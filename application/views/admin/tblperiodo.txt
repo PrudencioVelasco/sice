@@ -1,0 +1,144 @@
+tblperiodo
+	idperiodo
+	mesinicio
+	yearinicio
+	mesfin
+	yearfin
+	activo
+	idusuario
+	fecharegistro
+
+tblgrupo
+	idgrupo
+	idnivelestudio
+	nombregrupo
+	activo 
+tblnivelestudio
+	idnivelestudio
+	nombrenivelestudio 
+
+tblmateria
+	idmateria
+	nombremateria
+	idusuario
+	fecharegistro
+
+tbltutor
+	idtutor
+	nombre
+	apellidop
+	apellidom
+	nacimiento
+	direccion
+	telefono
+	direccion
+	correo
+	password
+
+tblalumno
+	idalumno
+	matricula
+	nombre
+	apellidop
+	apellidom
+	foto
+	correo
+	password
+	
+tblalumno_grupo
+	idgrupoalumno
+	idalumno
+	idgrupo
+	activo
+
+	
+tblprofesor
+	idprofesor
+	cedula
+	nombre
+	apellidop
+	apellidom
+	profesion
+	correo
+	password
+
+tbldia
+	iddia
+	nombre
+
+tblexamen
+	idexamen
+	nombrexamen
+
+tblcalificacion
+	idunidadcalificacion
+	idexamen
+	idgrupoalumno
+	idhorario
+	idhorariodetalle
+	calificacion
+
+
+tblintitucion
+	idinstitucion
+	nombreinstitucion
+	logo
+tblplantel
+	idplantel
+	idinstitucion
+	nombreplantel
+	logoplantel
+	direccion
+	telefono
+	director
+
+
+tblpersonal
+	idpersonal
+	nombre
+	apellidop
+	apellidom
+	usuario
+	contrasena
+	acitivo
+
+user
+	id
+	idusuario
+	idtipousuario
+
+tblperiodo_pago
+	idperiodopago
+	mes
+	year
+	activo
+	idusuario
+	fecharegistro
+
+tblamotizacion
+	idamortizacion
+	idalumno
+	idperiodo
+	idperiodopago
+	descuento
+	pagado
+	idusuario
+	fecharegistro
+
+tblestado_cuenta
+	idestadocuenta
+	idamortizacion
+	descuento
+	idusuario
+	fecharegistro
+
+tbldetalle_pago
+iddetallepago
+idestadocuenta
+idformapago
+descuento
+autotizacion
+fechapago
+idusuario
+fecharegistro
+	

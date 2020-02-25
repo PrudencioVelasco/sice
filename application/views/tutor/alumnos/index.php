@@ -1,0 +1,76 @@
+  <!-- page content -->
+      <div class="right_col" role="main">
+
+        <div class=""> 
+
+          <div class="row">
+            <div class="col-md-12">
+              <div class="x_panel">
+                <div class="x_title">
+                  <h2><strong>HIJOS(AS)</strong></h2> 
+                  <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+
+                  <div class="row"> 
+                    <div class="col-md-12 col-sm-12 col-xs-12 ">
+                                  <table class="table ">
+                                            <thead >
+                                              <th>#</th>
+                                              <th>Grupo</th>
+                                              <th>Nombre</th>
+                                              <th></th>
+                                            </thead>
+                                            <tbody >
+                                              <?php 
+                                              if (isset($alumnos) && !empty($alumnos)) {
+                                                $numero = 1;
+                                                foreach ($alumnos as $value) { ?>
+                                                     <tr>
+                                                      <td><?php echo $numero++; ?></td>
+                                                      <td><?php echo $value->nombrenivel.' '.$value->nombregrupo; ?></td> 
+                                                      <td><?php echo $value->nombre.' '.$value->apellidop.' '.$value->apellidom ?></td> 
+                                                      <td align="right">
+                                                        <a class="btn btn-info" href="<?php echo site_url('Tutores/materias/'.$value->idalumno) ?>"><i class="fa fa-list"></i>  Detalles</a>
+                                                      </td>
+                                                     </tr>
+                                                  <?php
+                                                  }  
+                                              } 
+                                              ?>
+                                                
+                                            </tbody>
+                                            <tfoot> 
+                                    </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- footer content -->
+        <footer>
+          <div class="copyright-info">
+             <p class="pull-right">SICE - Sistema Integral para el Control Escolar</a>
+            </p>
+          </div>
+          <div class="clearfix"></div>
+        </footer>
+        <!-- /footer content -->
+
+      </div>
+      <!-- /page content -->
+    </div>
+
+  </div>
+
+  <div id="custom_notifications" class="custom-notifications dsp_none">
+    <ul class="list-unstyled notifications clearfix" data-tabbed_notifications="notif-group">
+    </ul>
+    <div class="clearfix"></div>
+    <div id="notif-group" class="tabbed_notifications"></div>
+  </div> 
+
+
