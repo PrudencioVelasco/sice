@@ -691,8 +691,7 @@ tblcalificacion  {border-collapse:collapse}
             $data = array( 
                     'idalumno' => $this->input->post('idalumno'),
                     'idperiodo' => $this->input->post('idcicloescolar'),
-                    'idgrupo' => $this->input->post('idgrupo'),
-                    'idgrupo' => 1,
+                    'idgrupo' => $this->input->post('idgrupo'), 
                     'activo'=>1,
                     'idusuario' => $this->session->user_id,
                     'fecharegistro' => date('Y-m-d H:i:s')

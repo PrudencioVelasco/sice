@@ -24,11 +24,11 @@ class Materia extends CI_Controller {
 		$this->load->view('admin/materia/index');
 		$this->load->view('admin/footer');
 	}
-      public function searchCiclo() { 
+      public function searchMateria() { 
         $value = $this->input->post('text');
-        $query = $this->ciclo->searchCiclo($value,$this->session->idplantel);
+        $query = $this->materia->searchMateria($value,$this->session->idplantel);
         if ($query) {
-            $result['ciclos'] = $query;
+            $result['materias'] = $query;
         }
      if(isset($result) && !empty($result)){
          echo json_encode($result);
@@ -59,7 +59,7 @@ class Materia extends CI_Controller {
          $query = $this->materia->showAllEspecialidades($this->session->idplantel);
          //var_dump($query);
          if ($query) {
-             $result['especialidades'] = $this->showAllEspecialidades->showAllYears($this->session->idplantel);
+             $result['especialidades'] = $this->materia->showAllEspecialidades($this->session->idplantel);;
          }
         if(isset($result) && !empty($result)){
          echo json_encode($result);
@@ -86,6 +86,22 @@ class Materia extends CI_Controller {
                 )
             ),
              array(
+                'field' => 'clave',
+                'label' => 'Clve',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
+            ), array(
+                'field' => 'credito',
+                'label' => 'Clve',
+                'rules' => 'trim|required|integer',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.',
+                    'integer'=>'Solo número enteros.'
+                )
+            ),
+             array(
                 'field' => 'nombreclase',
                 'label' => 'A. Paterno',
                 'rules' => 'trim|required',
@@ -101,21 +117,27 @@ class Materia extends CI_Controller {
             $result['msg'] = array(
                 'idnivelestudio' => form_error('idnivelestudio'),
                 'idespecialidad' => form_error('idespecialidad'), 
-                'nombreclase' => form_error('nombreclase') 
+                'nombreclase' => form_error('nombreclase'),
+                'clave' => form_error('clave'),
+                'credito' => form_error('credito') 
             );
         } else {
 
             $idnivelestudio =  trim($this->input->post('idnivelestudio'));
             $idespecialidad =  trim($this->input->post('idespecialidad'));
             $nombreclase =  trim($this->input->post('nombreclase')); 
-            $validar = $this->materia->validarAddMateria($idnivelestudio,$idespecialidad,$nombreclase, $this->session->idplantel);
+            $credito =  trim($this->input->post('credito')); 
+            $clave =  trim($this->input->post('clave')); 
+            $validar = $this->materia->validarAddMateria($idnivelestudio,$idespecialidad,$nombreclase, $this->session->idplantel,$clave);
             if($validar == FALSE){
 
             $data = array(
                     'idplantel'=> $this->session->idplantel,
                     'idnivelestudio' => $idnivelestudio,
                     'idespecialidad' =>  $idespecialidad,
-                    'nombreclase' =>  $nombreclase, 
+                    'nombreclase' =>  strtoupper($nombreclase), 
+                    'clave' =>  strtoupper($clave), 
+                    'credito' =>  $credito, 
                     'idusuario' => $this->session->user_id,
                     'fecharegistro' => date('Y-m-d H:i:s')
                      
@@ -126,7 +148,7 @@ class Materia extends CI_Controller {
          }else{
              $result['error'] = true;
             $result['msg'] = array(
-                'msgerror' => 'Ya esta registrado la Materia.'
+                'msgerror' => 'Algunos datos ya se encentran registrados.'
             );
              
           } 
@@ -140,7 +162,7 @@ class Materia extends CI_Controller {
 
     public function updateMateria()
     {
-           $config = array(
+   $config = array(
              array(
                 'field' => 'idnivelestudio',
                 'label' => 'Mes inicio',
@@ -158,6 +180,22 @@ class Materia extends CI_Controller {
                 )
             ),
              array(
+                'field' => 'clave',
+                'label' => 'Clve',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
+            ), array(
+                'field' => 'credito',
+                'label' => 'Clve',
+                'rules' => 'trim|required|integer',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.',
+                    'integer'=>'Solo número enteros.'
+                )
+            ),
+             array(
                 'field' => 'nombreclase',
                 'label' => 'A. Paterno',
                 'rules' => 'trim|required',
@@ -173,21 +211,27 @@ class Materia extends CI_Controller {
             $result['msg'] = array(
                 'idnivelestudio' => form_error('idnivelestudio'),
                 'idespecialidad' => form_error('idespecialidad'), 
-                'nombreclase' => form_error('nombreclase') 
+                'nombreclase' => form_error('nombreclase'),
+                'clave' => form_error('clave'),
+                'credito' => form_error('credito') 
             );
         } else {
 
-           $idnivelestudio =  trim($this->input->post('idnivelestudio'));
+            $idnivelestudio =  trim($this->input->post('idnivelestudio'));
             $idespecialidad =  trim($this->input->post('idespecialidad'));
             $nombreclase =  trim($this->input->post('nombreclase'));
             $idmateria =  trim($this->input->post('idmateria')); 
-            $validar = $this->materia->validarUpdateMateria($idmateria,$idnivelestudio,$idespecialidad,$nombreclase,$this->session->idplantel);
+            $clave =  trim($this->input->post('clave'));
+            $credito =  trim($this->input->post('credito')); 
+            $validar = $this->materia->validarUpdateMateria($idmateria,$idnivelestudio,$idespecialidad,$nombreclase,$this->session->idplantel,$clave);
             if($validar == FALSE){ 
 
             $data = array(
                     'idnivelestudio' => $idnivelestudio,
                     'idespecialidad' =>  $idespecialidad,
-                    'nombreclase' =>  $nombreclase, 
+                    'nombreclase' =>  strtoupper($nombreclase), 
+                    'clave' =>  strtoupper($clave), 
+                    'credito' =>  $credito, 
                     'idusuario' => $this->session->user_id,
                     'fecharegistro' => date('Y-m-d H:i:s')
                      

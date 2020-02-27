@@ -189,7 +189,7 @@
                                             <span class="caret"></span>
                                         </button>
                                         <ul class="dropdown-menu"> 
-                                            <li><a href="<?php echo site_url('alumno/historial/'.$row->idhorario.'/'.$id) ?>"><i class="fa fa-list-alt" aria-hidden="true"></i> Kardex</a></li> 
+                                            <li><a href="<?php echo site_url('alumno/historial/'.$row->idhorario.'/'.$id) ?>"><i class="fa fa-list-alt" aria-hidden="true"></i> Boleta</a></li> 
                                             <li><a href="<?php echo site_url('alumno/horario/'.$row->idhorario.'/'.$id) ?>"><i class="fa fa-clock-o"></i> Horario</a></li> 
                                             <li><a href="<?php echo site_url('alumno/asistencia/'.$row->idhorario.'/'.$id) ?>"> <i class="fa fa-check"></i> Asistencia</a></li>  
                                            

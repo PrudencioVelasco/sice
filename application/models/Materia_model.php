@@ -15,7 +15,7 @@ class Materia_model extends CI_Model {
 
    
       public function showAll($idplantel = '') {
-        $this->db->select('m.idmateria, m.nombreclase, e.idespecialidad, e.nombreespecialidad, n.idnivelestudio, n.nombrenivel');
+        $this->db->select('m.idmateria, m.nombreclase, e.idespecialidad, e.nombreespecialidad, n.idnivelestudio, n.nombrenivel, m.clave, m.credito');
         $this->db->from('tblmateria m'); 
         $this->db->join('tblnivelestudio n ', ' n.idnivelestudio = m.idnivelestudio'); 
         $this->db->join('tblespecialidad e ', ' m.idespecialidad = e.idespecialidad');  
@@ -63,14 +63,15 @@ class Materia_model extends CI_Model {
             return false;
         }
     }
-    public function validarAddMateria($idnivelestudio = '', $idespecialidad = '', $nombreclase= '',$idplantel = '') {
+    public function validarAddMateria($idnivelestudio = '', $idespecialidad = '', $nombreclase= '',$idplantel = '',$clave = '') {
         $this->db->select('m.*');
         $this->db->from('tblmateria m');
         $this->db->where('m.idnivelestudio',$idnivelestudio);
         $this->db->where('m.idespecialidad',$idespecialidad);
         $this->db->where('m.nombreclase',$nombreclase); 
+         $this->db->where('m.clave',$clave); 
         if (isset($idplantel) && !empty($idplantel)) {
-        $this->db->where('p.idplantel',$idplantel);
+        $this->db->where('m.idplantel',$idplantel);
         }
          $query = $this->db->get();
         if ($query->num_rows() > 0) {
@@ -79,12 +80,13 @@ class Materia_model extends CI_Model {
             return false;
         }
     }
-       public function validarUpdateMateria($idmateria = '', $idnivelestudio = '', $idespecialidad= '', $nombreclase = '',$idplantel = '') {
+       public function validarUpdateMateria($idmateria = '', $idnivelestudio = '', $idespecialidad= '', $nombreclase = '',$idplantel = '',$clave = '') {
         $this->db->select('m.*');
         $this->db->from('tblmateria m');
         $this->db->where('m.idnivelestudio',$idnivelestudio);
         $this->db->where('m.idespecialidad',$idespecialidad);
         $this->db->where('m.nombreclase',$nombreclase); 
+         $this->db->where('m.clave',$clave); 
         $this->db->where('m.idmateria !=',$idmateria);
          if (isset($idplantel) && !empty($idplantel)) {
         $this->db->where('m.idplantel',$idplantel);
@@ -99,7 +101,7 @@ class Materia_model extends CI_Model {
    
 
  
-public function addMteria($data)
+public function addMateria($data)
     {
         $this->db->insert('tblmateria', $data);
         $insert_id = $this->db->insert_id(); 
@@ -123,7 +125,7 @@ public function deleteMateria($idmateria='')
                  'e.nombreespecialidad',
                  'n.nombrenivel'
         );
-       $this->db->select('m.idmateria, m.nombreclase, e.idespecialidad, e.nombreespecialidad, n.idnivelestudio, n.nombrenivel');
+       $this->db->select('m.idmateria, m.nombreclase, e.idespecialidad, e.nombreespecialidad, n.idnivelestudio, n.nombrenivel, m.clave, m.credito');
         $this->db->from('tblmateria m'); 
         $this->db->join('tblnivelestudio n ', ' n.idnivelestudio = m.idnivelestudio'); 
         $this->db->join('tblespecialidad e ', ' m.idespecialidad = e.idespecialidad');  
