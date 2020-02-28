@@ -46,8 +46,11 @@ var v = new Vue({
         idhorario:my_var_2,
         addModal: false,
         addModalRecreo: false,
+        addModalHoraSinClase: false,
+        editModalHoraSinClase: false,
         editModal:false,
         editModalRecreo: false,
+        editModalSinClases: false,
         //deleteModal:false,
         horarios:[], 
         dias:[], 
@@ -174,6 +177,26 @@ var v = new Vue({
                 }
                })
         },
+        addHoraSinClases(){
+            var formData = v.formData(v.newHorario);
+              axios.post(this.url+"Horario/addHoraSinClases", formData).then(function(response){
+                if(response.data.error){
+                    v.formValidate = response.data.msg;
+                }else{
+                    swal({
+            position: 'center',
+            type: 'success',
+            title: 'Exito!',
+            showConfirmButton: false,
+            timer: 1500
+          });
+
+                    v.clearAll();
+                    v.clearMSG();
+                     v.cargar();
+                }
+               })
+        },
         updateHorario(){
             var formData = v.formData(v.chooseHorario); 
             axios.post(this.url+"Horario/updateMateriaHorario", formData).then(function(response){
@@ -218,6 +241,28 @@ var v = new Vue({
                 }
             })
         },
+        updateHoraSinClases(){
+            var formData = v.formData(v.chooseHorario); 
+            axios.post(this.url+"Horario/updateHoraSinClases", formData).then(function(response){
+                if(response.data.error){
+                    v.formValidate = response.data.msg;
+                    console.log(response.data.error)
+                }else{
+                    //v.successMSG = response.data.success;
+                      swal({
+                            position: 'center',
+                            type: 'success',
+                            title: 'Modificado!',
+                            showConfirmButton: false,
+                            timer: 1500
+                          });
+                    v.clearAll();
+                    v.clearMSG();
+                     v.cargar();
+
+                }
+            })
+        },
       cargar(){
           //this.showAll(); 
           this.showAllLunes(); 
@@ -229,12 +274,9 @@ var v = new Vue({
           //this.showAllMaterias();  
          },
        deleteHorario(id){
-       // var formData = v.formData(v.chooseHorario);
-        //console.log(id);
-             
-           Swal.fire({
-          title: '¿Eliminar elemento?',
-          text: "Realmente desea eliminar el elemento seleccionado",
+                   Swal.fire({
+          title: '¿Eliminar Elemente?',
+          text: "Realmente desea eliminar el Elemente.",
           type: 'info',
           showCancelButton: true,
           confirmButtonColor: '#3085d6',
@@ -243,23 +285,78 @@ var v = new Vue({
           cancelButtonText: 'Cancelar'
         }).then((result) => {
           if (result.value) {
-             axios.get(this.url+"Horario/deleteHorarioMateria/"+id).then(function(response){
-                
-                  //console.log(response.data);
-                v.cargar();
-            }) 
-          }
-        })
 
-             
+              axios.get(this.url + "Horario/deleteHorarioMateria", {
+                params: {
+                    id: id
+                }
+            }).then(function (response) {
+                if (response.data.horarios == true) {
+                    //v.noResult()
+                     swal({
+                        position: 'center',
+                        type: 'success',
+                        title: 'Eliminado!',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    v.clearAll();
+                    v.clearMSG();
+                     v.cargar();
+                } else {
+                   swal("Error", "No se puede eliminar el Elemente", "error")
+                }
+                console.log(response);
+            }).catch((error) => {
+                swal("Error", "No se puede eliminar el Elemente", "error")
+            })
+            }
+            }) 
+        },
+   deleteSinClases(id) {
+             Swal.fire({
+          title: '¿Eliminar Elemente?',
+          text: "Realmente desea eliminar el Elemente.",
+          type: 'info',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Eliminar',
+          cancelButtonText: 'Cancelar'
+        }).then((result) => {
+          if (result.value) {
+
+              axios.get(this.url + "Horario/deleteSinClases", {
+                params: {
+                    id: id
+                }
+            }).then(function (response) {
+                if (response.data.horarios == true) {
+                    //v.noResult()
+                     swal({
+                        position: 'center',
+                        type: 'success',
+                        title: 'Eliminado!',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    v.clearAll();
+                    v.clearMSG();
+                     v.cargar();
+                } else {
+                   swal("Error", "No se puede eliminar el Elemente", "error")
+                }
+                console.log(response);
+            }).catch((error) => {
+                swal("Error", "No se puede eliminar el Elemente", "error")
+            })
+            }
+            })
         },
          deleteReceso(id){
-       // var formData = v.formData(v.chooseHorario);
-        //console.log(id);
-             
-           Swal.fire({
-          title: '¿Eliminar elemento?',
-          text: "Realmente desea eliminar el elemento seleccionado",
+        Swal.fire({
+          title: '¿Eliminar Elemente?',
+          text: "Realmente desea eliminar el Elemente.",
           type: 'info',
           showCancelButton: true,
           confirmButtonColor: '#3085d6',
@@ -268,14 +365,33 @@ var v = new Vue({
           cancelButtonText: 'Cancelar'
         }).then((result) => {
           if (result.value) {
-             axios.get(this.url+"Horario/deleteReceso/"+id).then(function(response){
-                
-                  //console.log(response.data);
-                v.cargar();
-            }) 
-          }
-        })
 
+              axios.get(this.url + "Horario/deleteReceso", {
+                params: {
+                    id: id
+                }
+            }).then(function (response) {
+                if (response.data.horarios == true) {
+                    //v.noResult()
+                     swal({
+                        position: 'center',
+                        type: 'success',
+                        title: 'Eliminado!',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    v.clearAll();
+                    v.clearMSG();
+                     v.cargar();
+                } else {
+                   swal("Error", "No se puede eliminar el Elemente", "error")
+                }
+                console.log(response);
+            }).catch((error) => {
+                swal("Error", "No se puede eliminar el Elemente", "error")
+            })
+            }
+            }) 
              
         },
          formData(obj){
@@ -311,6 +427,9 @@ var v = new Vue({
             v.deleteModal=false;
             v.addModalRecreo = false;
             v.editModalRecreo = false;
+            v.addModalHoraSinClase = false;
+            v.editModalHoraSinClase = false;
+            v.editModalSinClases =false;
            // v.refresh()
 
         }

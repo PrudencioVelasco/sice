@@ -39,6 +39,7 @@ class pGrupo extends CI_Controller {
     {
         # code...
         $idhorario = $this->input->post('idhorario');
+        $idunidad = $this->input->post('unidad');
         $idhorariodetalle = $this->input->post('idhorariodetalle');
         $fechainicio = $this->input->post('fechainicio');
         $fechafin = $this->input->post('fechafin');
@@ -67,7 +68,7 @@ class pGrupo extends CI_Controller {
              for($i=0;$i<$range;$i++):
                     $date_at= date("Y-m-d",strtotime($fechainicio)+($i*(24*60*60)));
                    // $asist = AssistanceData::getByATD($alumn->id,$_GET["team_id"],$date_at);
-                    $asist = $this->grupo->listaAsistencia($alumn->idalumno,$idhorario,$date_at,$idhorariodetalle);
+                    $asist = $this->grupo->listaAsistencia($alumn->idalumno,$idhorario,$date_at,$idhorariodetalle,$idunidad);
                         
 
 
@@ -326,6 +327,7 @@ return $tabla;
  
         $alumns = $this->grupo->alumnosGrupo($idhorario);
         $motivo = $this->grupo->motivoAsistencia();
+         $unidades = $this->grupo->unidades($this->session->idplantel);
         $fechainicio = date("Y-m-d");
         $fechafin = date("Y-m-d");
         $table = $this->obetnerAsistencia($idhorario,$fechainicio,$fechafin,$idhorariodetalle);
@@ -338,8 +340,8 @@ return $tabla;
             'idhorario'=>$idhorario,
             'idhorariodetalle'=>$idhorariodetalle,
             'tabla'=>$table,
-            'nombreclase'=>$nombreclase
-           // 'unidades'=>$unidades
+            'nombreclase'=>$nombreclase,
+            'unidades'=>$unidades 
         );
         $this->load->view('docente/header');
         $this->load->view('docente/grupo/asistencia',$data);
@@ -454,6 +456,14 @@ return $tabla;
                     'required' => 'Debe de seleccionar la Fecha.'
                 )
             ),
+             array(
+                'field' => 'unidad',
+                'label' => 'Unidad',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Debe de seleccionar la Unidad.'
+                )
+            ),
               array(
                 'field' => 'motivo[]',
                 'label' => 'Asistencia',
@@ -469,11 +479,12 @@ return $tabla;
             echo json_encode(['error'=>$errors]);
         } else {
             $idhorario = $this->input->post('idhorario');
+            $idunidad = $this->input->post('unidad');
             $idhorariodetalle = $this->input->post('idhorariodetalle');
             $idalumno = $this->input->post('idalumno'); 
             $motivo = $this->input->post('motivo');
             $fecha = $this->input->post('fecha'); 
-            $validar = $this->grupo->validarAgregarAsistencia($fecha,$idhorariodetalle);
+            $validar = $this->grupo->validarAgregarAsistencia($fecha,$idhorariodetalle,$idunidad);
             if($validar == false){
             foreach ($idalumno as $key => $value) {
                 # code...
@@ -486,6 +497,7 @@ return $tabla;
                     'idhorariodetalle'=>$idhorariodetalle,
                     'idalumno'=>$idalumno2,
                     'idmotivo'=>$motivo2,
+                    'idunidad'=>$idunidad,
                     'fecha'=>$fecha,
                     'idusuario' => $this->session->user_id,
                     'fecharegistro' => date('Y-m-d H:i:s')

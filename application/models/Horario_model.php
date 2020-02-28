@@ -109,6 +109,8 @@ class Horario_model extends CI_Model {
             return false;
         }
     }
+  
+
       public function calificacionGeneralAlumno($idhorario,$idalumno)
     {
         $query =$this->db->query("SELECT 
@@ -220,6 +222,12 @@ class Horario_model extends CI_Model {
         $insert_id = $this->db->insert_id(); 
         return  $insert_id;
     }
+        public function addHoraSinClase($data)
+    {
+        $this->db->insert('tblhora_sinclase', $data);
+        $insert_id = $this->db->insert_id(); 
+        return  $insert_id;
+    }
       public function addReceso($data)
     {
         $this->db->insert('tbldescanzo', $data);
@@ -260,6 +268,17 @@ class Horario_model extends CI_Model {
     {
         $this->db->where('idhorariodetalle', $id);
         $this->db->update('tblhorario_detalle', $field);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+        
+    }
+      public function updateHoraSinClase($id, $field)
+    {
+        $this->db->where('idhorasinclase', $id);
+        $this->db->update('tblhora_sinclase', $field);
         if ($this->db->affected_rows() > 0) {
             return true;
         } else {
@@ -317,6 +336,17 @@ class Horario_model extends CI_Model {
     {
         $this->db->where('idhorario', $id);
         $this->db->delete('tblhorario');
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+        
+    }
+         public function deleteSinClases($id)
+    {
+        $this->db->where('idhorasinclase', $id);
+        $this->db->delete('tblhora_sinclase');
         if ($this->db->affected_rows() > 0) {
             return true;
         } else {

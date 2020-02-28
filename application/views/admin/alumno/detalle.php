@@ -191,7 +191,7 @@
                                         <ul class="dropdown-menu"> 
                                             <li><a href="<?php echo site_url('alumno/historial/'.$row->idhorario.'/'.$id) ?>"><i class="fa fa-list-alt" aria-hidden="true"></i> Boleta</a></li> 
                                             <li><a href="<?php echo site_url('alumno/horario/'.$row->idhorario.'/'.$id) ?>"><i class="fa fa-clock-o"></i> Horario</a></li> 
-                                            <li><a href="<?php echo site_url('alumno/asistencia/'.$row->idhorario.'/'.$id) ?>"> <i class="fa fa-check"></i> Asistencia</a></li>  
+                                           <!-- <li><a href="<?php //echo site_url('alumno/asistencia/'.$row->idhorario.'/'.$id) ?>"> <i class="fa fa-check"></i> Asistencia</a></li>  -->
                                            
                                           
                                         </ul>
@@ -302,14 +302,14 @@
                                   <div v-if="mostrar">
                                   <div class="row">
                                     <div class="col-md-12 col-sm-12 col-xs-12" align="center">
-                                      <small style="font-weight: bold;">Pagos de Inscripcion o Reinscripcion</small>
+                                      <small style="font-weight: bold;text-decoration: underline red; ">Pagos de Inscripcion o Reinscripcion</small>
                                     </div>
                                     <div class="col-md-12 col-sm-12 col-xs-12" align="left"> 
-                                      <button v-if="btnpagar"   @click="addPagoModal = true;" class="btn btn-info">Pagar</button>
+                                      <button v-if="btnpagar"   @click="addPagoModal = true;" class="btn btn-info">Agregar Pago</button>
                                     </div>
                                   </div>  
                                      <table class="table table-hover">
-                                          <thead style="background-color: #ccc">
+                                          <thead style="background-color: #e3e3df;">
                                             <tr>
                                               <th>Descuento</th> 
                                               <th>Forma de Pago</th>
@@ -348,11 +348,11 @@
                                         </table>
                                   <div class="row">
                                     <div class="col-md-12 col-sm-12 col-xs-12" align="center">
-                                      <small style="font-weight: bold;">Pagos de Colegiaturas</small>
+                                      <small style="font-weight: bold;text-decoration: underline red;  ">Pagos de Colegiaturas</small>
                                     </div>
                                   </div> 
                                        <table class="table table-hover">
-                                          <thead style="background-color: #ccc">
+                                          <thead style="background-color: #68c5ea">
                                             <tr>
                                              
                                               <th>Mes</th> 

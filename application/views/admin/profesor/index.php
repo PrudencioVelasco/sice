@@ -42,7 +42,7 @@
                                         <br>
                                         <table class="table table-striped responsive-utilities jambo_table bulk_action">
                                             <thead class="text-white bg-dark" >
-                                              <th class="text-white" v-column-sortable:cedula>Cëdula </th>
+                                              <th class="text-white" v-column-sortable:cedula>Cédula </th>
                                             <th class="text-white" v-column-sortable:nombre>Nombre </th>
                                             <th class="text-white" v-column-sortable:apellidop>A. Paterno </th>
                                             <th class="text-white" v-column-sortable:apellidom>A. Materno </th>

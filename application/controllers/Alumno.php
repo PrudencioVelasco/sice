@@ -19,6 +19,7 @@ class Alumno extends CI_Controller {
         $this->load->library('permission');
         $this->load->library('session');
         $this->load->library('pdfgenerator'); 
+        $this->promedio_minimo = 7.00;
     }
 
 	public function index()
@@ -421,12 +422,12 @@ tblcalificacion  {border-collapse:collapse}
 }
 .subtitulocal{
      font-family:Verdana, Geneva, sans-serif; 
-     font-size:10px; 
+     font-size:9px; 
 }
 </style>
- <table width="540" border="0" cellpadding="1" cellspacing="4">
+ <table width="540" border="0" cellpadding="0" cellspacing="4">
   <tr>
-    <td colspan="4" align="center"><label class="escuela">Escuela Primaria</label></td> 
+    <td colspan="4" align="center"><label class="escuela">'.$alumno->nombreplantel.'</label></td> 
   </tr>
   <tr>
     <td colspan="4" align="center"><label class="horario">Kardex Escolar del Alumno</label></td> 
@@ -440,7 +441,7 @@ tblcalificacion  {border-collapse:collapse}
   <tr>
     <td align="center"><label class="result">'.$alumno->matricula.'</label></td>
     <td align="center"><label class="result">'.$alumno->nombre.' '.$alumno->apellidop.' '.$alumno->apellidom.'</label></td>
-    <td align="center"><label class="result">1 A</label></td>
+    <td align="center"><label class="result">'.$grupop->nombrenivel.' '.$grupop->nombregrupo.'</label></td>
     <td align="center"><label class="result">'.$grupop->mesinicio.' '.$grupop->yearinicio.' - '.$grupop->mesfin.' '.$grupop->yearfin.'</label></td>
   </tr> 
 </table>
@@ -629,6 +630,7 @@ tblcalificacion  {border-collapse:collapse}
         $datosalumno = $this->alumno->showAllAlumnoId($idalumno);
         $datoshorario = $this->horario->showNivelGrupo($idhorario);
         $materias = $this->alumno->showAllMaterias($idhorario);
+        $unidades =  $this->grupo->unidades($this->session->idplantel);
         $total_materia = 0;
         if ($materias != FALSE) { 
             foreach ($materias as $row) {
@@ -649,7 +651,8 @@ tblcalificacion  {border-collapse:collapse}
             'tabla'=>$tabla,
             'datosalumno'=>$datosalumno,
             'datoshorario'=>$datoshorario,
-            'calificacion'=>$calificacion
+            'calificacion'=>$calificacion,
+            'unidades'=>$unidades
         );
         $this->load->view('admin/header');
         $this->load->view('admin/alumno/kardex',$data);
@@ -770,6 +773,7 @@ tblcalificacion  {border-collapse:collapse}
 <style type="text/css">
 .titulodias{font-size:9px; font-weight:bold;}
 .cajon{
+     font-family:Verdana, Geneva, sans-serif;
     font-size:9px; 
     font-weight:bold;  
     border-bottom:solid 1px black;  
@@ -778,22 +782,27 @@ tblcalificacion  {border-collapse:collapse}
       padding:900px 20px 20px 20px;
 }  
 .escuela{
+     font-family:Verdana, Geneva, sans-serif;
       font-size:12px; 
     font-weight:bold;
 }
 .horario{
+     font-family:Verdana, Geneva, sans-serif;
       font-size:10px; 
     font-weight:bold;
 }
 .titulo{
+     font-family:Verdana, Geneva, sans-serif;
       font-size:8px; 
     font-weight:bold;
 }
 .result{
+     font-family:Verdana, Geneva, sans-serif;
       font-size:9px; 
     font-weight:bold;
 }
 .dl{ 
+     font-family:Verdana, Geneva, sans-serif;
     width:142px;
     display:inline-block;
     *display:inline;
@@ -804,7 +813,7 @@ tblcalificacion  {border-collapse:collapse}
 .dia{
     font-family:Verdana, Geneva, sans-serif;
     border:solid 1px #ccc;
-     font-size:10px;
+     font-size:8px;
      height:38px;
      vertical-align:top; 
      padding: 5px 5px 5px 5px;
@@ -820,6 +829,7 @@ tblcalificacion  {border-collapse:collapse}
      font-weight:bolder;
 }
 .hora{
+     font-family:Verdana, Geneva, sans-serif;
      font-size:8px;
      font-weight:bolder;
 }
@@ -830,7 +840,7 @@ tblcalificacion  {border-collapse:collapse}
 <body>
 <table width="540" border="0" cellpadding="1" cellspacing="4">
   <tr>
-    <td colspan="4" align="center"><label class="escuela">Escuela Primaria</label></td> 
+    <td colspan="4" align="center"><label class="escuela">'.$alumno->nombreplantel.'</label></td> 
   </tr>
   <tr>
     <td colspan="4" align="center"><label class="horario">Horario del Alumno</label></td> 
@@ -844,7 +854,7 @@ tblcalificacion  {border-collapse:collapse}
   <tr>
     <td align="center"><label class="result">'.$alumno->matricula.'</label></td>
     <td align="center"><label class="result">'.$alumno->nombre.' '.$alumno->apellidop.' '.$alumno->apellidom.'</label></td>
-    <td align="center"><label class="result">1 A</label></td>
+    <td align="center"><label class="result">'.$grupo->nombrenivel.' '.$grupo->nombregrupo.'</label></td>
     <td align="center"><label class="result">'.$grupo->mesinicio.' '.$grupo->yearinicio.' - '.$grupo->mesfin.' '.$grupo->yearfin.'</label></td>
   </tr> 
 </table>
@@ -854,10 +864,18 @@ tblcalificacion  {border-collapse:collapse}
     ';
     if(isset($lunes) && !empty($lunes)){
     foreach($lunes as $row){
-            if($row->opcion != "Descanso"){
+              if(strtoupper($row->opcion) == "NORMAL"){ 
+                 $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small>
+              <br>
+              <small class = "hora">'.$row->nombre.' '.$row->apellidop.' '.$row->apellidom.'</small></div>';
+              
+            
+            }
+            if(strtoupper($row->opcion) == "DESCANSO"){
               $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
-            }else{
-              $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
+            }
+             if(strtoupper($row->opcion) == "SIN CLASES"){
+              $tbl.='<div class="dia"><label>SIN CLASES</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
             }
         }
         } 
@@ -868,10 +886,18 @@ tblcalificacion  {border-collapse:collapse}
      ';
      if(isset($martes) && !empty($martes)){
     foreach($martes as $row){
-            if($row->opcion != "Descanso"){
+            if(strtoupper($row->opcion) == "NORMAL"){ 
+                 $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small>
+              <br>
+              <small class = "hora">'.$row->nombre.' '.$row->apellidop.' '.$row->apellidom.'</small></div>';
+              
+            
+            }
+            if(strtoupper($row->opcion) == "DESCANSO"){
               $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
-            }else{
-              $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
+            }
+             if(strtoupper($row->opcion) == "SIN CLASES"){
+              $tbl.='<div class="dia"><label>SIN CLASES</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
             }
         } 
     }
@@ -882,10 +908,18 @@ tblcalificacion  {border-collapse:collapse}
    ';
    if(isset($miercoles) && !empty($miercoles)){
     foreach($miercoles as $row){
-            if($row->opcion != "Descanso"){
+            if(strtoupper($row->opcion) == "NORMAL"){ 
+                 $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small>
+              <br>
+              <small class = "hora">'.$row->nombre.' '.$row->apellidop.' '.$row->apellidom.'</small></div>';
+              
+            
+            }
+            if(strtoupper($row->opcion) == "DESCANSO"){
               $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
-            }else{
-              $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
+            }
+             if(strtoupper($row->opcion) == "SIN CLASES"){
+              $tbl.='<div class="dia"><label>SIN CLASES</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
             }
         }
     }
@@ -896,10 +930,18 @@ tblcalificacion  {border-collapse:collapse}
      ';
      if(isset($jueves) && !empty($jueves)){
     foreach($jueves as $row){
-            if($row->opcion != "Descanso"){
+          if(strtoupper($row->opcion) == "NORMAL"){ 
+                 $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small>
+              <br>
+              <small class = "hora">'.$row->nombre.' '.$row->apellidop.' '.$row->apellidom.'</small></div>';
+              
+            
+            }
+            if(strtoupper($row->opcion) == "DESCANSO"){
               $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
-            }else{
-              $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
+            }
+             if(strtoupper($row->opcion) == "SIN CLASES"){
+              $tbl.='<div class="dia"><label>SIN CLASES</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
             }
         } 
     }
@@ -910,10 +952,18 @@ tblcalificacion  {border-collapse:collapse}
     ';
     if(isset($viernes) && !empty($viernes)){
     foreach($viernes as $row){
-            if($row->opcion != "Descanso"){
+             if(strtoupper($row->opcion) == "NORMAL"){ 
+                 $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small>
+              <br>
+              <small class = "hora">'.$row->nombre.' '.$row->apellidop.' '.$row->apellidom.'</small></div>';
+              
+            
+            }
+            if(strtoupper($row->opcion) == "DESCANSO"){
               $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
-            }else{
-              $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
+            }
+             if(strtoupper($row->opcion) == "SIN CLASES"){
+              $tbl.='<div class="dia"><label>SIN CLASES</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
             }
         } 
     }
@@ -1103,5 +1153,204 @@ return $tabla;
        if(isset($result) && !empty($result)){
          echo json_encode($result);
         }
+  }
+
+  public function boleta($idhorario='',$idalumno = '',$idunidad = '')
+  {
+      $logo = base_url() . '/assets/images/escuelas/logo.jpeg';
+       $logo2 = base_url() . '/assets/images/escuelas/ugto.png';
+       $datelle_alumno = $this->alumno->showAllMateriasAlumno($idalumno);
+       $materias = $this->alumno->showAllMaterias($idhorario);
+       $detalle_unidad = $this->alumno->detalleUnidad($idunidad);
+       $this->load->library('tcpdf');  
+        $hora = date("h:i:s a");
+        //$linkimge = base_url() . '/assets/images/woorilogo.png';
+        $fechaactual = date('d/m/Y');
+        $pdf = new Pdf('P', 'mm', 'A4', true, 'UTF-8', false);
+        $pdf->SetTitle('Horario de clases.');
+        $pdf->SetHeaderMargin(30);
+        $pdf->SetTopMargin(10);
+        $pdf->setFooterMargin(20);
+        $pdf->SetAutoPageBreak(true);
+        $pdf->SetAuthor('Author');
+        $pdf->SetDisplayMode('real', 'default');
+        $pdf->setPrintHeader(false);
+        $pdf->setPrintFooter(false);
+
+        $pdf->AddPage();
+
+        $tbl = '
+<style type="text/css">
+    .txtn{
+        font-size:7px;
+    }
+    .direccion{
+        font-size:8px;
+    }
+    .nombreplantel{
+        font-size:11px;
+        font-weight:bolder;
+    }
+    .telefono{
+          font-size:7px;
+    }
+    .boleta{
+         font-size:9px;
+         font-weight:bolder;
+    }
+     .periodo{
+         font-size:9px;
+         font-weight:bolder;
+    }
+    .txtgeneral{
+         font-size:8px;
+         font-weight:bolder; 
+    }
+    .txtnota{
+         font-size:6px;
+         font-weight:bolder; 
+    } 
+    .txtcalificacion{
+        font-size:10px;
+         font-weight:bolder; 
+    } 
+    .imgtitle{
+        width:55px;
+
+    }
+</style>
+<table width="610" border="0" cellpadding="2" cellspacing="0">
+  <tr>
+    <td width="101" align="center"><img   class="imgtitle" src="' . $logo2 . '" /></td>
+    <td colspan="2" align="center">
+            <label class="nombreplantel">'.$datelle_alumno[0]->nombreplantel.'</label><br>
+            <label class="txtn">INCORPORADA A LA UNIVERSIDAD DE GUANAJUATO SEGÚN EL OFICIO 14/ABRIL/1972</label><br>
+            <label class="direccion">'.$datelle_alumno[0]->direccion.'</label><br>
+            <label class="telefono">TELÉFONO: '.$datelle_alumno[0]->telefono.' EXT 1</label>
+    </td>
+    <td width="137" align="center"><img   class="imgtitle" src="' . $logo . '" /></td>
+  </tr>
+   <tr>
+    <td width="543" colspan="3" align="center"><label class="boleta">BOLETA DE CALIFICACIONES DEL '.$detalle_unidad[0]->nombreunidad.'</label></td>  
+  </tr>
+   <tr> 
+    <td width="543" colspan="3" align="center"><label class="periodo">PERIODO: '.$datelle_alumno[0]->mesinicio.' - '.$datelle_alumno[0]->mesfin.' DE '.$datelle_alumno[0]->yearfin.'</label></td> 
+  </tr>
+ <tr>
+    <td width="50" valign="bottom"  class="txtgeneral" >NOMBRE:</td>
+    <td width="300" valign="bottom" class="txtgeneral" style="border-bottom:solid 1px black;"> '.$datelle_alumno[0]->apellidop.' '.$datelle_alumno[0]->apellidom.' '.$datelle_alumno[0]->nombre.'</td>
+    <td width="60" valign="bottom" class="txtgeneral"> GRUPO:</td>
+    <td width="130" valign="bottom" class="txtgeneral" style="border-bottom:solid 1px black;">'.$datelle_alumno[0]->nombrenivel.' '.$datelle_alumno[0]->nombregrupo.'</td>
+  </tr>
+  <tr>
+   <td width="60" valign="bottom"  class="txtgeneral" >INSCRIPCIÓN:</td>
+    <td width="290" valign="bottom" class="txtgeneral" style="border-bottom:solid 1px black;"> PRIMERA</td>
+    <td width="60" valign="bottom" class="txtgeneral"> NUA:</td>
+    <td width="130" valign="bottom" class="txtgeneral" style="border-bottom:solid 1px black;">'.$datelle_alumno[0]->matricula.'</td>
+  </tr>
+<tr>
+   <td width="60" colspan="4" ></td> 
+  </tr>
+    <tr >
+   <td width="60" style="border:solid 1px black; background-color:#ccc;" valign="bottom" align="center"  class="txtgeneral" >NUM</td>
+    <td width="290" style="border:solid 1px black; background-color:#ccc;" valign="bottom"  align="center" class="txtgeneral">MATERIA</td>
+    <td width="60" style="border:solid 1px black; background-color:#ccc;" valign="bottom"  align="center" class="txtgeneral">FALTAS</td>
+    <td width="130"style="border:solid 1px black; background-color:#ccc;" valign="bottom"  align="center" class="txtgeneral">CALIFICACIÓN</td>
+  </tr>
+  ';
+  if(isset($materias) && !empty($materias)){
+    $numero = 1;
+    $total_materia = 0;
+    $total_calificacion = 0;
+    $promedio_final = 0;
+    $total_reprobadas = 0;
+    $total_aprovadas = 0;
+  foreach ($materias as $row) { 
+    $total_materia = $total_materia + 1;
+    $idhorariodetalle = $row->idhorariodetalle;
+    $calificacion = $this->alumno->obtenerCalificacionMateria($idhorariodetalle,$idalumno,$idunidad);
+     $asistencia = $this->alumno->obtenerAsistenciaMateria($idhorariodetalle,$idalumno,$idunidad);
+    $tbl .=' <tr >
+           <td width="60" style="border:solid 1px black;" valign="bottom" align="center"  class="txtgeneral" >'.$numero++.'</td>
+            <td width="290" style="border:solid 1px black;" valign="bottom" class="txtgeneral">'.$row->nombreclase.'</td>
+            <td width="60" style="border:solid 1px black;" valign="bottom"  align="center" class="txtgeneral">';
+                 if($asistencia != FALSE){
+                    $total_falta = 0;
+                        foreach ($asistencia as  $value) {
+                           $total_falta = $total_falta + 1;
+                        }
+                    $tbl .= '<label>'.$total_falta.'</label>';
+                    }else{
+                        $tbl .= '0';
+                    }
+            $tbl .= '</td>
+            <td width="130"style="border:solid 1px black;" align="center" valign="bottom" class="txtgeneral">';
+            if($calificacion != FALSE){
+                $total_calificacion = $total_calificacion + $calificacion->calificacion;
+                if($calificacion->calificacion < $this->promedio_minimo){
+                    $total_reprobadas = $total_reprobadas + 1;
+                     $tbl .= '<label style="color:red;">'.$calificacion->calificacion.'<label>';
+                }else{
+                    $total_aprovadas= $total_aprovadas + 1;
+                     $tbl .= '<label>'.$calificacion->calificacion.'</label>';
+                }
+            }else{
+                $tbl .= 'S/C';
+            }
+           $tbl .='</td>
+          </tr>';
+  }
+  $promedio_final = $total_calificacion / $total_materia;
+}
+$tbl .='<tr >
+   <td width="60" style="" valign="bottom" align="center"  class="txtgeneral" ></td>
+    <td width="290" style="" valign="bottom"  align="center" class="txtgeneral"></td>
+    <td width="60" style="border:solid 1px black; background-color:#ccc;" valign="bottom"  align="center" class="txtgeneral">PROMEDIO:</td>
+    <td width="130"style="border:solid 1px black; background-color:#ccc;" valign="bottom"  align="center" class="txtcalificacion">'.number_format($promedio_final,2).'</td>
+  </tr>
+  <tr >
+   <td width="60" style="" valign="bottom" align="center"  class="txtgeneral" ></td>
+    <td width="290" style="" valign="bottom"  align="center" class="txtgeneral"></td>
+    <td width="60"  valign="bottom"  align="center" class="txtgeneral"></td>
+    <td width="130" valign="bottom"  align="center" class="txtgeneral"></td>
+  </tr>
+  <tr >
+   <td width="60" style="" valign="bottom" align="center"  class="txtgeneral" ></td>
+    <td width="290" style="" valign="bottom"  align="center" class="txtgeneral"></td>
+    <td width="60" class="txtgeneral"></td>
+    <td width="130"style="" valign="bottom"  align="right" class="txtgeneral">APROVADAS: '.$total_aprovadas.'</td>
+  </tr>
+   <tr >
+   <td width="60" style="" valign="bottom" align="center"  class="txtgeneral"  ></td>
+    <td width="290" style="" valign="bottom"  align="center" style="border-bottom:solid 2px black" class="txtgeneral"></td>
+    <td width="60" class="txtgeneral" ></td>
+    <td width="130"style="" valign="bottom"  align="right" class="txtgeneral">REPROVADAS: '.$total_reprobadas.'</td>
+  </tr>
+   <tr >
+   <td width="60" style="" valign="bottom" align="center"  class="txtgeneral"  ></td>
+    <td width="290" style="" valign="bottom"  align="center" style="" class="txtgeneral">LRI.MARÍA ELENA DURÁN HERNÁNDEZ</td> 
+    <td width="190"  colspan= "2"  style="" valign="bottom"  align="center" class="txtgeneral"> *Sin validez oficial </td>
+  </tr>
+  <tr > 
+    <td width="540"  colspan= "4"  style="" valign="bottom"  align="left" class="txtnota">   </td>
+  </tr>
+  <tr > 
+    <td width="540"  colspan= "4"  style="" valign="bottom"  align="left" class="txtnota">  </td>
+  </tr>
+  <tr > 
+    <td width="540"  colspan= "4"  style="" valign="bottom"  align="left" class="txtnota"> NOTA: AC = ACREDITADO, NA= NO ACREDITADO, MÍNIMA APROVATORIA = 7.0 </td>
+  </tr>
+  ';
+$tbl .='</table>
+ 
+
+      ';
+
+        $pdf->writeHTML($tbl, true, false, false, false, '');
+
+    ob_end_clean();
+
+
+        $pdf->Output('My-File-Name.pdf', 'I');
   }
 }

@@ -19,7 +19,7 @@ class Promover extends CI_Controller {
         $this->load->model('data_model'); 
         $this->load->library('permission');
         $this->load->library('session'); 
-         $this->promedio_minimo = 5.00;
+         $this->promedio_minimo = 7.00;
        
     }
 

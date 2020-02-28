@@ -44,12 +44,13 @@ class Alumno_model extends CI_Model {
         }
     }
           public function showAllMateriasAlumno($idalumno = '') {
-        $this->db->select('hd.idhorariodetalle,ma.nombreclase,p.nombre, p.apellidop, p.apellidom, g.nombregrupo,ne.nombrenivel, g.idgrupo, h.idhorario,m.nombremes as mesinicio,m2.nombremes as mesfin,y.nombreyear as yearinicio,y2.nombreyear as yearfin');
+        $this->db->select('hd.idhorariodetalle,ma.nombreclase,p.nombre, p.apellidop, p.apellidom, g.nombregrupo,ne.nombrenivel, g.idgrupo, h.idhorario,m.nombremes as mesinicio,m2.nombremes as mesfin,y.nombreyear as yearinicio,y2.nombreyear as yearfin, pla.nombreplantel, pla.direccion, pla.telefono, a.matricula');
         $this->db->from('tblhorario_detalle hd'); 
         $this->db->join('tblprofesor_materia pm', 'pm.idprofesormateria = hd.idmateria');
         $this->db->join('tblprofesor p', 'p.idprofesor = pm.idprofesor');
         $this->db->join('tblmateria ma', 'ma.idmateria = pm.idmateria'); 
         $this->db->join('tblhorario h', 'hd.idhorario = h.idhorario');
+        $this->db->join('tblplantel pla', 'pla.idplantel = h.idplantel');
         $this->db->join('tblgrupo g', 'g.idgrupo = h.idgrupo');
         $this->db->join('tblnivelestudio ne', 'ne.idnivelestudio = g.idnivelestudio');
         $this->db->join('tblperiodo pe', 'pe.idperiodo = h.idperiodo');
@@ -211,6 +212,19 @@ class Alumno_model extends CI_Model {
             return false;
         }
     } 
+
+      public function detalleUnidad($idunidad = '') {
+        $this->db->select('u.*');
+        $this->db->from('tblunidad u');
+        $this->db->where('u.idunidad',$idunidad); 
+         $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    } 
+    
      public function showAllTutoresDisponibles($idplantel = '') {
         $this->db->select('t.*');
         $this->db->from('tbltutor t');
@@ -560,12 +574,12 @@ class Alumno_model extends CI_Model {
     
        public function detalleAlumno($idalumno)
     {
-        $this->db->select('t.*, e.nombreespecialidad');
+        $this->db->select('t.*, e.nombreespecialidad, p.clave, p.nombreplantel, p.direccion, p.telefono');
         $this->db->from('tblalumno t'); 
         $this->db->where('t.idalumno', $idalumno);
         $this->db->join('tblespecialidad e', 'e.idespecialidad = t.idespecialidad');
-        $query = $this->db->get();
-
+         $this->db->join('tblplantel p', 'p.idplantel = t.idplantel');
+        $query = $this->db->get(); 
         return $query->first_row();
     }
     
@@ -593,6 +607,35 @@ public function detalleGrupoActual($idalumno)
         $query = $this->db->get();
          if ($this->db->affected_rows() > 0) {
         return $query->first_row();
+        }else{
+            return false;
+        }
+    }
+    public function obtenerCalificacionMateria($idhorariodetalle = '',$idalumno = '', $idunidad = '')
+    {
+        $this->db->select('c.calificacion');
+        $this->db->from('tblcalificacion c');   
+        $this->db->where('c.idalumno', $idalumno);
+         $this->db->where('c.idhorariodetalle', $idhorariodetalle);
+          $this->db->where('c.idunidad', $idunidad); 
+        $query = $this->db->get();
+         if ($this->db->affected_rows() > 0) {
+        return $query->first_row();
+        }else{
+            return false;
+        }
+    }
+     public function obtenerAsistenciaMateria($idhorariodetalle = '',$idalumno = '', $idunidad = '')
+    {
+        $this->db->select('a.*');
+        $this->db->from('tblasistencia a');   
+        $this->db->where('a.idalumno', $idalumno);
+        $this->db->where('a.idhorariodetalle', $idhorariodetalle);
+        $this->db->where('a.idunidad', $idunidad); 
+        $this->db->where('a.idmotivo', 4); 
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->result();
         }else{
             return false;
         }

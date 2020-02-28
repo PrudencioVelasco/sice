@@ -206,13 +206,14 @@ class Grupo_model extends CI_Model {
             return false;
         }
         }
-          public function validarAgregarAsistencia($fecha,$idhorariodetalle='')
+          public function validarAgregarAsistencia($fecha,$idhorariodetalle='',$idunidad = '')
         {
             # code...
         $this->db->select('c.*');
         $this->db->from('tblasistencia c');   
         $this->db->where('c.idhorariodetalle', $idhorariodetalle); 
         $this->db->where('c.fecha', $fecha); 
+         $this->db->where('c.idunidad', $idunidad); 
         $query = $this->db->get();
          if ($this->db->affected_rows() > 0) {
         return $query->result();
@@ -370,7 +371,7 @@ public function deleteAsistencia($idasistencia='')
     }
     
      
-  public function listaAsistencia($idalumno = '',$idhorario='',$fecha = '', $idhorariodetalle = '')
+  public function listaAsistencia($idalumno = '',$idhorario='',$fecha = '', $idhorariodetalle = '',$idunidad = '')
         {
             # code...
         $this->db->select('a.idasistencia,ma.idmotivo, a.fecha,ma.nombremotivo, ma.abreviatura');
@@ -380,6 +381,9 @@ public function deleteAsistencia($idasistencia='')
         $this->db->where('a.idhorario', $idhorario); 
         $this->db->where('a.idhorariodetalle', $idhorariodetalle); 
         $this->db->where('a.fecha', $fecha); 
+        if(isset($idunidad) && !empty($idunidad) && $idunidad != 0){
+        $this->db->where('a.idunidad', $idunidad); 
+        }
         $query = $this->db->get();
          if ($this->db->affected_rows() > 0) {
        return $query->first_row();

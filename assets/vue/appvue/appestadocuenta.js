@@ -110,14 +110,14 @@ var ve = new Vue({
                      idalumno: my_var_2
                  }
              }).then(function(response){
-                //console.log(response.data);
-                 if(response.data == null){
+                console.log(response.data);
+                 if(response.data.pagos == null ){
                       ve.pagos = null;
                       ve.noresultadoinicio = true;
                       ve.btnpagar = true;
                     }else{
                       console.log(response.data);
-                        ve.pagos = response.data
+                        ve.pagos = response.data.pagos
                          ve.noresultadoinicio = false;
                          ve.btnpagar = false;
                     }

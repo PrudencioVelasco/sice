@@ -240,6 +240,114 @@ public function showAllMaterias() {
         }
          
     }
+        public function addHoraSinClases() {
+        //Permission::grant(uri_string());
+        $config = array(
+             array(
+                'field' => 'iddia',
+                'label' => 'Titulo',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
+            ),
+             array(
+                'field' => 'horainicial',
+                'label' => 'Hora inicial',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
+            ),
+            array(
+                'field' => 'horafinal',
+                'label' => 'Hora final',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
+            )
+         );
+
+        $this->form_validation->set_rules($config);
+        if ($this->form_validation->run() == FALSE) {
+            $result['error'] = true;
+            $result['msg'] = array(
+                'iddia' => form_error('iddia'),
+                'horainicial' => form_error('horainicial'),
+                'horafinal' => form_error('horafinal')
+            );
+        } else {
+            $data = array(
+                    'iddia' => $this->input->post('iddia'),
+                    'idhorario' => $this->input->post('idhorario'),
+                    'horainicial' => $this->input->post('horainicial'), 
+                    'horafinal' => $this->input->post('horafinal') 
+                     
+                );
+            $this->horario->addHoraSinClase($data);
+              $result['error']   = false;
+                $result['success'] = 'User updated successfully'; 
+        }
+         
+     if(isset($result) && !empty($result)){
+         echo json_encode($result);
+        }
+         
+    }
+     public function updateHoraSinClases() {
+        //Permission::grant(uri_string());
+        $config = array(
+             array(
+                'field' => 'iddia',
+                'label' => 'Titulo',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
+            ),
+             array(
+                'field' => 'horainicial',
+                'label' => 'Hora inicial',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
+            ),
+            array(
+                'field' => 'horafinal',
+                'label' => 'Hora final',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
+            )
+         );
+
+        $this->form_validation->set_rules($config);
+        if ($this->form_validation->run() == FALSE) {
+            $result['error'] = true;
+            $result['msg'] = array(
+                'iddia' => form_error('iddia'),
+                'horainicial' => form_error('horainicial'),
+                'horafinal' => form_error('horafinal')
+            );
+        } else {
+            $id =  $this->input->post('idhorariodetalle');
+            $data = array(
+                    'iddia' => $this->input->post('iddia'), 
+                    'horainicial' => $this->input->post('horainicial'), 
+                    'horafinal' => $this->input->post('horafinal') 
+                     
+                );
+            $this->horario->updateHoraSinClase($id,$data); 
+        }
+         
+     if(isset($result) && !empty($result)){
+         echo json_encode($result);
+        }
+         
+    }
   public function addHorario() {
         //Permission::grant(uri_string());
         $config = array(
@@ -474,22 +582,30 @@ public function showAllMaterias() {
          
     }
 
- public function deleteHorarioMateria($id)
- {
-     # code...
-   // $id = $this->input->post('idhorariodetalle');
-   // echo $id;
-    $eliminar = $this->horario->deleteHorarioMateria($id);
-    // echo json_encode($this->input->post('idhorariodetalle'));
+ public function deleteHorarioMateria()
+ { 
+      $id = $this->input->get('id');
+        $query = $this->horario->deleteHorarioMateria($id);
+        if ($query) {
+            $result['horarios'] = true;
+        } 
+       if(isset($result) && !empty($result)){
+         echo json_encode($result);
+        }
+
  }
 
-  public function deleteReceso($id)
- {
-     # code...
-   // $id = $this->input->post('idhorariodetalle');
-   // echo $id;
-    $eliminar = $this->horario->deleteReceso($id);
-    // echo json_encode($this->input->post('idhorariodetalle'));
+  public function deleteReceso()
+ { 
+        $id = $this->input->get('id');
+        $query = $this->horario->deleteReceso($id);
+        if ($query) {
+            $result['horarios'] = true;
+        } 
+       if(isset($result) && !empty($result)){
+         echo json_encode($result);
+        }
+
  }
 
  public function imprimirHorario($idhorario='')
@@ -548,7 +664,7 @@ public function showAllMaterias() {
 .dia{
     font-family:Verdana, Geneva, sans-serif;
     border:solid 1px #ccc;
-     font-size:10px;
+     font-size:8px;
      height:38px;
      vertical-align:top; 
      padding: 5px 5px 5px 5px;
@@ -578,10 +694,18 @@ public function showAllMaterias() {
     ';
     if(isset($lunes) && !empty($lunes)){
     foreach($lunes as $row){
-            if($row->opcion != "Descanso"){
+            if(strtoupper($row->opcion) == "NORMAL"){ 
+                 $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small>
+              <br>
+              <small class = "hora">'.$row->nombre.' '.$row->apellidop.' '.$row->apellidom.'</small></div>';
+              
+            
+            }
+            if(strtoupper($row->opcion) == "DESCANSO"){
               $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
-            }else{
-              $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
+            }
+             if(strtoupper($row->opcion) == "SIN CLASES"){
+              $tbl.='<div class="dia"><label>SIN CLASES</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
             }
         } 
       }
@@ -592,10 +716,18 @@ public function showAllMaterias() {
      ';
      if(isset($martes) && !empty($martes)){
     foreach($martes as $row){
-            if($row->opcion != "Descanso"){
+               if(strtoupper($row->opcion) == "NORMAL"){ 
+                 $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small>
+              <br>
+              <small class = "hora">'.$row->nombre.' '.$row->apellidop.' '.$row->apellidom.'</small></div>';
+              
+            
+            }
+            if(strtoupper($row->opcion) == "DESCANSO"){
               $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
-            }else{
-              $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
+            }
+             if(strtoupper($row->opcion) == "SIN CLASES"){
+              $tbl.='<div class="dia"><label>SIN CLASES</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
             }
         } 
       }
@@ -606,10 +738,18 @@ public function showAllMaterias() {
    ';
    if(isset($miercoles) && !empty($miercoles)){
     foreach($miercoles as $row){
-            if($row->opcion != "Descanso"){
+                 if(strtoupper($row->opcion) == "NORMAL"){ 
+                 $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small>
+              <br>
+              <small class = "hora">'.$row->nombre.' '.$row->apellidop.' '.$row->apellidom.'</small></div>';
+              
+            
+            }
+            if(strtoupper($row->opcion) == "DESCANSO"){
               $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
-            }else{
-              $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
+            }
+             if(strtoupper($row->opcion) == "SIN CLASES"){
+              $tbl.='<div class="dia"><label>SIN CLASES</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
             }
         } 
       }
@@ -620,10 +760,18 @@ public function showAllMaterias() {
      ';
      if(isset($jueves) && !empty($jueves)){
     foreach($jueves as $row){
-            if($row->opcion != "Descanso"){
+           if(strtoupper($row->opcion) == "NORMAL"){ 
+                 $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small>
+              <br>
+              <small class = "hora">'.$row->nombre.' '.$row->apellidop.' '.$row->apellidom.'</small></div>';
+              
+            
+            }
+            if(strtoupper($row->opcion) == "DESCANSO"){
               $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
-            }else{
-              $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
+            }
+             if(strtoupper($row->opcion) == "SIN CLASES"){
+              $tbl.='<div class="dia"><label>SIN CLASES</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
             }
         } 
       }
@@ -634,10 +782,18 @@ public function showAllMaterias() {
     ';
     if(isset($viernes) && !empty($viernes)){
     foreach($viernes as $row){
-            if($row->opcion != "Descanso"){
+                 if(strtoupper($row->opcion) == "NORMAL"){ 
+                 $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small>
+              <br>
+              <small class = "hora">'.$row->nombre.' '.$row->apellidop.' '.$row->apellidom.'</small></div>';
+              
+            
+            }
+            if(strtoupper($row->opcion) == "DESCANSO"){
               $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
-            }else{
-              $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
+            }
+             if(strtoupper($row->opcion) == "SIN CLASES"){
+              $tbl.='<div class="dia"><label>SIN CLASES</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
             }
         } 
       }
@@ -657,6 +813,17 @@ $this->dompdf->stream("welcome.pdf", array("Attachment"=>0));
   {
         $idhorario = $this->input->get('idhorario');
         $query = $this->horario->deleteHorario($idhorario);
+        if ($query) {
+            $result['horarios'] = true;
+        } 
+       if(isset($result) && !empty($result)){
+         echo json_encode($result);
+        }
+  }
+  public function deleteSinClases()
+  {
+        $id = $this->input->get('id');
+        $query = $this->horario->deleteSinClases($id);
         if ($query) {
             $result['horarios'] = true;
         } 

@@ -40,44 +40,53 @@
                           <div v-for="row in lunes">  
                             <ul class="nav navbar-right panel_toolbox" style="border: 2px solid #ccc; border-radius: 4px; margin-bottom: 4px">
                                 <li><a class="collapse-link " style="color: #000"> 
-                                  <div  v-if="row.opcion != 'Descanso'">
+                                  <div  v-if="row.opcion == 'NORMAL'">
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
                                     <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small>
                                   </div>
-                                  <div v-else>
+                                  <div v-else-if="row.opcion == 'DESCANSO'">
                                      <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})
                                   </div>
+                                  <div v-else>
+                                     <strong>SIN CLASES</strong> ({{row.horainicial}}-{{row.horafinal}})
+                                  </div>
                                 </a>
-                                </li> 
+                                </li>
                               </ul> 
                           </div>
                        </td>
                         <td>
                           <div v-for="row in martes">  
                              <ul class="nav navbar-right panel_toolbox" style="border: 2px solid #ccc; border-radius: 4px; margin-bottom: 4px">
-                                <li><a class="collapse-link " style="color: #000">
-                                  <div  v-if="row.opcion != 'Descanso'">
+                               <li><a class="collapse-link " style="color: #000"> 
+                                  <div  v-if="row.opcion == 'NORMAL'">
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
                                     <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small>
                                   </div>
-                                  <div v-else>
+                                  <div v-else-if="row.opcion == 'DESCANSO'">
                                      <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})
                                   </div>
+                                  <div v-else>
+                                     <strong>SIN CLASES</strong> ({{row.horainicial}}-{{row.horafinal}})
+                                  </div>
                                 </a>
-                                </li> 
+                                </li>
                               </ul> 
                           </div>
                         </td> 
                         <td>
                           <div v-for="row in miercoles">  
                              <ul class="nav navbar-right panel_toolbox" style="border: 2px solid #ccc; border-radius: 4px; margin-bottom: 4px">
-                                <li><a class="collapse-link " style="color: #000">
-                                  <div  v-if="row.opcion != 'Descanso'">
+                               <li><a class="collapse-link " style="color: #000"> 
+                                  <div  v-if="row.opcion == 'NORMAL'">
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
                                     <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small>
                                   </div>
-                                  <div v-else>
+                                  <div v-else-if="row.opcion == 'DESCANSO'">
                                      <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})
+                                  </div>
+                                  <div v-else>
+                                     <strong>SIN CLASES</strong> ({{row.horainicial}}-{{row.horafinal}})
                                   </div>
                                 </a>
                                 </li> 
@@ -86,32 +95,38 @@
                         <td>
                           <div v-for="row in jueves">  
                             <ul class="nav navbar-right panel_toolbox" style="border: 2px solid #ccc; border-radius: 4px; margin-bottom: 4px">
-                                <li><a class="collapse-link " style="color: #000">
-                                  <div  v-if="row.opcion != 'Descanso'">
+                               <li><a class="collapse-link " style="color: #000"> 
+                                  <div  v-if="row.opcion == 'NORMAL'">
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
                                     <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small>
                                   </div>
-                                  <div v-else>
+                                  <div v-else-if="row.opcion == 'DESCANSO'">
                                      <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})
                                   </div>
+                                  <div v-else>
+                                     <strong>SIN CLASES</strong> ({{row.horainicial}}-{{row.horafinal}})
+                                  </div>
                                 </a>
-                                </li> 
+                                </li>
                               </ul> 
                           </div>
                         </td>
                         <td>
                           <div v-for="row in viernes">  
                             <ul class="nav navbar-right panel_toolbox" style="border: 2px solid #ccc; border-radius: 4px; margin-bottom: 4px">
-                                <li><a class="collapse-link " style="color: #000">
-                                  <div  v-if="row.opcion != 'Descanso'">
+                              <li><a class="collapse-link " style="color: #000"> 
+                                  <div  v-if="row.opcion == 'NORMAL'">
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
                                     <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small>
                                   </div>
-                                  <div v-else>
+                                  <div v-else-if="row.opcion == 'DESCANSO'">
                                      <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})
                                   </div>
+                                  <div v-else>
+                                     <strong>SIN CLASES</strong> ({{row.horainicial}}-{{row.horafinal}})
+                                  </div>
                                 </a>
-                                </li> 
+                                </li>
                               </ul> 
                           </div>
                         </td>

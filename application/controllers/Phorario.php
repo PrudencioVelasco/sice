@@ -24,8 +24,9 @@ class Phorario extends CI_Controller {
         //Permission::grant(uri_string()); 
         $idhorario = "";
         $result = $this->grupo->showAllGruposProfesor($this->session->idprofesor);
+        //var_dump($result);
         if($result != false){
-             $idhorario = $result[1]->idhorario;
+             $idhorario = $result[0]->idhorario;
         }
        
         $data = array( 
