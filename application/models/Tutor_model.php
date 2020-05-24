@@ -87,6 +87,34 @@ class Tutor_model extends CI_Model {
             return false;
         }
     }
+     public function detalleColonia($idcolonia = '')
+    {
+        $this->db->select('c.nombrecolonia,m.nombremunicipio, e.nombreestado');    
+        $this->db->from('tblcolonia c');
+        $this->db->join('tblmunicipio m', 'm.idmunicipio = c.idmunicipio');
+        $this->db->join('tblestado e', 'e.idestado = m.idestado');
+        $this->db->where('c.idcolonia', $idcolonia); 
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+        public function precioColegiatura($idtipo = '',$idnivel = '')
+    {
+        $this->db->select('c.descuento');    
+        $this->db->from('tblcolegiatura c'); 
+        $this->db->where('c.idnivelestudio', $idnivel);
+        $this->db->where('c.idtipopagocol', $idtipo); 
+        $this->db->where('c.activo', 1); 
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
 
  public function deleteAlumno($id)
     {

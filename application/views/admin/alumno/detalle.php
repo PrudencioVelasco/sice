@@ -300,14 +300,17 @@
                                 </div>
                                 <div class="row">
                                   <div v-if="mostrar">
+                                      <div class="row">
+                                    <div class="col-md-12 col-sm-12 col-xs-12" align="left"> 
+                                      <button v-if="btnpagar"   @click="addPagoModal = true;" class="btn btn-default"> <i class="fa fa-plus-circle"></i> Agregar Pago</button>
+                                    </div>
+                                  </div>  
                                   <div class="row">
                                     <div class="col-md-12 col-sm-12 col-xs-12" align="center">
                                       <small style="font-weight: bold;text-decoration: underline red; ">Pagos de Inscripcion o Reinscripcion</small>
                                     </div>
-                                    <div class="col-md-12 col-sm-12 col-xs-12" align="left"> 
-                                      <button v-if="btnpagar"   @click="addPagoModal = true;" class="btn btn-info">Agregar Pago</button>
-                                    </div>
-                                  </div>  
+                                     </div>  
+                                   
                                      <table class="table table-hover">
                                           <thead style="background-color: #e3e3df;">
                                             <tr>
@@ -346,8 +349,14 @@
                                             </tr>
                                           </tbody> 
                                         </table>
+                                        <div class="row">
+                                          <div class="col-md-12 col-sm-12 col-xs-12">
+                                            <button class="btn btn-info"  @click="addPagoColegiaturaModal = true;"> <i class="fa fa-plus-circle"></i> Agregar Pago</button>
+                                          </div>
+                                        </div>
                                   <div class="row">
                                     <div class="col-md-12 col-sm-12 col-xs-12" align="center">
+
                                       <small style="font-weight: bold;text-decoration: underline red;  ">Pagos de Colegiaturas</small>
                                     </div>
                                   </div> 
@@ -366,11 +375,11 @@
                                             <tr v-for="solicitud in solicitudes" class="table-default">
                                                
                                                
-                                               <td>{{solicitud.mes}} {{solicitud.year}}</td> 
-                                               <td>{{solicitud.descuento}}</td>
+                                               <td>{{solicitud.mes}}</td> 
+                                               <td><strong>$ {{solicitud.descuento}}</strong></td>
                                                <td>
                                                    <span v-if="solicitud.pagado==1" class="label label-success">ABONADO</span>
-                                                        <span v-else class="label label-danger">NO ABONADO</span>
+                                                   <span v-else class="label label-warning">PENDIENTE</span>
                                                </td>
                                                <td>{{solicitud.fecha}}</td>
                                                <td>

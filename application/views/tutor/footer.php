@@ -24,6 +24,9 @@
     <!-- TinyMCE -->
     <script src="<?php echo base_url(); ?>/assets/plugins/tinymce/tinymce.js"></script>
 
+    <script  data-my_var_1="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/js/validar/direccion.js"></script>
+     <script  data-my_var_1="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/js/validar/pagotarjeta.js"></script>
+
 <script type="text/javascript">
   $(function () {
     //CKEditor

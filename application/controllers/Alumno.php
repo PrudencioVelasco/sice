@@ -623,8 +623,9 @@ tblcalificacion  {border-collapse:collapse}
 
     }
 
-    public function historial($idhorario,$idalumno)
+    public function historial($idhorario = '',$idalumno = '')
     {
+        if((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno))){
         $calificacion = "";
         $tabla = $this->obtenerCalificacion($idhorario,$idalumno);
         $datosalumno = $this->alumno->showAllAlumnoId($idalumno);
@@ -657,6 +658,13 @@ tblcalificacion  {border-collapse:collapse}
         $this->load->view('admin/header');
         $this->load->view('admin/alumno/kardex',$data);
         $this->load->view('admin/footer');
+    }else{
+        $data = array(
+            'heading'=>'Error',
+            'message'=>'Error intente mas tarde.'
+        );
+         $this->load->view('errors/html/error_general',$data);
+    }
 
     }
 
@@ -750,8 +758,10 @@ tblcalificacion  {border-collapse:collapse}
 
     }
 
-    public function generarHorarioPDF($idhorario,$idalumno)
+    public function generarHorarioPDF($idhorario = '',$idalumno='')
     {
+        if((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno)) ){
+ 
         $lunes = $this->horario->showAllDiaHorario($idhorario,1);
         $martes = $this->horario->showAllDiaHorario($idhorario,2);
         $miercoles = $this->horario->showAllDiaHorario($idhorario,3);
@@ -977,7 +987,13 @@ $this->dompdf->loadHtml($tbl);
 $this->dompdf->setPaper('A4');
 $this->dompdf->render();
 $this->dompdf->stream("Horario Escolar.pdf", array("Attachment"=>0));
-
+        }else{
+             $data = array(
+            'heading'=>'Notificación',
+            'message'=>'El Alumno(a) no tiene registrado Horario.'
+        );
+         $this->load->view('errors/html/error_general',$data);
+        }
         
         }
     public function updatePasswordAlumno()

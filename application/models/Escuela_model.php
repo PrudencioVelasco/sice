@@ -25,7 +25,7 @@ class Escuela_model extends CI_Model {
             return false;
         }
     } 
-
+  
     public function validarAddEscuela($clave)
     {
         $this->db->select('p.*');    

@@ -27,8 +27,33 @@ class Alumno_model extends CI_Model {
             return false;
         }
     }
+    public function buscarAlumno($matricula = '')
+    {
+        $this->db->select('a.idalumno, a.nombre, a.apellidop, a.apellidom');
+        $this->db->from('tblalumno a');   
+        $this->db->where('a.matricula', $matricula); 
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+    public function showAllAlumnosTutor($idtutor = '')
+    {
+        $this->db->select('a.idalumno,a.nombre, a.apellidop, a.apellidom');
+        $this->db->from('tbltutoralumno ta');   
+        $this->db->join('tblalumno a', 'a.idalumno = ta.idalumno'); 
+        $this->db->where('ta.idtutor', $idtutor); 
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
     public function showAllAlumnosTutorActivos($idtutor = '') {
-        $this->db->select('a.idalumno, a.nombre, a.apellidop, a.apellidom,ne.nombrenivel, g.nombregrupo');
+        $this->db->select('a.idalumno, a.nombre, a.apellidop, a.apellidom,ne.nombrenivel, ne.idnivelestudio, g.nombregrupo, g.idgrupo, ag.idperiodo');
         $this->db->from('tblalumno a');  
         $this->db->join('tbltutoralumno ta','a.idalumno=ta.idalumno'); 
         $this->db->join('tblalumno_grupo ag','ag.idalumno=a.idalumno'); 
@@ -43,8 +68,8 @@ class Alumno_model extends CI_Model {
             return false;
         }
     }
-          public function showAllMateriasAlumno($idalumno = '') {
-        $this->db->select('hd.idhorariodetalle,ma.nombreclase,p.nombre, p.apellidop, p.apellidom, g.nombregrupo,ne.nombrenivel, g.idgrupo, h.idhorario,m.nombremes as mesinicio,m2.nombremes as mesfin,y.nombreyear as yearinicio,y2.nombreyear as yearfin, pla.nombreplantel, pla.direccion, pla.telefono, a.matricula');
+        public function showAllMateriasAlumno($idalumno = '') {
+        $this->db->select('pe.idperiodo, hd.idhorariodetalle,ma.nombreclase,p.nombre, p.apellidop, p.apellidom, g.nombregrupo,ne.nombrenivel, g.idgrupo, h.idhorario,m.nombremes as mesinicio,m2.nombremes as mesfin,y.nombreyear as yearinicio,y2.nombreyear as yearfin, pla.nombreplantel, pla.direccion, pla.telefono, a.matricula, ho.idhorario');
         $this->db->from('tblhorario_detalle hd'); 
         $this->db->join('tblprofesor_materia pm', 'pm.idprofesormateria = hd.idmateria');
         $this->db->join('tblprofesor p', 'p.idprofesor = pm.idprofesor');
@@ -68,6 +93,59 @@ class Alumno_model extends CI_Model {
         $this->db->group_by('h.idgrupo');
         $this->db->order_by('ne.nombrenivel asc');
          $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+     public function showAllPagoInscripcion($idalumno = '',$idperiodo = '') {
+        $this->db->select('tp.nombretipopago, tp2.concepto, pi.descuento, pi.fecharegistro');
+        $this->db->from('tblpago_inicio pi'); 
+        $this->db->join('tbltipo_pago tp', 'tp.idtipopago = pi.idformapago'); 
+        $this->db->join('tbltipopagocol tp2', 'tp2.idtipopagocol = pi.idtipopagocol'); 
+        $this->db->where('pi.idalumno', $idalumno); 
+        $this->db->where('pi.idperiodo', $idperiodo); 
+         $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+       public function showColonias($cp)
+    {
+        $this->db->select('c.*');
+        $this->db->from('tblcolonia c');
+         $this->db->where('c.cp',$cp);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+      public function showMunicipio($cp)
+    {
+        $this->db->select('m.*');
+        $this->db->from('tblcolonia c');
+        $this->db->join('tblmunicipio m ', 'c.idmunicipio = m.idmunicipio');
+        $this->db->where('c.cp',$cp);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+      public function showEstado($cp)
+    {
+        $this->db->select('e.*');
+        $this->db->from('tblcolonia c');
+        $this->db->join('tblmunicipio m ', 'c.idmunicipio = m.idmunicipio');
+         $this->db->join('tblestado e ', 'e.idestado = m.idestado');
+        $this->db->where('c.cp',$cp);
+        $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();
         } else {
@@ -279,9 +357,10 @@ class Alumno_model extends CI_Model {
 
       public function showAllAlumnoId($idalumno)
     {
-        $this->db->select('t.*');
+        $this->db->select('t.*, e.nombreespecialidad');
         $this->db->from('tblalumno t'); 
         $this->db->where('t.idalumno', $idalumno); 
+        $this->db->join('tblespecialidad e', 't.idespecialidad = e.idespecialidad'); 
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();

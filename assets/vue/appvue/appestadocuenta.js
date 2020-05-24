@@ -50,12 +50,15 @@ var ve = new Vue({
         mostrar:false,
         noresultado:false,
         noresultadoinicio:false,
+        addPagoColegiaturaModal:false,
         btnpagar:false,
         //deleteModal:false, 
         ciclos:[],
         pagos:[],
         formaspago:[],
         solicitudes:[], 
+        tipospago: [],
+        meses: [], 
         search: {text: ''},
         emptyResult:false,
         newBuscarCiclo:{
@@ -66,12 +69,21 @@ var ve = new Vue({
             idalumno:my_var_2, 
             descuento:'',
             autorizacion:'',
+            idtipopagocol: '',
             idformapago:'', 
+        },
+        newCobroColegiatura: {
+            idalumno: my_var_2,
+            descuento: '',
+            idmes:'',
+            autorizacion: '',
+            idformapago: '',
         },
         newCobro:{ 
             idformapago:'', 
             autorizacion:'',
             idperiodo:'',
+            
             idalumno:my_var_2,
             idamortizacion:'', 
             msgerror:''},
@@ -84,6 +96,9 @@ var ve = new Vue({
      created(){ 
       this.showAllTutoresDisponibles();
       this.showAllFormasPago(); 
+      this.showAllTiposPago();
+         this.showAllMeses();
+
     },
     methods:{
       searchSolicitud() { 
@@ -109,8 +124,7 @@ var ve = new Vue({
                      idperiodo: this.$refs.idperiodo.value,
                      idalumno: my_var_2
                  }
-             }).then(function(response){
-                console.log(response.data);
+             }).then(function(response){ 
                  if(response.data.pagos == null ){
                       ve.pagos = null;
                       ve.noresultadoinicio = true;
@@ -127,12 +141,33 @@ var ve = new Vue({
 
          },
          estadocuentaAll(idperiodo){
+             console.log(idperiodo);
+             console.log(ve.chooseSolicitud.idperiodo);
+             console.log(this.$refs.idperiodo.value);
              axios.get(this.url+"EstadoCuenta/estadoCuenta/", {
                  params: {
-                     idperiodo: idperiodo,
+                     idperiodo: this.$refs.idperiodo.value,
                      idalumno: my_var_2
                  }
-             }).then(response => (this.solicitudes = response.data)) 
+             }).then(response => (this.solicitudes = response.data));
+
+             axios.get(this.url + "EstadoCuenta/pagosInicio/", {
+                 params: {
+                     idperiodo: this.$refs.idperiodo.value,
+                     idalumno: my_var_2
+                 }
+             }).then(function (response) {
+                 if (response.data.pagos == null) {
+                     ve.pagos = null;
+                     ve.noresultadoinicio = true;
+                     ve.btnpagar = true;
+                 } else {
+                     console.log(response.data);
+                     ve.pagos = response.data.pagos
+                     ve.noresultadoinicio = false;
+                     ve.btnpagar = false;
+                 }
+             });
          },
         showAllTutoresDisponibles() {
 
@@ -144,6 +179,18 @@ var ve = new Vue({
 
             axios.get(this.url+"EstadoCuenta/showAllFormasPago/")
                     .then(response => (this.formaspago = response.data.formaspago));
+
+        },
+        showAllTiposPago() {
+
+            axios.get(this.url + "EstadoCuenta/showAllTipoPago/")
+                .then(response => (this.tipospago = response.data.tipospago));
+
+        },
+        showAllMeses() {
+
+            axios.get(this.url + "EstadoCuenta/showAllMeses/")
+                .then(response => (this.meses = response.data.meses));
 
         },
         selectPeriodo(solicitud) {
@@ -181,6 +228,29 @@ var ve = new Vue({
                 }
                })
         },
+        addCobroColegiatura(){
+            var formData = v.formData(ve.newCobroColegiatura); 
+            formData.append('idperiodo', ve.idperiodobuscado);
+            // for (var value of formData.values()) {
+            //                  console.log(value); 
+            //               }
+            axios.post(this.url + "EstadoCuenta/addCobroColegiatura", formData).then(function (response) {
+                if (response.data.error) {
+                    ve.formValidate = response.data.msg;
+                } else {
+                    swal({
+                        position: 'center',
+                        type: 'success',
+                        title: 'Exito!',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+
+                    ve.clearAll();
+                    ve.estadocuentaAll(ve.chooseSolicitud.idperiodo);
+                }
+            })
+        },
             addCobroInicio(){
             var formData = v.formData(ve.newCobroInicio); 
                 formData.append('idperiodobuscado', ve.idperiodobuscado);
@@ -201,6 +271,7 @@ var ve = new Vue({
 
                     ve.clearAll(); 
                     ve.estadocuentaAll(ve.chooseSolicitud.idperiodo);
+                    
                 }
                })
         },
@@ -208,7 +279,35 @@ var ve = new Vue({
             ve.formValidate = false;
             ve.addModal= false; 
             ve.addPagoModal = false;
-
+            ve.addPagoColegiaturaModal = false;
+            
+            ve.newBuscarCiclo = {
+                idalumno: ve.my_var_2,
+                idperiodo: '',
+                msgerror: ''
+            },
+                ve.newCobroInicio = {
+                idalumno: ve.my_var_2,
+                descuento: '',
+                autorizacion: '',
+                idtipopagocol: '',
+                idformapago: '', 
         },
+                ve.newCobroColegiatura = {
+                idalumno: ve.my_var_2,
+                idmes:'',
+                descuento: '',
+                autorizacion: '',
+                idformapago: '',
+        },
+                ve.newCobro = {
+                idformapago: '',
+                autorizacion: '',
+                idperiodo: '', 
+                idalumno: ve.my_var_2,
+                idamortizacion: '',
+                msgerror: ''
+            }
+        }
     }
 });

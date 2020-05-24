@@ -31,7 +31,21 @@
                                                       <td><?php echo $value->nombrenivel.' '.$value->nombregrupo; ?></td> 
                                                       <td><?php echo $value->nombre.' '.$value->apellidop.' '.$value->apellidom ?></td> 
                                                       <td align="right">
-                                                        <a class="btn btn-info" href="<?php echo site_url('Tutores/materias/'.$value->idalumno) ?>"><i class="fa fa-list"></i>  Detalles</a>
+                                                         <div class="btn-group" role="group">
+                                                            <div class="btn-group" role="group">
+                                                                <button type="button" class="btn btn-primary waves-effect dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                    <i class='fa fa-plus'></i>  Opciones
+                                                                    <span class="caret"></span>
+                                                                </button>
+                                                                <ul class="dropdown-menu"> 
+                                                                    <!--<li ><a href="<?php //echo site_url('Tutores/materias/'.$value->idalumno) ?>"   title="Eliminar Datos"><i class="fa fa-trash"></i> Materias</a></li>-->
+                                                                    <li><a href="<?php echo site_url('Tutores/horario/'.$value->idalumno) ?>"  title="Modificar Datos"><i class="fa fa-edit"></i> Horario</a></li>
+                                                                    <li><a href="<?php echo site_url('Tutores/boletas/'.$value->idalumno) ?>"  title="Modificar Datos"><i class="fa fa-edit"></i> Examen</a></li>
+                                                                    <li><a href="<?php echo site_url('Tutores/asistencias/'.$value->idalumno) ?>"  title="Modificar Datos"><i class="fa fa-check "></i> Asistencia</a></li>
+                                                                    <li><a href="<?php echo site_url('Tutores/pagos/'.$value->idalumno.'/'.$value->idnivelestudio.'/'.$value->idperiodo) ?>"    title="Modificar Datos"><i class="fa fa-paypal "></i> Pagos</a></li>  
+                                                                </ul>
+                                                            </div>
+                                                         </div> 
                                                       </td>
                                                      </tr>
                                                   <?php

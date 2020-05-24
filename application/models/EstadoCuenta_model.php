@@ -31,10 +31,45 @@ class EstadoCuenta_model extends CI_Model {
             return false;
         }
     }
+    public function showAllTipoPago() {
+        $this->db->select('tp.*');
+        $this->db->from('tbltipopagocol tp'); 
+        $this->db->where('tp.idtipopagocol  IN (1,2)'); 
+         $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    } 
+        public function showAllMeses() {
+        $this->db->select('tp.*');
+        $this->db->from('tblmes tp');  
+         $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    } 
 public function showAllFormasPago() {
         $this->db->select('tp.idtipopago as idformapago, tp.nombretipopago');
         $this->db->from('tbltipo_pago tp'); 
         $this->db->where('tp.activo', 1);  
+         $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+    public function validarAddColegiatura($idalumno,$idperiodo,$idmes) {
+        $this->db->select('ec.*');
+        $this->db->from('tblestado_cuenta ec'); 
+        $this->db->join('tblamotizacion a','ec.idamortizacion = a.idamortizacion'); 
+        $this->db->where('ec.idalumno', $idalumno); 
+        $this->db->where('ec.idperiodo', $idperiodo); 
+        $this->db->where('a.idperiodopago', $idmes);  
          $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();
@@ -60,31 +95,30 @@ public function showAllPagosInicio($idalumno = '',$idperiodo = '') {
 public function showAllTableAmotizacion($idperiodo='',$idalumno='')
 {
           $query =$this->db->query("SELECT 
-    a.idamortizacion,
-    pp.year as yearp,
+    a.idamortizacion, 
     a.descuento,
     a.pagado,
-     pp.mes as numeromes,
+     pp.numero as numeromes,
      a.idperiodo,
     CASE
-        WHEN pp.mes = 1 THEN 'ENERO'
-        WHEN pp.mes = 2 THEN 'FEBRERO'
-        WHEN pp.mes = 3 THEN 'MARZO'
-        WHEN pp.mes = 4 THEN 'ABRIL'
-        WHEN pp.mes = 5 THEN 'MAYO'
-        WHEN pp.mes = 6 THEN 'JUNIO'
-        WHEN pp.mes = 7 THEN 'JULIO'
-        WHEN pp.mes = 8 THEN 'AGOSTO'
-        WHEN pp.mes = 9 THEN 'SEPTIEMBRE'
-        WHEN pp.mes = 10 THEN 'OCTUBRE'
-        WHEN pp.mes = 11 THEN 'NOVIEMBRE'
-        WHEN pp.mes = 12 THEN 'DICIEMBRE'
+        WHEN pp.numero = 1 THEN 'ENERO'
+        WHEN pp.numero = 2 THEN 'FEBRERO'
+        WHEN pp.numero = 3 THEN 'MARZO'
+        WHEN pp.numero = 4 THEN 'ABRIL'
+        WHEN pp.numero = 5 THEN 'MAYO'
+        WHEN pp.numero = 6 THEN 'JUNIO'
+        WHEN pp.numero = 7 THEN 'JULIO'
+        WHEN pp.numero = 8 THEN 'AGOSTO'
+        WHEN pp.numero = 9 THEN 'SEPTIEMBRE'
+        WHEN pp.numero = 10 THEN 'OCTUBRE'
+        WHEN pp.numero = 11 THEN 'NOVIEMBRE'
+        WHEN pp.numero = 12 THEN 'DICIEMBRE'
         ELSE 'NO DEFINIDO'
     END AS mes
 FROM
     tblamotizacion a
         JOIN
-    tblperiodo_pago pp ON a.idperiodopago = pp.idperiodopago
+    tblmes pp ON a.idperiodopago = pp.idmes
     WHERE a.idperiodo = $idperiodo AND a.idalumno = $idalumno"); 
         if ($query->num_rows() > 0) {
             return $query->result();
@@ -95,32 +129,31 @@ FROM
 public function showAllEstadoCuenta($idperiodo='',$idalumno='',$idamortizacion = '')
 {
           $query =$this->db->query("SELECT 
-    a.idamortizacion,
-    pp.year as yearp,
+    a.idamortizacion, 
     ec.descuento,
-    a.pagado,
-    pp.mes as numeromes, 
+    ec.pagado,
+    pp.numero as numeromes, 
     a.idperiodo,
      DATE_FORMAT(ec.fechapago,'%d/%m/%Y') as fechapago,
     CASE
-        WHEN pp.mes = 1 THEN 'ENERO'
-        WHEN pp.mes = 2 THEN 'FEBRERO'
-        WHEN pp.mes = 3 THEN 'MARZO'
-        WHEN pp.mes = 4 THEN 'ABRIL'
-        WHEN pp.mes = 5 THEN 'MAYO'
-        WHEN pp.mes = 6 THEN 'JUNIO'
-        WHEN pp.mes = 7 THEN 'JULIO'
-        WHEN pp.mes = 8 THEN 'AGOSTO'
-        WHEN pp.mes = 9 THEN 'SEPTIEMBRE'
-        WHEN pp.mes = 10 THEN 'OCTUBRE'
-        WHEN pp.mes = 11 THEN 'NOVIEMBRE'
-        WHEN pp.mes = 12 THEN 'DICIEMBRE'
+        WHEN pp.numero = 1 THEN 'ENERO'
+        WHEN pp.numero = 2 THEN 'FEBRERO'
+        WHEN pp.numero = 3 THEN 'MARZO'
+        WHEN pp.numero = 4 THEN 'ABRIL'
+        WHEN pp.numero = 5 THEN 'MAYO'
+        WHEN pp.numero = 6 THEN 'JUNIO'
+        WHEN pp.numero = 7 THEN 'JULIO'
+        WHEN pp.numero = 8 THEN 'AGOSTO'
+        WHEN pp.numero = 9 THEN 'SEPTIEMBRE'
+        WHEN pp.numero = 10 THEN 'OCTUBRE'
+        WHEN pp.numero = 11 THEN 'NOVIEMBRE'
+        WHEN pp.numero = 12 THEN 'DICIEMBRE'
         ELSE 'NO DEFINIDO'
     END AS mes
 FROM
     tblamotizacion a
         JOIN
-    tblperiodo_pago pp ON a.idperiodopago = pp.idperiodopago
+    tblmes pp ON a.idperiodopago = pp.idmes
      JOIN
     tblestado_cuenta ec ON a.idamortizacion = ec.idamortizacion
     WHERE a.idperiodo = $idperiodo AND a.idalumno = $idalumno  AND ec.idamortizacion = $idamortizacion"); 
@@ -134,32 +167,31 @@ FROM
  public function showAllEstadoCuentaTodos($idperiodo='',$idalumno='')
 {
           $query =$this->db->query("SELECT 
-    a.idamortizacion,
-    pp.year as yearp,
+    a.idamortizacion, 
     ec.descuento,
-    a.pagado,
-    pp.mes as numeromes, 
+    ec.pagado,
+    pp.numero as numeromes, 
     a.idperiodo,
     DATE_FORMAT(ec.fechapago,'%d/%m/%Y') as fechapago,
     CASE
-        WHEN pp.mes = 1 THEN 'ENERO'
-        WHEN pp.mes = 2 THEN 'FEBRERO'
-        WHEN pp.mes = 3 THEN 'MARZO'
-        WHEN pp.mes = 4 THEN 'ABRIL'
-        WHEN pp.mes = 5 THEN 'MAYO'
-        WHEN pp.mes = 6 THEN 'JUNIO'
-        WHEN pp.mes = 7 THEN 'JULIO'
-        WHEN pp.mes = 8 THEN 'AGOSTO'
-        WHEN pp.mes = 9 THEN 'SEPTIEMBRE'
-        WHEN pp.mes = 10 THEN 'OCTUBRE'
-        WHEN pp.mes = 11 THEN 'NOVIEMBRE'
-        WHEN pp.mes = 12 THEN 'DICIEMBRE'
+        WHEN pp.numero = 1 THEN 'ENERO'
+        WHEN pp.numero = 2 THEN 'FEBRERO'
+        WHEN pp.numero = 3 THEN 'MARZO'
+        WHEN pp.numero = 4 THEN 'ABRIL'
+        WHEN pp.numero = 5 THEN 'MAYO'
+        WHEN pp.numero = 6 THEN 'JUNIO'
+        WHEN pp.numero = 7 THEN 'JULIO'
+        WHEN pp.numero = 8 THEN 'AGOSTO'
+        WHEN pp.numero = 9 THEN 'SEPTIEMBRE'
+        WHEN pp.numero = 10 THEN 'OCTUBRE'
+        WHEN pp.numero = 11 THEN 'NOVIEMBRE'
+        WHEN pp.numero = 12 THEN 'DICIEMBRE'
         ELSE 'NO DEFINIDO'
     END AS mes
 FROM
     tblamotizacion a
         JOIN
-    tblperiodo_pago pp ON a.idperiodopago = pp.idperiodopago
+    tblmes pp ON a.idperiodopago = pp.idmes
      JOIN
     tblestado_cuenta ec ON a.idamortizacion = ec.idamortizacion
     WHERE a.idperiodo = $idperiodo AND a.idalumno = $idalumno"); 
@@ -211,6 +243,13 @@ public function datosTablaAmortizacion($idamortizacion='')
       public function addPagoInicio($data)
     {
         $this->db->insert('tblpago_inicio', $data);
+        $insert_id = $this->db->insert_id(); 
+        return  $insert_id;
+    }
+
+     public function addAmortizacion($data)
+    {
+        $this->db->insert('tblamotizacion', $data);
         $insert_id = $this->db->insert_id(); 
         return  $insert_id;
     }

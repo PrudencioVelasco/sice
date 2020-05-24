@@ -36,7 +36,11 @@
       <!-- SweetAlert -->
     <script src="<?php echo base_url(); ?>/assets/js/sweetalert2/dist/sweetalert2.min.js"></script>
     <link rel="stylesheet" href="<?php echo base_url(); ?>/assets/js/sweetalert2/dist/sweetalert2.min.css">
+    <script src="<?php echo base_url(); ?>/assets/js/jquery.validate.min.js"></script>
 
+     <script type="text/javascript" src="<?php echo base_url(); ?>/assets/js/bootstrapValidator.min.js"></script>
+    <script type="text/javascript" src="https://openpay.s3.amazonaws.com/openpay.v1.min.js"></script>
+    <script type='text/javascript' src="https://openpay.s3.amazonaws.com/openpay-data.v1.min.js"></script>
      
     
   <!--[if lt IE 9]>
@@ -123,8 +127,7 @@
               <ul class="nav side-menu">
               <li><a href="<?= base_url('/Tutores/') ?>"><i class="fa fa-home"></i>  Inicio</a></li>
                <li><a href="<?= base_url('/Tutores/alumnos') ?>"><i class="fa fa-users"></i>  Alumnos</a></li>
-               <li><a href="<?= base_url('/Tutores/horario') ?>"><i class="fa fa-calendar"></i>  Horario</a></li>
-               <li><a href="<?= base_url('/Tutores/mensajes') ?>"><i class="fa fa-tasks"></i>  Mesajes y Tareas</a></li> 
+                <li><a href="<?= base_url('/Tutores/mensajes') ?>"><i class="fa fa-tasks"></i>  Mesajes y Tareas</a></li> 
                <li><a href="<?= base_url('/Tutores/kardex') ?>"><i class="fa fa-list"></i>  Kardex</a></li>
                
 
