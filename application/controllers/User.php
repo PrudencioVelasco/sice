@@ -42,14 +42,24 @@ class User extends CI_Controller
         }
     }
 
- public function showAllPlanteles()
+    public function showAllPlanteles()
     {
          $idplantel = $this->session->idplantel;
         $idrol = $this->session->idrol;
        // Permission::grant(uri_string());
         $query = $this->user->showAllPlanteles($idrol,$idplantel);
          
-        echo json_encode($query);
+         if(isset($query) && !empty($query)){
+         echo json_encode($query);
+        }
+    }
+        public function showAllRoles()
+    { 
+        $query = $this->user->showAllRoles();
+         
+        if(isset($query) && !empty($query)){
+         echo json_encode($query);
+        }
     }
 
 

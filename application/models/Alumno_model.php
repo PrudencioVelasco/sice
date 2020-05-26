@@ -100,7 +100,7 @@ class Alumno_model extends CI_Model {
         }
     }
      public function showAllPagoInscripcion($idalumno = '',$idperiodo = '') {
-        $this->db->select('tp.nombretipopago, tp2.concepto, pi.descuento, pi.fecharegistro');
+        $this->db->select("tp.nombretipopago, tp2.concepto, pi.descuento,tp.nombretipopago, DATE_FORMAT(pi.fecharegistro,'%d/%m/%Y') as fecharegistro, pi.idformapago, pi.online, pi.pagado");
         $this->db->from('tblpago_inicio pi'); 
         $this->db->join('tbltipo_pago tp', 'tp.idtipopago = pi.idformapago'); 
         $this->db->join('tbltipopagocol tp2', 'tp2.idtipopagocol = pi.idtipopagocol'); 

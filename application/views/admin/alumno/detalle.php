@@ -316,7 +316,8 @@
                                             <tr>
                                               <th>Descuento</th> 
                                               <th>Forma de Pago</th>
-                                              <th>Fecha de Pago</th> 
+                                              <th>Estatus</th>
+                                              <th>Fecha</th> 
                                                <th></th>
                                             </tr>
                                           </thead>
@@ -324,9 +325,15 @@
                                             <tr v-for="pago in pagos" class="table-default">  
                                                <td><label style="font-weight: bold;">${{pago.descuento}}</label></td> 
                                                <td align="left">
-                                                <label class="label label-success">{{pago.nombretipopago}}</label>
+                                                <label v-if="pago.idtipopago == 1" class="label label-primary">{{pago.nombretipopago}}</label>
+                                                <label  v-else class="label label-default">{{pago.nombretipopago}}</label>
+                                               </td> 
+                                                <td align="left">
+                                                <label v-if="pago.pagado == 1" class="label label-success">PAGADO</label>
+                                                <label  v-else class="label label-warning">EN PROCESO</label>
                                                </td> 
                                                <td>{{pago.fechapago}}</td> 
+                                               
                                                <td align="left">
                                                     <div class="btn-group" role="group">
                                             <button type="button" class="btn btn-info waves-effect dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -378,8 +385,8 @@
                                                <td>{{solicitud.mes}}</td> 
                                                <td><strong>$ {{solicitud.descuento}}</strong></td>
                                                <td>
-                                                   <span v-if="solicitud.pagado==1" class="label label-success">ABONADO</span>
-                                                   <span v-else class="label label-warning">PENDIENTE</span>
+                                                   <span v-if="solicitud.pagado==1" class="label label-success">PAGADO</span>
+                                                   <span v-else class="label label-warning">EN PROCESO</span>
                                                </td>
                                                <td>{{solicitud.fecha}}</td>
                                                <td>

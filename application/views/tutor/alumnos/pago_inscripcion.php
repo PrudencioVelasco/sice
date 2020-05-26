@@ -13,7 +13,20 @@
                 <div class="x_content">
  
     <div class="row">
-                      <!-- accepted payments column -->
+                    <?php if(isset($numeroautorizacion) && !empty($numeroautorizacion)){ ?>
+                       <div class="alert alert-success alert-dismissible fade in" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
+                        </button>
+                        <strong> <i class="fa fa-check-circle"></i> Cargo con Exito!</strong> Número de Autorización: <?php echo $numeroautorizacion; ?> 
+                      </div>
+                    <?php } ?>
+                    <?php if(isset($error) && !empty($error)){ ?>
+                       <div class="alert alert-danger alert-dismissible fade in" role="alert">
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
+                      </button>
+                      <strong> <i class="fa fa-exclamation-circle" aria-hidden="true"></i> Error!</strong> <?php echo $error; ?>.
+                    </div>
+                    <?php } ?>
                       <div class="col-xs-7">
                         <p class="lead">Forma de pago:</p>
                        
@@ -159,12 +172,35 @@
                              <input type="hidden" name="mensaje" value="<?php echo $mensaje ?>"/>
                              <input type="hidden" name="periodo" value="<?php echo $idperiodo ?>"/>
                              <input type="hidden" name="alumno" value="<?php echo $idalumno ?>"/>
-                                <button class="subscribe btn btn-primary btn-block" type="button" id="pay-button" > CONFIRMAR PAGO </button>
+                            <input type="hidden" name="nivel" value="<?php echo $idnivel ?>"/>
+                            <button class="subscribe btn btn-primary btn-block" type="button" id="pay-button" > CONFIRMAR PAGO </button>
                         </form>
                             </div>
                             <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="profile-tab">
-                                <p>Food truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin coffee squid. Exercitation +1 labore velit, blog sartorial PBR leggings next level wes anderson artisan four loko farm-to-table craft beer twee. Qui photo
-                                booth letterpress, commodo enim craft beer mlkshk aliquip</p>
+                               
+                            <form method="post" action="<?php echo site_url('Tutores/pagotienda');?>">  
+                            <label>Pasos para pagar en Tiendas</label> 
+                            <ul>
+                                 <li>1. Generar Documento</li>
+                                 <li>2. Descargar Documento</li>
+                                 <li>3. Pagar en Tiendas</li>
+                               </ul>
+                               <?php if(isset($opcion) && !empty($opcion) && $opcion == 1){ ?>
+                              <div class="row" align="center">
+                                  <a href="https://sandbox-dashboard.openpay.mx/paynet-pdf/mds4bdhgvbese0knzu2x/<?php echo $referencia ?>" class="btn btn-app btn-success">
+                                 <i class="fa fa-cloud-download" aria-hidden="true"></i> Descargar Documento
+                                </a>
+                              </div>
+                               <?php } ?>
+                              <input type="hidden" name="descuento" value="<?php echo $descuento ?>"/>
+                               <input type="hidden" name="mensaje" value="<?php echo $mensaje ?>"/>
+                               <input type="hidden" name="periodo" value="<?php echo $idperiodo ?>"/>
+                               <input type="hidden" name="alumno" value="<?php echo $idalumno ?>"/>
+                               <input type="hidden" name="nivel" value="<?php echo $idnivel ?>"/>
+                              <?php if(!isset($opcion)){ ?>
+                               <button class="subscribe btn btn-primary btn-block" type="submit"  > GENERAR DOCUMENTO </button>
+                              <?php } ?>
+                              </form>
                             </div> 
                             </div>
                         </div>

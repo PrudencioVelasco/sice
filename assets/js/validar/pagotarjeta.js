@@ -9,6 +9,7 @@ $(document).ready(function () {
             estado: "required",
             municipio: "required",
             colonia: "required",
+            numerocasa:"required",
             numerotarjeta: {
                 required: true,
                 digits: true,
@@ -35,6 +36,7 @@ $(document).ready(function () {
             estado: "Campo requerido.",
             municipio: "Campo requerido.",
             colonia: "Campo requerido.",
+            numerocasa:"Campo requerido",
             numerotarjeta: {
                 required: "Campo requerido.",
                 digits: "Solo número.",

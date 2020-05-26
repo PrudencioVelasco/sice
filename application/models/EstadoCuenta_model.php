@@ -79,7 +79,7 @@ public function showAllFormasPago() {
     }
 
 public function showAllPagosInicio($idalumno = '',$idperiodo = '') {
-        $this->db->select("pi.descuento, DATE_FORMAT(pi.fechapago,'%d/%m/%Y') as fechapago ,tp.nombretipopago, pi.autorizacion");
+        $this->db->select("pi.descuento, DATE_FORMAT(pi.fechapago,'%d/%m/%Y') as fechapago ,tp.nombretipopago,tp.idtipopago, pi.pagado, pi.autorizacion");
         $this->db->from('tblpago_inicio pi'); 
         $this->db->join('tbltipo_pago tp ', ' tp.idtipopago = pi.idformapago');
         $this->db->where('pi.idalumno',$idalumno);

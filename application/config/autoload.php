@@ -58,7 +58,7 @@ $autoload['packages'] = array();
 |
 |	$autoload['libraries'] = array('user_agent' => 'ua');
 */
-$autoload['libraries'] = array('form_validation', 'database', 'session');
+$autoload['libraries'] = array('form_validation', 'database', 'session','encryption');
 
 /*
 | -------------------------------------------------------------------
@@ -132,5 +132,5 @@ $autoload['language'] = array();
 | in the controller:
 |
 |	$autoload['model'] = array('first_model' => 'first');
-*/
-$autoload['model'] = array('Colegiatura_model','Pagos_model','Tutor_model','Alumno_model','Profesor_model','Horario_model','Grupo_model','CicloEscolar_model','rol_model','Escuela_model','EstadoCuenta_model','permiso_model','Materia_model');
+*/  
+$autoload['model'] = array('WebHook_model','CorteCaja_model','Colegiatura_model','Pagos_model','Tutor_model','Alumno_model','Profesor_model','Horario_model','Grupo_model','CicloEscolar_model','rol_model','Escuela_model','EstadoCuenta_model','permiso_model','Materia_model');

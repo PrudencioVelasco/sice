@@ -21,7 +21,7 @@
                 </div>
                 <div class="count">-</div>
 
-                <h3>Corte de Caja</h3>
+                <h3><a href="<?= base_url('/CorteCaja/') ?>">Corte de Caja</a></h3>
                 <p>Corte de Caja.</p>
               </div>
             </div>

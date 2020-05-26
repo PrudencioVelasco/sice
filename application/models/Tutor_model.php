@@ -155,6 +155,12 @@ class Tutor_model extends CI_Model {
         $insert_id = $this->db->insert_id(); 
         return  $insert_id;
     }
+     public function addCobroReinscripcion($data)
+    {
+        $this->db->insert('tblpago_inicio', $data);
+        $insert_id = $this->db->insert_id(); 
+        return  $insert_id;
+    }
      public function addTutorAlumno($data)
     {
         $this->db->insert('tbltutoralumno', $data);

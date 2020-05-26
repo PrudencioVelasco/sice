@@ -87,7 +87,7 @@ var v = new Vue({
             })
         },
         allRol(){
-           axios.get(this.url+"Tutor/todosRoles")
+          axios.get(this.url +"User/showAllRoles")
           .then(response => (this.roles = response.data))
 
         }, 
@@ -200,6 +200,7 @@ var v = new Vue({
 
         selectUser(user){
             v.chooseUser = user;
+            console.log(user);
         },
         clearMSG(){
             setTimeout(function(){

@@ -77,12 +77,12 @@
                                             </td>
                                         </tr>
                                         <tr v-if="emptyResult">
-                                            <td colspan="6" class="text-center h4">No encontrado</td>
+                                            <td colspan="7" class="text-center h4">No encontrado</td>
                                         </tr>
                                     </tbody>
                                     <tfoot>
                                         <tr>
-                                            <td colspan="6" align="right">
+                                            <td colspan="7" align="right">
                                     <pagination
                                         :current_page="currentPage"
                                         :row_count_page="rowCountPage"

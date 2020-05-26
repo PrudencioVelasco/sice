@@ -52,6 +52,19 @@ class User_model extends CI_Model
             return false;
         }
     }
+        public function showAllRoles()
+    {
+        $this->db->select('r.*');    
+        $this->db->from('rol r'); 
+        $this->db->where('r.id IN (13,14,15)'); 
+        
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
 
     public function addPersonal($data)
     {
