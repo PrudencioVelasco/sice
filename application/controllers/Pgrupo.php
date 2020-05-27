@@ -13,6 +13,7 @@ class pGrupo extends CI_Controller {
         $this->load->library('permission');
         $this->load->library('session'); 
         $this->load->model('grupo_model','grupo'); 
+        $this->load->model('mensaje_model','mensaje'); 
         date_default_timezone_set("America/Mexico_City");
 
     }
@@ -596,6 +597,44 @@ return $tabla;
         }
        // echo json_encode($result);
     }
+     public function addMensaje()
+    { 
+
+        $config = array(
+              array(
+                'field' => 'mensaje',
+                'label' => 'Calificación',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Tarea'
+                )
+            )
+        );
+        $this->form_validation->set_rules($config);
+        if ($this->form_validation->run() == FALSE) {
+            $errors = validation_errors();
+            echo json_encode(['error'=>$errors]);
+        } else {
+            $idhorario = $this->input->post('idhorario');
+            $idhorariodetalle = $this->input->post('idhorariodetalle');
+            $mensaje = $this->input->post('mensaje');
+            //$fechaentrega = $this->input->post('fechaentrega');  
+
+                $data = array(
+                    'idhorario'=>$idhorario,
+                    'idhorariodetalle'=>$idhorariodetalle,
+                    'mensaje'=>$mensaje,
+                    'eliminado'=>0, 
+                    'idusuario' => $this->session->user_id,
+                    'fecharegistro'=>date('Y-m-d H:i:s')
+                );
+                $this->mensaje->addMensaje($data);
+             
+             echo json_encode(['success'=>'Ok']);
+            
+        }
+       // echo json_encode($result);
+    }
 
      public function updateTarea()
     { 
@@ -641,17 +680,68 @@ return $tabla;
        // echo json_encode($result);
     }
 
+     public function updateMensaje()
+    { 
+
+        $config = array(
+              array(
+                'field' => 'mensaje',
+                'label' => 'Calificación',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Tarea'
+                )
+            )
+        );
+        $this->form_validation->set_rules($config);
+        if ($this->form_validation->run() == FALSE) {
+            $errors = validation_errors();
+            echo json_encode(['error'=>$errors]);
+        } else {
+            $idmensaje = $this->input->post('idmensaje'); 
+            $mensaje = $this->input->post('mensaje');
+                $data = array(  
+                    'mensaje'=>$mensaje,
+                    'idusuario' => $this->session->user_id,
+                    'fecharegistro' => date('Y-m-d H:i:s')
+                );
+                $this->mensaje->updateMensaje($idmensaje,$data);
+             
+             echo json_encode(['success'=>'Ok']);
+            
+        }
+       // echo json_encode($result);
+    }
+
 public function eliminarTarea($idhorario,$idhorariodetalle,$idtarea)
 {
   # code...
   $this->grupo->eliminarTarea($idtarea);
   redirect('pGrupo/tarea/'.$idhorario.'/'.$idhorariodetalle);
 }
+public function eliminarMensaje($idhorario,$idhorariodetalle,$idmensaje)
+{
+  # code...
+  $data = array(
+      'eliminado'=>1
+  );
+  $this->mensaje->updateMensaje($idmensaje,$data);
+  redirect('pGrupo/tarea/'.$idhorario.'/'.$idhorariodetalle);
+}
  
 public function mensaje($idhorario='',$idhorariodetalle = '')
 {
-  # code...
-  echo "En construcción";
+       
+      $data = array( 
+        'idhorario'=>$idhorario,
+        'idhorariodetalle'=>$idhorariodetalle, 
+        'mensajes'=>$this->mensaje->showAllMensaje($idhorariodetalle)
+      );
+        $this->load->view('docente/header');
+        $this->load->view('docente/grupo/mensaje',$data);
+        $this->load->view('docente/footer');
+
+    
 }
 public function eliminarCalificacion()
 {
@@ -708,4 +798,5 @@ public function updateCalificacion()
     }
 
 }
+ 
 }

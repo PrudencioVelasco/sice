@@ -26,6 +26,7 @@
 
     <script  data-my_var_1="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/js/validar/direccion.js"></script>
      <script  data-my_var_1="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/js/validar/pagotarjeta.js"></script>
+     <script  data-my_var_1="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/js/validar/pagotarjetam.js"></script>
 
 <script type="text/javascript">
   $(function () {

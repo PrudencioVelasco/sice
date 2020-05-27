@@ -14,8 +14,8 @@
 
                   <div class="row"> 
                     <div class="col-md-12 col-sm-12 col-xs-12 ">
-                                  <table class="table ">
-                                            <thead >
+                                  <table class="table table-hover">
+                                            <thead  class="info">
                                               <th>#</th>
                                               <th>Grupo</th>
                                               <th>Nombre</th>
@@ -26,10 +26,10 @@
                                               if (isset($alumnos) && !empty($alumnos)) {
                                                 $numero = 1;
                                                 foreach ($alumnos as $value) { ?>
-                                                     <tr>
-                                                      <td><?php echo $numero++; ?></td>
-                                                      <td><?php echo $value->nombrenivel.' '.$value->nombregrupo; ?></td> 
-                                                      <td><?php echo $value->nombre.' '.$value->apellidop.' '.$value->apellidom ?></td> 
+                                                     <tr >
+                                                      <td><strong><?php echo $numero++; ?></strong></td>
+                                                      <td><strong><?php echo $value->nombrenivel.' '.$value->nombregrupo; ?></strong></td> 
+                                                      <td><strong><?php echo $value->nombre.' '.$value->apellidop.' '.$value->apellidom ?></strong></td> 
                                                       <td align="right">
                                                          <div class="btn-group" role="group">
                                                             <div class="btn-group" role="group">
@@ -39,10 +39,12 @@
                                                                 </button>
                                                                 <ul class="dropdown-menu"> 
                                                                     <!--<li ><a href="<?php //echo site_url('Tutores/materias/'.$value->idalumno) ?>"   title="Eliminar Datos"><i class="fa fa-trash"></i> Materias</a></li>-->
-                                                                    <li><a href="<?php echo site_url('Tutores/horario/'.$value->idalumno) ?>"  title="Modificar Datos"><i class="fa fa-edit"></i> Horario</a></li>
-                                                                    <li><a href="<?php echo site_url('Tutores/boletas/'.$value->idalumno) ?>"  title="Modificar Datos"><i class="fa fa-edit"></i> Examen</a></li>
-                                                                    <li><a href="<?php echo site_url('Tutores/asistencias/'.$value->idalumno) ?>"  title="Modificar Datos"><i class="fa fa-check "></i> Asistencia</a></li>
-                                                                    <li><a href="<?php echo site_url('Tutores/pagos/'.$value->idalumno.'/'.$value->idnivelestudio.'/'.$value->idperiodo) ?>"    title="Modificar Datos"><i class="fa fa-paypal "></i> Pagos</a></li>  
+                                                                    <li><a href="<?php echo site_url('Tutores/horario/'.$value->idalumno) ?>"  title="Horario"><i class="fa fa-edit"></i> Horario</a></li>
+                                                                    <li><a href="<?php echo site_url('Tutores/boletas/'.$value->idalumno) ?>"  title="Examen"><i class="fa fa-check-circle"></i> Examen</a></li>
+                                                                    <li><a href="<?php echo site_url('Tutores/asistencias/'.$value->idalumno) ?>"  title="Asistencias"><i class="fa fa-check "></i> Asistencia</a></li>
+                                                                     <li><a href="<?php echo site_url('Tutores/mensajes/'.$value->idalumno.'/'.$value->idnivelestudio.'/'.$value->idperiodo) ?>"  title="Mensajes"><i class="fa fa-envelope "></i> Mensajes</a></li>
+                                                                      <li><a href="<?php echo site_url('Tutores/asistencias/'.$value->idalumno.'/'.$value->idnivelestudio.'/'.$value->idperiodo) ?>"  title="Tareas"><i class="fa fa-book  "></i> Tarea</a></li>
+                                                                    <li><a href="<?php echo site_url('Tutores/pagos/'.$value->idalumno.'/'.$value->idnivelestudio.'/'.$value->idperiodo) ?>"    title="Pagos"><i class="fa fa-paypal "></i> Pagos</a></li>  
                                                                 </ul>
                                                             </div>
                                                          </div> 

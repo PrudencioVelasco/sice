@@ -32,17 +32,17 @@
                        
                         <div class="" role="tabpanel" data-example-id="togglable-tabs">
                             <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-                            <li role="presentation" class="active"><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-credit-card"></i> <strong>PAGO CON TARJETA</strong></a>
+                            <li role="presentation" <?php if(isset($formapago) && !empty($formapago)){ if($formapago == 1){ echo 'class="active"';}else{} } ?> ><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-credit-card"></i> <strong>PAGO CON TARJETA</strong></a>
                             </li>
-                            <li role="presentation" class=""><a href="#tab_content2" role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false"> <i class="fa fa-money"></i> <strong>PAGO EN EFECTIVO</strong></a>
+                            <li role="presentation" <?php if(isset($formapago) && !empty($formapago)){ if($formapago == 0){echo 'class="active"';}else{} } ?>><a href="#tab_content2" role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false"> <i class="fa fa-money"></i> <strong>PAGO EN EFECTIVO</strong></a>
                             </li> 
                             </ul>
                             <div id="myTabContent" class="tab-content">
-                            <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="home-tab">
+                            <div role="tabpanel" <?php if(isset($formapago) && !empty($formapago)){ if($formapago == 1){ echo 'class="tab-pane fade active in"';}else{ echo 'class="tab-pane fade"';} } ?>  id="tab_content1" aria-labelledby="home-tab">
                                     <img align="right" style="padding-right: 5px" src="<?php echo base_url(); ?>/assets/images/visa.png" alt="Visa">
                                     <img align="right" style="padding-right: 5px" src="<?php echo base_url(); ?>/assets/images/mastercard.png" alt="Mastercard">
                                     <img align="right" style="padding-right: 5px" src="<?php echo base_url(); ?>/assets/images/american-express.png" alt="Americ" >   
-                                      <form id="payment-form" method="POST" action="<?php echo site_url('Tutores/pagotarjeta');?>">  
+                                      <form id="payment-form2" method="POST" action="<?php echo site_url('Tutores/pagotarjetac');?>">  
                                           <input type="hidden" name="token_id" id="token_id">
                                     <div class="row">
                                             <div class="col-md-12 col-sm-12 col-xs-12 ">
@@ -136,7 +136,7 @@
                                      <div class="col-md-4 col-sm-12 col-xs-12 ">
                                          <div class="form-group">
                                             <label><font color="red">*</font> Num. Exterior</label>
-                                            <input type="text" class="form-control" name="numerocasa" required="" id="numerocasa"  >
+                                            <input type="text" class="form-control" name="numerocasa" required="" id="numerocasa" >
                                             
                                         </div>
                                      </div>
@@ -168,23 +168,63 @@
                                         </div>
                                      </div>
                             </div>
+                              <div class="row">
+                                    <div class="col-md-12 col-sm-12 col-xs-12 ">
+                                        <label for=""> <i class="fa fa-money"></i> MES A PAGAR</label>
+                                      </div>
+                                </div>
+                                <div class="row">
+                                     <div class="col-md-12 col-sm-12 col-xs-12 ">
+                                        <div class="form-group">
+                                            <label><font color="red">*</font> Mes a pagar</label>
+                                           <select class="form-control" name="mespago" id="mespago" required />
+                                               <option value="">--SELECCIONAR--</option>
+                                               <?php
+                                                if(isset($meses) && !empty($meses)){
+                                                    foreach($meses as $value){
+                                                      echo '<option value="'.$value->idmes.'" >'.$value->nombremes.'</option>';
+                                                    }
+                                                }
+                                               ?>
+                                           </select>    
+                                        </div>
+                                     </div>
+                                </div>
                             <input type="hidden" name="descuento" value="<?php echo $descuento ?>"/>
                              <input type="hidden" name="mensaje" value="<?php echo $mensaje ?>"/>
                              <input type="hidden" name="periodo" value="<?php echo $idperiodo ?>"/>
                              <input type="hidden" name="alumno" value="<?php echo $idalumno ?>"/>
                             <input type="hidden" name="nivel" value="<?php echo $idnivel ?>"/>
-                            <button class="subscribe btn btn-primary btn-block" type="button" id="pay-button" > CONFIRMAR PAGO </button>
+                            <button class="subscribe btn btn-primary btn-block" type="button" id="pay-button2" > CONFIRMAR PAGO </button>
                         </form>
                             </div>
-                            <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="profile-tab">
+                            <div role="tabpanel" <?php if(isset($formapago) && !empty($formapago)){ if($formapago == 0){echo 'class="tab-pane fade active in"';}else{ echo 'class="tab-pane fade"';} } ?>  id="tab_content2" aria-labelledby="profile-tab">
                                
-                            <form method="post" action="<?php echo site_url('Tutores/pagotienda');?>">  
+                            <form method="post" action="<?php echo site_url('Tutores/pagotiendac');?>">  
                             <label>Pasos para pagar en Tiendas</label> 
                             <ul>
-                                 <li>1. Generar Documento</li>
-                                 <li>2. Descargar Documento</li>
-                                 <li>3. Pagar en Tiendas</li>
+                                 <li>1. Seleccionar el mes a pagar.</li>
+                                 <li>2. Generar Documento.</li>
+                                 <li>3. Descargar Documento.</li>
+                                 <li>4. Pagar en Tiendas.</li>
                                </ul>
+                                                               <div class="row">
+                                     <div class="col-md-12 col-sm-12 col-xs-12 ">
+                                        <div class="form-group">
+                                            <label><font color="red">*</font> Mes a pagar</label>
+                                           <select class="form-control" name="mespago" id="mespago" required />
+                                               <option value="">--SELECCIONAR--</option>
+                                               <?php
+                                                if(isset($meses) && !empty($meses)){
+                                                    foreach($meses as $value){
+                                                      echo '<option value="'.$value->idmes.'" >'.$value->nombremes.'</option>';
+                                                    }
+                                                }
+                                               ?>
+                                           </select>    
+                                        </div>
+                                     </div>
+                                </div>
                                <?php if(isset($opcion) && !empty($opcion) && $opcion == 1){ ?>
                               <div class="row" align="center">
                                   <a href="https://sandbox-dashboard.openpay.mx/paynet-pdf/mds4bdhgvbese0knzu2x/<?php echo $referencia ?>" class="btn btn-app btn-success">

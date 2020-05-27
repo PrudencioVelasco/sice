@@ -7,14 +7,14 @@
             <div class="col-md-12">
               <div class="x_panel">
                 <div class="x_title">
-                  <h2><strong>TAREAS PARA EL GRUPO</strong></h2>
+                  <h2><strong>MENSAJES PARA EL GRUPO O PADRES DE FAMILIA</strong></h2>
                    
                   <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
                   <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12 ">
-                      <button type="button" class="btn btn-primary waves-effect m-r-20" data-toggle="modal" data-target="#largeModal"><i class='fa fa-plus'></i> Registrar Tarea</button>
+                      <button type="button" class="btn btn-primary waves-effect m-r-20" data-toggle="modal" data-target="#largeModal"><i class='fa fa-plus'></i> Registrar Mensaje</button>
                        </div>
 
                   </div>
@@ -23,7 +23,7 @@
                 <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h4 class="modal-title" id="largeModalLabel">REGISTRAR TAREA</h4>
+                            <h4 class="modal-title" id="largeModalLabel">REGISTRAR MENSAJE</h4>
                          </div>
                          <form id="frmtarea" >
                         <div class="modal-body">
@@ -32,20 +32,12 @@
                             <div class="alert alert-success print-success-msg" style="display:none"></div>
                              <div class="alert alert-danger print-error-msg" style="display:none"></div>
                              </div>
-                          </div>
+                          </div> 
                             <div class="row">
                                <div class="col-md-12 col-sm-12 col-xs-12 ">
                                   <div class="form-group">
-                                      <label><font color="red">*</font> Fecha de entrega</label>
-                                      <input type="date" name="fechaentrega" required="" class="form-control">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                               <div class="col-md-12 col-sm-12 col-xs-12 ">
-                                  <div class="form-group">
-                                      <label><font color="red">*</font> Redactar Tarea</label>
-                                         <textarea id="ckeditor"   name="tarea"  required="">
+                                      <label><font color="red">*</font> Redactar Mensaje</label>
+                                         <textarea id="ckeditor"   name="mensaje"  required="">
                                 
                                          </textarea> 
                                     </div>
@@ -75,24 +67,24 @@
                     <thead>
                       <tr>
                         <th>#</th>
-                        <th>Tarea</th>
-                        <th>Fecha de entrega</th> 
+                        <th>Mensaje</th>
+                        <th>Fecha de registro</th> 
                         <th align="right"></th>
                       </tr>
                     </thead>
                     <tbody>
                       <?php
-                        if (isset($tareas) && !empty($tareas)) {
+                        if (isset($mensajes) && !empty($mensajes)) {
                           # code...
                           $i = 1;
-                          foreach ($tareas as $value) { ?>
+                          foreach ($mensajes as $value) { ?>
                             <tr>
                             <th scope="row"><?php echo $i++ ?></th> 
-                            <td><?php echo $value->tarea ?></td>
+                            <td><?php echo $value->mensaje ?></td>
                             <td>
                               <?php
                               setlocale(LC_ALL, 'es_ES');
-                               $date_fin = new Datetime($value->fechaentrega);
+                               $date_fin = new Datetime($value->fecharegistro);
                         $fecha_fin = strftime("%A, %d de %B", $date_fin->getTimestamp());
 
                         echo "<strong>".$fecha_fin."</strong>";
@@ -101,12 +93,12 @@
                             <td align="right">
                                  <a  href="javascript:void(0)"  class="edit_button_tarea btn btn-primary btn-sm"
                       data-toggle="modal" data-target="#largeModalEdit"
-                      data-idtarea="<?php echo $value->idtarea;?>"
-                      data-tarea="<?php echo $value->tarea;?>"
-                      data-fechaentrega ="<?php echo $value->fechaentrega;?>" >
+                      data-idmensaje="<?php echo $value->idmensaje;?>"
+                      data-mensaje="<?php echo $value->mensaje;?>"
+                      data-fecharegistro ="<?php echo $value->fecharegistro;?>" >
                       <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                     Modificar / Detalles</a>
-                      <a onclick="return confirm('Esta seguro de Eliminar la Tarea?')"  href="<?php echo site_url('Pgrupo/eliminarTarea/'.$idhorario.'/'.$idhorariodetalle.'/'.$value->idtarea) ?>" class="btn btn-danger btn-sm"><i class='fa fa-trash'></i> Eliminar</a>
+                      <a onclick="return confirm('Esta seguro de Eliminar la Tarea?')"  href="<?php echo site_url('Pgrupo/eliminarMensaje/'.$idhorario.'/'.$idhorariodetalle.'/'.$value->idmensaje) ?>" class="btn btn-danger btn-sm"><i class='fa fa-trash'></i> Eliminar</a>
                             </td> 
                           </tr>
                      <?php
@@ -124,7 +116,7 @@
                 <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h4 class="modal-title" id="largeModalLabel">MODIFICAR TAREA</h4>
+                            <h4 class="modal-title" id="largeModalLabel">MODIFICAR MENSAJE</h4>
                          </div>
                          <form id="frmmodificartarea" >
                         <div class="modal-body">
@@ -134,20 +126,12 @@
                             
                               <div class="alert alert-danger print-error-msg" style="display:none"></div>
                              </div>
-                          </div>
-                          <div class="row">
-                               <div class="col-md-12 col-sm-12 col-xs-12 ">
-                                  <div class="form-group">
-                                      <label><font color="red">*</font>  Fecha de entrega</label>
-                                        <input type="date" name="fechaentrega" class="form-control fechaentrega">
-                                    </div>
-                                </div>
-                            </div>
+                          </div> 
                             <div class="row">
                                <div class="col-md-12 col-sm-12 col-xs-12 ">
                                   <div class="form-group">
-                                      <label><font color="red">*</font> Redactar Tarea</label>
-                                         <textarea id="ckeditoredit"   name="tarea" class="tarea"  required="">
+                                      <label><font color="red">*</font>  Redactar Mensaje</label>
+                                         <textarea id="ckeditoredit"   name="mensaje" class="mensaje"  required="">
                                 
                                          </textarea> 
                                     </div>
@@ -156,7 +140,7 @@
 
                         </div>
                         <div class="modal-footer">
-                          <input type="hidden" name="idtarea" class="idtarea">  
+                          <input type="hidden" name="idmensaje" class="idmensaje">  
                             <button type="button" id="btnmodificar" class="btn btn-primary waves-effect"><i class='fa fa-edit'></i> MODIFICAR</button>
                             <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal"><i class='fa fa-close'></i> CERRAR</button>
                         </div>
@@ -201,13 +185,13 @@
   </div> 
 <script type="text/javascript">
        $(document).on( "click", '.edit_button_tarea',function(e) { 
-        var idtarea = $(this).data('idtarea'); 
-        var fechaentrega = $(this).data('fechaentrega');
-        var tarea = $(this).data('tarea');  
-        CKEDITOR.instances['ckeditoredit'].setData(tarea);
-        $(".idtarea").val(idtarea);  
+        var idmensaje = $(this).data('idmensaje'); 
+        var fecharegistro = $(this).data('fecharegistro');
+        var mensaje = $(this).data('mensaje');  
+        CKEDITOR.instances['ckeditoredit'].setData(mensaje);
+        $(".idmensaje").val(idmensaje);  
        // $(".planeacion").val(planeacion);  
-        $(".fechaentrega").val(fechaentrega); 
+        $(".fecharegistro").val(fecharegistro); 
        // $("#entradanumeroparte_salida").text(numeroparte);    
       });
 
@@ -217,7 +201,7 @@
     } 
     $.ajax({
       type: "POST",
-      url: "<?php echo site_url('Pgrupo/addTarea');?>",
+      url: "<?php echo site_url('Pgrupo/addMensaje');?>",
       data: $('#frmtarea').serialize(),
       success: function(data) {
         var val = $.parseJSON(data);
@@ -227,7 +211,7 @@
           
          if((val.success === "Ok")){ 
           $(".print-success-msg").css('display','block'); 
-          $(".print-success-msg").html("Fue registrado la Tarea con Exito.");
+          $(".print-success-msg").html("Fue registrado el Mensaje con Exito.");
           setTimeout(function() {
             $('.print-error-msg').fadeOut('fast');
             location.reload(); 
@@ -248,7 +232,7 @@
     } 
     $.ajax({
       type: "POST",
-      url: "<?php echo site_url('Pgrupo/updateTarea');?>",
+      url: "<?php echo site_url('Pgrupo/updateMensaje');?>",
       data: $('#frmmodificartarea').serialize(),
       success: function(data) {
         var val = $.parseJSON(data);

@@ -14,8 +14,9 @@
                 <div class="x_content">
 
                   <div class="row">  
+                    <?php if(isset($pago_inicio) && empty($pago_inicio)){ ?>
                   <a href="<?php echo site_url('Tutores/pagoi/'.$idalumno.'/'.$idperiodo.'/'.$idnivel.'/1') ?>" class="btn btn-primary"> <i class="fa fa-money"></i> PAGAR REINSCRIPCIÓN</a>
-                   
+                    <?php } ?>
                   <a href="<?php echo site_url('Tutores/pagoc/'.$idalumno.'/'.$idperiodo.'/'.$idnivel.'/2') ?>" class="btn btn-primary"><i class="fa fa-money"></i> PAGAR COLEGIATURA</a>
                   <hr>
                    <table class="table">

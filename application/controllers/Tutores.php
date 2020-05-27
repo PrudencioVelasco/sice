@@ -17,6 +17,7 @@ class Tutores extends CI_Controller {
         $this->load->model('grupo_model','grupo'); 
         $this->load->model('horario_model','horario');
         $this->load->model('user_model','user');
+        $this->load->model('mensaje_model','mensaje');
         $this->load->model('cicloescolar_model','cicloescolar');
          $this->load->model('tutor_model','tutor');  
         $this->load->model('data_model'); 
@@ -423,7 +424,7 @@ function decode($string)
             'pago_inicio'=>$pago_inicio,
             'idalumno'=>$this->encode($idalumno),
             'idperiodo'=>$this->encode($idperiodo),
-            'idnivel'=>$this->encode($idnivel)
+            'idnivel'=>$this->encode($idnivel), 
         );
         $this->load->view('tutor/header');
         $this->load->view('tutor/alumnos/pagos',$data);
@@ -462,7 +463,8 @@ function decode($string)
             'idperiodo'=>$this->encode($idperiodo),
             'descuento'=>$descuento,
             'mensaje'=>$mensaje,
-            'idnivel'=>$this->encode($idnivel)
+            'idnivel'=>$this->encode($idnivel),
+            'formapago'=>1
         );
          $this->load->view('tutor/header');
         $this->load->view('tutor/alumnos/pago_inscripcion',$data);
@@ -504,15 +506,18 @@ function decode($string)
 
         if($detalle != false){
          $descuento = $detalle[0]->descuento;
+         $meses = $this->tutor->showAllMeses($idalumno,$idperiodo);
          $data = array( 
             'idalumno'=>$this->encode($idalumno),
             'idperiodo'=>$this->encode($idperiodo),
             'descuento'=>$descuento,
             'mensaje'=>$mensaje,
-            'idnivel'=>$this->encode($idnivel)
+            'meses'=>$meses,
+            'idnivel'=>$this->encode($idnivel),
+            'formapago'=>1
         );
          $this->load->view('tutor/header');
-        $this->load->view('tutor/alumnos/pago_inscripcion',$data);
+        $this->load->view('tutor/alumnos/pago_colegiatura',$data);
         $this->load->view('tutor/footer');
         
     }else{
@@ -627,7 +632,7 @@ function decode($string)
                          $idopenpay = $charge->id;
                          $idorden = $charge->order_id;
                          $autorizacion = $charge->authorization; 
-                        $data = array(
+                        $add_cobro = array(
                             'idperiodo'=>$idperiodo,
                             'idalumno'=>$idalumno,
                             'idformapago'=>2,
@@ -643,9 +648,10 @@ function decode($string)
                             'idusuario'=> $this->session->user_id,
                             'fecharegistro'=>date('Y-m-d H:i:s')
                         );
-                        $this->tutor->addCobroReinscripcion($data);
+                        $this->tutor->addCobroReinscripcion($add_cobro);
                          $mensaje = "PAGO DE REINSCRIPCIÓN";
                          $data = array( 
+                                'formapago'=>1,
                                 'idalumno'=>$this->encode($idalumno),
                                 'idperiodo'=>$this->encode($idperiodo),
                                 'descuento'=>$descuento,
@@ -703,6 +709,7 @@ function decode($string)
                         }
                          $mensaje_pago = "PAGO DE REINSCRIPCIÓN";
                          $data = array( 
+                                'formapago'=>1,
                                 'idalumno'=>$this->encode($idalumno),
                                 'idperiodo'=>$this->encode($idperiodo),
                                 'descuento'=>$descuento,
@@ -718,6 +725,7 @@ function decode($string)
                         $mensaje .= $e->getMessage();
                          $mensaje_pago = "PAGO DE REINSCRIPCIÓN";
                          $data = array( 
+                                'formapago'=>1,
                                 'idalumno'=>$this->encode($idalumno),
                                 'idperiodo'=>$this->encode($idperiodo),
                                 'descuento'=>$descuento,
@@ -733,6 +741,7 @@ function decode($string)
                         $mensaje .= $e->getMessage();
                          $mensaje_pago = "PAGO DE REINSCRIPCIÓN";
                          $data = array( 
+                                 'formapago'=>1,
                                 'idalumno'=>$this->encode($idalumno),
                                 'idperiodo'=>$this->encode($idperiodo),
                                 'descuento'=>$descuento,
@@ -748,6 +757,7 @@ function decode($string)
                         $mensaje .= $e->getMessage();
                          $mensaje_pago = "PAGO DE REINSCRIPCIÓN";
                          $data = array( 
+                                'formapago'=>1,    
                                 'idalumno'=>$this->encode($idalumno),
                                 'idperiodo'=>$this->encode($idperiodo),
                                 'descuento'=>$descuento,
@@ -762,7 +772,8 @@ function decode($string)
                     } catch (OpenpayApiError $e) {
                         $mensaje .= $e->getMessage();
                          $mensaje_pago = "PAGO DE REINSCRIPCIÓN";
-                         $data = array( 
+                         $data = array(
+                                'formapago'=>1, 
                                 'idalumno'=>$this->encode($idalumno),
                                 'idperiodo'=>$this->encode($idperiodo),
                                 'descuento'=>$descuento,
@@ -777,7 +788,8 @@ function decode($string)
                     } catch (Exception $e) {
                         $mensaje .= $e->getMessage();
                          $mensaje_pago = "PAGO DE REINSCRIPCIÓN";
-                         $data = array( 
+                         $data = array(
+                                'formapago'=>1, 
                                 'idalumno'=>$this->encode($idalumno),
                                 'idperiodo'=>$this->encode($idperiodo),
                                 'descuento'=>$descuento,
@@ -787,6 +799,272 @@ function decode($string)
                             );
                             $this->load->view('tutor/header');
                             $this->load->view('tutor/alumnos/pago_inscripcion',$data);
+                            $this->load->view('tutor/footer');
+                        
+                    }
+                      }else{
+         $data = array(
+            'heading'=>'Error',
+            'message'=>'Error intente mas tarde.'
+        );
+         $this->load->view('errors/html/error_general',$data);
+        }
+    }
+     public function pagotarjetac()
+    {
+        $idperiodo = $this->decode($this->input->post('periodo'));
+        $idalumno = $this->decode($this->input->post('alumno'));
+        $idnivel = $this->decode($this->input->post('nivel'));
+        if((isset($idnivel) && !empty($idnivel)) && (isset($idperiodo) && !empty($idperiodo)) && (isset($idalumno) && !empty($idalumno))){
+            try {
+                $idtutor = $this->session->idtutor;
+                $detalle_tutor = $this->tutor->detalleTutor($idtutor);
+                $nombretarjetahabiente  = $this->input->post('nombretitular');
+                $calle  = $this->input->post('calletitular');
+                $nombretarjetahabiente  = $this->input->post('nombretitular');
+                $numero  = $this->input->post('numerocasa');
+                $idcolonia  = $this->input->post('colonia');
+                $detalle_colonia = $this->tutor->detalleColonia($idcolonia);
+                $cp  = $this->input->post('cp');
+                $descuento  = $this->input->post('descuento'); 
+                $mensaje  = $this->input->post('mensaje');
+                $idmes  = $this->input->post('mespago');
+                $detalle_mes = $this->tutor->detalleMes($idmes);
+                        $response = [];
+                        Openpay::setProductionMode(false);
+                        $openpay = Openpay::getInstance('mds4bdhgvbese0knzu2x', 'sk_f95d7349163642fba9f5a71021b3f6d5');
+                        $customer = array(
+                            'name' => strtoupper($nombretarjetahabiente),
+                            'last_name' => '',
+                            'email' => $detalle_tutor->correo,
+                            'phone_number' => $detalle_tutor->telefono,
+                            'address' => array(
+                                'line1' => strtoupper($calle . ' ' . $numero),
+                                'line2' => strtoupper($detalle_colonia[0]->nombrecolonia),
+                                'line3' => '',
+                                'postal_code' => $cp,
+                                'state' => strtoupper($detalle_colonia[0]->nombreestado),
+                                'city' => strtoupper($detalle_colonia[0]->nombremunicipio),
+                                'country_code' => 'MX'));
+
+                        $chargeData = array(
+                            'method' => 'card',
+                            'source_id' => $_POST["token_id"],
+                            'amount' => (float) $descuento,
+                            'description' => $mensaje." DE ".$detalle_mes[0]->nombremes,
+                            'device_session_id' => $_POST["deviceIdHiddenFieldName"],
+                            'customer' => $customer
+                        );
+
+                        $charge = $openpay->charges->create($chargeData);
+                        $response['charge'] = $charge;  
+                         $idopenpay = $charge->id;
+                         $idorden = $charge->order_id;
+                         $autorizacion = $charge->authorization; 
+                        
+                         /*$data = array(
+                            'idperiodo'=>$idperiodo,
+                            'idalumno'=>$idalumno,
+                            'idformapago'=>2,
+                            'idtipopagocol'=>2,
+                            'descuento'=>$descuento,
+                            'idopenpay'=>$idopenpay,
+                            'idorden'=>$idorden,
+                            'autorizacion'=>$autorizacion, 
+                            'online'=>1,
+                            'pagado'=>1,
+                            'fechapago'=>date('Y-m-d H:i:s'),
+                            'eliminado'=>0,
+                            'idusuario'=> $this->session->user_id,
+                            'fecharegistro'=>date('Y-m-d H:i:s')
+                        );
+                        $this->tutor->addCobroReinscripcion($data);*/
+                        $add_amortizacion = array(
+                            'idalumno'=>$idalumno,
+                            'idperiodo'=>$idperiodo,
+                            'idperiodopago'=>$idmes,
+                            'descuento'=>$descuento,
+                            'pagado'=>1,
+                            'idusuario'=> $this->session->user_id,
+                            'fecharegistro'=>date('Y-m-d H:i:s')
+                        );
+                        $idamortizacion = $this->tutor->addAmortizacion($add_amortizacion);
+                        $add_estadocuenta = array(
+                            'idamortizacion'=>$idamortizacion,
+                            'idperiodo'=>$idperiodo,
+                            'idalumno'=>$idalumno,
+                            'idformapago'=>2,
+                            'descuento'=>$descuento,
+                            'idopenpay'=>$idopenpay,
+                            'idorden'=>$idorden,
+                            'autorizacion'=>$autorizacion, 
+                            'online'=>1,
+                            'pagado'=>1,
+                            'fechapago'=>date('Y-m-d H:i:s'), 
+                            'idusuario'=> $this->session->user_id,
+                            'fecharegistro'=>date('Y-m-d H:i:s')
+                        );
+                        $idestadocuenta = $this->tutor->addEstadoCuenta($add_estadocuenta);
+                        $add_detalle_pago = array(
+                            'idestadocuenta'=>$idestadocuenta,
+                            'idformapago'=>2,
+                            'descuento'=>$descuento,
+                            'autorizacion'=>$autorizacion,
+                            'fechapago'=>date('Y-m-d H:i:s'), 
+                            'idusuario'=> $this->session->user_id,
+                            'fecharegistro'=>date('Y-m-d H:i:s')
+                        );
+                        $this->tutor->addDetallePago($add_detalle_pago);
+                         $mensaje = "PAGO DE MENSUALIDAD";
+                         $data = array( 
+                                'formapago'=>1,
+                                'idalumno'=>$this->encode($idalumno),
+                                'idperiodo'=>$this->encode($idperiodo),
+                                'descuento'=>$descuento,
+                                'mensaje'=>$mensaje,
+                                'idnivel'=>$this->encode($idnivel),
+                                'numeroautorizacion'=>$autorizacion
+                            );
+                            $this->load->view('tutor/header');
+                            $this->load->view('tutor/alumnos/pago_colegiatura',$data);
+                            $this->load->view('tutor/footer');
+                       
+                    } catch (OpenpayApiTransactionError $e) {
+                        $mensaje = "";
+                        switch ($e->getErrorCode()) {
+                            case 3001:
+                                $mensaje .= "La tarjeta fue declinada.";
+                                break;
+                            case 3002:
+                                $mensaje .= "La tarjeta ha expirado.";
+                                break;
+                            case 3003:
+                                $mensaje .= "La tarjeta no tiene fondos suficientes.";
+                                break;
+                            case 3004:
+                                $mensaje .= "La tarjeta ha sido identificada como una tarjeta robada.";
+                                break;
+                            case 3005:
+                                $mensaje .= "La tarjeta ha sido rechazada por el sistema antifraudes.";
+                                break;
+                            case 3006:
+                                $mensaje .= "La operación no esta permitida para este cliente o esta transacción.";
+                                break;
+                            case 3007:
+                                $mensaje .= "Deprecado. La tarjeta fue declinada.";
+                                break;
+                            case 3008:
+                                $mensaje .= "La tarjeta no es soportada en transacciones en línea.";
+                                break;
+                            case 3009:
+                                $mensaje .= "La tarjeta fue reportada como perdida.";
+                                break;
+                            case 3010:
+                                $mensaje .= "El banco ha restringido la tarjeta.";
+                                break;
+                            case 3011:
+                                $mensaje .= "El banco ha solicitado que la tarjeta sea retenida. Contacte al banco.";
+                                break;
+                            case 3012:
+                                $mensaje .= "Se requiere solicitar al banco autorización para realizar este pago.";
+                                break;
+
+                            default:
+                                $mensaje .= $e->getMessage();
+                                break;
+                        }
+                         $mensaje_pago = "PAGO DE MENSUALIDAD";
+                         $data = array( 
+                                'formapago'=>1,
+                                'idalumno'=>$this->encode($idalumno),
+                                'idperiodo'=>$this->encode($idperiodo),
+                                'descuento'=>$descuento,
+                                'mensaje'=>$mensaje_pago,
+                                'idnivel'=>$this->encode($idnivel), 
+                                'error'=>$mensaje
+                            );
+                            $this->load->view('tutor/header');
+                            $this->load->view('tutor/alumnos/pago_colegiatura',$data);
+                            $this->load->view('tutor/footer');
+                        
+                    } catch (OpenpayApiRequestError $e) {
+                        $mensaje .= $e->getMessage();
+                         $mensaje_pago = "PAGO DE MENSUALIDAD";
+                         $data = array( 
+                                'formapago'=>1,
+                                'idalumno'=>$this->encode($idalumno),
+                                'idperiodo'=>$this->encode($idperiodo),
+                                'descuento'=>$descuento,
+                                'mensaje'=>$mensaje_pago,
+                                'idnivel'=>$this->encode($idnivel), 
+                                'error'=>$mensaje
+                            );
+                            $this->load->view('tutor/header');
+                            $this->load->view('tutor/alumnos/pago_colegiatura',$data);
+                            $this->load->view('tutor/footer');
+                         
+                    } catch (OpenpayApiConnectionError $e) {
+                        $mensaje .= $e->getMessage();
+                         $mensaje_pago = "PAGO DE MENSUALIDAD";
+                         $data = array( 
+                                 'formapago'=>1,
+                                'idalumno'=>$this->encode($idalumno),
+                                'idperiodo'=>$this->encode($idperiodo),
+                                'descuento'=>$descuento,
+                                'mensaje'=>$mensaje_pago,
+                                'idnivel'=>$this->encode($idnivel), 
+                                'error'=>$mensaje
+                            );
+                            $this->load->view('tutor/header');
+                            $this->load->view('tutor/alumnos/pago_colegiatura',$data);
+                            $this->load->view('tutor/footer');
+                       
+                    } catch (OpenpayApiAuthError $e) {
+                        $mensaje .= $e->getMessage();
+                         $mensaje_pago = "PAGO DE MENSUALIDAD";
+                         $data = array( 
+                                'formapago'=>1,    
+                                'idalumno'=>$this->encode($idalumno),
+                                'idperiodo'=>$this->encode($idperiodo),
+                                'descuento'=>$descuento,
+                                'mensaje'=>$mensaje_pago,
+                                'idnivel'=>$this->encode($idnivel), 
+                                'error'=>$mensaje
+                            );
+                            $this->load->view('tutor/header');
+                            $this->load->view('tutor/alumnos/pago_colegiatura',$data);
+                            $this->load->view('tutor/footer');
+                      
+                    } catch (OpenpayApiError $e) {
+                        $mensaje .= $e->getMessage();
+                         $mensaje_pago = "PAGO DE MENSUALIDAD";
+                         $data = array(
+                                'formapago'=>1, 
+                                'idalumno'=>$this->encode($idalumno),
+                                'idperiodo'=>$this->encode($idperiodo),
+                                'descuento'=>$descuento,
+                                'mensaje'=>$mensaje_pago,
+                                'idnivel'=>$this->encode($idnivel), 
+                                'error'=>$mensaje
+                            );
+                            $this->load->view('tutor/header');
+                            $this->load->view('tutor/alumnos/pago_colegiatura',$data);
+                            $this->load->view('tutor/footer');
+                         
+                    } catch (Exception $e) {
+                        $mensaje .= $e->getMessage();
+                         $mensaje_pago = "PAGO DE MENSUALIDAD";
+                         $data = array(
+                                'formapago'=>1, 
+                                'idalumno'=>$this->encode($idalumno),
+                                'idperiodo'=>$this->encode($idperiodo),
+                                'descuento'=>$descuento,
+                                'mensaje'=>$mensaje_pago,
+                                'idnivel'=>$this->encode($idnivel), 
+                                'error'=>$mensaje
+                            );
+                            $this->load->view('tutor/header');
+                            $this->load->view('tutor/alumnos/pago_colegiatura',$data);
                             $this->load->view('tutor/footer');
                         
                     }
@@ -836,7 +1114,7 @@ function decode($string)
                         //var_dump($charge["authorization"]);
                         //var_dump($charge->authorization);
                         //$autorizacion = $charge->authorization;
-                        $data = array(
+                        $add_cobro = array(
                             'idperiodo'=>$idperiodo,
                             'idalumno'=>$idalumno,
                             'idformapago'=>1,
@@ -852,9 +1130,11 @@ function decode($string)
                             'idusuario'=> $this->session->user_id,
                             'fecharegistro'=>date('Y-m-d H:i:s')
                         );
-                        $this->tutor->addCobroReinscripcion($data);
+                        $this->tutor->addCobroReinscripcion($add_cobro);
                          $mensaje = "PAGO DE REINSCRIPCIÓN";
                          $data = array( 
+                                'formapago'=>0,
+                                'opcion'=>0,
                                 'idalumno'=>$this->encode($idalumno),
                                 'idperiodo'=>$this->encode($idperiodo),
                                 'descuento'=>$descuento,
@@ -913,6 +1193,8 @@ function decode($string)
                         }
                          $mensaje_pago = "PAGO DE REINSCRIPCIÓN";
                          $data = array( 
+                             'formapago'=>0,
+                                'opcion'=>0,
                                 'idalumno'=>$this->encode($idalumno),
                                 'idperiodo'=>$this->encode($idperiodo),
                                 'descuento'=>$descuento,
@@ -928,6 +1210,8 @@ function decode($string)
                         $mensaje .= $e->getMessage();
                          $mensaje_pago = "PAGO DE REINSCRIPCIÓN";
                          $data = array( 
+                                'formapago'=>0,
+                                'opcion'=>0,
                                 'idalumno'=>$this->encode($idalumno),
                                 'idperiodo'=>$this->encode($idperiodo),
                                 'descuento'=>$descuento,
@@ -943,6 +1227,8 @@ function decode($string)
                         $mensaje .= $e->getMessage();
                          $mensaje_pago = "PAGO DE REINSCRIPCIÓN";
                          $data = array( 
+                             'formapago'=>0,
+                                'opcion'=>0,
                                 'idalumno'=>$this->encode($idalumno),
                                 'idperiodo'=>$this->encode($idperiodo),
                                 'descuento'=>$descuento,
@@ -958,6 +1244,8 @@ function decode($string)
                         $mensaje .= $e->getMessage();
                          $mensaje_pago = "PAGO DE REINSCRIPCIÓN";
                          $data = array( 
+                             'formapago'=>0,
+                                'opcion'=>0,
                                 'idalumno'=>$this->encode($idalumno),
                                 'idperiodo'=>$this->encode($idperiodo),
                                 'descuento'=>$descuento,
@@ -972,7 +1260,9 @@ function decode($string)
                     } catch (OpenpayApiError $e) {
                         $mensaje .= $e->getMessage();
                          $mensaje_pago = "PAGO DE REINSCRIPCIÓN";
-                         $data = array( 
+                         $data = array(
+                             'formapago'=>0,
+                                'opcion'=>0, 
                                 'idalumno'=>$this->encode($idalumno),
                                 'idperiodo'=>$this->encode($idperiodo),
                                 'descuento'=>$descuento,
@@ -987,7 +1277,9 @@ function decode($string)
                     } catch (Exception $e) {
                         $mensaje .= $e->getMessage();
                          $mensaje_pago = "PAGO DE REINSCRIPCIÓN";
-                         $data = array( 
+                         $data = array(
+                             'formapago'=>0,
+                                'opcion'=>0, 
                                 'idalumno'=>$this->encode($idalumno),
                                 'idperiodo'=>$this->encode($idperiodo),
                                 'descuento'=>$descuento,
@@ -997,6 +1289,266 @@ function decode($string)
                             );
                             $this->load->view('tutor/header');
                             $this->load->view('tutor/alumnos/pago_inscripcion',$data);
+                            $this->load->view('tutor/footer');
+                        
+                    }
+                      }else{
+         $data = array(
+            'heading'=>'Error',
+            'message'=>'Error intente mas tarde.'
+        );
+         $this->load->view('errors/html/error_general',$data);
+        }
+ }
+ public function pagotiendac()
+ {
+        $idperiodo = $this->decode($this->input->post('periodo'));
+        $idalumno = $this->decode($this->input->post('alumno'));
+        $idnivel = $this->decode($this->input->post('nivel'));
+        if((isset($idnivel) && !empty($idnivel)) && (isset($idperiodo) && !empty($idperiodo)) && (isset($idalumno) && !empty($idalumno))){
+            try {
+                 $idtutor = $this->session->idtutor;
+                $detalle_tutor = $this->tutor->detalleTutor($idtutor);
+                $descuento  = $this->input->post('descuento'); 
+                $mensaje  = $this->input->post('mensaje');
+                $idmes  = $this->input->post('mespago');
+                $detalle_mes = $this->tutor->detalleMes($idmes);
+                        $response = [];
+                        Openpay::setProductionMode(false);
+                        $openpay = Openpay::getInstance('mds4bdhgvbese0knzu2x', 'sk_f95d7349163642fba9f5a71021b3f6d5');
+                         $customer = array(
+                            'name' => strtoupper($detalle_tutor->nombre),
+                            'last_name' => strtoupper($detalle_tutor->apellidop.' '.$detalle_tutor->apellidom),
+                            'email' => $detalle_tutor->correo,
+                            'phone_number' => $detalle_tutor->telefono
+                        );
+                        $chargeData = array(
+                                    'method' => 'store',
+                                    'amount' => $descuento,
+                                    'description' => $mensaje." DE ".$detalle_mes[0]->nombremes,
+                                     'customer' => $customer); 
+                        $charge = $openpay->charges->create($chargeData);
+                        $response['charge'] = $charge; 
+                        //var_dump($charge);
+                         $idopenpay = $charge->id;
+                         $idorden = $charge->order_id;
+                         $autorizacion = $charge->authorization;
+                         $barcode = $charge->payment_method->barcode_url;
+                         $referencia =$charge->payment_method->reference;
+                        //var_dump($charge["authorization"]);
+                        //var_dump($charge->authorization);
+                        //$autorizacion = $charge->authorization;
+                        /*$add_cobro = array(
+                            'idperiodo'=>$idperiodo,
+                            'idalumno'=>$idalumno,
+                            'idformapago'=>1,
+                            'idtipopagocol'=>2,
+                            'descuento'=>$descuento,
+                            'idopenpay'=>$idopenpay,
+                            'idorden'=>$idorden,
+                            'autorizacion'=>$autorizacion,
+                            'online'=>1,
+                            'pagado'=>0,
+                            'fechapago'=>date('Y-m-d H:i:s'),
+                            'eliminado'=>0,
+                            'idusuario'=> $this->session->user_id,
+                            'fecharegistro'=>date('Y-m-d H:i:s')
+                        );
+                        $this->tutor->addCobroReinscripcion($add_cobro);*/
+                        $add_amortizacion = array(
+                            'idalumno'=>$idalumno,
+                            'idperiodo'=>$idperiodo,
+                            'idperiodopago'=>$idmes,
+                            'descuento'=>$descuento,
+                            'pagado'=>1,
+                            'idusuario'=> $this->session->user_id,
+                            'fecharegistro'=>date('Y-m-d H:i:s')
+                        );
+                        $idamortizacion = $this->tutor->addAmortizacion($add_amortizacion);
+                        $add_estadocuenta = array(
+                            'idamortizacion'=>$idamortizacion,
+                            'idperiodo'=>$idperiodo,
+                            'idalumno'=>$idalumno,
+                            'idformapago'=>2,
+                            'descuento'=>$descuento,
+                            'idopenpay'=>$idopenpay,
+                            'idorden'=>$idorden,
+                            'autorizacion'=>$autorizacion, 
+                            'online'=>1,
+                            'pagado'=>0,
+                            'fechapago'=>date('Y-m-d H:i:s'), 
+                            'idusuario'=> $this->session->user_id,
+                            'fecharegistro'=>date('Y-m-d H:i:s')
+                        );
+                        $idestadocuenta = $this->tutor->addEstadoCuenta($add_estadocuenta);
+                        $add_detalle_pago = array(
+                            'idestadocuenta'=>$idestadocuenta,
+                            'idformapago'=>2,
+                            'descuento'=>$descuento,
+                            'autorizacion'=>$autorizacion,
+                            'fechapago'=>date('Y-m-d H:i:s'), 
+                            'idusuario'=> $this->session->user_id,
+                            'fecharegistro'=>date('Y-m-d H:i:s')
+                        );
+                        $this->tutor->addDetallePago($add_detalle_pago);
+                         $mensaje = "PAGO DE MENSUALIDAD";
+                         $data = array( 
+                                'formapago'=>0,
+                                'opcion'=>0,
+                                'idalumno'=>$this->encode($idalumno),
+                                'idperiodo'=>$this->encode($idperiodo),
+                                'descuento'=>$descuento,
+                                'mensaje'=>$mensaje,
+                                'idnivel'=>$this->encode($idnivel),
+                                'opcion'=>1,
+                                'referencia'=>$referencia
+                            );
+                            $this->load->view('tutor/header');
+                            $this->load->view('tutor/alumnos/pago_colegiatura',$data);
+                            $this->load->view('tutor/footer');
+                       
+                    } catch (OpenpayApiTransactionError $e) {
+                        $mensaje = "";
+                        switch ($e->getErrorCode()) {
+                            case 3001:
+                                $mensaje .= "La tarjeta fue declinada.";
+                                break;
+                            case 3002:
+                                $mensaje .= "La tarjeta ha expirado.";
+                                break;
+                            case 3003:
+                                $mensaje .= "La tarjeta no tiene fondos suficientes.";
+                                break;
+                            case 3004:
+                                $mensaje .= "La tarjeta ha sido identificada como una tarjeta robada.";
+                                break;
+                            case 3005:
+                                $mensaje .= "La tarjeta ha sido rechazada por el sistema antifraudes.";
+                                break;
+                            case 3006:
+                                $mensaje .= "La operación no esta permitida para este cliente o esta transacción.";
+                                break;
+                            case 3007:
+                                $mensaje .= "Deprecado. La tarjeta fue declinada.";
+                                break;
+                            case 3008:
+                                $mensaje .= "La tarjeta no es soportada en transacciones en línea.";
+                                break;
+                            case 3009:
+                                $mensaje .= "La tarjeta fue reportada como perdida.";
+                                break;
+                            case 3010:
+                                $mensaje .= "El banco ha restringido la tarjeta.";
+                                break;
+                            case 3011:
+                                $mensaje .= "El banco ha solicitado que la tarjeta sea retenida. Contacte al banco.";
+                                break;
+                            case 3012:
+                                $mensaje .= "Se requiere solicitar al banco autorización para realizar este pago.";
+                                break;
+
+                            default:
+                                $mensaje .= $e->getMessage();
+                                break;
+                        }
+                         $mensaje_pago = "PAGO DE MENSUALIDAD";
+                         $data = array( 
+                             'formapago'=>0,
+                                'opcion'=>0,
+                                'idalumno'=>$this->encode($idalumno),
+                                'idperiodo'=>$this->encode($idperiodo),
+                                'descuento'=>$descuento,
+                                'mensaje'=>$mensaje_pago,
+                                'idnivel'=>$this->encode($idnivel), 
+                                'error'=>$mensaje
+                            );
+                            $this->load->view('tutor/header');
+                            $this->load->view('tutor/alumnos/pago_colegiatura',$data);
+                            $this->load->view('tutor/footer');
+                        
+                    } catch (OpenpayApiRequestError $e) {
+                        $mensaje .= $e->getMessage();
+                         $mensaje_pago = "PAGO DE MENSUALIDAD";
+                         $data = array( 
+                                'formapago'=>0,
+                                'opcion'=>0,
+                                'idalumno'=>$this->encode($idalumno),
+                                'idperiodo'=>$this->encode($idperiodo),
+                                'descuento'=>$descuento,
+                                'mensaje'=>$mensaje_pago,
+                                'idnivel'=>$this->encode($idnivel), 
+                                'error'=>$mensaje
+                            );
+                            $this->load->view('tutor/header');
+                            $this->load->view('tutor/alumnos/pago_colegiatura',$data);
+                            $this->load->view('tutor/footer');
+                         
+                    } catch (OpenpayApiConnectionError $e) {
+                        $mensaje .= $e->getMessage();
+                         $mensaje_pago = "PAGO DE MENSUALIDAD";
+                         $data = array( 
+                             'formapago'=>0,
+                                'opcion'=>0,
+                                'idalumno'=>$this->encode($idalumno),
+                                'idperiodo'=>$this->encode($idperiodo),
+                                'descuento'=>$descuento,
+                                'mensaje'=>$mensaje_pago,
+                                'idnivel'=>$this->encode($idnivel), 
+                                'error'=>$mensaje
+                            );
+                            $this->load->view('tutor/header');
+                            $this->load->view('tutor/alumnos/pago_colegiatura',$data);
+                            $this->load->view('tutor/footer');
+                       
+                    } catch (OpenpayApiAuthError $e) {
+                        $mensaje .= $e->getMessage();
+                         $mensaje_pago = "PAGO DE MENSUALIDAD";
+                         $data = array( 
+                             'formapago'=>0,
+                                'opcion'=>0,
+                                'idalumno'=>$this->encode($idalumno),
+                                'idperiodo'=>$this->encode($idperiodo),
+                                'descuento'=>$descuento,
+                                'mensaje'=>$mensaje_pago,
+                                'idnivel'=>$this->encode($idnivel), 
+                                'error'=>$mensaje
+                            );
+                            $this->load->view('tutor/header');
+                            $this->load->view('tutor/alumnos/pago_colegiatura',$data);
+                            $this->load->view('tutor/footer');
+                      
+                    } catch (OpenpayApiError $e) {
+                        $mensaje .= $e->getMessage();
+                         $mensaje_pago = "PAGO DE MENSUALIDAD";
+                         $data = array(
+                             'formapago'=>0,
+                                'opcion'=>0, 
+                                'idalumno'=>$this->encode($idalumno),
+                                'idperiodo'=>$this->encode($idperiodo),
+                                'descuento'=>$descuento,
+                                'mensaje'=>$mensaje_pago,
+                                'idnivel'=>$this->encode($idnivel), 
+                                'error'=>$mensaje
+                            );
+                            $this->load->view('tutor/header');
+                            $this->load->view('tutor/alumnos/pago_colegiatura',$data);
+                            $this->load->view('tutor/footer');
+                         
+                    } catch (Exception $e) {
+                        $mensaje .= $e->getMessage();
+                         $mensaje_pago = "PAGO DE MENSUALIDAD";
+                         $data = array(
+                             'formapago'=>0,
+                                'opcion'=>0, 
+                                'idalumno'=>$this->encode($idalumno),
+                                'idperiodo'=>$this->encode($idperiodo),
+                                'descuento'=>$descuento,
+                                'mensaje'=>$mensaje_pago,
+                                'idnivel'=>$this->encode($idnivel), 
+                                'error'=>$mensaje
+                            );
+                            $this->load->view('tutor/header');
+                            $this->load->view('tutor/alumnos/pago_colegiatura',$data);
                             $this->load->view('tutor/footer');
                         
                     }
@@ -1065,6 +1617,22 @@ function decode($string)
         $this->load->view('tutor/footer');
     }
 
+    public function mensajes($idalumno = '',$idnivel = '',$idperiodo = '')
+    {
+        
+    $detalle = $this->alumno->showAllMateriasAlumno($idalumno);
+       $idhorario = '';
+       if(isset($detalle[0]->idhorario) && !empty($detalle[0]->idhorario)){
+        $idhorario =  $detalle[0]->idhorario;
+       } 
+       $mensajes = $this->mensaje->showAllMensajeAlumno($idhorario);
+       $data = array(
+            'mensajes'=>$mensajes
+       );
+        $this->load->view('tutor/header');
+        $this->load->view('tutor/alumnos/mensajes',$data);
+        $this->load->view('tutor/footer');
+    }
    /*
     public function noficaciones()
     {

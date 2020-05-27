@@ -126,11 +126,8 @@
               <h3>General</h3>
               <ul class="nav side-menu">
               <li><a href="<?= base_url('/Tutores/') ?>"><i class="fa fa-home"></i>  Inicio</a></li>
-               <li><a href="<?= base_url('/Tutores/alumnos') ?>"><i class="fa fa-users"></i>  Alumnos</a></li>
-                <li><a href="<?= base_url('/Tutores/mensajes') ?>"><i class="fa fa-tasks"></i>  Mesajes y Tareas</a></li> 
-               <li><a href="<?= base_url('/Tutores/kardex') ?>"><i class="fa fa-list"></i>  Kardex</a></li>
-               
-
+              <li><a href="<?= base_url('/Tutores/alumnos') ?>"><i class="fa fa-users"></i>  Alumnos</a></li>
+              <li><a href="<?= base_url('/Tutores/kardex') ?>"><i class="fa fa-list"></i>  Kardex</a></li>
               </ul>
             </div>
           

@@ -27,6 +27,43 @@ class Tutor_model extends CI_Model {
             return false;
         }
     } 
+    public function showAllTareas($idhorario = '') {
+        $this->db->select('t.*');
+        $this->db->from('tbltarea t'); 
+         if (isset($idhorario) && !empty($idhorario)) {
+        $this->db->where('t.idhorario',$idhorario); 
+        }  
+         $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    } 
+
+        public function detalleMes($idmes = '') {
+        $this->db->select('m.idmes, m.nombremes');
+        $this->db->from('tblmes m');  
+        $this->db->where('m.idmes',$idmes);  
+         $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    } 
+
+    public function showAllMeses($idalumno,$idperiodo) {
+        $query = $this->db->query("SELECT * FROM tblmes m WHERE m.idmes NOT IN (
+            SELECT a.idperiodopago FROM tblamotizacion a INNER JOIN tblestado_cuenta ec ON a.idamortizacion = ec.idamortizacion
+            WHERE ec.idalumno = $idalumno AND ec.idperiodo = $idperiodo ) ");
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+             return false;
+        }
+    } 
+
       public function showAllAlumnos($idplantel = '') {
         $this->db->select('a.*');
         $this->db->from('tblalumno a'); 
@@ -164,6 +201,24 @@ class Tutor_model extends CI_Model {
      public function addTutorAlumno($data)
     {
         $this->db->insert('tbltutoralumno', $data);
+        $insert_id = $this->db->insert_id(); 
+        return  $insert_id;
+    }
+       public function addAmortizacion($data)
+    {
+        $this->db->insert('tblamotizacion', $data);
+        $insert_id = $this->db->insert_id(); 
+        return  $insert_id;
+    }
+           public function addDetallePago($data)
+    {
+        $this->db->insert('tbldetalle_pago', $data);
+        $insert_id = $this->db->insert_id(); 
+        return  $insert_id;
+    }
+           public function addEstadoCuenta($data)
+    {
+        $this->db->insert('tblestado_cuenta', $data);
         $insert_id = $this->db->insert_id(); 
         return  $insert_id;
     }

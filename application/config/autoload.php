@@ -133,4 +133,4 @@ $autoload['language'] = array();
 |
 |	$autoload['model'] = array('first_model' => 'first');
 */  
-$autoload['model'] = array('WebHook_model','CorteCaja_model','Colegiatura_model','Pagos_model','Tutor_model','Alumno_model','Profesor_model','Horario_model','Grupo_model','CicloEscolar_model','rol_model','Escuela_model','EstadoCuenta_model','permiso_model','Materia_model');
+$autoload['model'] = array('Mensaje_model','WebHook_model','CorteCaja_model','Colegiatura_model','Pagos_model','Tutor_model','Alumno_model','Profesor_model','Horario_model','Grupo_model','CicloEscolar_model','rol_model','Escuela_model','EstadoCuenta_model','permiso_model','Materia_model');
