@@ -22,6 +22,13 @@
   <link href="<?php echo base_url(); ?>/assets/css/custom.css" rel="stylesheet">
   <link href="<?php echo base_url(); ?>/assets/css/icheck/flat/green.css" rel="stylesheet">
 
+        <link href="<?php echo base_url(); ?>/assets/media/css/dataTables.bootstrap.css" rel="stylesheet" type="text/css" />
+    <link href="<?php echo base_url(); ?>/assets/js/datatables/buttons.bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="<?php echo base_url(); ?>/assets/js/datatables/fixedHeader.bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="<?php echo base_url(); ?>/assets/js/datatables/responsive.bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="<?php echo base_url(); ?>/assets/js/datatables/scroller.bootstrap.min.css" rel="stylesheet" type="text/css" />
+
+    
  <link href="<?php echo base_url(); ?>/assets/css/calendar/fullcalendar.css" rel="stylesheet">
   <link href="<?php echo base_url(); ?>/assets/css/calendar/fullcalendar.print.css" rel="stylesheet" media="print">
   <script src="<?php echo base_url(); ?>/assets/js/jquery.min.js"></script>

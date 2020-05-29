@@ -14,6 +14,7 @@ class Alumnos extends CI_Controller {
         $this->load->library('permission');
         $this->load->library('session');
         $this->load->model('alumno_model','alumno'); 
+        $this->load->model('mensaje_model','mensaje'); 
 	}
  
 	public function index()
@@ -22,14 +23,17 @@ class Alumnos extends CI_Controller {
           $idalumno = $this->session->idalumno;
           $grupo = $this->alumno->obtenerGrupo($idalumno);
           $tareas = "";
+          $mensajes = "";
           if($grupo != false){
-            $idhorario= $grupo->idhorario;
+             $idhorario= $grupo->idhorario;
              $tareas = $this->alumno->showTareaAlumnoMateria($idhorario);
+             $mensajes = $this->mensaje->showAllMensajeAlumno($idhorario);
           }
          
          
           $data = array(
-            'tareas'=>$tareas
+            'tareas'=>$tareas,
+            'mensajes'=>$mensajes
           );
          // var_dump($tareas);
 

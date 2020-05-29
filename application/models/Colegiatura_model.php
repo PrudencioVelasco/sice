@@ -23,7 +23,7 @@ class Colegiatura_model extends CI_Model {
         if (isset($idplantel) && !empty($idplantel)) {
         $this->db->where('c.idplantel',$idplantel); 
         }   
-        
+        $this->db->where('c.eliminado',0);
          $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();
@@ -41,6 +41,7 @@ class Colegiatura_model extends CI_Model {
             return false;
         }
     } 
+ 
     public function showAllConceptos() {
         $this->db->select('n.*');
         $this->db->from('tbltipopagocol n'); 
@@ -122,6 +123,29 @@ class Colegiatura_model extends CI_Model {
             return false;
         }
     }
+        public function searchColegiatura($match) {
+        $field = array(
+                 'c.descuento',
+                 'p.nombreplantel',
+                 'n.nombrenivel',
+                 'tp.concepto',
+                 'c.activo'
+        );
+       $this->db->select('c.idcolegiatura, c.descuento,p.nombreplantel, c.idnivelestudio, n.nombrenivel, c.activo, c.idtipopagocol, tp.concepto');
+        $this->db->from('tblcolegiatura c'); 
+        $this->db->join('tblplantel p', 'p.idplantel = c.idplantel');
+        $this->db->join('tblnivelestudio n', 'n.idnivelestudio = c.idnivelestudio');
+        $this->db->join('tbltipopagocol tp', 'tp.idtipopagocol = c.idtipopagocol'); 
+        //$this->db->where('c.idplantel',$this->session->idplantel);  
+        $this->db->where('c.eliminado',0);
+        $this->db->like('concat(' . implode(',', $field) . ')', $match);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
    
      public function addColegiatura($data)
     {
@@ -143,10 +167,22 @@ class Colegiatura_model extends CI_Model {
        
     }
     
-    public function desactivarColegiatura($idconcepto = '',$idnivel = '', $field)
+    public function desactivarColegiatura($idconcepto = '',$idnivel = '',$idplantel = ' ', $field)
     {
+        $this->db->where('idplantel', $idplantel);
         $this->db->where('idnivelestudio', $idnivel);
         $this->db->where('idtipopagocol', $idconcepto);
+        $this->db->update('tblcolegiatura', $field);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+        
+    }
+        public function updateColegiatura($idcolegiatura = '', $field)
+    {
+        $this->db->where('idcolegiatura', $idcolegiatura);
         $this->db->update('tblcolegiatura', $field);
         if ($this->db->affected_rows() > 0) {
             return true;

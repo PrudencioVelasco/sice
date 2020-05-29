@@ -26,6 +26,21 @@ class Alumno_model extends CI_Model {
         } else {
             return false;
         }
+
+    }
+        public function logo($idplantel = '') {
+        $this->db->select('p.logoplantel, p.logosegundo');
+        $this->db->from('tblplantel p'); 
+        if (isset($idplantel) && !empty($idplantel)) {
+        $this->db->where('p.idplantel',$idplantel); 
+        }  
+         $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+        
     }
     public function buscarAlumno($matricula = '')
     {
@@ -106,6 +121,7 @@ class Alumno_model extends CI_Model {
         $this->db->join('tbltipopagocol tp2', 'tp2.idtipopagocol = pi.idtipopagocol'); 
         $this->db->where('pi.idalumno', $idalumno); 
         $this->db->where('pi.idperiodo', $idperiodo); 
+         $this->db->where('pi.eliminado', 0); 
          $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();
@@ -247,15 +263,19 @@ class Alumno_model extends CI_Model {
             return false;
         }
     } 
-     public function showAllTareaAlumno($dhorario,$idmateria) {
+     public function showAllTareaAlumno($dhorario = '',$idmateria = '') {
         $this->db->select('hd.idhorariodetalle,hd.idhorario, hd.horainicial, hd.horafinal, m.nombreclase,p.nombre, p.apellidop, p.apellidom,t.tarea, t.fechaentrega');
         $this->db->from('tblhorario_detalle hd'); 
         $this->db->join('tblprofesor_materia pm', 'hd.idmateria = pm.idprofesormateria');
         $this->db->join('tblmateria m', 'm.idmateria = pm.idmateria');
         $this->db->join('tblprofesor p', 'p.idprofesor = pm.idprofesor');
         $this->db->join('tbltarea t', 't.idhorariodetalle = hd.idhorariodetalle');
+        if(isset($idhorario) && !empty($idhorario)){
         $this->db->where('hd.idhorario', $dhorario);
+        }
+        if(isset($idmateria) && !empty($idmateria)){
          $this->db->where('m.idmateria', $idmateria);
+        }
          $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();

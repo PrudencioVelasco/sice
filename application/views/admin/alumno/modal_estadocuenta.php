@@ -145,3 +145,37 @@
       <button class="btn btn-primary" @click="addCobroColegiatura" ><i class="fa fa-check-circle"></i> Cobrar</button>
    </div>
 </modal>
+
+<modal v-if="eliminarModalP" @close="clearAll()">
+    <h3 slot="head" >Eliminar Cobro</h3>
+    <div slot="body">
+         <div style=" height: 100px;overflow-x: hidden; overflow-y: scroll;">
+         <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12 ">
+                <label class="text-danger" v-html="formValidate.msgerror"></label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-sm-12 col-xs-12 ">
+                <div class="form-group">
+                    <label><font color="red">*</font> Usuario</label>
+                    <input type="password" v-model="eliminarPrimerCobro.usuario" class="form-control"  :class="{'is-invalid': formValidate.usuario}" name="po"> 
+                           <div class="text-danger" v-html="formValidate.usuario"></div>
+                </div>
+            </div> 
+            <div class="col-md-6 col-sm-12 col-xs-12 ">
+                <div class="form-group">
+                    <label><font color="red">*</font> Contraseña</label>
+                    <input type="password" v-model="eliminarPrimerCobro.password" class="form-control"  :class="{'is-invalid': formValidate.password}" name="po"> 
+                           <div class="text-danger" v-html="formValidate.password"></div>
+                </div>
+            </div> 
+        </div>  
+ 
+</div>
+    </div>
+    <div slot="foot">
+        <button class="btn btn-danger" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
+        <button class="btn btn-primary" @click="eliminarPagoInicio"><i class='fa fa-edit'></i> Eliminar</button>
+    </div>
+</modal>

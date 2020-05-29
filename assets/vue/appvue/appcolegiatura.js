@@ -96,7 +96,7 @@ var v = new Vue({
         searchColegiatura() {
             var formData = v.formData(v.search);
             axios.post(this.url + "Catalogo/searchColegiatura", formData).then(function (response) {
-                if (response.data.colegiaturas == null) {
+                if (response.data.colegiaturas == null || response.data.colegiaturas == false) {
                     v.noResult()
                 } else {
                     v.getData(response.data.colegiaturas);
@@ -146,7 +146,7 @@ var v = new Vue({
         deleteColegiatura(id) {
             // body...
             Swal.fire({
-                title: '¿Eliminar Escuela?',
+                title: '¿Eliminar Colegiatura?',
                 text: "Realmente desea eliminar la Colegiatura.",
                 type: 'info',
                 showCancelButton: true,
@@ -157,12 +157,12 @@ var v = new Vue({
             }).then((result) => {
                 if (result.value) {
 
-                    axios.get(this.url + "Escuela/deleteEscuela", {
+                    axios.get(this.url + "Catalogo/deleteColegiatura", {
                         params: {
-                            idplantel: id
+                            idcolegiatura: id
                         }
                     }).then(function (response) {
-                        if (response.data.escuelas == true) {
+                        if (response.data.colegiaturas == true) {
                             //v.noResult()
                             swal({
                                 position: 'center',
@@ -174,11 +174,11 @@ var v = new Vue({
                             v.clearAll();
                             v.clearMSG();
                         } else {
-                            swal("Error", "No se puede eliminar la Escuela", "error")
+                            swal("Error", "No se puede eliminar la Colegiatura", "error")
                         }
                         console.log(response);
                     }).catch((error) => {
-                        swal("Error", "No se puede eliminar la Escuela", "error")
+                        swal("Error", "No se puede eliminar la Colegiatura", "error")
                     })
                 }
             })
@@ -237,7 +237,7 @@ var v = new Vue({
         noResult() {
 
             v.emptyResult = true;  // become true if the record is empty, print 'No Record Found'
-            v.escuelas = null
+            v.colegiaturas = null
             v.totalColegiaturas = 0 //remove current page if is empty
 
         },

@@ -7,7 +7,7 @@
             <div class="col-md-12">
               <div class="x_panel">
                 <div class="x_title">
-                  <h2><strong>MENSAJES PARA EL ALUMNO O PADRE DE FAMILIA</strong></h2>
+                  <h2><strong>TAREAS PARA EL ALUMNO</strong></h2>
                   
                   <div class="clearfix"></div>
                 </div>
@@ -19,20 +19,29 @@
                     <thead>
                       <tr>
                         <th>#</th> 
-                        <th>Mensaje</th>
-                        <th>Fecha</th> 
+                        <th>Clase</th>
+                        <th>Tarea</th> 
+                        <th>F. Entrega</th>
                       </tr>
                     </thead>
                     <tbody>
                       <?php
-                        if(isset($mensajes) && !empty($mensajes)){
+                        if(isset($tareas) && !empty($tareas)){
                           $i=1;
-                          foreach ($mensajes as  $value) {
+                          foreach ($tareas as  $value) {
                             ?>
                              <tr>
                               <th scope="row"><?php echo $i++; ?></th> 
-                              <td scope="row"><?php echo $value->mensaje ?></td>
-                              <td><strong><?php echo $value->fecha; ?></strong></td> 
+                              <td scope="row"><?php echo $value->nombreclase ?><br><small><strong><?php echo $value->nombre." ".$value->apellidop." ".$value->apellidom; ?></strong></small></td>
+                              <td><?php echo $value->tarea; ?></td>
+                              <td>
+                                 <?php
+                                setlocale(LC_ALL, 'es_ES');
+                        $date = new Datetime($value->fechaentrega);
+                        $fecha = strftime("%A, %d de %B", $date->getTimestamp());
+                        echo $fecha;
+                        ?>
+                              </td>
                             </tr>
                             <?php
                           }

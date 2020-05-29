@@ -194,6 +194,35 @@ class Tutores extends CI_Controller {
         $this->load->view('docente/footer');
 
     }
+    public function tareas($idalumno = '',$idnivelestudio = '',$idperiodo = ''){
+        if((isset($idalumno) && !empty($idalumno)) && (isset($idperiodo) && !empty($idperiodo))){
+            $detalle = $this->alumno->showAllMateriasAlumno($idalumno);
+            if(isset($detalle[0]->idhorario) && !empty($detalle[0]->idhorario)){
+                $idhorario = $detalle[0]->idhorario;
+                $idhorariodetalle =  $detalle[0]->idhorariodetalle;
+                $tareas = $this->alumno->showAllTareaAlumno($idhorario);
+                $data = array(
+                    'tareas'=>$tareas
+                );
+                    $this->load->view('tutor/header');
+                    $this->load->view('tutor/alumnos/tareas',$data);
+                    $this->load->view('tutor/footer');
+                }else{
+                $data = array(
+                    'heading'=>'Notificación',
+                    'message'=>'El Alumno(a) no tiene registrado Tareas.'
+                );
+                $this->load->view('errors/html/error_general',$data);
+            }
+        
+         }else{
+        $data = array(
+            'heading'=>'Error',
+            'message'=>'Intente mas tarde.'
+        );
+         $this->load->view('errors/html/error_general',$data);
+    }
+    }
  
      public function asistencias($idalumno='')
     {
@@ -205,7 +234,7 @@ class Tutores extends CI_Controller {
  
         $alumns = $this->grupo->alumnosGrupo($idhorario);
         $motivo = $this->grupo->motivoAsistencia();
-         $unidades = $this->grupo->unidades($this->session->idplantel);
+        $unidades = $this->grupo->unidades($this->session->idplantel);
         $fechainicio = date("Y-m-d");
         $fechafin = date("Y-m-d");
         $table = $this->obetnerAsistencia($idhorario,$fechainicio,$fechafin,$idhorariodetalle,$idalumno);

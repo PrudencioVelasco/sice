@@ -342,7 +342,9 @@ class Alumno extends CI_Controller {
         $grupop = $this->horario->showNivelGrupo($idhorario);
         $unidades =  $this->grupo->unidades($this->session->idplantel);
         $materias = $this->alumno->showAllMaterias($idhorario);
-
+        $detalle_logo = $this->alumno->logo($this->session->idplantel);
+        $logo = base_url() . '/assets/images/escuelas/'.$detalle_logo[0]->logoplantel;
+        $logo2 = base_url() . '/assets/images/escuelas/'.$detalle_logo[0]->logosegundo;
         $total_unidades = 0;
         $calificacion = "";   
         $materias = $this->alumno->showAllMaterias($idhorario);
@@ -368,6 +370,8 @@ class Alumno extends CI_Controller {
        $this->load->library('tcpdf');  
         $hora = date("h:i:s a");
         //$linkimge = base_url() . '/assets/images/woorilogo.png';
+      
+       $datelle_alumno = $this->alumno->showAllMateriasAlumno($idalumno);
         $fechaactual = date('d/m/Y');
         $pdf = new Pdf('P', 'mm', 'A4', true, 'UTF-8', false);
         $pdf->SetTitle('Horario de clases.');
@@ -393,6 +397,12 @@ class Alumno extends CI_Controller {
      border-right:solid 1px black;  
       padding:900px 20px 20px 20px;
 }  
+ .txtn{
+        font-size:6px;
+    }
+    .direccion{
+        font-size:6px;
+    }
 .escuela{
       font-size:12px; 
     font-weight:bold;
@@ -406,9 +416,23 @@ class Alumno extends CI_Controller {
     font-weight:bold;
 }
 .result{
-      font-size:9px; 
+      font-size:8px; 
     font-weight:bold;
-}
+} 
+    .nombreplantel{
+        font-size:11px;
+        font-weight:bolder;
+    }
+    .telefono{
+          font-size:6px;
+    }
+ .imgtitle{
+        width:55px;
+
+    }
+    .promedio{
+           font-size:10px;
+    }
 .tblcalificacion  td 
                 {
                     border:0px  solid black;
@@ -417,24 +441,32 @@ tblcalificacion  {border-collapse:collapse}
 .titulocal{
      font-family:Verdana, Geneva, sans-serif;
      font-weight:bolder;
-     font-size:10px;
+     font-size:8px;
      background-color:#ccc;
 }
 .subtitulocal{
      font-family:Verdana, Geneva, sans-serif; 
-     font-size:9px; 
+     font-size:7px; 
 }
 </style>
- <table width="540" border="0" cellpadding="0" cellspacing="4">
-  <tr>
-    <td colspan="4" align="center"><label class="escuela">'.$alumno->nombreplantel.'</label></td> 
+ <table width="580" border="0" cellpadding="0" cellspacing="4">
+   <tr>
+    <td width="101" align="left"><img   class="imgtitle" src="' . $logo2 . '" /></td>
+    <td colspan="2" align="center">
+            <label class="nombreplantel">'.$datelle_alumno[0]->nombreplantel.'</label><br>
+            <label class="txtn">INCORPORADA A LA UNIVERSIDAD DE GUANAJUATO SEGÚN EL OFICIO 14/ABRIL/1972</label><br>
+            <label class="direccion">'.$datelle_alumno[0]->direccion.'</label><br>
+            <label class="telefono">TELÉFONO: '.$datelle_alumno[0]->telefono.' EXT 1</label>
+    </td>
+    <td width="137" align="right"><img   class="imgtitle" src="' . $logo . '" /></td>
   </tr>
+   
   <tr>
-    <td colspan="4" align="center"><label class="horario">Kardex Escolar del Alumno</label></td> 
+    <td colspan="4" align="center"><label class="horario">KARDEX ESCOLAR</label></td> 
     </tr>
    <tr>
     <td align="center"  style="border-bottom:solid 1px #000000;"><label class="titulo">Matricula</label></td>
-    <td align="center"  style="border-bottom:solid 1px #000000;"><label class="titulo">Alumno</label></td>
+    <td align="center"  style="border-bottom:solid 1px #000000;"><label class="titulo">Alumno(a)</label></td>
     <td align="center"  style="border-bottom:solid 1px #000000;"><label class="titulo">Nivel Escolar</label></td>
     <td align="center"  style="border-bottom:solid 1px #000000;"><label class="titulo">Periodo Escolar</label></td>
   </tr>
@@ -442,7 +474,7 @@ tblcalificacion  {border-collapse:collapse}
     <td align="center"><label class="result">'.$alumno->matricula.'</label></td>
     <td align="center"><label class="result">'.$alumno->nombre.' '.$alumno->apellidop.' '.$alumno->apellidom.'</label></td>
     <td align="center"><label class="result">'.$grupop->nombrenivel.' '.$grupop->nombregrupo.'</label></td>
-    <td align="center"><label class="result">'.$grupop->mesinicio.' '.$grupop->yearinicio.' - '.$grupop->mesfin.' '.$grupop->yearfin.'</label></td>
+    <td align="center"><label class="result">'.$grupop->mesinicio.' - '.$grupop->mesfin.' '.$grupop->yearfin.'</label></td>
   </tr> 
 </table>
 <br><br>
@@ -484,8 +516,15 @@ tblcalificacion  {border-collapse:collapse}
 <br><br>
       <table border="0" width="531">
         <tr>
-            <td align="right" class="" >
-                Promedio: <strong>'.number_format($calificacion,2).'</strong>
+            <td align="right" class="promedio" >
+                Promedio: <strong>';
+                if(isset($calificacion) && !empty($calificacion)){
+                   $tbl .= number_format($calificacion,2);
+                }else{
+                    $tbl .='<label>0.0</label>';
+                }
+                
+                $tbl .= '</strong>
             </td>
         </tr>
       </table>
@@ -496,7 +535,7 @@ tblcalificacion  {border-collapse:collapse}
     ob_end_clean();
 
 
-        $pdf->Output('My-File-Name.pdf', 'I');
+        $pdf->Output('Kardex de Calificaciones', 'I');
 
     }
  
@@ -849,6 +888,7 @@ tblcalificacion  {border-collapse:collapse}
 </head>
 <body>
 <table width="540" border="0" cellpadding="1" cellspacing="4">
+
   <tr>
     <td colspan="4" align="center"><label class="escuela">'.$alumno->nombreplantel.'</label></td> 
   </tr>
@@ -1173,8 +1213,10 @@ return $tabla;
 
   public function boleta($idhorario='',$idalumno = '',$idunidad = '')
   {
-      $logo = base_url() . '/assets/images/escuelas/logo.jpeg';
-       $logo2 = base_url() . '/assets/images/escuelas/ugto.png';
+       $detalle_logo = $this->alumno->logo($this->session->idplantel);
+        $logo = base_url() . '/assets/images/escuelas/'.$detalle_logo[0]->logoplantel;
+        $logo2 = base_url() . '/assets/images/escuelas/'.$detalle_logo[0]->logosegundo;
+        
        $datelle_alumno = $this->alumno->showAllMateriasAlumno($idalumno);
        $materias = $this->alumno->showAllMaterias($idhorario);
        $detalle_unidad = $this->alumno->detalleUnidad($idunidad);

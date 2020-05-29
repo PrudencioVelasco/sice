@@ -61,8 +61,7 @@ class Welcome extends CI_Controller {
 		$password = $_POST['password'];
  
 		$result = $this->usuario->loginDocente($correo); 
-		if($result){
-			var_dump($result);
+		if($result){ 
 			if (password_verify($password, $result->password)) {
 			 $this->session->set_userdata([
                     'user_id' => $result->id,
@@ -85,14 +84,13 @@ class Welcome extends CI_Controller {
 	}
 		public function tutor()
 	{
-		 echo "string";
+		 
 		$this->load->library('session'); 
-		echo $correo = $_POST['correo'];
-		echo $password = $_POST['password'];
+		  $correo = $_POST['correo'];
+		  $password = $_POST['password'];
  
 		$result = $this->usuario->loginTutor($correo); 
-		if($result){
-			var_dump($result);
+		if($result){ 
 			if (password_verify($password, $result->password)) {
 			 $this->session->set_userdata([
                     'user_id' => $result->id,

@@ -342,7 +342,7 @@
                                             </button>
                                             <ul class="dropdown-menu">  
                                                 <li><a href="" ><i class="fa fa-print" style="color:blue;"></i> Imprimir</a></li> 
-                                                <li><a href=""> <i class="fa fa-trash" style="color: red;"></i> Eliminar</a></li>  
+                                                <li><a href="#"  @click="eliminarModalP = true; selectPrimerPago(pago)"> <i class="fa fa-trash" style="color: red;"></i> Eliminar</a></li>  
                                                
                                               
                                             </ul>

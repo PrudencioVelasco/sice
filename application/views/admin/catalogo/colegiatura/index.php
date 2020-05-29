@@ -52,7 +52,7 @@
                                                 <tr v-for="row in colegiaturas" class="table-default">
                                                     <td>{{row.nombrenivel}}</td>
                                                      <td>{{row.concepto}}</td>
-                                                    <td>{{row.descuento}}</td> 
+                                                    <td><strong> ${{row.descuento}}</strong></td> 
                                                     <td>
                                                         <span v-if="row.activo==1" class="label label-success">Activo</span>
                                                         <span v-else class="label label-danger">Inactivo</span>
@@ -64,6 +64,9 @@
                                                         <button type="button" class="btn btn-icons btn-success btn-sm" @click="editModal = true; selectColegiatura(row)" title="Modificar Datos"> <i class="fa fa-edit" aria-hidden="true"></i>
                                                           Editar
                                                         </button> 
+                                                           <button type="button" class="btn btn-icons btn-danger btn-sm" @click="deleteColegiatura(row.idcolegiatura)" title="Eliminar Datos"> <i class="fa fa-trash" aria-hidden="true"></i>
+                                                          Eliminar
+                                                        </button>  
                                                       </td>
                                                 </tr>
                                                 <tr v-if="emptyResult">

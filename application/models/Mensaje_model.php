@@ -29,8 +29,11 @@ class Mensaje_model extends CI_Model {
         }
     } 
     public function showAllMensajeAlumno($idhorario = '') {
-        $this->db->select("m.mensaje, DATE_FORMAT(m.fecharegistro,'%d/%m/%Y') as fecha");
+        $this->db->select("ma.nombreclase,m.mensaje, DATE_FORMAT(m.fecharegistro,'%d/%m/%Y') as fecha");
         $this->db->from('tblmensaje m'); 
+        $this->db->join('tblhorario_detalle hd','hd.idhorariodetalle = m.idhorariodetalle');
+        $this->db->join('tblprofesor_materia pm','hd.idmateria = pm.idprofesormateria');
+        $this->db->join('tblmateria ma','pm.idmateria = ma.idmateria');
         if(isset($idhorario) && !empty($idhorario)){
         $this->db->where('m.idhorario',$idhorario);
         } 

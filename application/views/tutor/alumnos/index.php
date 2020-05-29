@@ -43,7 +43,7 @@
                                                                     <li><a href="<?php echo site_url('Tutores/boletas/'.$value->idalumno) ?>"  title="Examen"><i class="fa fa-check-circle"></i> Examen</a></li>
                                                                     <li><a href="<?php echo site_url('Tutores/asistencias/'.$value->idalumno) ?>"  title="Asistencias"><i class="fa fa-check "></i> Asistencia</a></li>
                                                                      <li><a href="<?php echo site_url('Tutores/mensajes/'.$value->idalumno.'/'.$value->idnivelestudio.'/'.$value->idperiodo) ?>"  title="Mensajes"><i class="fa fa-envelope "></i> Mensajes</a></li>
-                                                                      <li><a href="<?php echo site_url('Tutores/asistencias/'.$value->idalumno.'/'.$value->idnivelestudio.'/'.$value->idperiodo) ?>"  title="Tareas"><i class="fa fa-book  "></i> Tarea</a></li>
+                                                                      <li><a href="<?php echo site_url('Tutores/tareas/'.$value->idalumno.'/'.$value->idnivelestudio.'/'.$value->idperiodo) ?>"  title="Tareas"><i class="fa fa-book  "></i> Tarea</a></li>
                                                                     <li><a href="<?php echo site_url('Tutores/pagos/'.$value->idalumno.'/'.$value->idnivelestudio.'/'.$value->idperiodo) ?>"    title="Pagos"><i class="fa fa-paypal "></i> Pagos</a></li>  
                                                                 </ul>
                                                             </div>

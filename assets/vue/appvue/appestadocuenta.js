@@ -44,9 +44,11 @@ var ve = new Vue({
     data:{
         url: my_var_1,
         idalumno: my_var_2,
+        idperiodo:'',
         addModal: false,
         addPagoModal: false,
         editModal:false,
+        eliminarModalP: false,
         mostrar:false,
         noresultado:false,
         noresultadoinicio:false,
@@ -79,6 +81,10 @@ var ve = new Vue({
             autorizacion: '',
             idformapago: '',
         },
+        eliminarPrimerCobro: {
+            usuario: '',
+            password: '',
+        },
         newCobro:{ 
             idformapago:'', 
             autorizacion:'',
@@ -88,6 +94,7 @@ var ve = new Vue({
             idamortizacion:'', 
             msgerror:''},
         chooseSolicitud:{},
+        choosePrimerPago: {},
         choosePeriodo:{},
         formValidate:[],
         idperiodobuscado:'',
@@ -103,6 +110,7 @@ var ve = new Vue({
     methods:{
       searchSolicitud() { 
              this.mostrar = true; 
+             ve.idperiodo = this.$refs.idperiodo.value;
              axios.get(this.url+"EstadoCuenta/estadoCuenta/", {
                  params: {
                      idperiodo: this.$refs.idperiodo.value,
@@ -140,20 +148,18 @@ var ve = new Vue({
           //then(response => (this.solicitudes = response.data))  
 
          },
-         estadocuentaAll(idperiodo){
+         estadocuentaAll(idperiodo){ 
              console.log(idperiodo);
-             console.log(ve.chooseSolicitud.idperiodo);
-             console.log(this.$refs.idperiodo.value);
              axios.get(this.url+"EstadoCuenta/estadoCuenta/", {
                  params: {
-                     idperiodo: this.$refs.idperiodo.value,
+                     idperiodo: ve.idperiodo,
                      idalumno: my_var_2
                  }
              }).then(response => (this.solicitudes = response.data));
 
              axios.get(this.url + "EstadoCuenta/pagosInicio/", {
                  params: {
-                     idperiodo: this.$refs.idperiodo.value,
+                     idperiodo: ve.idperiodo,
                      idalumno: my_var_2
                  }
              }).then(function (response) {
@@ -197,6 +203,10 @@ var ve = new Vue({
              ve.chooseSolicitud = solicitud; 
 
          },
+        selectPrimerPago(row) {
+            ve.choosePrimerPago = row;
+
+        },
         formData(obj){
             var formData = new FormData();
               for ( var key in obj ) {
@@ -251,6 +261,26 @@ var ve = new Vue({
                 }
             })
         },
+        eliminarPagoInicio(){
+            var formData = v.formData(ve.eliminarPrimerCobro);
+            formData.append('idpago', ve.choosePrimerPago.idpago);
+            axios.post(this.url + "EstadoCuenta/eliminarPrimerCobro", formData).then(function (response) {
+                if (response.data.error) {
+                    ve.formValidate = response.data.msg;
+                } else {
+                    swal({
+                        position: 'center',
+                        type: 'success',
+                        title: 'Exito!',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+
+                    ve.clearAll();
+                    ve.estadocuentaAll(ve.chooseSolicitud.idperiodo);
+                }
+            })
+        },
             addCobroInicio(){
             var formData = v.formData(ve.newCobroInicio); 
                 formData.append('idperiodobuscado', ve.idperiodobuscado);
@@ -279,6 +309,7 @@ var ve = new Vue({
             ve.formValidate = false;
             ve.addModal= false; 
             ve.addPagoModal = false;
+            ve.eliminarModalP = false;
             ve.addPagoColegiaturaModal = false;
             
             ve.newBuscarCiclo = {
@@ -286,6 +317,11 @@ var ve = new Vue({
                 idperiodo: '',
                 msgerror: ''
             },
+                ve.eliminarPrimerCobro = { 
+                    usuario: '',
+                    password: '',
+                    msgerror: ''
+                },
                 ve.newCobroInicio = {
                 idalumno: ve.my_var_2,
                 descuento: '',

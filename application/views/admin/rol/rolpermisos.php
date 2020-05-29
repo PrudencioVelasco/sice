@@ -38,9 +38,9 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     
-                                       <a  href="<?= base_url('/user/') ?>" class="btn btn-round btn-default">Usuarios</a>
-                                          <a  href="<?= base_url('/rol/') ?>" class="btn btn-round btn-default">Roles</a>
-                                         <a  href="<?= base_url('/permiso/') ?>" class="btn btn-round btn-default">Permisos</a>
+                                       <a  href="<?= base_url('/User/') ?>" class="btn btn-round btn-default">Usuarios</a>
+                                          <a  href="<?= base_url('/Rol/') ?>" class="btn btn-round btn-default">Roles</a>
+                                         <a  href="<?= base_url('/Permiso/') ?>" class="btn btn-round btn-default">Permisos</a>
                                        
                                 </div>
                                 <div class="col-md-6"></div>

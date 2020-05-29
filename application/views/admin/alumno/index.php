@@ -10,9 +10,7 @@
                   <h2><strong>ADMINISTRAR ALUMNOS</strong></h2> 
                   <div class="clearfix"></div>
                 </div>
-                <div class="x_content">
-
-                  <div class="row"> 
+                <div class="x_content">  
 
                      <div id="app">
                             <div class="container">
@@ -101,9 +99,7 @@
                         </div>
                     
 
-                  </div>
-
-                </div>
+                  </div> 
               </div>
             </div>
           </div>

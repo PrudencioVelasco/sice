@@ -44,7 +44,7 @@
                                         <ul class="dropdown-menu"> 
                                             <li><a href="<?php echo site_url('Aalumno/calificacion/'.$value->idhorario.'/'.$value->idhorariodetalle.'/'.$value->idmateria) ?>"><i class="fa fa-tasks"></i> Calificación</a></li> 
                                             <li><a href="<?php echo site_url('Aalumno/asistencia/'.$value->idhorario.'/'.$value->idhorariodetalle.'/'.$value->idmateria) ?> "><i class="fa fa-check"></i> Asistencia</a></li>
-                                            <li><a href="<?php echo site_url('Aalumno/tarea/'.$value->idhorario.'/'.$value->idhorariodetalle.'/'.$value->idmateria) ?>"><i class="fa fa-book"></i>  Tarea</a></li> 
+                                            <!--<li><a href="<?php //echo site_url('Aalumno/tarea/'.$value->idhorario.'/'.$value->idhorariodetalle.'/'.$value->idmateria) ?>"><i class="fa fa-book"></i>  Tarea</a></li>--> 
                                         </ul>
                                     </div>
                                 </div> 

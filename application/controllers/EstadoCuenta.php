@@ -12,6 +12,7 @@ class EstadoCuenta extends CI_Controller {
         $this->load->helper('url');
         $this->load->model('data_model'); 
          $this->load->model('EstadoCuenta_model','estadocuenta'); 
+         $this->load->model('user_model','usuario'); 
         $this->load->library('permission');
         $this->load->library('session');
 	}
@@ -69,6 +70,67 @@ public function pagosInicio()
          echo json_encode($result);
         }
    
+}
+
+public function eliminarPrimerCobro()
+{
+     $config = array(
+             array(
+                'field' => 'usuario',
+                'label' => 'Forma de Pago',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
+            ),
+             array(
+                'field' => 'password',
+                'label' => 'Forma de Pago',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
+            )
+            
+        );
+
+        $this->form_validation->set_rules($config);
+        if ($this->form_validation->run() == FALSE) {
+            $result['error'] = true;
+            $result['msg'] = array(
+                'usuario' => form_error('usuario'),
+                'password' => form_error('password')
+            );
+        } else {
+        $idpago = $this->input->post('idpago');
+        $usuario = $this->input->post('usuario');
+        $password = $this->input->post('password'); 
+        $detalle_usuario =  $this->usuario->validarUsuarioEliminar($usuario);
+        if($detalle_usuario){
+            if (password_verify($password, $detalle_usuario[0]->password)) {
+              
+              $data = array(
+                'eliminado'=>1
+              );
+              $this->estadocuenta->updatePagoInicio($idpago,$data);
+
+            }else{
+              $result['error'] = true;
+                $result['msg'] = array(
+                            'msgerror' => 'El Usuario o Contraseña no son validos.'
+                    );
+            }
+        } else{
+              $result['error'] = true;
+              $result['msg'] = array(
+                          'msgerror' => 'El Usuario o Contraseña no son validos.'
+                  );
+              
+        }
+  }
+  if(isset($result) && !empty($result)){
+         echo json_encode($result);
+        }
 }
   public function estadoCuenta()
   {

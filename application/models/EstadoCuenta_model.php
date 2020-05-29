@@ -79,11 +79,12 @@ public function showAllFormasPago() {
     }
 
 public function showAllPagosInicio($idalumno = '',$idperiodo = '') {
-        $this->db->select("pi.descuento, DATE_FORMAT(pi.fechapago,'%d/%m/%Y') as fechapago ,tp.nombretipopago,tp.idtipopago, pi.pagado, pi.autorizacion");
+        $this->db->select("pi.idpago, pi.descuento, DATE_FORMAT(pi.fechapago,'%d/%m/%Y') as fechapago ,tp.nombretipopago,tp.idtipopago, pi.pagado, pi.autorizacion");
         $this->db->from('tblpago_inicio pi'); 
         $this->db->join('tbltipo_pago tp ', ' tp.idtipopago = pi.idformapago');
         $this->db->where('pi.idalumno',$idalumno);
         $this->db->where('pi.idperiodo',$idperiodo);  
+         $this->db->where('pi.eliminado',0);  
          $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();
@@ -220,6 +221,29 @@ public function datosTablaAmortizacion($idamortizacion='')
     {
         $this->db->where('idamortizacion', $id);
         $this->db->update('tblamotizacion', $field);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+        
+    } 
+
+    public function updateEstadoCuenta($id, $field)
+    {
+        $this->db->where('idestadocuenta', $id);
+        $this->db->update('tblestado_cuenta', $field);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+        
+    } 
+      public function updatePagoInicio($id, $field)
+    {
+        $this->db->where('idpago', $id);
+        $this->db->update('tblpago_inicio', $field);
         if ($this->db->affected_rows() > 0) {
             return true;
         } else {

@@ -145,6 +145,7 @@ class Tutor_model extends CI_Model {
         $this->db->where('c.idnivelestudio', $idnivel);
         $this->db->where('c.idtipopagocol', $idtipo); 
         $this->db->where('c.activo', 1); 
+        $this->db->where('c.eliminado', 0); 
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();

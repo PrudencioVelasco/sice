@@ -37,21 +37,6 @@
             </div>
             <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
               <div class="tile-stats">
-                <div class="icon"><i class="fa fa-check-square-o"></i>
-                </div>
-                <div class="count">-</div>
-
-                <h3>Unidades</h3>
-                <p>Admin. unidades de examen.</p>
-              </div>
-            </div>
-          </div>
-
-
-
-           <div class="row top_tiles">
-            <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
-              <div class="tile-stats">
                 <div class="icon"><i class="fa fa-money"></i>
                 </div>
                 <div class="count">-</div>
@@ -60,38 +45,9 @@
                 <p>Admin. Colegiaturas</p>
               </div>
             </div>
-            <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
-              <div class="tile-stats">
-                <div class="icon"><i class="fa fa-inbox"></i>
-                </div>
-                <div class="count">-</div>
-
-                <h3>Corte de Caja</h3>
-                <p>Corte de Caja.</p>
-              </div>
-            </div>
-            <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
-              <div class="tile-stats">
-                <div class="icon"><i class="fa fa-book"></i>
-                </div>
-                <div class="count">-</div>
-
-                <h3><a href="<?= base_url('/Materia/') ?>">Materias</a></h3>
-                <p>Admin. Materias.</p>
-              </div>
-            </div>
-            <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
-              <div class="tile-stats">
-                <div class="icon"><i class="fa fa-check-square-o"></i>
-                </div>
-                <div class="count">-</div>
-
-                <h3>Unidades</h3>
-                <p>Admin. unidades de examen.</p>
-              </div>
-            </div>
           </div>
 
+ 
  
   
         </div>

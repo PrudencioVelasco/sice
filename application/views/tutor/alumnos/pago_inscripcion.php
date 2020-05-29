@@ -32,13 +32,13 @@
                        
                         <div class="" role="tabpanel" data-example-id="togglable-tabs">
                             <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-                            <li role="presentation" <?php if(isset($formapago) && !empty($formapago)){ if($formapago == 1){ echo 'class="active"';}else{} } ?> ><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-credit-card"></i> <strong>PAGO CON TARJETA</strong></a>
+                            <li role="presentation" <?php if(isset($formapago)) { if($formapago == 1){ echo 'class="active"';} } ?> ><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-credit-card"></i> <strong>PAGO CON TARJETA</strong></a>
                             </li>
-                            <li role="presentation" <?php if(isset($formapago) && !empty($formapago)){ if($formapago == 0){echo 'class="active"';}else{} } ?>><a href="#tab_content2" role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false"> <i class="fa fa-money"></i> <strong>PAGO EN EFECTIVO</strong></a>
+                            <li role="presentation" <?php if(isset($formapago)) { if($formapago == 0){ echo 'class="active"';} } ?>><a href="#tab_content2" role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false"> <i class="fa fa-money"></i> <strong>PAGO EN EFECTIVO</strong></a>
                             </li>  
                             </ul>
                             <div id="myTabContent" class="tab-content">
-                              <div role="tabpanel" <?php if(isset($formapago) && !empty($formapago)){ if($formapago == 1){ echo 'class="tab-pane fade active in"';}else{ echo 'class="tab-pane fade"';} } ?>  id="tab_content1" aria-labelledby="home-tab">
+                               <div role="tabpanel" <?php if(isset($formapago)){ if($formapago == 1){ echo 'class="tab-pane fade active in"';}else{echo 'class="tab-pane fade"';}} ?>  id="tab_content1" aria-labelledby="home-tab">
                                     <img align="right" style="padding-right: 5px" src="<?php echo base_url(); ?>/assets/images/visa.png" alt="Visa">
                                     <img align="right" style="padding-right: 5px" src="<?php echo base_url(); ?>/assets/images/mastercard.png" alt="Mastercard">
                                     <img align="right" style="padding-right: 5px" src="<?php echo base_url(); ?>/assets/images/american-express.png" alt="Americ" >   
@@ -176,7 +176,7 @@
                             <button class="subscribe btn btn-primary btn-block" type="button" id="pay-button" > CONFIRMAR PAGO </button>
                         </form>
                             </div>
-                            <div role="tabpanel" <?php if(isset($formapago) && !empty($formapago)){ if($formapago == 0){echo 'class="tab-pane fade active in"';}else{ echo 'class="tab-pane fade"';} } ?>  id="tab_content2" aria-labelledby="profile-tab">
+                            <div role="tabpanel" <?php if(isset($formapago)){ if($formapago == 0){echo 'class="tab-pane fade active in"';}else{echo 'class="tab-pane fade"';} } ?>  id="tab_content2" aria-labelledby="profile-tab">
                                
                             <form method="post" action="<?php echo site_url('Tutores/pagotienda');?>">  
                             <label>Pasos para pagar en Tiendas</label> 

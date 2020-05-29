@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 date_default_timezone_set("America/Mexico_City");
-class Tutores extends CI_Controller {
+class Webhook extends CI_Controller {
  function __construct() {
         parent::__construct();
         $this->load->helper('url');
