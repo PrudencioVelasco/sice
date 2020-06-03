@@ -11,7 +11,7 @@
             <div class="col-md-12 col-sm-12 col-xs-12">
               <div class="x_panel">
                 <div class="x_title">
-                  <h2><strong>Administrar Permisos del Rol</strong></h2>
+                  <h2><strong>ADMINISTRAR PERMISOS</strong></h2>
                   
                   <div class="clearfix"></div>
                 </div>

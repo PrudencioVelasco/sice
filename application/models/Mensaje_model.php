@@ -29,7 +29,7 @@ class Mensaje_model extends CI_Model {
         }
     } 
     public function showAllMensajeAlumno($idhorario = '') {
-        $this->db->select("ma.nombreclase,m.mensaje, DATE_FORMAT(m.fecharegistro,'%d/%m/%Y') as fecha");
+        $this->db->select("m.idmensaje, ma.nombreclase,LEFT(m.mensaje, 90) as mensaje, DATE_FORMAT(m.fecharegistro,'%d/%m/%Y') as fecha");
         $this->db->from('tblmensaje m'); 
         $this->db->join('tblhorario_detalle hd','hd.idhorariodetalle = m.idhorariodetalle');
         $this->db->join('tblprofesor_materia pm','hd.idmateria = pm.idprofesormateria');
@@ -38,6 +38,38 @@ class Mensaje_model extends CI_Model {
         $this->db->where('m.idhorario',$idhorario);
         } 
         $this->db->where('m.eliminado',0);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    } 
+        public function detalleTarea($idtarea = '') {
+        $this->db->select("ma.nombreclase,t.tarea, DATE_FORMAT(t.fechaentrega,'%d/%m/%Y') as fecha");
+        $this->db->from('tbltarea t'); 
+        $this->db->join('tblhorario_detalle hd','hd.idhorariodetalle = t.idhorariodetalle');
+        $this->db->join('tblprofesor_materia pm','hd.idmateria = pm.idprofesormateria');
+        $this->db->join('tblmateria ma','pm.idmateria = ma.idmateria');
+        if(isset($idtarea) && !empty($idtarea)){
+        $this->db->where('t.idtarea',$idtarea);
+        }  
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    } 
+            public function detalleMensaje($idmensaje = '') {
+        $this->db->select("ma.nombreclase,t.mensaje, DATE_FORMAT(t.fecharegistro,'%d/%m/%Y') as fecha");
+        $this->db->from('tblmensaje t'); 
+        $this->db->join('tblhorario_detalle hd','hd.idhorariodetalle = t.idhorariodetalle');
+        $this->db->join('tblprofesor_materia pm','hd.idmateria = pm.idprofesormateria');
+        $this->db->join('tblmateria ma','pm.idmateria = ma.idmateria');
+        if(isset($idmensaje) && !empty($idmensaje)){
+        $this->db->where('t.idmensaje',$idmensaje);
+        }  
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();

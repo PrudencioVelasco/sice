@@ -78,6 +78,25 @@ public function showAllFormasPago() {
         }
     }
 
+
+    public function descuentoPagosInicio($idalumno = '',$idperiodo = '', $idtipo = '') {
+        $this->db->select("co.descuento, b.descuento as descuentobeca");
+        $this->db->from('tblcolegiatura co');  
+        $this->db->join('tblgrupo g ', ' g.idnivelestudio = co.idnivelestudio');
+        $this->db->join('tblalumno_grupo ag ', ' ag.idgrupo = g.idgrupo');
+        $this->db->join('tblbeca b ', 'b.idbeca = ag.idbeca');
+        $this->db->where('ag.idalumno',$idalumno);
+        $this->db->where('ag.idperiodo',$idperiodo);  
+        $this->db->where('co.activo',1);  
+         $this->db->where('co.idtipopagocol',$idtipo);  
+         $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+
 public function showAllPagosInicio($idalumno = '',$idperiodo = '') {
         $this->db->select("pi.idpago, pi.descuento, DATE_FORMAT(pi.fechapago,'%d/%m/%Y') as fechapago ,tp.nombretipopago,tp.idtipopago, pi.pagado, pi.autorizacion");
         $this->db->from('tblpago_inicio pi'); 

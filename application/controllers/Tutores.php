@@ -30,7 +30,8 @@ class Tutores extends CI_Controller {
  
 	public function index()
 	{ 
-
+       // $_SESSION['user_id'];
+        Permission::grant(uri_string());
 	    $this->load->view('tutor/header');
         $this->load->view('tutor/index');
         $this->load->view('tutor/footer');
@@ -38,6 +39,7 @@ class Tutores extends CI_Controller {
 	} 
     public function alumnos()
     {
+        Permission::grant(uri_string());
         $alumnos = $this->alumno->showAllAlumnosTutorActivos($this->session->idtutor);
         
         $data = array(
@@ -47,6 +49,207 @@ class Tutores extends CI_Controller {
         $this->load->view('tutor/alumnos/index',$data);
         $this->load->view('tutor/footer');
     }
+     public function boleta($idhorario='',$idalumno = '',$idunidad = '')
+  {
+      Permission::grant(uri_string());
+       $detalle_logo = $this->alumno->logo($this->session->idplantel);
+        $logo = base_url() . '/assets/images/escuelas/'.$detalle_logo[0]->logoplantel;
+        $logo2 = base_url() . '/assets/images/escuelas/'.$detalle_logo[0]->logosegundo;
+        
+       $datelle_alumno = $this->alumno->showAllMateriasAlumno($idalumno);
+       $materias = $this->alumno->showAllMaterias($idhorario);
+       $detalle_unidad = $this->alumno->detalleUnidad($idunidad);
+       $this->load->library('tcpdf');  
+        $hora = date("h:i:s a");
+        //$linkimge = base_url() . '/assets/images/woorilogo.png';
+        $fechaactual = date('d/m/Y');
+        $pdf = new Pdf('P', 'mm', 'A4', true, 'UTF-8', false);
+        $pdf->SetTitle('Horario de clases.');
+        $pdf->SetHeaderMargin(30);
+        $pdf->SetTopMargin(10);
+        $pdf->setFooterMargin(20);
+        $pdf->SetAutoPageBreak(true);
+        $pdf->SetAuthor('Author');
+        $pdf->SetDisplayMode('real', 'default');
+        $pdf->setPrintHeader(false);
+        $pdf->setPrintFooter(false);
+
+        $pdf->AddPage();
+
+        $tbl = '
+<style type="text/css">
+    .txtn{
+        font-size:7px;
+    }
+    .direccion{
+        font-size:8px;
+    }
+    .nombreplantel{
+        font-size:11px;
+        font-weight:bolder;
+    }
+    .telefono{
+          font-size:7px;
+    }
+    .boleta{
+         font-size:9px;
+         font-weight:bolder;
+    }
+     .periodo{
+         font-size:9px;
+         font-weight:bolder;
+    }
+    .txtgeneral{
+         font-size:8px;
+         font-weight:bolder; 
+    }
+    .txtnota{
+         font-size:6px;
+         font-weight:bolder; 
+    } 
+    .txtcalificacion{
+        font-size:10px;
+         font-weight:bolder; 
+    } 
+    .imgtitle{
+        width:55px;
+
+    }
+</style>
+<table width="610" border="0" cellpadding="2" cellspacing="0">
+  <tr>
+    <td width="101" align="center"><img   class="imgtitle" src="' . $logo2 . '" /></td>
+    <td colspan="2" align="center">
+            <label class="nombreplantel">'.$datelle_alumno[0]->nombreplantel.'</label><br>
+            <label class="txtn">INCORPORADA A LA UNIVERSIDAD DE GUANAJUATO SEGÚN EL OFICIO 14/ABRIL/1972</label><br>
+            <label class="direccion">'.$datelle_alumno[0]->direccion.'</label><br>
+            <label class="telefono">TELÉFONO: '.$datelle_alumno[0]->telefono.' EXT 1</label>
+    </td>
+    <td width="137" align="center"><img   class="imgtitle" src="' . $logo . '" /></td>
+  </tr>
+   <tr>
+    <td width="543" colspan="3" align="center"><label class="boleta">BOLETA DE CALIFICACIONES DEL '.$detalle_unidad[0]->nombreunidad.'</label></td>  
+  </tr>
+   <tr> 
+    <td width="543" colspan="3" align="center"><label class="periodo">PERIODO: '.$datelle_alumno[0]->mesinicio.' - '.$datelle_alumno[0]->mesfin.' DE '.$datelle_alumno[0]->yearfin.'</label></td> 
+  </tr>
+ <tr>
+    <td width="50" valign="bottom"  class="txtgeneral" >NOMBRE:</td>
+    <td width="300" valign="bottom" class="txtgeneral" style="border-bottom:solid 1px black;"> '.$datelle_alumno[0]->apellidop.' '.$datelle_alumno[0]->apellidom.' '.$datelle_alumno[0]->nombre.'</td>
+    <td width="60" valign="bottom" class="txtgeneral"> GRUPO:</td>
+    <td width="130" valign="bottom" class="txtgeneral" style="border-bottom:solid 1px black;">'.$datelle_alumno[0]->nombrenivel.' '.$datelle_alumno[0]->nombregrupo.'</td>
+  </tr>
+  <tr>
+   <td width="60" valign="bottom"  class="txtgeneral" >INSCRIPCIÓN:</td>
+    <td width="290" valign="bottom" class="txtgeneral" style="border-bottom:solid 1px black;"> PRIMERA</td>
+    <td width="60" valign="bottom" class="txtgeneral"> NUA:</td>
+    <td width="130" valign="bottom" class="txtgeneral" style="border-bottom:solid 1px black;">'.$datelle_alumno[0]->matricula.'</td>
+  </tr>
+<tr>
+   <td width="60" colspan="4" ></td> 
+  </tr>
+    <tr >
+   <td width="60" style="border:solid 1px black; background-color:#ccc;" valign="bottom" align="center"  class="txtgeneral" >NUM</td>
+    <td width="290" style="border:solid 1px black; background-color:#ccc;" valign="bottom"  align="center" class="txtgeneral">MATERIA</td>
+    <td width="60" style="border:solid 1px black; background-color:#ccc;" valign="bottom"  align="center" class="txtgeneral">FALTAS</td>
+    <td width="130"style="border:solid 1px black; background-color:#ccc;" valign="bottom"  align="center" class="txtgeneral">CALIFICACIÓN</td>
+  </tr>
+  ';
+  if(isset($materias) && !empty($materias)){
+    $numero = 1;
+    $total_materia = 0;
+    $total_calificacion = 0;
+    $promedio_final = 0;
+    $total_reprobadas = 0;
+    $total_aprovadas = 0;
+  foreach ($materias as $row) { 
+    $total_materia = $total_materia + 1;
+    $idhorariodetalle = $row->idhorariodetalle;
+    $calificacion = $this->alumno->obtenerCalificacionMateria($idhorariodetalle,$idalumno,$idunidad);
+     $asistencia = $this->alumno->obtenerAsistenciaMateria($idhorariodetalle,$idalumno,$idunidad);
+    $tbl .=' <tr >
+           <td width="60" style="border:solid 1px black;" valign="bottom" align="center"  class="txtgeneral" >'.$numero++.'</td>
+            <td width="290" style="border:solid 1px black;" valign="bottom" class="txtgeneral">'.$row->nombreclase.'</td>
+            <td width="60" style="border:solid 1px black;" valign="bottom"  align="center" class="txtgeneral">';
+                 if($asistencia != FALSE){
+                    $total_falta = 0;
+                        foreach ($asistencia as  $value) {
+                           $total_falta = $total_falta + 1;
+                        }
+                    $tbl .= '<label>'.$total_falta.'</label>';
+                    }else{
+                        $tbl .= '0';
+                    }
+            $tbl .= '</td>
+            <td width="130"style="border:solid 1px black;" align="center" valign="bottom" class="txtgeneral">';
+            if($calificacion != FALSE){
+                $total_calificacion = $total_calificacion + $calificacion->calificacion;
+                if($calificacion->calificacion < $this->promedio_minimo){
+                    $total_reprobadas = $total_reprobadas + 1;
+                     $tbl .= '<label style="color:red;">'.$calificacion->calificacion.'<label>';
+                }else{
+                    $total_aprovadas= $total_aprovadas + 1;
+                     $tbl .= '<label>'.$calificacion->calificacion.'</label>';
+                }
+            }else{
+                $tbl .= 'S/C';
+            }
+           $tbl .='</td>
+          </tr>';
+  }
+  $promedio_final = $total_calificacion / $total_materia;
+}
+$tbl .='<tr >
+   <td width="60" style="" valign="bottom" align="center"  class="txtgeneral" ></td>
+    <td width="290" style="" valign="bottom"  align="center" class="txtgeneral"></td>
+    <td width="60" style="border:solid 1px black; background-color:#ccc;" valign="bottom"  align="center" class="txtgeneral">PROMEDIO:</td>
+    <td width="130"style="border:solid 1px black; background-color:#ccc;" valign="bottom"  align="center" class="txtcalificacion">'.number_format($promedio_final,2).'</td>
+  </tr>
+  <tr >
+   <td width="60" style="" valign="bottom" align="center"  class="txtgeneral" ></td>
+    <td width="290" style="" valign="bottom"  align="center" class="txtgeneral"></td>
+    <td width="60"  valign="bottom"  align="center" class="txtgeneral"></td>
+    <td width="130" valign="bottom"  align="center" class="txtgeneral"></td>
+  </tr>
+  <tr >
+   <td width="60" style="" valign="bottom" align="center"  class="txtgeneral" ></td>
+    <td width="290" style="" valign="bottom"  align="center" class="txtgeneral"></td>
+    <td width="60" class="txtgeneral"></td>
+    <td width="130"style="" valign="bottom"  align="right" class="txtgeneral">APROVADAS: '.$total_aprovadas.'</td>
+  </tr>
+   <tr >
+   <td width="60" style="" valign="bottom" align="center"  class="txtgeneral"  ></td>
+    <td width="290" style="" valign="bottom"  align="center" style="border-bottom:solid 2px black" class="txtgeneral"></td>
+    <td width="60" class="txtgeneral" ></td>
+    <td width="130"style="" valign="bottom"  align="right" class="txtgeneral">REPROVADAS: '.$total_reprobadas.'</td>
+  </tr>
+   <tr >
+   <td width="60" style="" valign="bottom" align="center"  class="txtgeneral"  ></td>
+    <td width="290" style="" valign="bottom"  align="center" style="" class="txtgeneral">LRI.MARÍA ELENA DURÁN HERNÁNDEZ</td> 
+    <td width="190"  colspan= "2"  style="" valign="bottom"  align="center" class="txtgeneral"> *Sin validez oficial </td>
+  </tr>
+  <tr > 
+    <td width="540"  colspan= "4"  style="" valign="bottom"  align="left" class="txtnota">   </td>
+  </tr>
+  <tr > 
+    <td width="540"  colspan= "4"  style="" valign="bottom"  align="left" class="txtnota">  </td>
+  </tr>
+  <tr > 
+    <td width="540"  colspan= "4"  style="" valign="bottom"  align="left" class="txtnota"> NOTA: AC = ACREDITADO, NA= NO ACREDITADO, MÍNIMA APROVATORIA = 7.0 </td>
+  </tr>
+  ';
+$tbl .='</table>
+ 
+
+      ';
+
+        $pdf->writeHTML($tbl, true, false, false, false, '');
+
+    ob_end_clean();
+
+
+        $pdf->Output('My-File-Name.pdf', 'I');
+  }
     public function horario($idalumno = '')
     {
        $detalle = $this->alumno->showAllMateriasAlumno($idalumno);
@@ -110,6 +313,7 @@ class Tutores extends CI_Controller {
     }
      public function boletas($idalumno = '')
     {
+        Permission::grant(uri_string());
         if(isset($idalumno) && !empty($idalumno)){
         $detalle = $this->alumno->showAllMateriasAlumno($idalumno);
          if(isset( $detalle[0]->idhorario) && !empty( $detalle[0]->idhorario)){
@@ -160,6 +364,7 @@ class Tutores extends CI_Controller {
     }
     public function materias($idalumno='')
     {
+        Permission::grant(uri_string());
         $materias = $this->alumno->showAllMateriasAlumno($idalumno);
         $alumno = $this->alumno->detalleAlumno($idalumno);
          $data = array(
@@ -174,6 +379,7 @@ class Tutores extends CI_Controller {
    
     public function examen($idhorario='',$idhorariodetalle = '',$idalumno = '')
     {
+        Permission::grant(uri_string());
       $unidades =  $this->grupo->unidades($this->session->idplantel);
       $alumns = $this->grupo->alumnosGrupo($idhorario);
       $detalle = $this->grupo->detalleClase($idhorariodetalle);
@@ -195,6 +401,7 @@ class Tutores extends CI_Controller {
 
     }
     public function tareas($idalumno = '',$idnivelestudio = '',$idperiodo = ''){
+        Permission::grant(uri_string());
         if((isset($idalumno) && !empty($idalumno)) && (isset($idperiodo) && !empty($idperiodo))){
             $detalle = $this->alumno->showAllMateriasAlumno($idalumno);
             if(isset($detalle[0]->idhorario) && !empty($detalle[0]->idhorario)){
@@ -226,6 +433,7 @@ class Tutores extends CI_Controller {
  
      public function asistencias($idalumno='')
     {
+        Permission::grant(uri_string());
         if(isset($idalumno) && !empty($idalumno)){
        $detalle = $this->alumno->showAllMateriasAlumno($idalumno);
        if(isset($detalle[0]->idhorario) && !empty($detalle[0]->idhorario)){
@@ -273,7 +481,7 @@ class Tutores extends CI_Controller {
 
      public function obetnerAsistencia($idhorario,$fechainicio,$fechafin,$idhorariodetalle,$idalumno)
     { 
-        
+        Permission::grant(uri_string());
        //  $alumns = $this->grupo->alumnosGrupo($idhorario);
          $tabla = "";  
          $materias = $this->alumno->showAllMaterias($idhorario); 
@@ -351,6 +559,7 @@ return $tabla;
 
       public function obetnerAsistenciaAlu()
     { 
+        Permission::grant(uri_string());
         $idhorario = $this->input->post('idhorario'); 
         $idhorariodetalle = $this->input->post('idhorariodetalle');
         $fechainicio = $this->input->post('fechainicio');
@@ -446,6 +655,7 @@ function decode($string)
 } 
     public function pagos($idalumno = '',$idnivel = '',$idperiodo = '')
     { 
+        Permission::grant(uri_string());
         $this->encryption->initialize(array('driver' => 'openssl'));
         if((isset($idalumno) && !empty($idalumno)) && (isset($idnivel) && !empty($idnivel)) && (isset($idperiodo) && !empty($idperiodo))){
         $pago_inicio = $this->alumno->showAllPagoInscripcion($idalumno,$idperiodo); 
@@ -468,6 +678,7 @@ function decode($string)
     }
     public function pagoi($idalumno = '',$idperiodo = '',$idnivel = '',$tipo = '')
     {
+        Permission::grant(uri_string());
          $idalumno = $this->decode($idalumno);
           $idperiodo = $this->decode($idperiodo);
            $idnivel = $this->decode($idnivel); 
@@ -516,6 +727,7 @@ function decode($string)
     }
      public function pagoc($idalumno = '',$idperiodo = '',$idnivel = '',$tipo = '')
     {
+        Permission::grant(uri_string());
          $idalumno = $this->decode($idalumno);
           $idperiodo = $this->decode($idperiodo);
            $idnivel = $this->decode($idnivel); 
@@ -612,6 +824,7 @@ function decode($string)
     
     public function pagotarjeta()
     {
+        Permission::grant(uri_string());
         $idperiodo = $this->decode($this->input->post('periodo'));
         $idalumno = $this->decode($this->input->post('alumno'));
         $idnivel = $this->decode($this->input->post('nivel'));
@@ -841,6 +1054,7 @@ function decode($string)
     }
      public function pagotarjetac()
     {
+        Permission::grant(uri_string());
         $idperiodo = $this->decode($this->input->post('periodo'));
         $idalumno = $this->decode($this->input->post('alumno'));
         $idnivel = $this->decode($this->input->post('nivel'));
@@ -1109,6 +1323,7 @@ function decode($string)
  
  public function pagotienda()
  {
+     Permission::grant(uri_string());
         $idperiodo = $this->decode($this->input->post('periodo'));
         $idalumno = $this->decode($this->input->post('alumno'));
         $idnivel = $this->decode($this->input->post('nivel'));
@@ -1331,6 +1546,7 @@ function decode($string)
  }
  public function pagotiendac()
  {
+     Permission::grant(uri_string());
         $idperiodo = $this->decode($this->input->post('periodo'));
         $idalumno = $this->decode($this->input->post('alumno'));
         $idnivel = $this->decode($this->input->post('nivel'));
@@ -1591,6 +1807,7 @@ function decode($string)
  }
     public function kardex()
     {
+        Permission::grant(uri_string());
         $alumnos = $this->alumno->showAllAlumnosTutor($this->session->idtutor);
         $data = array(
             'alumnos'=>$alumnos
@@ -1602,6 +1819,7 @@ function decode($string)
     }
     public function detalle($idalumno = '')
     {
+        Permission::grant(uri_string());
          $kardex = $this->alumno->allKardex($idalumno);
          $detalle_alumno = $this->alumno->showAllAlumnoId($idalumno);
          
@@ -1645,10 +1863,271 @@ function decode($string)
         $this->load->view('tutor/alumnos/kardex',$data);
         $this->load->view('tutor/footer');
     }
+     public function historial($idhorario = '',$idalumno = '')
+    {
+        Permission::grant(uri_string());
+        if((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno))){
+        $calificacion = "";
+        $tabla = $this->obtenerCalificacion($idhorario,$idalumno);
+        $datosalumno = $this->alumno->showAllAlumnoId($idalumno);
+        $datoshorario = $this->horario->showNivelGrupo($idhorario);
+        $materias = $this->alumno->showAllMaterias($idhorario);
+        $unidades =  $this->grupo->unidades($this->session->idplantel);
+        $total_materia = 0;
+        if ($materias != FALSE) { 
+            foreach ($materias as $row) {
+                # code...
+                $total_materia = $total_materia + 1;
+            }
+        } 
+        $datoscalifiacacion = $this->horario->calificacionGeneralAlumno($idhorario,$idalumno);
+         if($datoscalifiacacion != FALSE && $total_materia > 0){
+            $calificacion= $datoscalifiacacion->calificaciongeneral / $total_materia;
+         }
+        # code...
+       // printf($tabla);
+
+          $data = array(
+            'idhorario'=>$idhorario,
+            'idalumno'=>$idalumno,
+            'tabla'=>$tabla,
+            'datosalumno'=>$datosalumno,
+            'datoshorario'=>$datoshorario,
+            'calificacion'=>$calificacion,
+            'unidades'=>$unidades
+        );
+        $this->load->view('tutor/header');
+        $this->load->view('tutor/alumnos/kardex2',$data);
+        $this->load->view('tutor/footer');
+    }else{
+        $data = array(
+            'heading'=>'Error',
+            'message'=>'Error intente mas tarde.'
+        );
+         $this->load->view('errors/html/error_general',$data);
+    }
+
+    }
+     public function horario2($idhorario,$idalumno)
+    {
+        # code...
+        Permission::grant(uri_string());
+        //$tabla = $this->obtenerCalificacion($idhorario);
+        $data = array(
+            'idhorario'=>$idhorario,
+            'idalumno'=>$idalumno
+        ); 
+        $this->load->view('tutor/header');
+        $this->load->view('tutor/alumnos/horario2',$data);
+        $this->load->view('tutor/footer');
+    }
+        public function imprimirkardex($idhorario='',$idalumno = '')
+    {
+        Permission::grant(uri_string());
+        $alumno = $this->alumno->detalleAlumno($idalumno);
+        $grupop = $this->horario->showNivelGrupo($idhorario);
+        $unidades =  $this->grupo->unidades($this->session->idplantel);
+        $materias = $this->alumno->showAllMaterias($idhorario);
+        $detalle_logo = $this->alumno->logo($this->session->idplantel);
+        $logo = base_url() . '/assets/images/escuelas/'.$detalle_logo[0]->logoplantel;
+        $logo2 = base_url() . '/assets/images/escuelas/'.$detalle_logo[0]->logosegundo;
+        $total_unidades = 0;
+        $calificacion = "";   
+        $materias = $this->alumno->showAllMaterias($idhorario);
+        $total_materia = 0;
+        if ($materias != FALSE) { 
+            foreach ($materias as $row) {
+                # code...
+                $total_materia = $total_materia + 1;
+            }
+        } 
+         if ($unidades != FALSE) { 
+            foreach ($unidades as $row) {
+                # code...
+                $total_unidades = $total_unidades + 1;
+            }
+        } 
+        $datoscalifiacacion = $this->horario->calificacionGeneralAlumno($idhorario,$idalumno);
+         if($datoscalifiacacion != FALSE && $total_materia > 0){
+            $calificacion= ($datoscalifiacacion->calificaciongeneral / $total_unidades) / $total_materia;
+         }
+
+
+       $this->load->library('tcpdf');  
+        $hora = date("h:i:s a");
+        //$linkimge = base_url() . '/assets/images/woorilogo.png';
+      
+       $datelle_alumno = $this->alumno->showAllMateriasAlumno($idalumno);
+        $fechaactual = date('d/m/Y');
+        $pdf = new Pdf('P', 'mm', 'A4', true, 'UTF-8', false);
+        $pdf->SetTitle('Horario de clases.');
+        $pdf->SetHeaderMargin(30);
+        $pdf->SetTopMargin(10);
+        $pdf->setFooterMargin(20);
+        $pdf->SetAutoPageBreak(true);
+        $pdf->SetAuthor('Author');
+        $pdf->SetDisplayMode('real', 'default');
+        $pdf->setPrintHeader(false);
+        $pdf->setPrintFooter(false);
+
+        $pdf->AddPage();
+
+        $tbl = '
+<style type="text/css">
+.titulodias{font-size:9px; font-weight:bold;}
+.cajon{
+    font-size:9px; 
+    font-weight:bold;  
+    border-bottom:solid 1px black;  
+    border-left:solid 1px black;
+     border-right:solid 1px black;  
+      padding:900px 20px 20px 20px;
+}  
+ .txtn{
+        font-size:6px;
+    }
+    .direccion{
+        font-size:6px;
+    }
+.escuela{
+      font-size:12px; 
+    font-weight:bold;
+}
+.horario{
+      font-size:10px; 
+    font-weight:bold;
+}
+.titulo{
+      font-size:8px; 
+    font-weight:bold;
+}
+.result{
+      font-size:8px; 
+    font-weight:bold;
+} 
+    .nombreplantel{
+        font-size:11px;
+        font-weight:bolder;
+    }
+    .telefono{
+          font-size:6px;
+    }
+ .imgtitle{
+        width:55px;
+
+    }
+    .promedio{
+           font-size:10px;
+    }
+.tblcalificacion  td 
+                {
+                    border:0px  solid black;
+                }
+tblcalificacion  {border-collapse:collapse}
+.titulocal{
+     font-family:Verdana, Geneva, sans-serif;
+     font-weight:bolder;
+     font-size:8px;
+     background-color:#ccc;
+}
+.subtitulocal{
+     font-family:Verdana, Geneva, sans-serif; 
+     font-size:7px; 
+}
+</style>
+ <table width="580" border="0" cellpadding="0" cellspacing="4">
+   <tr>
+    <td width="101" align="left"><img   class="imgtitle" src="' . $logo2 . '" /></td>
+    <td colspan="2" align="center">
+            <label class="nombreplantel">'.$datelle_alumno[0]->nombreplantel.'</label><br>
+            <label class="txtn">INCORPORADA A LA UNIVERSIDAD DE GUANAJUATO SEGÚN EL OFICIO 14/ABRIL/1972</label><br>
+            <label class="direccion">'.$datelle_alumno[0]->direccion.'</label><br>
+            <label class="telefono">TELÉFONO: '.$datelle_alumno[0]->telefono.' EXT 1</label>
+    </td>
+    <td width="137" align="right"><img   class="imgtitle" src="' . $logo . '" /></td>
+  </tr>
+   
+  <tr>
+    <td colspan="4" align="center"><label class="horario">KARDEX ESCOLAR</label></td> 
+    </tr>
+   <tr>
+    <td align="center"  style="border-bottom:solid 1px #000000;"><label class="titulo">Matricula</label></td>
+    <td align="center"  style="border-bottom:solid 1px #000000;"><label class="titulo">Alumno(a)</label></td>
+    <td align="center"  style="border-bottom:solid 1px #000000;"><label class="titulo">Nivel Escolar</label></td>
+    <td align="center"  style="border-bottom:solid 1px #000000;"><label class="titulo">Periodo Escolar</label></td>
+  </tr>
+  <tr>
+    <td align="center"><label class="result">'.$alumno->matricula.'</label></td>
+    <td align="center"><label class="result">'.$alumno->nombre.' '.$alumno->apellidop.' '.$alumno->apellidom.'</label></td>
+    <td align="center"><label class="result">'.$grupop->nombrenivel.' '.$grupop->nombregrupo.'</label></td>
+    <td align="center"><label class="result">'.$grupop->mesinicio.' - '.$grupop->mesfin.' '.$grupop->yearfin.'</label></td>
+  </tr> 
+</table>
+<br><br>
+ ';
+ $tbl .= '<table class="tblcalificacion" cellpadding="2"  >
+      <tr>
+      <td width="30" class="titulocal">#</td>
+      <td width="180" class="titulocal">MATERIA</td>';
+       foreach($unidades as $block):
+        $tbl .= '<td class="titulocal">'.$block->nombreunidad.'</td>';
+       endforeach; 
+
+      $tbl .= '</tr>';
+      $c = 1;
+      foreach($materias as $row){
+        //$alumn = $al->getAlumn();
+      
+        $tbl .= '<tr>
+        <td width="30" class="subtitulocal">'.$c++.'</td>
+        <td width="180" class="subtitulocal">'.$row->nombreclase.'</td>';
+      foreach($unidades as $block):
+      $val = $this->grupo->obtenerCalificacion($idalumno, $block->idunidad, $row->idhorariodetalle);
+      //var_dump($val);
+        $tbl .= '<td class="subtitulocal">';
+        if($val != false ){ 
+          $tbl .='<label>'.$val->calificacion.'</label>'; 
+        }else{
+           $tbl .='<label>No registrado</label>';
+        } 
+      $tbl .= '</td>';
+      endforeach;
+
+        $tbl .= '</tr>';
+      
+
+      }
+      $tbl .= '</table>';
+      $tbl .= '
+<br><br>
+      <table border="0" width="531">
+        <tr>
+            <td align="right" class="promedio" >
+                Promedio: <strong>';
+                if(isset($calificacion) && !empty($calificacion)){
+                   $tbl .= number_format($calificacion,2);
+                }else{
+                    $tbl .='<label>0.0</label>';
+                }
+                
+                $tbl .= '</strong>
+            </td>
+        </tr>
+      </table>
+      ';
+
+        $pdf->writeHTML($tbl, true, false, false, false, '');
+
+    ob_end_clean();
+
+
+        $pdf->Output('Kardex de Calificaciones', 'I');
+
+    }
 
     public function mensajes($idalumno = '',$idnivel = '',$idperiodo = '')
     {
-        
+        Permission::grant(uri_string());
     $detalle = $this->alumno->showAllMateriasAlumno($idalumno);
        $idhorario = '';
        if(isset($detalle[0]->idhorario) && !empty($detalle[0]->idhorario)){

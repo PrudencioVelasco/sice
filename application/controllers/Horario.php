@@ -24,7 +24,7 @@ class Horario extends CI_Controller {
 		$this->load->view('admin/footer');
 	}
     public function searchHorario() {
-        //Permission::grant(uri_string());
+        Permission::grant(uri_string());
       $idplantel = $this->session->idplantel;
         $value = $this->input->post('text');
         $query = $this->horario->searchHorario($value,$idplantel);
@@ -37,7 +37,7 @@ class Horario extends CI_Controller {
     }
 
     public function showAll() {
-        // Permission::grant(uri_string()); 
+         Permission::grant(uri_string()); 
          $query = $this->horario->showAll($this->session->idplantel);
          //var_dump($query);
          if ($query) {
@@ -51,6 +51,7 @@ class Horario extends CI_Controller {
      public function detalle($id)
      {
          # code...
+         Permission::grant(uri_string());
         $activo_horario = 0;
         $activo_ciclo_escolar = 0;
         if($this->horario->validarActivoHorario($id)){
@@ -70,7 +71,7 @@ class Horario extends CI_Controller {
         $this->load->view('admin/footer');
      }
       public function showAllDiaHorario($idhorario,$iddia) {
-        // Permission::grant(uri_string()); 
+         Permission::grant(uri_string()); 
          $query = $this->horario->showAllDiaHorario($idhorario,$iddia);
          //var_dump($query);
          if ($query) {
@@ -81,7 +82,7 @@ class Horario extends CI_Controller {
         }
      }
      public function showAllDias() {
-        // Permission::grant(uri_string()); 
+         Permission::grant(uri_string()); 
          $query = $this->horario->showAllDias();
          //var_dump($query);
          if ($query) {
@@ -92,6 +93,7 @@ class Horario extends CI_Controller {
         }
      }
      public function showAllPeriodos() { 
+         Permission::grant(uri_string());
          $query = $this->horario->showAllPeriodos($this->session->idplantel); 
          if ($query) {
              $result['periodos'] = $this->horario->showAllPeriodos($this->session->idplantel);
@@ -101,6 +103,7 @@ class Horario extends CI_Controller {
         }
      }
       public function showAllGrupos() { 
+          Permission::grant(uri_string());
          $query = $this->horario->showAllGrupos($this->session->idplantel); 
          if ($query) {
              $result['grupos'] = $this->horario->showAllGrupos($this->session->idplantel);
@@ -111,7 +114,7 @@ class Horario extends CI_Controller {
      }
 
 public function showAllMaterias() {
-        // Permission::grant(uri_string()); 
+        Permission::grant(uri_string()); 
          $query = $this->horario->showAllMaterias($this->session->idplantel);
          //var_dump($query);
          if ($query) {
@@ -122,7 +125,7 @@ public function showAllMaterias() {
         }
      }
   public function addMateriaHorario() {
-        //Permission::grant(uri_string());
+        Permission::grant(uri_string());
         $config = array(
              array(
                 'field' => 'idmateria',
@@ -186,7 +189,7 @@ public function showAllMaterias() {
          
     }
       public function addReceso() {
-        //Permission::grant(uri_string());
+        Permission::grant(uri_string());
         $config = array(
              array(
                 'field' => 'titulo',
@@ -241,7 +244,7 @@ public function showAllMaterias() {
          
     }
         public function addHoraSinClases() {
-        //Permission::grant(uri_string());
+        Permission::grant(uri_string());
         $config = array(
              array(
                 'field' => 'iddia',
@@ -296,7 +299,7 @@ public function showAllMaterias() {
          
     }
      public function updateHoraSinClases() {
-        //Permission::grant(uri_string());
+        Permission::grant(uri_string());
         $config = array(
              array(
                 'field' => 'iddia',
@@ -349,7 +352,7 @@ public function showAllMaterias() {
          
     }
   public function addHorario() {
-        //Permission::grant(uri_string());
+        Permission::grant(uri_string());
         $config = array(
              array(
                 'field' => 'idperiodo',
@@ -405,7 +408,7 @@ public function showAllMaterias() {
          
     }
      public function updateHorario() {
-        //Permission::grant(uri_string());
+        Permission::grant(uri_string());
         $config = array(
              array(
                 'field' => 'idperiodo',
@@ -461,7 +464,7 @@ public function showAllMaterias() {
          
     }
       public function updateMateriaHorario() {
-        //Permission::grant(uri_string());
+        Permission::grant(uri_string());
         $config = array(
              array(
                 'field' => 'idmateria',
@@ -527,7 +530,7 @@ public function showAllMaterias() {
          
     }
      public function updateReceso() {
-        //Permission::grant(uri_string());
+        Permission::grant(uri_string());
         $config = array(
              array(
                 'field' => 'nombreclase',
@@ -584,6 +587,7 @@ public function showAllMaterias() {
 
  public function deleteHorarioMateria()
  { 
+     Permission::grant(uri_string());
       $id = $this->input->get('id');
         $query = $this->horario->deleteHorarioMateria($id);
         if ($query) {
@@ -597,6 +601,7 @@ public function showAllMaterias() {
 
   public function deleteReceso()
  { 
+     Permission::grant(uri_string());
         $id = $this->input->get('id');
         $query = $this->horario->deleteReceso($id);
         if ($query) {
@@ -610,6 +615,7 @@ public function showAllMaterias() {
 
  public function imprimirHorario($idhorario='')
  {
+     Permission::grant(uri_string());
    # code...
    $lunes = $this->horario->showAllDiaHorario($idhorario,1);
         $martes = $this->horario->showAllDiaHorario($idhorario,2);
@@ -811,6 +817,7 @@ $this->dompdf->stream("welcome.pdf", array("Attachment"=>0));
 
  public function deleteHorario()
   {
+      Permission::grant(uri_string());
         $idhorario = $this->input->get('idhorario');
         $query = $this->horario->deleteHorario($idhorario);
         if ($query) {
@@ -822,6 +829,7 @@ $this->dompdf->stream("welcome.pdf", array("Attachment"=>0));
   }
   public function deleteSinClases()
   {
+      Permission::grant(uri_string());
         $id = $this->input->get('id');
         $query = $this->horario->deleteSinClases($id);
         if ($query) {

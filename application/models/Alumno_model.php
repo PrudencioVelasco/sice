@@ -54,6 +54,32 @@ class Alumno_model extends CI_Model {
             return false;
         }
     }
+    public function becaAlumno($idalumno = '')
+    {
+        $this->db->select('b.descuento,b.descripcion');
+        $this->db->from('tblbeca b');  
+        $this->db->join('tblalumno_grupo ag','ag.idbeca = b.idbeca'); 
+        $this->db->where('ag.idalumno', $idalumno); 
+        $this->db->where('ag.activo',1);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+     public function showAllBecas()
+    {
+        $this->db->select('b.idbeca, b.descuento,b.descripcion');
+        $this->db->from('tblbeca b');    
+        $this->db->where('b.activo',1);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
     public function showAllAlumnosTutor($idtutor = '')
     {
         $this->db->select('a.idalumno,a.nombre, a.apellidop, a.apellidom');
@@ -284,7 +310,7 @@ class Alumno_model extends CI_Model {
         }
     } 
       public function showTareaAlumnoMateria($dhorario) {
-        $this->db->select('hd.idhorariodetalle,hd.idhorario, hd.horainicial, hd.horafinal, m.nombreclase,p.nombre, p.apellidop, p.apellidom,t.tarea, t.fechaentrega');
+        $this->db->select('hd.idhorariodetalle,hd.idhorario, hd.horainicial, hd.horafinal, m.nombreclase,p.nombre, p.apellidop, p.apellidom,LEFT(t.tarea, 90) as tarea, t.idtarea, t.fechaentrega');
         $this->db->from('tblhorario_detalle hd'); 
         $this->db->join('tblprofesor_materia pm', 'hd.idmateria = pm.idprofesormateria');
         $this->db->join('tblmateria m', 'm.idmateria = pm.idmateria');
@@ -686,6 +712,18 @@ class Alumno_model extends CI_Model {
     {
         $this->db->where('idalumno', $id);
         $this->db->update('tblalumno', $field);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+        
+    }
+        public function updateBecaAlumno($id, $field)
+    {
+        $this->db->where('idalumno', $id);
+        $this->db->where('activo', 1);
+        $this->db->update('tblalumno_grupo', $field);
         if ($this->db->affected_rows() > 0) {
             return true;
         } else {

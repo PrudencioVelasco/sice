@@ -43,8 +43,7 @@ var ve = new Vue({
    el:'#appestadocuenta',
     data:{
         url: my_var_1,
-        idalumno: my_var_2,
-        idperiodo:'',
+        idalumno: my_var_2, 
         addModal: false,
         addPagoModal: false,
         editModal:false,
@@ -110,7 +109,7 @@ var ve = new Vue({
     methods:{
       searchSolicitud() { 
              this.mostrar = true; 
-             ve.idperiodo = this.$refs.idperiodo.value;
+            ve.idperiodobuscado = this.$refs.idperiodo.value;
              axios.get(this.url+"EstadoCuenta/estadoCuenta/", {
                  params: {
                      idperiodo: this.$refs.idperiodo.value,
@@ -241,6 +240,7 @@ var ve = new Vue({
         addCobroColegiatura(){
             var formData = v.formData(ve.newCobroColegiatura); 
             formData.append('idperiodo', ve.idperiodobuscado);
+            formData.append('idalumno', ve.idalumno);
             // for (var value of formData.values()) {
             //                  console.log(value); 
             //               }
@@ -284,6 +284,7 @@ var ve = new Vue({
             addCobroInicio(){
             var formData = v.formData(ve.newCobroInicio); 
                 formData.append('idperiodobuscado', ve.idperiodobuscado);
+                formData.append('idalumno', ve.idalumno);
             // for (var value of formData.values()) {
             //                  console.log(value); 
             //               }
@@ -312,25 +313,21 @@ var ve = new Vue({
             ve.eliminarModalP = false;
             ve.addPagoColegiaturaModal = false;
             
-            ve.newBuscarCiclo = {
-                idalumno: ve.my_var_2,
-                idperiodo: '',
-                msgerror: ''
-            },
+             
                 ve.eliminarPrimerCobro = { 
                     usuario: '',
                     password: '',
                     msgerror: ''
                 },
                 ve.newCobroInicio = {
-                idalumno: ve.my_var_2,
+                //idalumno: ve.my_var_2,
                 descuento: '',
                 autorizacion: '',
                 idtipopagocol: '',
                 idformapago: '', 
         },
                 ve.newCobroColegiatura = {
-                idalumno: ve.my_var_2,
+                //idalumno: ve.my_var_2,
                 idmes:'',
                 descuento: '',
                 autorizacion: '',
@@ -340,7 +337,7 @@ var ve = new Vue({
                 idformapago: '',
                 autorizacion: '',
                 idperiodo: '', 
-                idalumno: ve.my_var_2,
+                //idalumno: ve.my_var_2,
                 idamortizacion: '',
                 msgerror: ''
             }

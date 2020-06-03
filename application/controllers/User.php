@@ -30,7 +30,7 @@ class User extends CI_Controller
  
     public function showAll()
     {
-       // Permission::grant(uri_string());
+       Permission::grant(uri_string());
         $idplantel = $this->session->idplantel;
         $idrol = $this->session->idrol;
         $query = $this->user->showAll($idrol,$idplantel);
@@ -44,6 +44,7 @@ class User extends CI_Controller
 
     public function showAllPlanteles()
     {
+        Permission::grant(uri_string());
          $idplantel = $this->session->idplantel;
         $idrol = $this->session->idrol;
        // Permission::grant(uri_string());
@@ -55,6 +56,7 @@ class User extends CI_Controller
     }
         public function showAllRoles()
     { 
+        Permission::grant(uri_string());
         $query = $this->user->showAllRoles();
          
         if(isset($query) && !empty($query)){
@@ -66,7 +68,7 @@ class User extends CI_Controller
 
     public function addUser()
     {
-     //     Permission::grant(uri_string());
+          Permission::grant(uri_string());
         $config = array(
             array(
                 'field' => 'usuario',
@@ -188,6 +190,7 @@ class User extends CI_Controller
 
     public function updateUser()
     {
+        Permission::grant(uri_string());
             $config = array( 
             array(
                 'field' => 'nombre',
@@ -265,7 +268,7 @@ class User extends CI_Controller
     }
       public function passwordupdateUser()
     {
-         //Permission::grant(uri_string());
+         Permission::grant(uri_string());
         $config = array(
             array(
                 'field' => 'password1',
@@ -311,7 +314,7 @@ class User extends CI_Controller
     }
     public function deleteUser()
     {
-    //Permission::grant(uri_string());
+    Permission::grant(uri_string());
         $id = $this->input->post('id');
         if ($this->user->deleteUser($id)) {
             $msg['error']   = false;
@@ -324,7 +327,7 @@ class User extends CI_Controller
     }
     public function searchUser()
     {
-        //Permission::grant(uri_string());
+        Permission::grant(uri_string());
         $idplantel = $this->session->idplantel;
         $idrol = $this->session->idrol;
         $value = $this->input->post('text');

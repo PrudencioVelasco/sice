@@ -1,4 +1,5 @@
-  <!-- page content -->
+
+<!-- page content -->
       <div class="right_col" role="main">
 
         <div class=""> 
@@ -15,10 +16,46 @@
                   <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12 ">
                       <button type="button" class="btn btn-primary waves-effect m-r-20" data-toggle="modal" data-target="#largeModal"><i class='fa fa-plus'></i> Registrar Calificación</button>
+                       <button type="button" class="btn btn-danger waves-effect m-r-20" data-toggle="modal" data-target="#myModalDeleteAsistencia"><i class='fa fa-trash '></i> Eliminar Calificación</button>
                        </div>
 
                   </div>
                    <br>
+                     <div class="modal fade" id="myModalDeleteAsistencia" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h2 class="modal-title " id="myModalLabel">ELIMINAR CALIFICACIÓN POR UNIDAD </h2>
+                          </div>
+                          <form method="post" action="" id="frmeliminarcalificacion">
+                            <div class="modal-body"> 
+                              <div class="form-group">
+                                <label for=""> <font color="red">*</font> Unidad:</label>
+                                 <select  class="form-control" name="unidad" id="">
+                                    <option value="">-- SELECCIONAR --</option>
+                                    <?php
+                                      if(isset($unidades) && !empty($unidades)){ 
+                                        foreach($unidades as $row){  
+                                      ?>
+                                        <option value="<?php echo $row->idunidad ?>"><?php echo $row->nombreunidad; ?></option>
+                                    <?php
+                                      }
+                                    }
+                                    ?>
+                                  </select>
+                              </div> 
+                          </div>
+                          <div class="modal-footer">
+                            <input type="hidden" name="horariodetalle" value="<?php echo $idhorariodetalle; ?>">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</button>
+                            <button type="button" id="btneliminarcalificacion" class="btn btn-primary"><i class="fa fa-trash"></i> Eliminar</button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                    </div>
+
                        <div class="modal fade" id="largeModal" tabindex="-1" role="dialog">
                 <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
@@ -39,7 +76,7 @@
                                   <div class="form-group">
                                       <label><font color="red">*</font> Unidad</label>
                                        <select class="form-control" name="unidad">
-                                         <option value="">--Seleccionar--</option>
+                                         <option value="">-- SELECCIONAR --</option>
                                          <?php
                                             if(isset($unidades) && !empty($unidades)){
                                               foreach($unidades as $row){ ?>
@@ -232,22 +269,83 @@
 
           
          if((val.success === "Ok")){ 
-          $(".print-success-msg").css('display','block'); 
-          $(".print-success-msg").html("Fue registrado las Calificaciones con Exito.");
-          setTimeout(function() {
-            $('.print-error-msg').fadeOut('fast');
-            location.reload(); 
-          }, 3000);
+          //$(".print-success-msg").css('display','block'); 
+          //$(".print-success-msg").html("Fue registrado las Calificaciones con Exito.");
+          //setTimeout(function() {
+           // $('.print-error-msg').fadeOut('fast');
+           // location.reload(); 
+          //}, 3000);
+            swal({
+                            position: 'center',
+                            type: 'success',
+                            title: 'Fue registrado las Calificaciones con Exito!',
+                            text:'Dar clic en el boton.',
+                            showConfirmButton: true,
+                            //timer: 1500
+                          }).then(function(){
+                            location.reload();
+                          });
         }else{ 
-          $(".print-error-msg").css('display','block'); 
-          $(".print-error-msg").html(val.error);
-          setTimeout(function() {$('.print-error-msg').fadeOut('fast');}, 6000);
+        swal({
+               type: 'error',
+               title: 'Oops...', 
+               html: val.error,
+               customClass:'swal-wide',
+               footer: ''
+              }); 
+          //$(".print-error-msg").css('display','block'); 
+          //$(".print-error-msg").html(val.error);
+          //setTimeout(function() {$('.print-error-msg').fadeOut('fast');}, 6000);
         }
  
       }
     })
   });
 
+    $("#btneliminarcalificacion").click(function(){ 
+    $.ajax({
+      type: "POST",
+      url: "<?php echo site_url('Pgrupo/eliminarCalificacionUnidad');?>",
+      data: $('#frmeliminarcalificacion').serialize(),
+      success: function(data) {
+        var val = $.parseJSON(data); 
+         if((val.success === "Ok")){ 
+          //$(".print-success-msg").css('display','block'); 
+          //$(".print-success-msg").html("Fue eliminado la Calificación con Exito.");
+          //setTimeout(function() {
+          //  $('.print-error-msg').fadeOut('fast');
+          //  location.reload(); 
+          //}, 3000);
+
+           swal({
+                            position: 'center',
+                            type: 'success',
+                            title: 'Fue eliminado la Calificación con Exito!',
+                            text:'Dar clic en el boton.',
+                            showConfirmButton: true,
+                            //timer: 1500
+                          }).then(function(){
+                            location.reload();
+                          });
+
+          //$(".print-error-msg").css('display','none'); 
+          //location.reload(); 
+        }else{ 
+          //$(".print-error-msg").css('display','block'); 
+          //$(".print-error-msg").html(val.error);
+          //setTimeout(function() {$('.print-error-msg').fadeOut('fast');}, 6000);
+          swal({
+               type: 'error',
+               title: 'Oops...', 
+               html: val.error,
+               customClass:'swal-wide',
+               footer: ''
+              }); 
+        }
+ 
+      }
+    })
+  });
   $("#btneliminar").click(function(){ 
     $.ajax({
       type: "POST",
@@ -256,19 +354,37 @@
       success: function(data) {
         var val = $.parseJSON(data); 
          if((val.success === "Ok")){ 
-          $(".print-success-msg").css('display','block'); 
-          $(".print-success-msg").html("Fue eliminado la Calificación con Exito.");
-          setTimeout(function() {
-            $('.print-error-msg').fadeOut('fast');
-            location.reload(); 
-          }, 3000);
+          //$(".print-success-msg").css('display','block'); 
+          //$(".print-success-msg").html("Fue eliminado la Calificación con Exito.");
+          //setTimeout(function() {
+          //  $('.print-error-msg').fadeOut('fast');
+          //  location.reload(); 
+          //}, 3000);
+
+           swal({
+                            position: 'center',
+                            type: 'success',
+                            title: 'Fue eliminado la Calificación con Exito!',
+                            text:'Dar clic en el boton.',
+                            showConfirmButton: true,
+                            //timer: 1500
+                          }).then(function(){
+                            location.reload();
+                          });
 
           //$(".print-error-msg").css('display','none'); 
           //location.reload(); 
         }else{ 
-          $(".print-error-msg").css('display','block'); 
-          $(".print-error-msg").html(val.error);
-          setTimeout(function() {$('.print-error-msg').fadeOut('fast');}, 6000);
+          //$(".print-error-msg").css('display','block'); 
+          //$(".print-error-msg").html(val.error);
+          //setTimeout(function() {$('.print-error-msg').fadeOut('fast');}, 6000);
+          swal({
+               type: 'error',
+               title: 'Oops...', 
+               html: val.error,
+               customClass:'swal-wide',
+               footer: ''
+              }); 
         }
  
       }
@@ -284,19 +400,37 @@
       success: function(data) {
         var val = $.parseJSON(data); 
          if((val.success === "Ok")){ 
-          $(".print-success-msg").css('display','block'); 
-          $(".print-success-msg").html("Fue modificado la Calificación con Exito.");
-          setTimeout(function() {
-            $('.print-error-msg').fadeOut('fast');
-            location.reload(); 
-          }, 3000);
+          //$(".print-success-msg").css('display','block'); 
+          //$(".print-success-msg").html("Fue modificado la Calificación con Exito.");
+          //setTimeout(function() {
+          //  $('.print-error-msg').fadeOut('fast');
+          //  location.reload(); 
+          //}, 3000);
+
+           swal({
+                            position: 'center',
+                            type: 'success',
+                            title: 'Fue modificado la Calificación con Exito!',
+                            text:'Dar clic en el boton.',
+                            showConfirmButton: true,
+                            //timer: 1500
+                          }).then(function(){
+                            location.reload();
+                          });
 
           //$(".print-error-msg").css('display','none'); 
           //location.reload(); 
         }else{ 
-          $(".print-error-msg").css('display','block'); 
-          $(".print-error-msg").html(val.error);
-          setTimeout(function() {$('.print-error-msg').fadeOut('fast');}, 6000);
+          //$(".print-error-msg").css('display','block'); 
+          //$(".print-error-msg").html(val.error);
+          //setTimeout(function() {$('.print-error-msg').fadeOut('fast');}, 6000);
+          swal({
+               type: 'error',
+               title: 'Oops...', 
+               html: val.error,
+               customClass:'swal-wide',
+               footer: ''
+              }); 
         }
  
       }

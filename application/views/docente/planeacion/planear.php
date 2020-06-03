@@ -187,7 +187,7 @@
                       data-fechafin="<?php echo $value->fechafin;?>">
                       <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                     Modificar / Detalles</a>
-                      <a onclick="return confirm('Esta seguro de Eliminar la Planeación?')" href="<?php echo site_url('Pprofesor/eliminar/'.$idunidad.'/'.$iddetallehorario.'/'.$value->idplaneacion) ?>" class="btn btn-danger btn-sm"><i class='fa fa-trash'></i> Eliminar</a>
+                      <a onclick="return confirm('Esta seguro de Eliminar la Planeación?')" href="<?php echo site_url('Pprofesor/eliminar/'.$controller->encode($idunidad).'/'.$controller->encode($iddetallehorario).'/'.$controller->encode($value->idplaneacion)) ?>" class="btn btn-danger btn-sm"><i class='fa fa-trash'></i> Eliminar</a>
                             </td> 
                           </tr>
                      <?php
@@ -263,17 +263,34 @@
 
           
          if((val.success === "Ok")){ 
-          $(".print-success-msg").css('display','block'); 
-          $(".print-success-msg").html("Fue agregado la Actividad con Exito.");
-          setTimeout(function() {
-            $('.print-error-msg').fadeOut('fast');
-            location.reload(); 
-          }, 3000);
+          //$(".print-success-msg").css('display','block'); 
+          //$(".print-success-msg").html("Fue agregado la Actividad con Exito.");
+          //setTimeout(function() {
+          //  $('.print-error-msg').fadeOut('fast');
+          //  location.reload(); 
+          //}, 3000);
+          swal({
+                            position: 'center',
+                            type: 'success',
+                            title: 'Fue agregado la Actividad con Exito!',
+                            text:'Dar clic en el boton.',
+                            showConfirmButton: true,
+                            //timer: 1500
+                         }).then(function(){
+                            location.reload();
+                          });
 
         }else{ 
-          $(".print-error-msg").css('display','block'); 
-          $(".print-error-msg").html(val.error);
-          setTimeout(function() {$('.print-error-msg').fadeOut('fast');}, 6000);
+          //$(".print-error-msg").css('display','block'); 
+          //$(".print-error-msg").html(val.error);
+          //setTimeout(function() {$('.print-error-msg').fadeOut('fast');}, 6000);
+           swal({
+               type: 'error',
+               title: 'Oops...', 
+               html: val.error,
+               customClass:'swal-wide',
+               footer: ''
+              }); 
         }
  
       }
@@ -294,17 +311,34 @@
 
           
          if((val.success === "Ok")){ 
-          $(".print-success-msg").css('display','block'); 
-          $(".print-success-msg").html("Fue modificado la Actividad con Exito.");
-          setTimeout(function() {
-            $('.print-error-msg').fadeOut('fast');
-            location.reload(); 
-          }, 3000);
+          //$(".print-success-msg").css('display','block'); 
+          //$(".print-success-msg").html("Fue modificado la Actividad con Exito.");
+          //setTimeout(function() {
+          //  $('.print-error-msg').fadeOut('fast');
+          //  location.reload(); 
+          //}, 3000);
+           swal({
+                            position: 'center',
+                            type: 'success',
+                            title: 'Fue modificado la Actividad con Exito!',
+                            text:'Dar clic en el boton.',
+                            showConfirmButton: true,
+                            //timer: 1500
+                         }).then(function(){
+                            location.reload();
+                          });
 
         }else{ 
-          $(".print-error-msg").css('display','block'); 
-          $(".print-error-msg").html(val.error);
-          setTimeout(function() {$('.print-error-msg').fadeOut('fast');}, 6000);
+          //$(".print-error-msg").css('display','block'); 
+          //$(".print-error-msg").html(val.error);
+          //setTimeout(function() {$('.print-error-msg').fadeOut('fast');}, 6000);
+           swal({
+               type: 'error',
+               title: 'Oops...', 
+               html: val.error,
+               customClass:'swal-wide',
+               footer: ''
+              }); 
         }
  
       }

@@ -290,6 +290,30 @@ public function eliminarPlaneacion($idplaneacion='')
             return false;
         }
 }
+public function eliminarAsistenciaFecha($idhorariodetalle = '',$fecha = '')
+{
+    # code...
+        $this->db->where('idhorariodetalle', $idhorariodetalle);
+        $this->db->where('fecha', $fecha);
+        $this->db->delete('tblasistencia');
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+}
+public function eliminarCalificacionUnidad($idunidad = '',$idhorariodetalle = '')
+{
+    # code...
+        $this->db->where('idhorariodetalle', $idhorariodetalle);
+        $this->db->where('idunidad', $idunidad);
+        $this->db->delete('tblcalificacion');
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+}
 public function eliminarTarea($idtarea='')
 {
     # code...

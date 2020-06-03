@@ -15,6 +15,7 @@
                   <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12 ">
                       <button type="button" class="btn btn-primary waves-effect m-r-20" data-toggle="modal" data-target="#largeModal"><i class='fa fa-plus'></i> Registrar Asistencia</button>
+                      <button type="button" class="btn btn-danger waves-effect m-r-20" data-toggle="modal" data-target="#myModalDeleteAsistencia"><i class='fa fa-trash '></i> Eliminar Asistencia</button>
                        <div class="modal fade" id="largeModal" tabindex="-1" role="dialog">
                 <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
@@ -40,7 +41,7 @@
                                   <div class="form-group">
                                       <label><font color="red">*</font> Unidad</label>
                                       <select name="unidad" required="" class="form-control">
-                                        <option value="">--Seleccionar--</option>
+                                        <option value="">-- SELECCIONAR --</option>
                                        <?php
                                         if(isset($unidades) && !empty($unidades)){
                                             foreach ($unidades as $value) { ?>
@@ -78,7 +79,7 @@
                                                   </td> 
                                                   <td>
                                                     <select name="motivo[]" required="" class="form-control">
-                                                      <option value="">--Seleccionar--</option>
+                                                      <option value="">-- SELECCIONAR --</option>
                                                       <?php
                                                         if(isset($motivo) && !empty($motivo)){
                                                             foreach($motivo as $value){ ?>
@@ -115,6 +116,7 @@
 
                     </div>
                   </div>
+                  <hr/>
                   <div class="row">
                        <div class="col-md-4 col-sm-12 col-xs-12 "></div>
                         <div class="col-md-8 col-sm-12 col-xs-12 " align="right">
@@ -124,8 +126,8 @@
                                   <div class="col-md-4 col-sm-12 col-xs-12 ">
                                   <div class="form-group"> 
                                       <select name="unidad" required="" class="form-control">
-                                        <option value="">--Seleccionar Unidad--</option>
-                                        <option value="1">TODOS</option>
+                                        <option value="">-- UNIDAD --</option>
+                                        <option value="0">TODOS</option>
                                        <?php
                                         if(isset($unidades) && !empty($unidades)){
                                             foreach ($unidades as $value) { ?>
@@ -199,6 +201,30 @@
 
   </div>
 
+  <div class="modal fade" id="myModalDeleteAsistencia" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h2 class="modal-title " id="myModalLabel">ELIMINAR ASISTENCIA POR FECHA </h2>
+      </div>
+      <form method="post" action="" id="frmeliminarasistencia">
+        <div class="modal-body"> 
+          <div class="form-group">
+            <label for=""> <font color="red">*</font> Fecha:</label>
+            <input class="form-control " type="date" name="fechaeliminar" id="fechaeliminar"/> 
+          </div> 
+       </div>
+       <div class="modal-footer">
+         <input type="hidden" name="horariodetalle" value="<?php echo $idhorariodetalle; ?>">
+        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</button>
+        <button type="button" id="btneliminarasistencia" class="btn btn-primary"><i class="fa fa-trash"></i> Eliminar</button>
+      </div>
+    </form>
+  </div>
+</div>
+</div>
+
   <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -217,7 +243,7 @@
           <div class="form-group">
            <label ><font color="red">*</font> Opción</label><br>
            <select name="motivo" required="" class="form-control">
-                  <option value="">--Seleccionar--</option>
+                  <option value="">-- SELECCIONAR --</option>
                   <?php
                    if(isset($motivo) && !empty($motivo)){
                      foreach($motivo as $value){ ?>
@@ -282,7 +308,8 @@ $(document).on( "click", '.edit_button',function(e) {
 
       $(".idasistencia").val(idasistencia);    
       $("#alumno").text(nombre);    
-    }); 
+    });
+     
     $(document).on( "click", '.delete_button',function(e) { 
       var idasistencia = $(this).data('idasistencia');  
       var nombre = $(this).data('alumno'); 
@@ -303,16 +330,33 @@ $(document).on( "click", '.edit_button',function(e) {
 
           
          if((val.success === "Ok")){ 
-          $(".print-success-msg").css('display','block'); 
-          $(".print-success-msg").html("Las asistencias fueron registrado con Exito.");
-          setTimeout(function() {
-            $('.print-error-msg').fadeOut('fast');
-            location.reload(); 
-          }, 3000);
+          //$(".print-success-msg").css('display','block'); 
+          //$(".print-success-msg").html("Las asistencias fueron registrado con Exito.");
+          //setTimeout(function() {
+          //  $('.print-error-msg').fadeOut('fast');
+          //  location.reload(); 
+          //}, 3000);
+           swal({
+                            position: 'center',
+                            type: 'success',
+                            title: 'Las asistencias fueron registrado con Exito!',
+                            text:'Dar clic en el boton.',
+                            showConfirmButton: true,
+                            //timer: 1500
+                         }).then(function(){
+                            location.reload();
+                          });
         }else{ 
-          $(".print-error-msg").css('display','block'); 
-          $(".print-error-msg").html(val.error);
-          setTimeout(function() {$('.print-error-msg').fadeOut('fast');}, 6000);
+            swal({
+               type: 'error',
+               title: 'Oops...', 
+               html: val.error,
+               customClass:'swal-wide',
+               footer: ''
+              }); 
+          //$(".print-error-msg").css('display','block'); 
+          //$(".print-error-msg").html(val.error);
+          //setTimeout(function() {$('.print-error-msg').fadeOut('fast');}, 6000);
         }
  
       }
@@ -337,9 +381,58 @@ $(document).on( "click", '.edit_button',function(e) {
                 }
               })
           }else{
- $(".print-error-msg-1").css('display','block'); 
-          $(".print-error-msg-1").html("Es necesario la Fecha.");
-          setTimeout(function() {$('.print-error-msg-1').fadeOut('fast');}, 4000);
+          //$(".print-error-msg-1").css('display','block'); 
+          //$(".print-error-msg-1").html("Es necesario la Fecha.");
+          //setTimeout(function() {$('.print-error-msg-1').fadeOut('fast');}, 4000);
+           swal({
+               type: 'error',
+               title: 'Oops...', 
+               html: 'Es necesario la Fecha',
+               customClass:'swal-wide',
+               footer: ''
+              }); 
+
+}
+
+  });
+
+          $("#btneliminarasistencia").click(function(){ 
+          var fechainicio = $("#fechaeliminar").val(); 
+          if(fechainicio != ""){
+              $.ajax({
+                type: "POST",
+                url: "<?php echo site_url('Pgrupo/eliminarAsistenciaFecha');?>",
+                data: $('#frmeliminarasistencia').serialize(),
+                success: function(data) {
+                  //var val = $.parseJSON(data);
+                 // console.log(data);
+                 //$("#tblalumnos").css('display','none'); 
+                 // $('#tblasistencias').html(data);
+                   swal({
+                            position: 'center',
+                            type: 'success',
+                            title: 'Fue eliminado las Asistencias con Exito!',
+                            text:'Dar clic en el boton.',
+                            showConfirmButton: true,
+                            //timer: 1500
+                         }).then(function(){
+                            location.reload();
+                          });
+                   
+           
+                }
+              })
+          }else{
+          //$(".print-error-msg-1").css('display','block'); 
+          //$(".print-error-msg-1").html("Es necesario la Fecha.");
+          //setTimeout(function() {$('.print-error-msg-1').fadeOut('fast');}, 4000);
+           swal({
+               type: 'error',
+               title: 'Oops...', 
+               html: 'Es necesario la Fecha',
+               customClass:'swal-wide',
+               footer: ''
+              }); 
 
 }
 
@@ -353,19 +446,36 @@ $(document).on( "click", '.edit_button',function(e) {
       success: function(data) {
         var val = $.parseJSON(data); 
          if((val.success === "Ok")){ 
-          $(".print-success-msg").css('display','block'); 
-          $(".print-success-msg").html("Fue eliminado la Asistencia con Exito.");
-          setTimeout(function() {
-            $('.print-error-msg').fadeOut('fast');
-            location.reload(); 
-          }, 3000);
+          //$(".print-success-msg").css('display','block'); 
+          //$(".print-success-msg").html("Fue eliminado la Asistencia con Exito.");
+          //setTimeout(function() {
+          //  $('.print-error-msg').fadeOut('fast');
+          //  location.reload(); 
+          //}, 3000);
+                        swal({
+                            position: 'center',
+                            type: 'success',
+                            title: 'Fue eliminado la Asistencia con Exito!',
+                            text:'Dar clic en el boton.',
+                            showConfirmButton: true,
+                            //timer: 1500
+                         }).then(function(){
+                            location.reload();
+                          });
 
           //$(".print-error-msg").css('display','none'); 
           //location.reload(); 
         }else{ 
-          $(".print-error-msg").css('display','block'); 
-          $(".print-error-msg").html(val.error);
-          setTimeout(function() {$('.print-error-msg').fadeOut('fast');}, 6000);
+            swal({
+               type: 'error',
+               title: 'Oops...', 
+               html: val.error,
+               customClass:'swal-wide',
+               footer: ''
+              }); 
+          //$(".print-error-msg").css('display','block'); 
+          //$(".print-error-msg").html(val.error);
+          //setTimeout(function() {$('.print-error-msg').fadeOut('fast');}, 6000);
         }
  
       }
@@ -381,19 +491,35 @@ $(document).on( "click", '.edit_button',function(e) {
       success: function(data) {
         var val = $.parseJSON(data); 
          if((val.success === "Ok")){ 
-          $(".print-success-msg").css('display','block'); 
-          $(".print-success-msg").html("Fue modificado la Asistencia con Exito.");
-          setTimeout(function() {
-            $('.print-error-msg').fadeOut('fast');
-            location.reload(); 
-          }, 3000);
-
+          //$(".print-success-msg").css('display','block'); 
+          //$(".print-success-msg").html("Fue modificado la Asistencia con Exito.");
+          //setTimeout(function() {
+           // $('.print-error-msg').fadeOut('fast');
+           // location.reload(); 
+          //}, 3000);
+            swal({
+                            position: 'center',
+                            type: 'success',
+                            title: 'Fue modificado la Asistencia con Exito!',
+                            text:'Dar clic en el boton.',
+                            showConfirmButton: true,
+                            //timer: 1500
+                         }).then(function(){
+                            location.reload();
+                          });
           //$(".print-error-msg").css('display','none'); 
           //location.reload(); 
-        }else{ 
-          $(".print-error-msg").css('display','block'); 
-          $(".print-error-msg").html(val.error);
-          setTimeout(function() {$('.print-error-msg').fadeOut('fast');}, 6000);
+        }else{
+            swal({
+               type: 'error',
+               title: 'Oops...', 
+               html: val.error,
+               customClass:'swal-wide',
+               footer: ''
+              });  
+          //$(".print-error-msg").css('display','block'); 
+          //$(".print-error-msg").html(val.error);
+          //setTimeout(function() {$('.print-error-msg').fadeOut('fast');}, 6000);
         }
  
       }

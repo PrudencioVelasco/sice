@@ -19,7 +19,7 @@ class Alumnos extends CI_Controller {
  
 	public function index()
 	{ 
-         Permission::grant(uri_string());
+          Permission::grant(uri_string());
           $idalumno = $this->session->idalumno;
           $grupo = $this->alumno->obtenerGrupo($idalumno);
           $tareas = "";
@@ -30,14 +30,14 @@ class Alumnos extends CI_Controller {
              $mensajes = $this->mensaje->showAllMensajeAlumno($idhorario);
           }
          
-         
+         //var_dump($mensajes);
           $data = array(
             'tareas'=>$tareas,
             'mensajes'=>$mensajes
           );
          // var_dump($tareas);
 
-	    $this->load->view('alumno/header');
+	      $this->load->view('alumno/header');
         $this->load->view('alumno/index',$data);
         $this->load->view('alumno/footer');
 

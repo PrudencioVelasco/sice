@@ -58,7 +58,7 @@
                                   ?>
                                 </td>
                                 <td align="right">
-                                  <a class="btn btn-primary" href="<?php echo site_url('Aalumno/historial/'.$row->idhorario) ?>"><i class="fa fa-list-alt"></i> Calificaciones</a> 
+                                  <a class="btn btn-primary" href="<?php echo site_url('Aalumno/historial/'.$controller->encode($row->idhorario)) ?>"><i class="fa fa-list-alt"></i> Calificaciones</a> 
 
                                 </td>
                              </tr>

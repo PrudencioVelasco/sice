@@ -14,6 +14,7 @@ class Pprofesor extends CI_Controller {
         $this->load->library('permission');
         $this->load->library('session'); 
         $this->load->model('grupo_model','grupo'); 
+         $this->load->library('encryption');
     }
 
 	public function index()
@@ -24,7 +25,22 @@ class Pprofesor extends CI_Controller {
 		$this->load->view('docente/header');
 		$this->load->view('docente/index');
 		$this->load->view('docente/footer');
-	}
+    }
+    function encode($string)
+        {
+            $encrypted = $this->encryption->encrypt($string);
+            if ( !empty($string) )
+            {
+                $encrypted = strtr($encrypted, array('/' => '~'));
+            }
+            return $encrypted;
+        }
+
+        function decode($string)
+        {
+            $string = strtr($string, array('~' => '/'));
+            return $this->encryption->decrypt($string);
+        } 
     public function planeacion()
     {
         # code...
@@ -35,7 +51,8 @@ class Pprofesor extends CI_Controller {
         //var_dump($result);
         $data = array(
             'datos'=>$result,
-            'unidades'=>$unidades
+            'unidades'=>$unidades,
+            'controller'=>$this
         );
         $this->load->view('docente/header');
         $this->load->view('docente/planeacion/index',$data);
@@ -50,11 +67,15 @@ class Pprofesor extends CI_Controller {
         $fecha = $dias[date('N',strtotime($nombredia))];
         return $fecha;
     }
-    public function planear($idunidad,$id)
+    public function planear($idunidad = '',$id = '')
     {
          Permission::grant(uri_string());
-        date_default_timezone_set('UTC');
+         date_default_timezone_set('UTC');
 
+        $idunidad = $this->decode($idunidad);
+        $id = $this->decode($id);
+        if((isset($idunidad) && !empty($idunidad)) && (isset($id) && !empty($id))){
+        
         //RETROCEDER 6 MESES PARA ATRAS
         for ($i=1; $i < 150 ; $i++) { 
             # code... $fecha_actual = '';
@@ -107,7 +128,8 @@ $data = array(
 'atras'=>$datosinicial,
 'idunidad'=>$idunidad,
 'iddetallehorario'=>$id,
-'listaplaneacion'=>$lista_planeacion
+'listaplaneacion'=>$lista_planeacion,
+'controller'=>$this
 );
  
 
@@ -115,6 +137,13 @@ $data = array(
         $this->load->view('docente/header');
         $this->load->view('docente/planeacion/planear',$data);
         $this->load->view('docente/footer');
+         }else{
+         $data = array(
+            'heading'=>'Error',
+            'message'=>'Error intente mas tarde.'
+        );
+         $this->load->view('errors/html/error_general',$data);
+    }
     }
 
     public function addPlaneacion()
@@ -259,11 +288,21 @@ $data = array(
     public function eliminar($idunidad='',$iddetallehorario='',$idplaneacion='')
     {
         # code...
-         Permission::grant(uri_string());
-
+        Permission::grant(uri_string());
+        $idunidad = $this->decode($idunidad);
+        $iddetallehorario = $this->decode($iddetallehorario);
+        $idplaneacion = $this->decode($idplaneacion);
+         
+        if((isset($idunidad) && !empty($idunidad)) && (isset($iddetallehorario) && !empty($iddetallehorario)) && (isset($idplaneacion) && !empty($idplaneacion))){
         $result = $this->grupo->eliminarPlaneacion($idplaneacion);
-        redirect('pProfesor/planear/'.$idunidad.'/'.$iddetallehorario);
-
+        redirect('pProfesor/planear/'.$this->encode($idunidad).'/'.$this->encode($iddetallehorario));
+          }else{
+         $data = array(
+            'heading'=>'Error',
+            'message'=>'Error intente mas tarde.'
+        );
+         $this->load->view('errors/html/error_general',$data);
+    }
     }
 
 }

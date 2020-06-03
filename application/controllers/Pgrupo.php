@@ -14,10 +14,27 @@ class pGrupo extends CI_Controller {
         $this->load->library('session'); 
         $this->load->model('grupo_model','grupo'); 
         $this->load->model('mensaje_model','mensaje'); 
+        $this->load->library('encryption');
         date_default_timezone_set("America/Mexico_City");
 
     }
  
+        function encode($string)
+        {
+            $encrypted = $this->encryption->encrypt($string);
+            if ( !empty($string) )
+            {
+                $encrypted = strtr($encrypted, array('/' => '~'));
+            }
+            return $encrypted;
+        }
+
+        function decode($string)
+        {
+            $string = strtr($string, array('~' => '/'));
+            return $this->encryption->decrypt($string);
+        } 
+
     public function index()
     {
         # code...
@@ -28,7 +45,8 @@ class pGrupo extends CI_Controller {
        // var_dump($result);
         $data = array(
             'datos'=>$result,
-            'unidades'=>$unidades
+            'unidades'=>$unidades,
+            'controller'=>$this
         );
         $this->load->view('docente/header');
         $this->load->view('docente/grupo/index',$data);
@@ -39,6 +57,7 @@ class pGrupo extends CI_Controller {
     public function buscarAsistencia()
     {
         # code...
+         Permission::grant(uri_string());
         $idhorario = $this->input->post('idhorario');
         $idunidad = $this->input->post('unidad');
         $idhorariodetalle = $this->input->post('idhorariodetalle');
@@ -84,11 +103,11 @@ class pGrupo extends CI_Controller {
                                 data-idmotivo="'.$asist->idmotivo.'"
                                 data-alumno="'.$alumn->apellidop." ".$alumn->apellidom." ".$alumn->nombre.'"
                                style = "color:blue;" title="Editar Calificación"></i> </a>';
-                                $tabla .=' <a  href="javascript:void(0)"><i class="fa fa-trash delete_button"  data-toggle="modal" data-target="#myModalDelete"
+                                /*$tabla .=' <a  href="javascript:void(0)"><i class="fa fa-trash delete_button"  data-toggle="modal" data-target="#myModalDelete"
                                 data-idasistencia="'.$asist->idasistencia.'"
                                 data-idmotivo="'.$asist->idmotivo.'"
                                 data-alumno="'.$alumn->apellidop." ".$alumn->apellidom." ".$alumn->nombre.'"
-                               style = "color:red;" title="Eliminar Calificación"></i> </a>'; 
+                               style = "color:red;" title="Eliminar Calificación"></i> </a>';*/ 
                             break;
                                   case 2:
                                   $tabla .='<span class="label label-warning">'.$asist->nombremotivo.'</span>';
@@ -97,11 +116,11 @@ class pGrupo extends CI_Controller {
                                   data-idmotivo="'.$asist->idmotivo.'"
                                   data-alumno="'.$alumn->apellidop." ".$alumn->apellidom." ".$alumn->nombre.'"
                                  style = "color:blue;" title="Editar Calificación"></i> </a>';
-                                  $tabla .=' <a  href="javascript:void(0)"><i class="fa fa-trash delete_button"  data-toggle="modal" data-target="#myModalDelete"
+                                 /* $tabla .=' <a  href="javascript:void(0)"><i class="fa fa-trash delete_button"  data-toggle="modal" data-target="#myModalDelete"
                                   data-idasistencia="'.$asist->idasistencia.'"
                                   data-idmotivo="'.$asist->idmotivo.'"
                                   data-alumno="'.$alumn->apellidop." ".$alumn->apellidom." ".$alumn->nombre.'"
-                                 style = "color:red;" title="Eliminar Calificación"></i> </a>';
+                                 style = "color:red;" title="Eliminar Calificación"></i> </a>';*/
                                   # code...
                               break;
                                   case 3:
@@ -111,11 +130,11 @@ class pGrupo extends CI_Controller {
                                   data-idmotivo="'.$asist->idmotivo.'"
                                   data-alumno="'.$alumn->apellidop." ".$alumn->apellidom." ".$alumn->nombre.'"
                                  style = "color:blue;" title="Editar Calificación"></i> </a>';
-                                  $tabla .=' <a  href="javascript:void(0)"><i class="fa fa-trash delete_button"  data-toggle="modal" data-target="#myModalDelete"
+                                 /* $tabla .=' <a  href="javascript:void(0)"><i class="fa fa-trash delete_button"  data-toggle="modal" data-target="#myModalDelete"
                                   data-idasistencia="'.$asist->idasistencia.'"
                                   data-idmotivo="'.$asist->idmotivo.'"
                                   data-alumno="'.$alumn->apellidop." ".$alumn->apellidom." ".$alumn->nombre.'"
-                                 style = "color:red;" title="Eliminar Calificación"></i> </a>';
+                                 style = "color:red;" title="Eliminar Calificación"></i> </a>';*/
                                   # code...
                               break;
                                   case 4:
@@ -125,11 +144,11 @@ class pGrupo extends CI_Controller {
                                   data-idmotivo="'.$asist->idmotivo.'"
                                   data-alumno="'.$alumn->apellidop." ".$alumn->apellidom." ".$alumn->nombre.'"
                                  style = "color:blue;" title="Editar Calificación"></i> </a>';
-                                  $tabla .=' <a  href="javascript:void(0)"><i class="fa fa-trash delete_button"  data-toggle="modal" data-target="#myModalDelete"
+                                  /*$tabla .=' <a  href="javascript:void(0)"><i class="fa fa-trash delete_button"  data-toggle="modal" data-target="#myModalDelete"
                                   data-idasistencia="'.$asist->idasistencia.'"
                                   data-idmotivo="'.$asist->idmotivo.'"
                                   data-alumno="'.$alumn->apellidop." ".$alumn->apellidom." ".$alumn->nombre.'"
-                                 style = "color:red;" title="Eliminar Calificación"></i> </a>';
+                                 style = "color:red;" title="Eliminar Calificación"></i> </a>';*/
                                   # code...
                               break;
                           
@@ -155,7 +174,7 @@ echo $tabla;
 
         public function obetnerAsistencia($idhorario,$fechainicio,$fechafin,$idhorariodetalle)
     { 
-        
+         Permission::grant(uri_string());
          $alumns = $this->grupo->alumnosGrupo($idhorario);
          $tabla = ""; 
 
@@ -196,11 +215,11 @@ echo $tabla;
                                 data-idmotivo="'.$asist->idmotivo.'"
                                 data-alumno="'.$alumn->apellidop." ".$alumn->apellidom." ".$alumn->nombre.'"
                                style = "color:blue;" title="Editar Calificación"></i> </a>';
-                                $tabla .=' <a  href="javascript:void(0)"><i class="fa fa-trash delete_button"  data-toggle="modal" data-target="#myModalDelete"
+                                /*$tabla .=' <a  href="javascript:void(0)"><i class="fa fa-trash delete_button"  data-toggle="modal" data-target="#myModalDelete"
                                 data-idasistencia="'.$asist->idasistencia.'"
                                 data-idmotivo="'.$asist->idmotivo.'"
                                 data-alumno="'.$alumn->apellidop." ".$alumn->apellidom." ".$alumn->nombre.'"
-                               style = "color:red;" title="Eliminar Calificación"></i> </a>';
+                               style = "color:red;" title="Eliminar Calificación"></i> </a>';*/
 
                             break;
                                   case 2:
@@ -210,11 +229,11 @@ echo $tabla;
                                   data-idmotivo="'.$asist->idmotivo.'"
                                   data-alumno="'.$alumn->apellidop." ".$alumn->apellidom." ".$alumn->nombre.'"
                                  style = "color:blue;" title="Editar Calificación"></i> </a>';
-                                  $tabla .=' <a  href="javascript:void(0)"><i class="fa fa-trash delete_button"  data-toggle="modal" data-target="#myModalDelete"
+                                  /*$tabla .=' <a  href="javascript:void(0)"><i class="fa fa-trash delete_button"  data-toggle="modal" data-target="#myModalDelete"
                                   data-idasistencia="'.$asist->idasistencia.'"
                                   data-idmotivo="'.$asist->idmotivo.'"
                                   data-alumno="'.$alumn->apellidop." ".$alumn->apellidom." ".$alumn->nombre.'"
-                                 style = "color:red;" title="Eliminar Calificación"></i> </a>';
+                                 style = "color:red;" title="Eliminar Calificación"></i> </a>';*/
                                   # code...
                               break;
                                   case 3:
@@ -225,11 +244,11 @@ echo $tabla;
                                   data-idmotivo="'.$asist->idmotivo.'"
                                   data-alumno="'.$alumn->apellidop." ".$alumn->apellidom." ".$alumn->nombre.'"
                                  style = "color:blue;" title="Editar Calificación"></i> </a>';
-                                  $tabla .=' <a  href="javascript:void(0)"><i class="fa fa-trash delete_button"  data-toggle="modal" data-target="#myModalDelete"
+                                  /*$tabla .=' <a  href="javascript:void(0)"><i class="fa fa-trash delete_button"  data-toggle="modal" data-target="#myModalDelete"
                                   data-idasistencia="'.$asist->idasistencia.'"
                                   data-idmotivo="'.$asist->idmotivo.'"
                                   data-alumno="'.$alumn->apellidop." ".$alumn->apellidom." ".$alumn->nombre.'"
-                                 style = "color:red;" title="Eliminar Calificación"></i> </a>';
+                                 style = "color:red;" title="Eliminar Calificación"></i> </a>';*/
                                      # code...
                               break;
                                   case 4:
@@ -239,11 +258,11 @@ echo $tabla;
                                   data-idmotivo="'.$asist->idmotivo.'"
                                   data-alumno="'.$alumn->apellidop." ".$alumn->apellidom." ".$alumn->nombre.'"
                                  style = "color:blue;" title="Editar Calificación"></i> </a>';
-                                  $tabla .=' <a  href="javascript:void(0)"><i class="fa fa-trash delete_button"  data-toggle="modal" data-target="#myModalDelete"
+                                  /*$tabla .=' <a  href="javascript:void(0)"><i class="fa fa-trash delete_button"  data-toggle="modal" data-target="#myModalDelete"
                                   data-idasistencia="'.$asist->idasistencia.'"
                                   data-idmotivo="'.$asist->idmotivo.'"
                                   data-alumno="'.$alumn->apellidop." ".$alumn->apellidom." ".$alumn->nombre.'"
-                                 style = "color:red;" title="Eliminar Calificación"></i> </a>';
+                                 style = "color:red;" title="Eliminar Calificación"></i> </a>';*/
                                   # code...
                               break;
                           
@@ -270,6 +289,7 @@ return $tabla;
     public function obtenerCalificacion($idhorario='',$idhorariodetalle)
     {
       # code...
+       Permission::grant(uri_string());
      $unidades =  $this->grupo->unidades($this->session->idplantel);
      $alumnos = $this->grupo->alumnosGrupo($idhorario);
      
@@ -302,11 +322,11 @@ return $tabla;
           data-calificacion="'.$val->calificacion.'"
           data-alumno="'.$row->apellidop." ".$row->apellidom." ".$row->nombre.'"
          style = "color:blue;" title="Editar Calificación"></i> </a>';
-          $tabla .=' <a  href="javascript:void(0)"><i class="fa fa-trash delete_button"  data-toggle="modal" data-target="#myModalDelete"
+          /*$tabla .=' <a  href="javascript:void(0)"><i class="fa fa-trash delete_button"  data-toggle="modal" data-target="#myModalDelete"
           data-idcalificacion="'.$val->idcalificacion.'"
           data-calificacion="'.$val->calificacion.'"
           data-alumno="'.$row->apellidop." ".$row->apellidom." ".$row->nombre.'"
-         style = "color:red;" title="Eliminar Calificación"></i> </a>';
+         style = "color:red;" title="Eliminar Calificación"></i> </a>';*/
         }else{
            $tabla .='<label>No registrado</label>';
         } 
@@ -322,13 +342,16 @@ return $tabla;
       return $tabla;
 
     }
-
+ 
     public function asistencia($idhorario='',$idhorariodetalle)
     {
- 
+        Permission::grant(uri_string());
+        $idhorario = $this->decode($idhorario);
+        $idhorariodetalle = $this->decode($idhorariodetalle);
+        if((isset($idhorario) && !empty($idhorario)) && (isset($idhorariodetalle) && !empty($idhorariodetalle))){
         $alumns = $this->grupo->alumnosGrupo($idhorario);
         $motivo = $this->grupo->motivoAsistencia();
-         $unidades = $this->grupo->unidades($this->session->idplantel);
+        $unidades = $this->grupo->unidades($this->session->idplantel);
         $fechainicio = date("Y-m-d");
         $fechafin = date("Y-m-d");
         $table = $this->obetnerAsistencia($idhorario,$fechainicio,$fechafin,$idhorariodetalle);
@@ -347,15 +370,30 @@ return $tabla;
         $this->load->view('docente/header');
         $this->load->view('docente/grupo/asistencia',$data);
         $this->load->view('docente/footer');
+         }else{
+         $data = array(
+            'heading'=>'Error',
+            'message'=>'Error intente mas tarde.'
+        );
+         $this->load->view('errors/html/error_general',$data);
+    }
+    }
+    public function eliminarAsistenciaFecha()
+    {
+        $fecha = $this->input->post('fechaeliminar');
+        $idhorariodetalle = $this->input->post('horariodetalle');
+        $this->grupo->eliminarAsistenciaFecha($idhorariodetalle,$fecha);
     }
   public function examen($idhorario='',$idhorariodetalle)
     {
+      Permission::grant(uri_string());
+      $idhorario = $this->decode($idhorario);
+      $idhorariodetalle = $this->decode($idhorariodetalle);
+      if((isset($idhorario) && !empty($idhorario)) && (isset($idhorariodetalle) && !empty($idhorariodetalle))){
       $unidades =  $this->grupo->unidades($this->session->idplantel);
       $alumns = $this->grupo->alumnosGrupo($idhorario);
-      $detalle = $this->grupo->detalleClase($idhorariodetalle);
-      //var_dump($detalle);
-      $nombreclase = $detalle[0]->nombreclase;
-     // echo $this->obtenerCalificacion($idhorario,$idhorariodetalle);
+      $detalle = $this->grupo->detalleClase($idhorariodetalle); 
+      $nombreclase = $detalle[0]->nombreclase; 
       $data = array(
         'alumnos'=>$alumns,
         'idhorario'=>$idhorario,
@@ -368,28 +406,42 @@ return $tabla;
        $this->load->view('docente/header');
         $this->load->view('docente/grupo/examen',$data);
         $this->load->view('docente/footer');
+         }else{
+         $data = array(
+            'heading'=>'Error',
+            'message'=>'Error intente mas tarde.'
+        );
+         $this->load->view('errors/html/error_general',$data);
+    }
 
     }
       public function tarea($idhorario='',$idhorariodetalle)
     {
-      //$unidades =  $this->grupo->unidades();
-      //$alumns = $this->grupo->alumnosGrupo($idhorario);
-     // echo $this->obtenerCalificacion($idhorario,$idhorariodetalle);
-      $data = array(
-        //'alumnos'=>$alumns,
-        'idhorario'=>$idhorario,
-        'idhorariodetalle'=>$idhorariodetalle, 
-        'tareas'=>$this->grupo->allTarea($idhorariodetalle)
-      );
+         Permission::grant(uri_string()); 
+         $idhorario = $this->decode($idhorario);
+         $idhorariodetalle = $this->decode($idhorariodetalle);
+         if((isset($idhorario) && !empty($idhorario)) && (isset($idhorariodetalle) && !empty($idhorariodetalle))){
+        $data = array( 
+            'idhorario'=>$idhorario,
+            'idhorariodetalle'=>$idhorariodetalle, 
+            'tareas'=>$this->grupo->allTarea($idhorariodetalle),
+            'controller'=>$this
+        );
 
        $this->load->view('docente/header');
         $this->load->view('docente/grupo/tarea',$data);
         $this->load->view('docente/footer');
-
+         }else{
+         $data = array(
+            'heading'=>'Error',
+            'message'=>'Error intente mas tarde.'
+        );
+         $this->load->view('errors/html/error_general',$data);
+        }
     }
     public function addCalificacion()
     { 
-
+ Permission::grant(uri_string());
         $config = array(
             array(
                 'field' => 'unidad',
@@ -447,7 +499,7 @@ return $tabla;
 
         public function addAsistencia()
     { 
-
+ Permission::grant(uri_string());
         $config = array(
             array(
                 'field' => 'fecha',
@@ -516,7 +568,7 @@ return $tabla;
 
     public function updateAsistencia()
     { 
-
+ Permission::grant(uri_string());
         $config = array( 
               array(
                 'field' => 'motivo',
@@ -553,7 +605,7 @@ return $tabla;
 
      public function addTarea()
     { 
-
+ Permission::grant(uri_string());
         $config = array(
             array(
                 'field' => 'fechaentrega',
@@ -599,7 +651,7 @@ return $tabla;
     }
      public function addMensaje()
     { 
-
+ Permission::grant(uri_string());
         $config = array(
               array(
                 'field' => 'mensaje',
@@ -638,7 +690,7 @@ return $tabla;
 
      public function updateTarea()
     { 
-
+ Permission::grant(uri_string());
         $config = array(
             array(
                 'field' => 'fechaentrega',
@@ -682,7 +734,7 @@ return $tabla;
 
      public function updateMensaje()
     { 
-
+ Permission::grant(uri_string());
         $config = array(
               array(
                 'field' => 'mensaje',
@@ -715,37 +767,56 @@ return $tabla;
 
 public function eliminarTarea($idhorario,$idhorariodetalle,$idtarea)
 {
+     Permission::grant(uri_string());
   # code...
+  $idhorario  = $this->decode($idhorario);
+  $idhorariodetalle  = $this->decode($idhorariodetalle);
+  $idtarea  = $this->decode($idtarea);
   $this->grupo->eliminarTarea($idtarea);
-  redirect('pGrupo/tarea/'.$idhorario.'/'.$idhorariodetalle);
+  redirect('pGrupo/tarea/'.$this->encode($idhorario).'/'.$this->encode($idhorariodetalle));
 }
 public function eliminarMensaje($idhorario,$idhorariodetalle,$idmensaje)
 {
+     Permission::grant(uri_string());
   # code...
+    $idhorario  = $this->decode($idhorario);
+  $idhorariodetalle  = $this->decode($idhorariodetalle);
+  $idmensaje  = $this->decode($idmensaje);
   $data = array(
       'eliminado'=>1
   );
   $this->mensaje->updateMensaje($idmensaje,$data);
-  redirect('pGrupo/tarea/'.$idhorario.'/'.$idhorariodetalle);
+  redirect('pGrupo/tarea/'.$this->encode($idhorario).'/'.$this->encode($idhorariodetalle));
 }
  
 public function mensaje($idhorario='',$idhorariodetalle = '')
 {
-       
+        Permission::grant(uri_string());
+        $idhorario = $this->decode($idhorario);
+        $idhorariodetalle = $this->decode($idhorariodetalle);
+        if((isset($idhorario) && !empty($idhorario)) && (isset($idhorariodetalle) && !empty($idhorariodetalle))){
       $data = array( 
         'idhorario'=>$idhorario,
         'idhorariodetalle'=>$idhorariodetalle, 
-        'mensajes'=>$this->mensaje->showAllMensaje($idhorariodetalle)
+        'mensajes'=>$this->mensaje->showAllMensaje($idhorariodetalle),
+        'controller'=>$this
       );
         $this->load->view('docente/header');
         $this->load->view('docente/grupo/mensaje',$data);
         $this->load->view('docente/footer');
 
-    
+     }else{
+         $data = array(
+            'heading'=>'Error',
+            'message'=>'Error intente mas tarde.'
+        );
+         $this->load->view('errors/html/error_general',$data);
+    }
 }
 public function eliminarCalificacion()
 {
     # code...
+     Permission::grant(uri_string());
     $idcalificacion = $this->input->post('idcalificacion'); 
     $value = $this->grupo->deleteCalificacion($idcalificacion);
     if($value){
@@ -757,6 +828,7 @@ public function eliminarCalificacion()
 public function eliminarAsistencia()
 {
     # code...
+     Permission::grant(uri_string());
     $idasistencia = $this->input->post('idasistencia'); 
     $value = $this->grupo->deleteAsistencia($idasistencia);
     if($value){
@@ -768,6 +840,7 @@ public function eliminarAsistencia()
 
 public function updateCalificacion()
 {
+     Permission::grant(uri_string());
     $config = array( 
           array(
             'field' => 'calificacion',
@@ -792,6 +865,33 @@ public function updateCalificacion()
                 'fecharegistro' => date('Y-m-d H:i:s')
             );
             $this->grupo->updateCalificacion($idcalificacion,$data);
+         
+        echo json_encode(['success'=>'Ok']);
+      
+    }
+
+}
+public function eliminarCalificacionUnidad()
+{
+     Permission::grant(uri_string());
+    $config = array( 
+          array(
+            'field' => 'unidad',
+            'label' => 'Calificacion',
+            'rules' => 'trim|required',
+            'errors' => array(
+                'required' => 'Seleccionar la Unidad.'
+            )
+        )
+    );
+    $this->form_validation->set_rules($config);
+    if ($this->form_validation->run() == FALSE) {
+        $errors = validation_errors();
+        echo json_encode(['error'=>$errors]);
+    } else {
+        $unidad = $this->input->post('unidad'); 
+        $horariodetalle = $this->input->post('horariodetalle');  
+        $this->grupo->eliminarCalificacionUnidad($unidad,$horariodetalle);
          
         echo json_encode(['success'=>'Ok']);
       

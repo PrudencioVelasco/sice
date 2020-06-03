@@ -7,8 +7,7 @@
     <div class="col-md-12">
       <div class="x_panel">
         <div class="x_title">
-          <h2><strong>HORARIO</strong></h2>
-         
+          <h2><strong>HORARIO ESCOLAR</strong></h2> 
           <div class="clearfix"></div>
         </div>
         <div class="x_content">
@@ -18,10 +17,7 @@
              <div id="appd">
                   <div class="row">
                            <div class="col-md-12" align="right"> 
-                            <?php if(isset($id) && !empty($id)){ ?>
- <a  target="_blank" class="btn btn-round btn-info" href="<?php echo base_url(); ?>/Phorario/imprimirHorario/<?php echo $controller->encode($id) ?>" class="btn btn-primary"><i class="fa fa-print"></i> Imprimir Horario</a>
-                           <?php }?>
-                               
+                              <a target="_blank" class="btn btn-round btn-primary" href="<?php echo base_url(); ?>/alumno/generarHorarioPDF/<?php echo $idhorario."/".$idalumno ?>"> <i class="fa fa-print"></i> Imprimir Horario</a>
                             </div> 
                   </div> 
                    <table class="table">
@@ -39,7 +35,7 @@
                         <td >
                           <div v-for="row in lunes">  
                             <ul class="nav navbar-right panel_toolbox" style="border: 2px solid #ccc; border-radius: 4px; margin-bottom: 4px">
-                                <li><a class="collapse-link " style="color: #000"> 
+                               <li><a class="collapse-link " style="color: #000"> 
                                   <div  v-if="row.opcion == 'NORMAL'">
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
                                     <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small>
@@ -70,7 +66,7 @@
                                      <strong>SIN CLASES</strong> ({{row.horainicial}}-{{row.horafinal}})
                                   </div>
                                 </a>
-                                </li>
+                                </li> 
                               </ul> 
                           </div>
                         </td> 
@@ -89,7 +85,7 @@
                                      <strong>SIN CLASES</strong> ({{row.horainicial}}-{{row.horafinal}})
                                   </div>
                                 </a>
-                                </li> 
+                                </li>
                               </ul> 
                           </div></td>
                         <td>
@@ -107,7 +103,7 @@
                                      <strong>SIN CLASES</strong> ({{row.horainicial}}-{{row.horafinal}})
                                   </div>
                                 </a>
-                                </li>
+                                </li> 
                               </ul> 
                           </div>
                         </td>
@@ -126,15 +122,15 @@
                                      <strong>SIN CLASES</strong> ({{row.horainicial}}-{{row.horafinal}})
                                   </div>
                                 </a>
-                                </li>
+                                </li> 
                               </ul> 
                           </div>
                         </td>
                       </tr>
                       
                     </tbody>
-                  </table> 
-
+                  </table>
+                  
              </div>
             
 
@@ -168,6 +164,6 @@
 <div class="clearfix"></div>
 <div id="notif-group" class="tabbed_notifications"></div>
 </div>
-<script data-my_var_1="<?php echo base_url() ?>" data-my_var_2="<?php echo $id; ?>" src="<?php echo base_url(); ?>/assets/vue/appvue/apphorariodetalle.js"></script> 
+<script data-my_var_1="<?php echo base_url() ?>" data-my_var_2="<?php echo $idhorario; ?>" src="<?php echo base_url(); ?>/assets/vue/appvue/apphorariodetalle.js"></script> 
 
 

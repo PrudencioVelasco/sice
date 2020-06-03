@@ -9,7 +9,7 @@
         <div class="x_title">
           <h2><strong>BOLETA DEL ALUMNO(A)</strong></h2>
           <ul class="nav navbar-right panel_toolbox">
-             <h3><small>Calificación: </small><strong style="color: green">
+             <h3><small>Calificación del Nivel: </small><strong style="color: green">
              <?php 
                 //$calificacion 
              if(isset($calificacion) && !empty($calificacion)){
@@ -54,7 +54,7 @@
                 <?php
                   if (isset($unidades) && !empty($unidades)) {
                     foreach ($unidades as $value) { ?>
-                     <a  target="_blank" href="<?php echo site_url('alumno/boleta/'.$idhorario.'/'.$idalumno.'/'.$value->idunidad) ?>" class="btn btn-info"><i class="fa fa-print"></i> BOLETA DE <?php echo $value->nombreunidad ?></a>
+                     <a  target="_blank" href="<?php echo site_url('alumno/boleta/'.$idhorario.'/'.$idalumno.'/'.$value->idunidad) ?>" class="btn btn-info"><i class="fa fa-print"></i> BOLETA <?php echo $value->nombreunidad ?></a>
                       <?php
                     }
                   }

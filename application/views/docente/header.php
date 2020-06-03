@@ -44,7 +44,11 @@
     <script src="<?php echo base_url(); ?>/assets/js/sweetalert2/dist/sweetalert2.min.js"></script>
     <link rel="stylesheet" href="<?php echo base_url(); ?>/assets/js/sweetalert2/dist/sweetalert2.min.css">
 
-     
+ <style>
+   .swal2-popup{
+     font-size: 1.4rem;
+   }
+ </style>
     
   <!--[if lt IE 9]>
         <script src="../assets/js/ie8-responsive-file-warning.js"></script>

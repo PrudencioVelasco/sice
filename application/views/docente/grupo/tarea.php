@@ -106,7 +106,7 @@
                       data-fechaentrega ="<?php echo $value->fechaentrega;?>" >
                       <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                     Modificar / Detalles</a>
-                      <a onclick="return confirm('Esta seguro de Eliminar la Tarea?')"  href="<?php echo site_url('Pgrupo/eliminarTarea/'.$idhorario.'/'.$idhorariodetalle.'/'.$value->idtarea) ?>" class="btn btn-danger btn-sm"><i class='fa fa-trash'></i> Eliminar</a>
+                      <a onclick="return confirm('Esta seguro de Eliminar la Tarea?')"  href="<?php echo site_url('Pgrupo/eliminarTarea/'.$controller->encode($idhorario).'/'.$controller->encode($idhorariodetalle).'/'.$controller->encode($value->idtarea)) ?>" class="btn btn-danger btn-sm"><i class='fa fa-trash'></i> Eliminar</a>
                             </td> 
                           </tr>
                      <?php

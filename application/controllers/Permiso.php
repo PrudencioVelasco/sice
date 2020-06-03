@@ -29,9 +29,9 @@ class Permiso extends CI_Controller {
 	    public function showAll()
     {
        //Permission::grant(uri_string());
-        $query = $this->permiso_model->showAll();
+        $query = $this->permiso->showAll();
         if ($query) {
-            $result['permisos'] = $this->permiso_model->showAll();
+            $result['permisos'] = $this->permiso->showAll();
         }
        if(isset($result) && !empty($result)){
          echo json_encode($result);
@@ -73,7 +73,7 @@ class Permiso extends CI_Controller {
                 'description' => $this->input->post('description')
                 
             );
-            if ($this->permiso_model->addPermiso($data)) {
+            if ($this->permiso->addPermiso($data)) {
                 $result['error'] = false;
                 $result['msg']   = 'User added successfully';
             }
@@ -118,7 +118,7 @@ class Permiso extends CI_Controller {
                 'uri' => $this->input->post('uri'),
                 'description' => $this->input->post('description')
             );
-            if ($this->permiso_model->updatePermiso($id, $data)) {
+            if ($this->permiso->updatePermiso($id, $data)) {
                 $result['error']   = false;
                 $result['success'] = 'User updated successfully';
             }
@@ -132,7 +132,7 @@ class Permiso extends CI_Controller {
     {
         //Permission::grant(uri_string());
         $value = $this->input->post('text');
-        $query = $this->permiso_model->searchPermiso($value);
+        $query = $this->permiso->searchPermiso($value);
         if ($query) {
             $result['permisos'] = $query;
         }

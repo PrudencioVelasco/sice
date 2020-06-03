@@ -103,12 +103,12 @@ class Welcome extends CI_Controller {
 			 redirect('/Tutores');
 			}else{
 				 $this->session->set_flashdata('err2', 'Correo o Contraseña son incorrectos.');
-                //redirect('/');
+                redirect('/');
 			}
 		}
 		else{
 		   $this->session->set_flashdata('err2', 'Correo o Contraseña son incorrectos.');
-                //redirect('/');
+                redirect('/');
 		} 
 
 	}

@@ -110,7 +110,18 @@
                         <i class="fa fa-check-circle" style="color: green"></i> <label>Promedio Gral. <?php if(isset($promediogeneral) && !empty($promediogeneral)) {  echo number_format($promediogeneral,2);}else{ echo " --- "; } ?></label>
                       </li>
                       <li>
-                        <i class="fa fa-check-circle "></i> <label>Especialidad: <?php echo $detalle->nombreespecialidad ?></label>
+                        <i class="fa fa-check-circle "></i> <label><?php echo $detalle->nombreespecialidad ?></label>
+                      </li>
+                      <li>
+                        <i class="fa fa-check-circle "></i> <label>Beca: <?php 
+                        if(isset($becaalumno) && !empty($becaalumno)) {echo $becaalumno."%"; }else{ echo 0;} 
+                        ?></label>
+                        <?php
+                          if(isset($validargrupo) && !empty($validargrupo)) {
+                            echo ' <i class="fa fa-pencil" title="Dar clic para modificar la Beca." data-toggle="modal" data-target=".bs-beca-modal-sm" ></i>'; 
+                          }
+                        ?>
+                       
                       </li>
 
 
@@ -131,7 +142,7 @@
                                    <?php// } ?>-->
                             </div>
                         </div>   
-                  </div>
+                  </div> 
                     <br />
 
                     
@@ -299,6 +310,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
+                                  <div class="col-md-12 col-sm-12 col-xs-12 ">
                                   <div v-if="mostrar">
                                       <div class="row">
                                     <div class="col-md-12 col-sm-12 col-xs-12" align="left"> 
@@ -415,6 +427,7 @@
                                         </table>
                   
                                   </div>
+                            </div>
                                 </div>
                             </div>
                             <?php include 'modal_estadocuenta.php' ?>
@@ -426,8 +439,53 @@
                     </div>
                   </div>
 
+                 <!-- MODAL ASIGNAR/MODIFICAR BEVA -->
+                  <div class="modal fade bs-beca-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
+                  <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
 
-                 
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel2">Asgnar Beca</h4>
+                      </div>
+                        <form method="post" id="frmasignarbeca" action="">
+                      <div class="modal-body">
+                       
+                          <div class="row">
+                            <div class="col-md-12 col-sm-12 col-xs-12 ">
+                               <div class="alert alert-danger print-error-msg" style="display:none"></div>
+                               <div class="alert alert-success print-success-msg" style="display:none"></div>
+                                <div class="form-group">
+                                    <label><font color="red">*</font> Beca</label>
+                                   
+                                        <select name="idbeca" required=""  class="form-control" >
+                                            <option value="">-- SELECCIONAR --</option>
+                                              <?php if(isset($becas) && !empty($becas)){ 
+                                                foreach($becas as $row){
+                                                ?>
+                                                <option value="<?php echo $row->idbeca ?>"><?php echo $row->descuento; ?></option>
+                                             
+                                              <?php  }  } ?>
+                                        </select>
+                                   
+                                </div> 
+                            </div>  
+                        </div>
+                      
+                      </div>
+                      <div class="modal-footer">
+                         <input type="hidden" name="idalumnobeca" value="<?php echo $id ?>">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class='fa fa-ban'></i>  Cerrar</button>
+                        <button type="button" id="btnasignarbeca" class="btn btn-primary"> <i class='fa fa-floppy-o'></i> Aceptar</button>
+                      </div>
+                        </form>
+
+                    </div>
+                  </div>
+                </div>
+                <!-- FIN MODAL ASIGNAR/MODIFICAR BECA -->
+                 <!-- MODAL ASIGNAR GRUPO -->
                   <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
                   <div class="modal-dialog modal-sm">
                     <div class="modal-content">
@@ -448,7 +506,7 @@
                                     <label><font color="red">*</font> Ciclo Escolar</label>
                                    
                                         <select name="idcicloescolar" required=""  class="form-control" >
-                                            <option value="">Seleccionar</option>
+                                            <option value="">-- SELECCIONAR --</option>
                                               <?php if(isset($cicloescolar) && !empty($cicloescolar)){ 
                                                 foreach($cicloescolar as $row){
                                                 ?>
@@ -462,7 +520,7 @@
                                     <label><font color="red">*</font> Grupo</label>
                                    
                                         <select name="idgrupo" required=""  class="form-control" >
-                                            <option value="">Seleccionar</option>
+                                            <option value="">-- SELECCIONAR --</option>
                                               <?php if(isset($grupos) && !empty($grupos)){ 
                                                 foreach($grupos as $row){
                                                 ?>
@@ -486,8 +544,9 @@
                     </div>
                   </div>
                 </div>
+                <!-- FIN MODAL ASIGNAR GRUPO -->
 
-
+<!--MODAL PARA MOFIFICAR GRUPO-->
                   <div class="modal fade bs-example-cambiar-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
                   <div class="modal-dialog modal-sm">
                     <div class="modal-content">
@@ -508,7 +567,7 @@
                                     <label><font color="red">*</font> Grupo</label>
                                    
                                         <select name="idgrupo" required=""  class="form-control" >
-                                            <option value="">Seleccionar</option>
+                                            <option value="">-- SELECCIONAR --</option>
                                               <?php if(isset($grupos) && !empty($grupos)){ 
                                                 foreach($grupos as $row){
                                                 ?>
@@ -531,7 +590,7 @@
                     </div>
                   </div>
                 </div>
- 
+ <!--FIN DEL MODAL PARA MODIFICAR GRUPO-->
 
                 </div>
               </div>
@@ -573,40 +632,32 @@
 
         $("#btncambiargrupo").click(function(){
  
-                myform = $('#frmcambiargrupo');
-            // Encuentra entradas deshabilitadas, y elimina el atributo "deshabilitado"
-           // disabled = myform.find(':input:disabled').removeAttr('disabled');
-            // serializar el formulario
+            myform = $('#frmcambiargrupo'); 
             serialized = myform.serialize();
             $.ajax({
              method: "POST",
              url: "<?php echo site_url('Alumno/cambiarGrupo'); ?>",
              data: serialized,
-             beforeSend: function( xhr ) {
-                //xhr.overrideMimeType( "text/plain; charset=x-user-defined" );
+             beforeSend: function( xhr ) { 
             }
-        }).done(function(data) {
-            console.log(data);
-             var msg = $.parseJSON(data);
-                    console.log(msg.error);
-                    if((typeof msg.error === "undefined")){ 
-                    $(".print-error-msg").css('display','none'); 
-                    // window.location.href = "<?php //echo site_url('hold/index'); ?>";
-                    }else{ 
-                    $(".print-error-msg").css('display','block'); 
-                    $(".print-error-msg").html(msg.error);
+          }).done(function(data) {
+              console.log(data);
+              var msg = $.parseJSON(data);
+                      console.log(msg.error);
+                      if((typeof msg.error === "undefined")){ 
+                      $(".print-error-msg").css('display','none'); 
+                      // window.location.href = "<?php //echo site_url('hold/index'); ?>";
+                      }else{ 
+                      $(".print-error-msg").css('display','block'); 
+                      $(".print-error-msg").html(msg.error);
 
-                    } 
-                     }); 
-                    
-                });
+                      } 
+                      }); 
+                      
+                  });
 
-           $("#btnasignargrupo").click(function(){
- 
-                myform = $('#frmasignargrupo');
-            // Encuentra entradas deshabilitadas, y elimina el atributo "deshabilitado"
-           // disabled = myform.find(':input:disabled').removeAttr('disabled');
-            // serializar el formulario
+           $("#btnasignargrupo").click(function(){ 
+                myform = $('#frmasignargrupo'); 
             serialized = myform.serialize();
             $.ajax({
              method: "POST",
@@ -616,36 +667,53 @@
                 //xhr.overrideMimeType( "text/plain; charset=x-user-defined" );
                 console.log(xhr);
             }
-        }).done(function(data) {
+        }).done(function(data) { 
+                      var val = $.parseJSON(data); 
+                        if((val.success === "Ok")){ 
+                          $(".print-success-msg").css('display','block'); 
+                          $(".print-success-msg").html("Fue asignado al Grupo.");
+                          setTimeout(function() {
+                            $('.print-error-msg').fadeOut('fast');
+                            location.reload(); 
+                          }, 3000);
 
-          
- var val = $.parseJSON(data);
-        //console.log(val.msg);
-         console.log(val.error);
-
-          
-         if((val.success === "Ok")){ 
-          $(".print-success-msg").css('display','block'); 
-          $(".print-success-msg").html("Fue asignado al Grupo.");
-          setTimeout(function() {
-            $('.print-error-msg').fadeOut('fast');
-            location.reload(); 
-          }, 3000);
-
-        }else{ 
-          $(".print-error-msg").css('display','block'); 
-          $(".print-error-msg").html(val.error);
-          setTimeout(function() {$('.print-error-msg').fadeOut('fast');}, 6000);
-        }
-
-
+                        }else{ 
+                          $(".print-error-msg").css('display','block'); 
+                          $(".print-error-msg").html(val.error);
+                          setTimeout(function() {$('.print-error-msg').fadeOut('fast');}, 6000);
+                        } 
                      }); 
                     
                 });
-          
-    
-        
- 
+        $("#btnasignarbeca").click(function(){ 
+                myform = $('#frmasignarbeca'); 
+            serialized = myform.serialize();
+            $.ajax({
+             method: "POST",
+             url: "<?php echo site_url('Alumno/asignarBeca'); ?>",
+             data: serialized,
+             beforeSend: function( xhr ) {
+                //xhr.overrideMimeType( "text/plain; charset=x-user-defined" );
+                console.log(xhr);
+            }
+        }).done(function(data) { 
+                      var val = $.parseJSON(data); 
+                        if((val.success === "Ok")){ 
+                          $(".print-success-msg").css('display','block'); 
+                          $(".print-success-msg").html("La beca fue registrada.");
+                          setTimeout(function() {
+                            $('.print-error-msg').fadeOut('fast');
+                            location.reload(); 
+                          }, 3000);
+
+                        }else{ 
+                          $(".print-error-msg").css('display','block'); 
+                          $(".print-error-msg").html(val.error);
+                          setTimeout(function() {$('.print-error-msg').fadeOut('fast');}, 6000);
+                        } 
+                     }); 
+                    
+                }); 
     });
 
 </script>

@@ -20,13 +20,13 @@ class Grupo extends CI_Controller {
 
 	public function index()
 	{  
-    Permission::grant(uri_string());
+        Permission::grant(uri_string());
 		$this->load->view('admin/header');
 		$this->load->view('admin/grupo/index');
 		$this->load->view('admin/footer');
 	}
     public function showAllEspecialidades() {
-       // Permission::grant(uri_string()); 
+        Permission::grant(uri_string()); 
         $idplantel = $this->session->idplantel;
         $query = $this->alumno->showAllEspecialidades($idplantel);
         if ($query) {
@@ -37,6 +37,7 @@ class Grupo extends CI_Controller {
         }
     }
       public function searchGrupo() { 
+          Permission::grant(uri_string());
          $idplantel = $this->session->idplantel;
         $value = $this->input->post('text');
         $query = $this->grupo->searchGrupo($value,$idplantel);
@@ -49,6 +50,7 @@ class Grupo extends CI_Controller {
     }
 
     public function showAll() { 
+        Permission::grant(uri_string());
        $idplantel = $this->session->idplantel;
          $query = $this->grupo->showAllGrupos($idplantel);
          //var_dump($query);
@@ -60,6 +62,7 @@ if(isset($result) && !empty($result)){
         }
      }
      public function showAllNiveles() { 
+         Permission::grant(uri_string());
          $query = $this->grupo->showAllNiveles();
          //var_dump($query);
          if ($query) {
@@ -70,6 +73,7 @@ if(isset($result) && !empty($result)){
         }
      }
       public function showAllTurnos() { 
+          Permission::grant(uri_string());
          $query = $this->grupo->showAllTurnos();
          //var_dump($query);
          if ($query) {
@@ -81,7 +85,7 @@ if(isset($result) && !empty($result)){
      }
      
        public function addGrupo() {
-        //Permission::grant(uri_string());
+        Permission::grant(uri_string());
         $config = array(
              array(
                 'field' => 'idespecialidad',
@@ -162,7 +166,7 @@ if(isset($result) && !empty($result)){
     }
 
            public function updateGrupo() {
-        //Permission::grant(uri_string());
+        Permission::grant(uri_string());
         $config = array(
              array(
                 'field' => 'idespecialidad',
@@ -248,6 +252,7 @@ if(isset($result) && !empty($result)){
    public function deleteGrupo()
     {
         # code...
+        Permission::grant(uri_string());
         $idgrupo = $this->input->get('idgrupo');
         $query = $this->grupo->deleteGrupo($idgrupo);
         if ($query) {

@@ -15,13 +15,13 @@ class Rol extends CI_Controller {
 		$this->load->model('data_model');
 		$this->load->model('rol_model','rol'); 
 		$this->load->library('permission'); 
-    $this->load->library('session');
+         $this->load->library('session');
 	}
 
 	public function index()
 	{
            Permission::grant(uri_string());
-		       $this->load->view('admin/header');
+		   $this->load->view('admin/header');
            $this->load->view('admin/rol/index');
            $this->load->view('admin/footer');
 	}
@@ -29,9 +29,9 @@ class Rol extends CI_Controller {
 	    public function showAll()
     {
          // Permission::grant(uri_string());
-        $query = $this->rol_model->showAll();
+        $query = $this->rol->showAll();
         if ($query) {
-            $result['roles'] = $this->rol_model->showAll();
+            $result['roles'] = $this->rol->showAll();
         }
        if(isset($result) && !empty($result)){
          echo json_encode($result);
@@ -43,7 +43,7 @@ class Rol extends CI_Controller {
         $idplantel = $this->session->idplantel;
         $idrol = $this->session->idrol;
           //Permission::grant(uri_string());
-        $query = $this->rol_model->showAll($idrol,$idplantel); 
+        $query = $this->rol->showAll($idrol,$idplantel); 
         echo json_encode($query);
     }
 
@@ -73,7 +73,7 @@ class Rol extends CI_Controller {
                 'rol' => $this->input->post('rol')
                 
             );
-            if ($this->rol_model->addRol($data)) {
+            if ($this->rol->addRol($data)) {
                 $result['error'] = false;
                 $result['msg']   = 'User added successfully';
             }
@@ -107,7 +107,7 @@ class Rol extends CI_Controller {
             $data = array(
                 'rol' => $this->input->post('rol') 
             );
-            if ($this->rol_model->updateRol($id, $data)) {
+            if ($this->rol->updateRol($id, $data)) {
                 $result['error']   = false;
                 $result['success'] = 'User updated successfully';
             }
@@ -121,7 +121,7 @@ class Rol extends CI_Controller {
     {
         //  Permission::grant(uri_string());
         $value = $this->input->post('text');
-        $query = $this->rol_model->searchRol($value);
+        $query = $this->rol->searchRol($value);
         if ($query) {
             $result['roles'] = $query;
         }
@@ -135,13 +135,13 @@ class Rol extends CI_Controller {
         //  Permission::grant(uri_string());
            //$data['permisos']  = $this->rol_model->rolpermisos($id); 
            $arraypermisos = array();
-           $permisos= $this->rol_model->permisos(); 
+           $permisos= $this->rol->permisos(); 
            //var_dump($permisos);
             $i = 0;
            foreach ($permisos as  $value) {
                  $idpermiso=$value->id;
                
-                 $permisodetalle= $this->rol_model->permisoid($idpermiso,$id); 
+                 $permisodetalle= $this->rol->permisoid($idpermiso,$id); 
                 
                  if(empty($permisodetalle)){
                         $arraypermisos[$i] = array();
@@ -175,7 +175,7 @@ class Rol extends CI_Controller {
          // Permission::grant(uri_string());
         # code...
         $idrol=$this->input->post('rol');
-        $this->rol_model->eliminarPermisosRol($idrol);
+        $this->rol->eliminarPermisosRol($idrol);
         $check=$this->input->post('permiso');
         for ($i=0; $i <sizeof($check) ; $i++) { 
             # code...
@@ -184,7 +184,7 @@ class Rol extends CI_Controller {
                  'rol_id' => $this->input->post('rol')
                 
             );
-            if ($this->rol_model->addRolPermiso($data)) {
+            if ($this->rol->addRolPermiso($data)) {
                 $result['error'] = false;
                 $result['msg']   = 'User added successfully';
             }

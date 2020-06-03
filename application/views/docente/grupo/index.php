@@ -22,7 +22,7 @@
                         <th>Periodo</th>
                         <th>Grupo</th>
                         <th>Materia</th>
-                        <th>Opción</th> 
+                        <th></th> 
                       </tr>
                     </thead>
                     <tbody>
@@ -36,7 +36,7 @@
                               <th scope="row"><?php echo $value->mesinicio." ".$value->yearinicio." - ".$value->mesfin." ".$value->yearfin; ?></th>
                               <td scope="row"><?php echo $value->nombrenivel." ".$value->nombregrupo ?></td>
                               <td><?php echo $value->nombreclase; ?></td>
-                              <td>
+                              <td align="right">
                                 <div class="btn-group" role="group">
                                     <div class="btn-group" role="group">
                                         <button type="button" class="btn btn-primary waves-effect dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -44,10 +44,10 @@
                                             <span class="caret"></span>
                                         </button>
                                         <ul class="dropdown-menu"> 
-                                            <li><a href="<?php echo site_url('Pgrupo/examen/'.$value->idhorario.'/'.$value->idhorariodetalle) ?>"> <i class="fa fa-file-o"></i> Examen</a></li> 
-                                            <li><a href="<?php echo site_url('Pgrupo/asistencia/'.$value->idhorario.'/'.$value->idhorariodetalle) ?>"> <i class="fa fa-check"></i> Asistencia</a></li> 
-                                            <li><a href="<?php echo site_url('Pgrupo/tarea/'.$value->idhorario.'/'.$value->idhorariodetalle) ?>"><i class="fa fa-book"></i> Tarea</a></li> 
-                                            <li><a href="<?php echo site_url('Pgrupo/mensaje/'.$value->idhorario.'/'.$value->idhorariodetalle) ?>"> <i class="fa fa-envelope"></i> Mensaje</a></li> 
+                                            <li><a href="<?php echo site_url('Pgrupo/examen/'.$controller->encode($value->idhorario).'/'.$controller->encode($value->idhorariodetalle)) ?>"> <i class="fa fa-file-o"></i> Examen</a></li> 
+                                            <li><a href="<?php echo site_url('Pgrupo/asistencia/'.$controller->encode($value->idhorario).'/'.$controller->encode($value->idhorariodetalle)) ?>"> <i class="fa fa-check"></i> Asistencia</a></li> 
+                                            <li><a href="<?php echo site_url('Pgrupo/tarea/'.$controller->encode($value->idhorario).'/'.$controller->encode($value->idhorariodetalle)) ?>"><i class="fa fa-book"></i> Tarea</a></li> 
+                                            <li><a href="<?php echo site_url('Pgrupo/mensaje/'.$controller->encode($value->idhorario).'/'.$controller->encode($value->idhorariodetalle)) ?>"> <i class="fa fa-envelope"></i> Mensaje</a></li> 
                                           
                                         </ul>
                                     </div>

@@ -26,7 +26,7 @@ class Tutor extends CI_Controller {
 		$this->load->view('admin/footer');
 	}
 	  public function showAll() {
-       // Permission::grant(uri_string()); 
+        Permission::grant(uri_string()); 
          $idplantel = $this->session->idplantel;
         $query = $this->tutor->showAll();
         if ($query) {
@@ -37,7 +37,7 @@ class Tutor extends CI_Controller {
         }
     }
      public function showAllAlumnos() {
-       // Permission::grant(uri_string()); 
+        Permission::grant(uri_string()); 
          $idplantel = $this->session->idplantel;
         $query = $this->tutor->showAllAlumnos();
         if ($query) {
@@ -48,7 +48,7 @@ class Tutor extends CI_Controller {
         }
     }
     public function showAllTutorAlumnos($idtutor) {
-       // Permission::grant(uri_string()); 
+        Permission::grant(uri_string()); 
         $query = $this->tutor->showAllTutorAlumnos($idtutor);
         if ($query) {
             $result['alumnos'] = $this->tutor->showAllTutorAlumnos($idtutor);
@@ -59,7 +59,7 @@ class Tutor extends CI_Controller {
     }
 
     public function addTutor() {
-        //Permission::grant(uri_string());
+        Permission::grant(uri_string());
         $config = array(
             array(
                 'field' => 'nombre',
@@ -160,6 +160,11 @@ class Tutor extends CI_Controller {
 
             );
              $idusuario = $this->user->addUser($datausuario);
+               $data_usuario_rol = array(
+                 'id_rol'=>11,
+                 'id_user'=>$idusuario
+             );
+             $id_usuario_rol = $this->user->addUserRol($data_usuario_rol);
         }else{
               $result['error'] = true;
               $result['msg'] = array(
@@ -175,7 +180,7 @@ class Tutor extends CI_Controller {
     }
 
         public function updateTutor() {
-        //Permission::grant(uri_string());
+        Permission::grant(uri_string());
       $config = array(
             array(
                 'field' => 'nombre',
@@ -284,7 +289,7 @@ class Tutor extends CI_Controller {
          
     }
     public function searchTutor() {
-        //Permission::grant(uri_string());
+        Permission::grant(uri_string());
         $value = $this->input->post('text');
          $idplantel = $this->session->idplantel;
         $query = $this->tutor->searchTutor($value,$idplantel);
@@ -298,6 +303,7 @@ class Tutor extends CI_Controller {
 
     public function alumnos($id)
     {
+        Permission::grant(uri_string());
     	# code...
     	$data = array(
     		'id'=>$id,
@@ -308,7 +314,7 @@ class Tutor extends CI_Controller {
 		$this->load->view('admin/footer');
     }
         public function addTutorAlumno() {
-        //Permission::grant(uri_string());
+        Permission::grant(uri_string());
         $config = array(
             array(
                 'field' => 'idalumno',
@@ -345,10 +351,12 @@ class Tutor extends CI_Controller {
     public function deleteAlumno($id)
     {
         # code...
+        Permission::grant(uri_string());
         $this->tutor->deleteAlumno($id);
     }
       public function deleteTutor()
   {
+      Permission::grant(uri_string());
         $idtutor = $this->input->get('idtutor');
         $query = $this->tutor->deleteTutor($idtutor);
         if ($query) {
@@ -360,6 +368,7 @@ class Tutor extends CI_Controller {
   }
   public function updatePassword()
   {
+      Permission::grant(uri_string());
                   $config = array(
              array(
                 'field' => 'password1',

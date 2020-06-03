@@ -15,7 +15,40 @@ class EstadoCuenta extends CI_Controller {
          $this->load->model('user_model','usuario'); 
         $this->load->library('permission');
         $this->load->library('session');
-	}
+        $this->load->helper('numeroatexto_helper');
+  }
+  
+  public function index()
+  {
+    # code..
+    echo generateRandomString();
+  }
+   /*$cantidad = trim($this->input->post('cantidad'));
+
+        if (empty($cantidad)) {
+            echo json_encode(array('leyenda' => 'Debe introducir una cantidad.'));
+            
+            return;
+        }
+        
+        # verificar si el número no tiene caracteres no númericos, con excepción
+        # del punto decimal
+        $xcantidad = str_replace('.', '', $cantidad);
+        
+        if (FALSE === ctype_digit($xcantidad)){
+            echo json_encode(array('leyenda' => 'La cantidad introducida no es válida.'));
+            
+            return;
+        }
+
+        # procedemos a covertir la cantidad en letras
+        $this->load->helper('numeros');
+        $response = array(
+            'leyenda' => num_to_letras($cantidad)
+            , 'cantidad' => $cantidad
+            );
+        echo json_encode($response);
+    }*/
  
    public function showAllCicloEscolar() { 
         $idplantel = $this->session->idplantel;
@@ -264,7 +297,13 @@ public function addCobroColegiatura()
             $idmes =  trim($this->input->post('idmes')); 
             $abono =  trim($this->input->post('descuento')); 
             $validar = $this->estadocuenta->validarAddColegiatura($idalumno,$idperiodo,$idmes);
+             $folio = generateRandomString();
             if($validar == false){
+              $detalle_descuento = $this->estadocuenta->descuentoPagosInicio($idalumno,$idperiodo,3);
+            if($detalle_descuento){
+
+               $descuento_correcto = $detalle_descuento[0]->descuento - ($detalle_descuento[0]->descuentobeca / 100 * $detalle_descuento[0]->descuento);
+              if($abono == $descuento_correcto){
             if($idformapago == 1){
 
               //1.- OBTENER DATOS DE LA TABLA AMORTIZACION Y PONER COMO PAGADO
@@ -279,6 +318,7 @@ public function addCobroColegiatura()
               );
               $idamortizacion = $this->estadocuenta->addAmortizacion($data_add_amortizacion);
                $data_estadocuenta = array(
+                  'folio'=> $folio,
                   'idamortizacion'=>$idamortizacion,
                   'idperiodo'=>$idperiodo,
                   'idalumno'=>$idalumno,
@@ -321,6 +361,7 @@ public function addCobroColegiatura()
               $idamortizacion = $this->estadocuenta->addAmortizacion($data_add_amortizacion);
                  //Se modifico el estatus de pagado
                 $data_estadocuenta = array(
+                  'folio'=>$folio,
                   'idamortizacion'=>$idamortizacion,
                   'idperiodo'=>$idperiodo,
                   'idalumno'=>$idalumno,
@@ -352,6 +393,24 @@ public function addCobroColegiatura()
              $result['error'] = true;
             $result['msg'] = array(
                 'msgerror' => 'Es necesario registrar el Número Autorización.'
+            );
+           
+          } 
+
+            } else{
+             $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => 'El pago debe de ser de: '. number_format($descuento_correcto,2)
+            );
+           
+          } 
+
+
+          }   
+        else{
+             $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => 'No esta registrado el Pago para el Nivel.'
             );
            
           } 
@@ -550,9 +609,16 @@ public function addCobro()
             $descuento =  trim($this->input->post('descuento')); 
             $idamortizacion =  trim($this->input->post('idamortizacion'));
             $idtipopagocol =  trim($this->input->post('idtipopagocol'));
+            $detalle_descuento = $this->estadocuenta->descuentoPagosInicio($idalumno,$idperiodo,$idtipopagocol);
+            if($detalle_descuento){
+              //$descuento_correcto  = $detalle_descuento[0]->descuento;
+              $descuento_correcto = $detalle_descuento[0]->descuento - ($detalle_descuento[0]->descuentobeca / 100 * $detalle_descuento[0]->descuento);
+              if($descuento == $descuento_correcto){
+            $folio = generateRandomString();
             if($idformapago == 1){ 
               //EFECTIVO FORMA PAGO 
                 $data_estadocuenta = array( 
+                  'folio'=>$folio,
                   'idperiodo'=>$idperiodo,
                   'idalumno'=>$idalumno,
                   'idformapago'=>$idformapago,
@@ -572,7 +638,7 @@ public function addCobro()
         elseif ($idformapago == 2 && !empty($autorizacion)) {
             //TARJETA
                 $data_estadocuenta = array(
-                  'idamortizacion'=>$idamortizacion,
+                  'folio'=>$folio,
                   'idperiodo'=>$idperiodo,
                   'idalumno'=>$idalumno,
                   'idformapago'=>$idformapago,
@@ -592,6 +658,21 @@ public function addCobro()
              $result['error'] = true;
             $result['msg'] = array(
                 'msgerror' => 'Es necesario registrar el Número Autorización.'
+            );
+           
+          } 
+        } else{
+             $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => 'El pago debe de ser de: '. number_format($descuento_correcto,2)
+            );
+           
+          } 
+        }   
+        else{
+             $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => 'No esta registrado el Pago para el Nivel.'
             );
            
           } 

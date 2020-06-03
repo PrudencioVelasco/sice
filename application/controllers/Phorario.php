@@ -16,12 +16,27 @@ class Phorario extends CI_Controller {
         date_default_timezone_set("America/Mexico_City");
         $this->load->library('permission');
         $this->load->library('session');
-
+        $this->load->library('encryption');
 	}
- 
+  function encode($string)
+        {
+            $encrypted = $this->encryption->encrypt($string);
+            if ( !empty($string) )
+            {
+                $encrypted = strtr($encrypted, array('/' => '~'));
+            }
+            return $encrypted;
+        }
+
+        function decode($string)
+        {
+            $string = strtr($string, array('~' => '/'));
+            return $this->encryption->decrypt($string);
+        } 
+
 	public function index()
 	{
-        //Permission::grant(uri_string()); 
+        Permission::grant(uri_string()); 
         $idhorario = "";
         $result = $this->grupo->showAllGruposProfesor($this->session->idprofesor);
         //var_dump($result);
@@ -30,7 +45,8 @@ class Phorario extends CI_Controller {
         }
        
         $data = array( 
-            'id'=>$idhorario
+            'id'=>$idhorario,
+            'controller'=>$this
         );
 	    $this->load->view('docente/header');
         $this->load->view('docente/horario/index',$data);
@@ -39,6 +55,9 @@ class Phorario extends CI_Controller {
 	} 
      public function imprimirHorario($idhorario='')
  { 
+    Permission::grant(uri_string());
+    $idhorario = $this->decode($idhorario);
+    if(isset($idhorario) && !empty($idhorario)){
    $lunes = $this->horario->showAllDiaHorario($idhorario,1);
         $martes = $this->horario->showAllDiaHorario($idhorario,2);
         $miercoles = $this->horario->showAllDiaHorario($idhorario,3);
@@ -195,5 +214,12 @@ $this->dompdf->loadHtml($tbl);
 $this->dompdf->setPaper('A4');
 $this->dompdf->render();
 $this->dompdf->stream("welcome.pdf", array("Attachment"=>0));
+ }else{
+         $data = array(
+            'heading'=>'Error',
+            'message'=>'Error intente mas tarde.'
+        );
+         $this->load->view('errors/html/error_general',$data);
+    }
  }
 }

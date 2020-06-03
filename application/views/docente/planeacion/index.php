@@ -22,7 +22,7 @@
                         <th>Periodo</th>
                         <th>Grupo</th>
                         <th>Materia</th>
-                        <th>Opción</th> 
+                        <th></th> 
                       </tr>
                     </thead>
                     <tbody>
@@ -36,7 +36,7 @@
                               <th scope="row"><?php echo $value->mesinicio." ".$value->yearinicio." - ".$value->mesfin." ".$value->yearfin; ?></th>
                               <td scope="row"><?php echo $value->nombrenivel." ".$value->nombregrupo ?></td>
                               <td><?php echo $value->nombreclase; ?></td>
-                              <td>
+                              <td align="right">
                                 <div class="btn-group" role="group">
                                     <div class="btn-group" role="group">
                                         <button type="button" class="btn btn-primary waves-effect dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -48,7 +48,7 @@
                                           if(isset($unidades) && !empty($unidades)){
                                           foreach($unidades as $row){
                                            ?>
-                                            <li><a href="<?php echo site_url('Pprofesor/planear/'.$row->idunidad.'/'.$value->idhorariodetalle) ?>"><?php echo $row->nombreunidad; ?></a></li> 
+                                            <li><a href="<?php echo site_url('Pprofesor/planear/'.$controller->encode($row->idunidad).'/'.$controller->encode($value->idhorariodetalle)) ?>"><?php echo $row->nombreunidad; ?></a></li> 
                                           <?php } }?>
                                         </ul>
                                     </div>

@@ -25,6 +25,7 @@ class CicloEscolar extends CI_Controller {
 		$this->load->view('admin/footer');
 	}
       public function searchCiclo() { 
+          Permission::grant(uri_string());
         $value = $this->input->post('text');
         $query = $this->ciclo->searchCiclo($value,$this->session->idplantel);
         if ($query) {
@@ -36,6 +37,7 @@ class CicloEscolar extends CI_Controller {
     }
 
     public function showAll() { 
+        Permission::grant(uri_string());
          $query = $this->ciclo->showAll($this->session->idplantel);
          //var_dump($query);
          if ($query) {
@@ -46,6 +48,7 @@ class CicloEscolar extends CI_Controller {
         }
      }
     public function showAllMeses() { 
+        Permission::grant(uri_string());
          $query = $this->ciclo->showAllMeses();
          //var_dump($query);
          if ($query) {
@@ -56,6 +59,7 @@ class CicloEscolar extends CI_Controller {
      }
      }
      public function showAllYears() { 
+         Permission::grant(uri_string());
          $query = $this->ciclo->showAllYears();
          //var_dump($query);
          if ($query) {
@@ -67,7 +71,7 @@ class CicloEscolar extends CI_Controller {
      }
      
        public function addCiclo() {
-        //Permission::grant(uri_string());
+        Permission::grant(uri_string());
         $config = array(
              array(
                 'field' => 'idmesinicio',
@@ -163,6 +167,7 @@ class CicloEscolar extends CI_Controller {
     public function updateCiclo()
     {
         # code...
+        Permission::grant(uri_string());
           $config = array(
              array(
                 'field' => 'idmesinicio',
@@ -298,6 +303,7 @@ class CicloEscolar extends CI_Controller {
    public function deleteCicloEscolar()
     {
         # code...
+        Permission::grant(uri_string());
         $idperiodo = $this->input->get('idperiodo');
         $query = $this->ciclo->deleteCicloEscolar($idperiodo);
         if ($query) {

@@ -1,6 +1,18 @@
   <!-- page content -->
       <div class="right_col" role="main">
- 
+       <div class="row">
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                  <?php if (isset($_SESSION['err'])): ?>
+                      <div class="alert alert-danger" role="alert">
+                          <h4 class="alert-heading">Permiso!</h4>
+                          <p>Acceso denegado para entrar a esta opcion.</p>
+                          <hr>
+                          <p class="mb-0">Si requiere permiso solicitelo al administrador.</p>
+                      </div>
+                  <?php endif ?>
+              </div>  
+          </div>  
+        <br /> 
 
 
             <div class=""> 
@@ -25,6 +37,7 @@
                 </div>
                 <div class="x_content"> 
                   <div class="row">  
+                    <h2><strong>* TAREAS</strong></h2>
                <table id="" class="table table-striped table-bordered datatabletarea">
                     <thead>
                       <tr>
@@ -39,11 +52,21 @@
                         if(isset($tareas) && !empty($tareas)){
                           $i=1;
                           foreach ($tareas as  $value) {
+                            $space = strrpos($value->tarea, ' ');	
                             ?>
                              <tr>
                               <th scope="row"><?php echo $i++; ?></th>
                               <td><strong><?php echo $value->nombreclase; ?></strong></td>
-                              <td><?php echo $value->tarea ?> </td> 
+                              <td>
+                                <?php
+                                if(strlen($value->tarea) > 20){
+                                 echo $cadena = substr($value->tarea,0,50)."..."; ?>
+                                   <a href="<?php echo site_url('Aalumno/detalletarea/'.$value->idtarea); ?>"> leer mas </a>
+                                <?php }else{
+                                  echo $value->tarea;
+                                }  
+                                ?>
+                              </td> 
                              <td>
                               <?php
                                 setlocale(LC_ALL, 'es_ES');
@@ -60,7 +83,7 @@
                      
                     </tbody>
                   </table>
-
+                    <h2><strong>* MENSAJES</strong></h2>
                    <table id="" class="table table-striped table-bordered datatabletarea">
                     <thead>
                       <tr>
@@ -74,11 +97,23 @@
                         if(isset($mensajes) && !empty($mensajes)){
                           $i=1;
                           foreach ($mensajes as  $value) {
+                              $value->mensaje;
+                              $space = strrpos($value->mensaje, ' ');
+                               substr($value->mensaje, 0, $space)	
                             ?>
                              <tr>
                               <th scope="row"><?php echo $i++; ?></th>
                               <td><strong><?php echo $value->nombreclase; ?></strong></td>
-                              <td><?php echo $value->mensaje ?> </td>  
+                               <td><?php 
+                               
+                               if(strlen($value->mensaje) > 20){
+                                 echo $cadena = substr($value->mensaje,0,50)."..."; ?>
+                                   <a href="<?php echo site_url('Aalumno/detallemensaje/'.$value->idmensaje); ?>"> leer mas </a>
+                                <?php }else{
+                                  echo $value->mensaje;
+                                }  
+                               ?>
+                             </td>  
                             </tr>
                             <?php
                           }

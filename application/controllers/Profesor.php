@@ -26,7 +26,7 @@ class Profesor extends CI_Controller {
 		$this->load->view('admin/footer');
 	}
 	  public function showAll() {
-       // Permission::grant(uri_string()); 
+        Permission::grant(uri_string()); 
          $idplantel = $this->session->idplantel;
         $query = $this->profesor->showAll($idplantel);
         if ($query) {
@@ -39,7 +39,7 @@ class Profesor extends CI_Controller {
 
 
     public function addProfesor() {
-        //Permission::grant(uri_string());
+       Permission::grant(uri_string());
         $config = array(
              array(
                 'field' => 'cedula',
@@ -127,7 +127,12 @@ class Profesor extends CI_Controller {
                 'idtipousuario'=>1,
                 'fecharegistro' => date('Y-m-d H:i:s')
             );
-            $this->usuario->addUser($data_user);
+           $idusuario =  $this->usuario->addUser($data_user);
+             $data_usuario_rol = array(
+                 'id_rol'=>10,
+                 'id_user'=>$idusuario
+             );
+             $id_usuario_rol = $this->usuario->addUserRol($data_usuario_rol);
             }else{
                  $result['error'] = true;
                     $result['msg'] = array(
@@ -144,6 +149,7 @@ class Profesor extends CI_Controller {
     public function updateProfesor()
     {
         # code...
+        Permission::grant(uri_string());
             $config = array(
              array(
                 'field' => 'cedula',
@@ -238,6 +244,7 @@ class Profesor extends CI_Controller {
     }
     public function updatePasswordProfesor()
     {
+        Permission::grant(uri_string());
               $config = array(
              array(
                 'field' => 'password1',
@@ -289,7 +296,7 @@ class Profesor extends CI_Controller {
         }
     }
     public function searchProfesor() {
-        //Permission::grant(uri_string());
+        Permission::grant(uri_string());
          $idplantel = $this->session->idplantel;
         $value = $this->input->post('text');
         $query = $this->profesor->searchProfesor($value,$idplantel);
@@ -303,6 +310,7 @@ class Profesor extends CI_Controller {
 
     public function detalle($id)
     {
+        Permission::grant(uri_string());
     	# code...
     	$data = array(
     		'id'=>$id,
@@ -316,7 +324,7 @@ class Profesor extends CI_Controller {
 
     //MATERIAS DEL PROFESOR
      public function showAllClases() {
-       // Permission::grant(uri_string()); 
+        Permission::grant(uri_string()); 
          $idplantel = $this->session->idplantel;
         $query = $this->profesor->showAllClases();
         if ($query) {
@@ -328,7 +336,7 @@ class Profesor extends CI_Controller {
     }
 
   public function searchllClases() {
-       // Permission::grant(uri_string()); 
+        Permission::grant(uri_string()); 
         $query = $this->profesor->searchMaterias();
         if ($query) {
             $result['clases'] = $this->profesor->searchMaterias();
@@ -340,7 +348,7 @@ class Profesor extends CI_Controller {
 
 
       public function showAllMaterias($idprofesor) {
-       // Permission::grant(uri_string()); 
+        Permission::grant(uri_string()); 
         $query = $this->profesor->showAllMateriasProfesor($idprofesor);
         if ($query) {
             $result['materias'] = $this->profesor->showAllMateriasProfesor($idprofesor);
@@ -351,7 +359,7 @@ class Profesor extends CI_Controller {
     }
 
      public function addMateria() {
-        //Permission::grant(uri_string());
+        Permission::grant(uri_string());
         $config = array(
              array(
                 'field' => 'idmateria',
@@ -397,7 +405,7 @@ class Profesor extends CI_Controller {
          
     }
      public function updateMateria() {
-        //Permission::grant(uri_string());
+        Permission::grant(uri_string());
         $config = array(
              array(
                 'field' => 'idmateria',
@@ -446,11 +454,13 @@ class Profesor extends CI_Controller {
 
  public function deleteMateria($id)
  { 
+     Permission::grant(uri_string());
     $eliminar = $this->profesor->deleteMateria($id);
     // echo json_encode($this->input->post('idhorariodetalle'));
  }
  public function deleteProfesor()
   {
+      Permission::grant(uri_string());
         $idprofesor = $this->input->get('idprofesor');
         $query = $this->profesor->deleteProfesor($idprofesor);
         if ($query) {
