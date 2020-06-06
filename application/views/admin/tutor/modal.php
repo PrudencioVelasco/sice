@@ -24,7 +24,8 @@
                 </div>
             </div> 
         </div>
-          <div class="row">
+
+           <div class="row">
             <div class="col-md-6 col-sm-12 col-xs-12 ">
                 <div class="form-group">
                     <label>A. Materno</label>
@@ -34,19 +35,47 @@
             </div> 
             <div class="col-md-6 col-sm-12 col-xs-12 ">
                 <div class="form-group">
-                    <label><font color="red">*</font> F. Nacimiento</label>
-                    <input type="date" v-model="newTutor.fnacimiento" class="form-control"  :class="{'is-invalid': formValidate.fnacimiento}" name="po"> 
-                           <div class="text-danger" v-html="formValidate.fnacimiento"></div>
+                    <label>Escolaridad</label>
+                    <input type="text" v-model="newTutor.escolaridad" class="form-control"  :class="{'is-invalid': formValidate.escolaridad}" name="po"> 
+                           <div class="text-danger" v-html="formValidate.escolaridad"></div>
                 </div>
             </div> 
         </div>
-        <div class="row">
+          <div class="row">
+            <div class="col-md-6 col-sm-12 col-xs-12 ">
+               <div class="form-group">
+                    <label>Ocupación</label>
+                    <input type="text" v-model="newTutor.ocupacion" class="form-control"  :class="{'is-invalid': formValidate.ocupacion}" name="po"> 
+                           <div class="text-danger" v-html="formValidate.ocupacion"></div>
+                </div>
+            </div> 
             <div class="col-md-6 col-sm-12 col-xs-12 ">
                 <div class="form-group">
+                    <label>Donde Trabaja</label>
+                    <input type="text" v-model="newTutor.dondetrabaja" class="form-control"  :class="{'is-invalid': formValidate.dondetrabaja}" name="po"> 
+                           <div class="text-danger" v-html="formValidate.dondetrabaja"></div>
+                </div>
+            </div> 
+        </div>
+       
+           <div class="row"> 
+            <div class="col-md-12 col-sm-12 col-xs-12 ">
+                 <div class="form-group">
                     <label><font color="red">*</font>Dirección</label>
                     <input type="text" v-model="newTutor.direccion" class="form-control"  :class="{'is-invalid': formValidate.direccioni}" name="po"> 
                            <div class="text-danger" v-html="formValidate.direccion"></div>
                            <small>Formato: Calle, Num, Colonia, CP, Ciudad, Estado.</small>
+                </div>
+
+              
+            </div> 
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-sm-12 col-xs-12 ">
+                 <div class="form-group">
+                    <label><font color="red">*</font> F. Nacimiento</label>
+                    <input type="date" v-model="newTutor.fnacimiento" class="form-control"  :class="{'is-invalid': formValidate.fnacimiento}" name="po"> 
+                           <div class="text-danger" v-html="formValidate.fnacimiento"></div>
                 </div>
             </div> 
             <div class="col-md-6 col-sm-12 col-xs-12 ">
@@ -93,7 +122,7 @@
                  <label style="color: red" v-html="formValidate.msgerror"></label>
             </div>
         </div>
-           <div class="row">
+     <div class="row">
             <div class="col-md-6 col-sm-12 col-xs-12 ">
                 <div class="form-group">
                     <label><font color="red">*</font> Nombre</label>
@@ -109,7 +138,8 @@
                 </div>
             </div> 
         </div>
-          <div class="row">
+
+           <div class="row">
             <div class="col-md-6 col-sm-12 col-xs-12 ">
                 <div class="form-group">
                     <label>A. Materno</label>
@@ -119,19 +149,47 @@
             </div> 
             <div class="col-md-6 col-sm-12 col-xs-12 ">
                 <div class="form-group">
-                    <label><font color="red">*</font> F. Nacimiento</label>
-                    <input type="date" v-model="chooseTutor.fnacimiento" class="form-control"  :class="{'is-invalid': formValidate.fnacimiento}" name="po"> 
-                           <div class="text-danger" v-html="formValidate.fnacimiento"></div>
+                    <label>Escolaridad</label>
+                    <input type="text" v-model="chooseTutor.escolaridad" class="form-control"  :class="{'is-invalid': formValidate.escolaridad}" name="po"> 
+                           <div class="text-danger" v-html="formValidate.escolaridad"></div>
                 </div>
+            </div> 
+        </div>
+          <div class="row">
+            <div class="col-md-6 col-sm-12 col-xs-12 ">
+               <div class="form-group">
+                    <label>Ocupación</label>
+                    <input type="text" v-model="chooseTutor.ocupacion" class="form-control"  :class="{'is-invalid': formValidate.ocupacion}" name="po"> 
+                           <div class="text-danger" v-html="formValidate.ocupacion"></div>
+                </div>
+            </div> 
+            <div class="col-md-6 col-sm-12 col-xs-12 ">
+                <div class="form-group">
+                    <label>Donde Trabaja</label>
+                    <input type="text" v-model="chooseTutor.dondetrabaja" class="form-control"  :class="{'is-invalid': formValidate.dondetrabaja}" name="po"> 
+                           <div class="text-danger" v-html="formValidate.dondetrabaja"></div>
+                </div>
+            </div> 
+        </div>
+       
+           <div class="row"> 
+            <div class="col-md-12 col-sm-12 col-xs-12 ">
+                 <div class="form-group">
+                    <label><font color="red">*</font>Dirección</label>
+                    <input type="text" v-model="chooseTutor.direccion" class="form-control"  :class="{'is-invalid': formValidate.direccioni}" name="po"> 
+                           <div class="text-danger" v-html="formValidate.direccion"></div>
+                           <small>Formato: Calle, Num, Colonia, CP, Ciudad, Estado.</small>
+                </div>
+
+              
             </div> 
         </div>
         <div class="row">
             <div class="col-md-6 col-sm-12 col-xs-12 ">
-                <div class="form-group">
-                    <label><font color="red">*</font> Dirección</label>
-                    <input type="text" v-model="chooseTutor.direccion" class="form-control"  :class="{'is-invalid': formValidate.direccioni}" name="po"> 
-                           <div class="text-danger" v-html="formValidate.direccion"></div>
-                           <small>Formato: Calle, Num, Colonia, CP, Ciudad, Estado.</small>
+                 <div class="form-group">
+                    <label><font color="red">*</font> F. Nacimiento</label>
+                    <input type="date" v-model="chooseTutor.fnacimiento" class="form-control"  :class="{'is-invalid': formValidate.fnacimiento}" name="po"> 
+                           <div class="text-danger" v-html="formValidate.fnacimiento"></div>
                 </div>
             </div> 
             <div class="col-md-6 col-sm-12 col-xs-12 ">

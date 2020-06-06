@@ -20,12 +20,14 @@ class Tutores extends CI_Controller {
         $this->load->model('mensaje_model','mensaje');
         $this->load->model('cicloescolar_model','cicloescolar');
          $this->load->model('tutor_model','tutor');  
+         $this->load->model('mensaje_model','mensaje'); 
         $this->load->model('data_model'); 
         $this->load->library('permission');
         $this->load->library('session');
         $this->load->library('pdfgenerator'); 
         $this->load->library('openpayservicio');
        $this->load->library('encryption');
+       $this->promedio_minimo = 7.00;
 	}
  
 	public function index()
@@ -43,7 +45,8 @@ class Tutores extends CI_Controller {
         $alumnos = $this->alumno->showAllAlumnosTutorActivos($this->session->idtutor);
         
         $data = array(
-            'alumnos'=>$alumnos
+            'alumnos'=>$alumnos,
+            'controller'=>$this
         );
         $this->load->view('tutor/header');
         $this->load->view('tutor/alumnos/index',$data);
@@ -52,6 +55,10 @@ class Tutores extends CI_Controller {
      public function boleta($idhorario='',$idalumno = '',$idunidad = '')
   {
       Permission::grant(uri_string());
+      $idhorario = $this->decode($idhorario);
+      $idalumno = $this->decode($idalumno);
+      $idunidad = $this->decode($idunidad);
+      if((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno)) && (isset($idunidad) && !empty($idunidad))){
        $detalle_logo = $this->alumno->logo($this->session->idplantel);
         $logo = base_url() . '/assets/images/escuelas/'.$detalle_logo[0]->logoplantel;
         $logo2 = base_url() . '/assets/images/escuelas/'.$detalle_logo[0]->logosegundo;
@@ -186,7 +193,7 @@ class Tutores extends CI_Controller {
                 $total_calificacion = $total_calificacion + $calificacion->calificacion;
                 if($calificacion->calificacion < $this->promedio_minimo){
                     $total_reprobadas = $total_reprobadas + 1;
-                     $tbl .= '<label style="color:red;">'.$calificacion->calificacion.'<label>';
+                     $tbl .= '<label style="color:red;">'.$calificacion->calificacion.'</label>';
                 }else{
                     $total_aprovadas= $total_aprovadas + 1;
                      $tbl .= '<label>'.$calificacion->calificacion.'</label>';
@@ -249,9 +256,18 @@ $tbl .='</table>
 
 
         $pdf->Output('My-File-Name.pdf', 'I');
+         }else{
+        $data = array(
+            'heading'=>'Error',
+            'message'=>'Intente mas tarde.'
+        );
+         $this->load->view('errors/html/error_general',$data);
+    }
   }
     public function horario($idalumno = '')
     {
+        $idalumno = $this->decode($idalumno);
+        if(isset($idalumno) && !empty($idalumno)){
        $detalle = $this->alumno->showAllMateriasAlumno($idalumno);
        $idhorario = '';
        if(isset($detalle[0]->idhorario) && !empty($detalle[0]->idhorario)){
@@ -259,11 +275,19 @@ $tbl .='</table>
        } 
         $data = array(
             'idhorario'=>$idhorario,
-            'idalumno'=>$idalumno
+            'idalumno'=>$idalumno,
+            'controller'=>$this
         ); 
         $this->load->view('tutor/header');
         $this->load->view('tutor/alumnos/horario',$data);
         $this->load->view('tutor/footer');
+         }else{
+         $data = array(
+            'heading'=>'Error',
+            'message'=>'Error intente mas tarde.'
+        );
+         $this->load->view('errors/html/error_general',$data);
+    }
     }
      public function obtenerCalificacion($idhorario='',$idalumno = '')
     {
@@ -295,7 +319,11 @@ $tbl .='</table>
       
         $tabla .= '<td>';
         if($val != false ){ 
-          $tabla .='<label>'.$val->calificacion.'</label>'; 
+            if($val->calificacion >= $this->promedio_minimo){
+                 $tabla .='<label style="color:green;">'.$val->calificacion.'</label>'; 
+            }else{
+                $tabla .='<label style="color:red;">'.$val->calificacion.'</label>';
+            } 
         }else{
            $tabla .='<label>No registrado</label>';
         } 
@@ -314,6 +342,7 @@ $tbl .='</table>
      public function boletas($idalumno = '')
     {
         Permission::grant(uri_string());
+        $idalumno = $this->decode($idalumno);
         if(isset($idalumno) && !empty($idalumno)){
         $detalle = $this->alumno->showAllMateriasAlumno($idalumno);
          if(isset( $detalle[0]->idhorario) && !empty( $detalle[0]->idhorario)){
@@ -402,6 +431,8 @@ $tbl .='</table>
     }
     public function tareas($idalumno = '',$idnivelestudio = '',$idperiodo = ''){
         Permission::grant(uri_string());
+        $idalumno = $this->decode($idalumno);
+        $idperiodo = $this->decode($idperiodo);
         if((isset($idalumno) && !empty($idalumno)) && (isset($idperiodo) && !empty($idperiodo))){
             $detalle = $this->alumno->showAllMateriasAlumno($idalumno);
             if(isset($detalle[0]->idhorario) && !empty($detalle[0]->idhorario)){
@@ -409,7 +440,8 @@ $tbl .='</table>
                 $idhorariodetalle =  $detalle[0]->idhorariodetalle;
                 $tareas = $this->alumno->showAllTareaAlumno($idhorario);
                 $data = array(
-                    'tareas'=>$tareas
+                    'tareas'=>$tareas,
+                    'controller'=>$this
                 );
                     $this->load->view('tutor/header');
                     $this->load->view('tutor/alumnos/tareas',$data);
@@ -430,10 +462,32 @@ $tbl .='</table>
          $this->load->view('errors/html/error_general',$data);
     }
     }
+
+    public function detalletarea($idtarea = '')
+    {
+        $idtarea = $this->decode($idtarea);
+        if(isset($idtarea) && !empty($idtarea)){
+            $detalle_tarea = $this->mensaje->detalleTarea($idtarea);
+            $data = array(
+                'tarea'=>$detalle_tarea
+            );
+             $this->load->view('tutor/header');
+             $this->load->view('tutor/detalle/tarea',$data);
+             $this->load->view('tutor/footer');
+
+        }else{
+              $data = array(
+                    'heading'=>'Error',
+                    'message'=>'Intente mas tarde.'
+                );
+             $this->load->view('errors/html/error_general',$data);
+        }
+    }
  
      public function asistencias($idalumno='')
     {
         Permission::grant(uri_string());
+         $idalumno = $this->decode($idalumno);
         if(isset($idalumno) && !empty($idalumno)){
        $detalle = $this->alumno->showAllMateriasAlumno($idalumno);
        if(isset($detalle[0]->idhorario) && !empty($detalle[0]->idhorario)){
@@ -656,7 +710,10 @@ function decode($string)
     public function pagos($idalumno = '',$idnivel = '',$idperiodo = '')
     { 
         Permission::grant(uri_string());
-        $this->encryption->initialize(array('driver' => 'openssl'));
+        $idalumno = $this->decode($idalumno);
+        $idnivel = $this->decode($idnivel);
+        $idperiodo = $this->decode($idperiodo);
+        //$this->encryption->initialize(array('driver' => 'openssl'));
         if((isset($idalumno) && !empty($idalumno)) && (isset($idnivel) && !empty($idnivel)) && (isset($idperiodo) && !empty($idperiodo))){
         $pago_inicio = $this->alumno->showAllPagoInscripcion($idalumno,$idperiodo); 
         $data = array(
@@ -1810,7 +1867,8 @@ function decode($string)
         Permission::grant(uri_string());
         $alumnos = $this->alumno->showAllAlumnosTutor($this->session->idtutor);
         $data = array(
-            'alumnos'=>$alumnos
+            'alumnos'=>$alumnos,
+            'controller'=>$this
         );
         $this->load->view('tutor/header');
         $this->load->view('tutor/alumnos/alumnos',$data);
@@ -1820,6 +1878,8 @@ function decode($string)
     public function detalle($idalumno = '')
     {
         Permission::grant(uri_string());
+        $idalumno = $this->decode($idalumno);
+        if(isset($idalumno) && !empty($idalumno)){
          $kardex = $this->alumno->allKardex($idalumno);
          $detalle_alumno = $this->alumno->showAllAlumnoId($idalumno);
          
@@ -1857,15 +1917,63 @@ function decode($string)
         $data = array(
             'kardex'=>$kardex,
             'idalumno'=>$idalumno,
-            'detalle_alumno'=>$detalle_alumno
+            'detalle_alumno'=>$detalle_alumno,
+            'controller'=>$this
         );
         $this->load->view('tutor/header');
         $this->load->view('tutor/alumnos/kardex',$data);
         $this->load->view('tutor/footer');
+         }else{
+         $data = array(
+            'heading'=>'Error',
+            'message'=>'Error intente mas tarde.'
+        );
+         $this->load->view('errors/html/error_general',$data);
+        }
+    }
+     public function obtenerCalificacionAlumnoPorNivel($idhorario='',$idalumno = '')
+    {
+        Permission::grant(uri_string());
+      # code...
+     $unidades =  $this->grupo->unidades($this->session->idplantel);
+     $materias = $this->alumno->showAllMaterias($idhorario);
+     $total_unidad = 0;
+     $total_materia = 0;
+     $suma_calificacion = 0; 
+     $promedio = 0;
+ 
+      $c = 1;
+      if (isset($materias) && !empty($materias)) {
+      
+        foreach($unidades as $block):
+        $total_unidad += 1;
+       endforeach; 
+      
+       foreach($materias as $row){
+       $total_materia +=1;
+      
+       foreach($unidades as $block):
+      $val = $this->grupo->obtenerCalificacion($idalumno, $block->idunidad, $row->idhorariodetalle);
+      
+      
+        if($val != false ){ 
+         $suma_calificacion +=$val->calificacion; 
+        }  
+      endforeach; 
+      
+
+      }
+      $promedio = ($suma_calificacion / $total_unidad) / $total_materia;
+  } 
+  
+      return $promedio;
+
     }
      public function historial($idhorario = '',$idalumno = '')
     {
         Permission::grant(uri_string());
+        $idhorario = $this->decode($idhorario);
+        $idalumno = $this->decode($idalumno);
         if((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno))){
         $calificacion = "";
         $tabla = $this->obtenerCalificacion($idhorario,$idalumno);
@@ -1873,17 +1981,7 @@ function decode($string)
         $datoshorario = $this->horario->showNivelGrupo($idhorario);
         $materias = $this->alumno->showAllMaterias($idhorario);
         $unidades =  $this->grupo->unidades($this->session->idplantel);
-        $total_materia = 0;
-        if ($materias != FALSE) { 
-            foreach ($materias as $row) {
-                # code...
-                $total_materia = $total_materia + 1;
-            }
-        } 
-        $datoscalifiacacion = $this->horario->calificacionGeneralAlumno($idhorario,$idalumno);
-         if($datoscalifiacacion != FALSE && $total_materia > 0){
-            $calificacion= $datoscalifiacacion->calificaciongeneral / $total_materia;
-         }
+       
         # code...
        // printf($tabla);
 
@@ -1893,8 +1991,9 @@ function decode($string)
             'tabla'=>$tabla,
             'datosalumno'=>$datosalumno,
             'datoshorario'=>$datoshorario,
-            'calificacion'=>$calificacion,
-            'unidades'=>$unidades
+            'calificacion'=>$this->obtenerCalificacionAlumnoPorNivel($idhorario,$idalumno),
+            'unidades'=>$unidades,
+            'controller'=>$this
         );
         $this->load->view('tutor/header');
         $this->load->view('tutor/alumnos/kardex2',$data);
@@ -1912,14 +2011,26 @@ function decode($string)
     {
         # code...
         Permission::grant(uri_string());
+          $idhorario = $this->decode($idhorario);
+        $idalumno = $this->decode($idalumno);
+        if((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno))){
+       
         //$tabla = $this->obtenerCalificacion($idhorario);
         $data = array(
             'idhorario'=>$idhorario,
-            'idalumno'=>$idalumno
+            'idalumno'=>$idalumno,
+            'controller'=>$this
         ); 
         $this->load->view('tutor/header');
         $this->load->view('tutor/alumnos/horario2',$data);
         $this->load->view('tutor/footer');
+         }else{
+        $data = array(
+            'heading'=>'Error',
+            'message'=>'Error intente mas tarde.'
+        );
+         $this->load->view('errors/html/error_general',$data);
+    }
     }
         public function imprimirkardex($idhorario='',$idalumno = '')
     {
@@ -2128,19 +2239,51 @@ tblcalificacion  {border-collapse:collapse}
     public function mensajes($idalumno = '',$idnivel = '',$idperiodo = '')
     {
         Permission::grant(uri_string());
-    $detalle = $this->alumno->showAllMateriasAlumno($idalumno);
+        $idalumno = $this->decode($idalumno);
+        if(isset($idalumno) && !empty($idalumno)){
+       $detalle = $this->alumno->showAllMateriasAlumno($idalumno);
        $idhorario = '';
        if(isset($detalle[0]->idhorario) && !empty($detalle[0]->idhorario)){
         $idhorario =  $detalle[0]->idhorario;
        } 
        $mensajes = $this->mensaje->showAllMensajeAlumno($idhorario);
        $data = array(
-            'mensajes'=>$mensajes
+            'mensajes'=>$mensajes,
+            'controller'=>$this
        );
         $this->load->view('tutor/header');
         $this->load->view('tutor/alumnos/mensajes',$data);
         $this->load->view('tutor/footer');
+        }else{
+              $data = array(
+            'heading'=>'Error',
+            'message'=>'Error intente mas tarde.'
+        );
+         $this->load->view('errors/html/error_general',$data);
+        }
+
+        
     }
+    public function detallemensaje($idmensaje = '')
+{
+    $idmensaje = $this->decode($idmensaje);
+    if(isset($idmensaje) && !empty($idmensaje)){
+        $detalle_mensaje = $this->mensaje->detalleMensaje($idmensaje);
+        //var_dump($detalle_tarea);
+        $data = array(
+          'mensaje'=>$detalle_mensaje
+        );
+        $this->load->view('tutor/header');
+        $this->load->view('tutor/detalle/mensaje',$data);
+        $this->load->view('tutor/footer');
+         }else{
+              $data = array(
+            'heading'=>'Error',
+            'message'=>'Error intente mas tarde.'
+        );
+         $this->load->view('errors/html/error_general',$data);
+        }
+}
    /*
     public function noficaciones()
     {

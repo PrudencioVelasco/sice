@@ -95,7 +95,7 @@
 
 
 <body class="nav-md">
-
+<div id="loadingnew"></div>
   <div class="container body">
 
 
@@ -105,7 +105,7 @@
         <div class="left_col scroll-view">
 
           <div class="navbar nav_title" style="border: 0;">
-            <a href="index.html" class="site_title"><i class="fa fa-graduation-cap"></i> <span>SICE</span></a>
+            <a href="#" class="site_title"><i class="fa fa-graduation-cap"></i> <span>SICE</span></a>
           </div>
           <div class="clearfix"></div>
 
@@ -113,7 +113,7 @@
           <!-- menu prile quick info -->
           <div class="profile">
             <div class="profile_pic">
-              <img src="<?php echo base_url(); ?>/assets/images/img.jpg" alt="..." class="img-circle profile_img">
+              <img src="<?php echo base_url(); ?>/assets/images/user2.png" alt="..." class="img-circle profile_img">
             </div>
             <div class="profile_info">
               <span>Bienvenido,</span>
@@ -165,7 +165,7 @@
 
               <li class="">
                 <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                  <img src="<?php echo base_url(); ?>/assets/images/img.jpg" alt=""><?php echo $this->session->nombre
+                  <img src="<?php echo base_url(); ?>/assets/images/user2.png" alt=""><?php echo $this->session->nombre
                                 ?>
                   <span class=" fa fa-angle-down"></span>
                 </a>

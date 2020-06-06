@@ -53,8 +53,8 @@
                                             <span class="caret"></span>
                                         </button>
                                         <ul class="dropdown-menu"> 
-                                            <li><a href="<?php echo site_url('Tutores/historial/'.$row->idhorario.'/'.$idalumno) ?>"><i class="fa fa-list-alt" aria-hidden="true"></i> Boleta</a></li> 
-                                            <li><a href="<?php echo site_url('Tutores/horario2/'.$row->idhorario.'/'.$idalumno) ?>"><i class="fa fa-clock-o"></i> Horario</a></li> 
+                                            <li><a href="<?php echo site_url('Tutores/historial/'.$controller->encode($row->idhorario).'/'.$controller->encode($idalumno)) ?>"><i class="fa fa-list-alt" aria-hidden="true"></i> Boleta</a></li> 
+                                            <li><a href="<?php echo site_url('Tutores/horario2/'.$controller->encode($row->idhorario).'/'.$controller->encode($idalumno)) ?>"><i class="fa fa-clock-o"></i> Horario</a></li> 
                                            <!-- <li><a href="<?php //echo site_url('alumno/asistencia/'.$row->idhorario.'/'.$id) ?>"> <i class="fa fa-check"></i> Asistencia</a></li>  -->
                                            
                                           

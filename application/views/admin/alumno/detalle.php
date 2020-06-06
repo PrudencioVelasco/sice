@@ -104,10 +104,10 @@
                       <li><i class="fa fa-key user-profile-icon" ></i> <label>Matricula:  <?php echo $detalle->matricula ?></label></li>
 
                       <li>
-                        <i class="fa fa-home user-profile-icon" style="color: blue"></i> <label><?php if(isset($grupoactual) && empty($grupoactual)) { echo "Grupo no asignado";}else{ echo $grupoactual; } ?></label>
+                        <i class="fa fa-home user-profile-icon" ></i> <label><?php if(isset($grupoactual) && empty($grupoactual)) { echo "Grupo no asignado";}else{ echo $grupoactual; } ?></label>
                       </li>
                       <li>
-                        <i class="fa fa-check-circle" style="color: green"></i> <label>Promedio Gral. <?php if(isset($promediogeneral) && !empty($promediogeneral)) {  echo number_format($promediogeneral,2);}else{ echo " --- "; } ?></label>
+                        <i class="fa fa-check-circle" ></i> <label>Promedio Gral. <?php if(isset($promediogeneral) && !empty($promediogeneral)) {  echo number_format($promediogeneral,2);}else{ echo " --- "; } ?></label>
                       </li>
                       <li>
                         <i class="fa fa-check-circle "></i> <label><?php echo $detalle->nombreespecialidad ?></label>
@@ -158,6 +158,8 @@
                         <li role="presentation" class=""><a href="#tab_content2" role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false"><i class="fa fa-users"></i> <label>Tutor(es)</label></a>
                         </li>
                         <li role="presentation" class=""><a href="#tab_content3" role="tab" id="profile-tab2" data-toggle="tab" aria-expanded="false"><i class="fa fa-money"></i> <label>Estado Cuenta</label></a>
+                        </li>
+                          <li role="presentation" class=""><a href="#tab_content4" role="tab" id="profile-tab2" data-toggle="tab" aria-expanded="false"><i class="fa fa-user"></i> <label>D. Alumno(a)</label></a>
                         </li>
                       </ul>
                       <div id="myTabContent" class="tab-content">
@@ -295,12 +297,14 @@
                                   <div class="row">
                                     <div class="col-md-6 col-sm-12 col-xs-12 ">
                                         <div class="form-group"> 
+
                                              <select v-model="newBuscarCiclo.idperiodo"  ref="idperiodo" :class="{'is-invalid': formValidate.idperiodo}"class="form-control">
-                                              <option value="">--Seleccione Ciclo Escolar--</option>
+                                              <option value="">-- CICLO ESCOLAR --</option>
                                                 <option   v-for="option in ciclos" v-bind:value="option.idperiodo">
                                                 {{ option.mesinicio }}  {{ option.yearinicio }} - {{option.mesfin}}  {{ option.yearfin }}
                                               </option>
                                             </select>
+                                            <span v-if="mostrar_error" style="color:red;">Ciclo Escolar requerido</span>
                                         </div>
                                     </div>  
                                     <div class="col-md-6 col-sm-12 col-xs-12 ">
@@ -433,7 +437,59 @@
                             <?php include 'modal_estadocuenta.php' ?>
                         </div>
                      </div>
+                                
 
+                       <div role="tabpanel" class="tab-pane fade" id="tab_content4" aria-labelledby="profile-tab">
+                              <div class="row">
+                                   <div class="col-md-6 col-sm-12 col-xs-12 ">
+                                        <h5 align="center">Datos del Alumno(a)</h5>
+                                         <div>
+                                           <ul>
+                                          <li>  CURP: <label for=""><?php echo $detalle->curp; ?></label> </li>
+                                          <li><i class="fa fa-phone"></i> Núm Celular:  <label for=""><?php echo $detalle->telefono; ?></label></li>
+                                          <li><i class="fa fa-phone"></i> Núm Emergencia: <label for=""> <?php echo $detalle->telefonoemergencia; ?></label></li>
+                                          <li>L. Nacimiento: <label for=""><?php echo $detalle->lugarnacimiento; ?></label></li>
+                                          <li>Nacionalidad: <label for=""><?php echo $detalle->nacionalidad; ?></label> </li>
+                                          <li>Servicio Medico: <label for=""><?php echo $detalle->serviciomedico; ?></label></li>
+                                          <li>Alergia o Padecimiento: <label for=""><?php echo $detalle->alergiaopadecimiento; ?></label></li>
+                                           <li>T. Sanguineo: <label for=""><?php echo $detalle->tiposanguineo; ?></label></li>
+                                           <li>Peso: <label for=""><?php echo $detalle->peso; ?></label></li>
+                                           <li>Estatura: <label for=""><?php echo $detalle->estatura; ?></label></li>
+                                           <li>Núm Folio: <label for=""><?php echo $detalle->numfolio; ?></label></li>
+                                           <li>Núm Acta: <label for=""><?php echo $detalle->numacta; ?></label></li>
+                                           <li>Núm Libro: <label for=""><?php echo $detalle->numlibro; ?></label></li>
+                                           <li>F. Nacimiento: <label for=""><?php echo $detalle->fechanacimiento; ?></label></li>
+                                           <li>Sexo: <label for=""><?php 
+                                                if($detalle->sexo == 1){
+                                                  echo "HOMBRE";
+                                                }else{
+                                                  echo "MUJER";
+                                                }
+                                           ?></label></li>
+                                           <li>Correo: <label for=""><?php echo $detalle->correo; ?></label></li>
+                                            <li>Domicilio: <label for=""><?php echo $detalle->domicilio; ?></label></li>
+                                      </ul>
+                                        </div>
+                                   </div>
+                                    <div class="col-md-6 col-sm-12 col-xs-12 ">
+                                        <h5 align="center">Datos del Tutor</h5>
+                                        <?php if(isset($tutores) && !empty($tutores)){
+                                          foreach($tutores as $value){
+                                          ?>
+                                        <ul>
+                                          <li>Nombre: <label for=""><?php echo $value->nombre." ".$value->apellidop." ".$value->apellidom ?></label></li>
+                                          <li>Escolaridad: <label for=""><?php echo $value->escolaridad; ?></label></li>
+                                          <li>Ocupación: <label for=""><?php echo $value->ocupacion; ?></label></li>
+                                          <li>Donde Trabaja: <label for=""><?php echo $value->dondetrabaja; ?></label></li>
+                                          <li>Telefono: <label for=""><?php echo $value->telefono; ?></label></li>
+                                          <li>Correo: <label for=""><?php echo $value->correo; ?></label></li>
+                                          <li>Domicilio: <label for=""><?php echo $value->direccion; ?></label></li>
+                                        </ul>
+                                        <hr>
+                                        <?php } } ?>
+                                   </div>
+                              </div>
+                       </div>
 
                       </div>
                     </div>

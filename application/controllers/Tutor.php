@@ -95,7 +95,7 @@ class Tutor extends CI_Controller {
             array(
                 'field' => 'telefono',
                 'label' => 'Telefono',
-                'rules' => 'trim|required|integer|exact_length[10]',
+                'rules' => 'trim|required|integer|exact_length[10]|regex_match[/^[0-9]{10}$/]',
                 'errors' => array(
                     'required' => 'Campo obligatorio.',
                     'integer'=>'Debe de ser solo número.',
@@ -139,10 +139,13 @@ class Tutor extends CI_Controller {
             if($validar == FALSE){
             $password_encrypted = password_hash(trim($this->input->post('password')), PASSWORD_BCRYPT);
         	$data = array(
-                   'idplantel'=> $this->session->idplantel,
+                    'idplantel'=> $this->session->idplantel,
                     'nombre' => strtoupper($this->input->post('nombre')),
                     'apellidop' => strtoupper($this->input->post('apellidop')),
                     'apellidom' => strtoupper($this->input->post('apellidom')),
+                    'escolaridad' => strtoupper($this->input->post('escolaridad')),
+                    'ocupacion' => strtoupper($this->input->post('ocupacion')),
+                    'dondetrabaja' => strtoupper($this->input->post('dondetrabaja')),
                     'fnacimiento' => $this->input->post('fnacimiento'),
                     'direccion' =>  strtoupper($this->input->post('direccion')),
                     'telefono' => $this->input->post('telefono'),
@@ -264,6 +267,9 @@ class Tutor extends CI_Controller {
                     'nombre' => strtoupper($this->input->post('nombre')),
                     'apellidop' => strtoupper($this->input->post('apellidop')),
                     'apellidom' => strtoupper($this->input->post('apellidom')),
+                    'escolaridad' => strtoupper($this->input->post('escolaridad')),
+                    'ocupacion' => strtoupper($this->input->post('ocupacion')),
+                    'dondetrabaja' => strtoupper($this->input->post('dondetrabaja')),
                     'fnacimiento' => $this->input->post('fnacimiento'),
                     'direccion' =>  strtoupper($this->input->post('direccion')),
                     'telefono' => $this->input->post('telefono'),

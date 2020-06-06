@@ -47,6 +47,8 @@ class Aalumno extends CI_Controller {
     }
     public function generarHorarioPDF($idhorario = '',$idalumno='')
     {
+      $idhorario = $this->decode($idhorario);
+      $idalumno = $this->decode($idalumno);
         if((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno)) ){
  
         $lunes = $this->horario->showAllDiaHorario($idhorario,1);
@@ -309,7 +311,8 @@ $this->dompdf->stream("Horario Escolar.pdf", array("Attachment"=>0));
       //var_dump($grupo);
       $data = array(
         'idhorario'=>$idhorario,
-        'idalumno'=>$idalumno
+        'idalumno'=>$idalumno,
+        'controller'=>$this
 
       );
         $this->load->view('alumno/header');
@@ -445,7 +448,8 @@ return $tabla;
       $materias = $this->alumno->showAllMaterias($idhorario);
     }
       $data = array(
-        'materias'=>$materias
+        'materias'=>$materias,
+        'controller'=>$this
       );
       $this->load->view('alumno/header');
         $this->load->view('alumno/calificacion/index',$data);
@@ -456,6 +460,9 @@ return $tabla;
     {
       # code... 
       Permission::grant(uri_string());
+      $idhorario = $this->decode($idhorario);
+      $idhorariodetalle = $this->decode($idhorariodetalle);
+      if((isset($idhorario) && !empty($idhorario)) && (isset($idhorariodetalle) && !empty($idhorariodetalle))){
       $detalle  = $this->alumno->detalleClase($idhorariodetalle);
       $nombreclase = $detalle[0]->nombreclase; 
       $data = array(
@@ -468,11 +475,21 @@ return $tabla;
         $this->load->view('alumno/header');
         $this->load->view('alumno/calificacion/calificacion',$data);
         $this->load->view('alumno/footer');
+          }else{
+        $data = array(
+            'heading'=>'Error',
+            'message'=>'Error intente mas tarde.'
+        );
+         $this->load->view('errors/html/error_general',$data);
+    }
     }
      public function asistencia($idhorario,$idhorariodetalle)
     {
       # code... 
       Permission::grant(uri_string());
+      $idhorario = $this->decode($idhorario);
+      $idhorariodetalle = $this->decode($idhorariodetalle);
+      if((isset($idhorario) && !empty($idhorario)) && (isset($idhorariodetalle) && !empty($idhorariodetalle))){
       $detalle  = $this->alumno->detalleClase($idhorariodetalle);
       $nombreclase = $detalle[0]->nombreclase; 
       $idalumno = $this->session->idalumno;
@@ -492,6 +509,14 @@ return $tabla;
       $this->load->view('alumno/header');
         $this->load->view('alumno/calificacion/asistencia',$data);
         $this->load->view('alumno/footer');
+
+           }else{
+        $data = array(
+            'heading'=>'Error',
+            'message'=>'Error intente mas tarde.'
+        );
+         $this->load->view('errors/html/error_general',$data);
+    }
     }
 
 
@@ -827,6 +852,8 @@ public function historial($idhorario='')
  
 public function detalletarea($idtarea = '')
 {
+  $idtarea = $this->decode($idtarea);
+  if(isset($idtarea) && !empty($idtarea)){
         $detalle_tarea = $this->mensaje->detalleTarea($idtarea);
         //var_dump($detalle_tarea);
         $data = array(
@@ -835,9 +862,18 @@ public function detalletarea($idtarea = '')
         $this->load->view('alumno/header');
         $this->load->view('alumno/detalle/tarea',$data);
         $this->load->view('alumno/footer');
+          }else{
+         $data = array(
+            'heading'=>'Error',
+            'message'=>'Error intente mas tarde.'
+        );
+         $this->load->view('errors/html/error_general',$data);
+    }
 }
 public function detallemensaje($idmensaje = '')
 {
+        $idmensaje = $this->decode($idmensaje);
+        if(isset($idmensaje) && !empty($idmensaje)){
         $detalle_mensaje = $this->mensaje->detalleMensaje($idmensaje);
         //var_dump($detalle_tarea);
         $data = array(
@@ -846,6 +882,13 @@ public function detallemensaje($idmensaje = '')
         $this->load->view('alumno/header');
         $this->load->view('alumno/detalle/mensaje',$data);
         $this->load->view('alumno/footer');
+         }else{
+         $data = array(
+            'heading'=>'Error',
+            'message'=>'Error intente mas tarde.'
+        );
+         $this->load->view('errors/html/error_general',$data);
+    }
 }
 
 }

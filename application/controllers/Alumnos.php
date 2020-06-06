@@ -15,6 +15,7 @@ class Alumnos extends CI_Controller {
         $this->load->library('session');
         $this->load->model('alumno_model','alumno'); 
         $this->load->model('mensaje_model','mensaje'); 
+        $this->load->library('encryption');
 	}
  
 	public function index()
@@ -33,7 +34,8 @@ class Alumnos extends CI_Controller {
          //var_dump($mensajes);
           $data = array(
             'tareas'=>$tareas,
-            'mensajes'=>$mensajes
+            'mensajes'=>$mensajes,
+            'controller'=>$this
           );
          // var_dump($tareas);
 
@@ -41,5 +43,20 @@ class Alumnos extends CI_Controller {
         $this->load->view('alumno/index',$data);
         $this->load->view('alumno/footer');
 
-	} 
+  } 
+      function encode($string)
+      {
+          $encrypted = $this->encryption->encrypt($string);
+          if ( !empty($string) )
+          {
+              $encrypted = strtr($encrypted, array('/' => '~'));
+          }
+          return $encrypted;
+      }
+
+      function decode($string)
+      {
+          $string = strtr($string, array('~' => '/'));
+          return $this->encryption->decrypt($string);
+      } 
 }

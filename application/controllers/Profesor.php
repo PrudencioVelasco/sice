@@ -114,7 +114,7 @@ class Profesor extends CI_Controller {
                     'nombre' => strtoupper($this->input->post('nombre')),
                     'apellidop' => strtoupper($this->input->post('apellidop')),
                     'apellidom' => strtoupper($this->input->post('apellidom')), 
-                    'profesion' => $this->input->post('profesion'), 
+                    'profesion' =>  strtoupper($this->input->post('profesion')), 
                     'correo' => $this->input->post('correo'),
                     'password' => $password_encrypted,
                     'idusuario' => $this->session->user_id,
@@ -223,7 +223,7 @@ class Profesor extends CI_Controller {
                     'nombre' => strtoupper($this->input->post('nombre')),
                     'apellidop' => strtoupper($this->input->post('apellidop')),
                     'apellidom' => strtoupper($this->input->post('apellidom')), 
-                    'profesion' => $this->input->post('profesion'), 
+                    'profesion' =>  strtoupper($this->input->post('profesion')), 
                     'correo' => $this->input->post('correo'),
                     'idusuario' => $this->session->user_id,
                     'fecharegistro' => date('Y-m-d H:i:s')

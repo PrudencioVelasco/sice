@@ -19,7 +19,7 @@
                   <div class="row">
                            <div class="col-md-12" align="right"> 
                             <?php if(isset($id) && !empty($id)){ ?>
- <a  target="_blank" class="btn btn-round btn-info" href="<?php echo base_url(); ?>/Phorario/imprimirHorario/<?php echo $controller->encode($id) ?>" class="btn btn-primary"><i class="fa fa-print"></i> Imprimir Horario</a>
+ <a  target="_blank" class="btn btn-round btn-info" href="<?php echo base_url(); ?>/Phorario/imprimirHorario/<?php echo $controller->encode($id) ?>" class="btn btn-primary"><i class="fa fa-print"></i> IMPRIMIR HORARIO</a>
                            <?php }?>
                                
                             </div> 

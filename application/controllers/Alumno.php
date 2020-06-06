@@ -21,6 +21,7 @@ class Alumno extends CI_Controller {
         $this->load->library('pdfgenerator'); 
         $this->promedio_minimo = 7.00;
         $this->load->helper('numeroatexto_helper');
+        $this->load->library('encryption');
     }
 
 	public function index()
@@ -29,7 +30,22 @@ class Alumno extends CI_Controller {
 		$this->load->view('admin/header');
 		$this->load->view('admin/alumno/index');
 		$this->load->view('admin/footer');
-	}
+    }
+    function encode($string)
+{
+    $encrypted = $this->encryption->encrypt($string);
+    if ( !empty($string) )
+    {
+        $encrypted = strtr($encrypted, array('/' => '~'));
+    }
+    return $encrypted;
+}
+
+function decode($string)
+{
+    $string = strtr($string, array('~' => '/'));
+    return $this->encryption->decrypt($string);
+} 
 	  public function showAll() {
         Permission::grant(uri_string()); 
         $idplantel = $this->session->idplantel;
@@ -47,6 +63,16 @@ class Alumno extends CI_Controller {
         $query = $this->alumno->showAllEspecialidades($idplantel);
         if ($query) {
             $result['especialidades'] = $this->alumno->showAllEspecialidades($idplantel);
+        }
+        if(isset($result) && !empty($result)){
+        echo json_encode($result);
+        }
+    }
+     public function showAllTiposSanguineos() {
+        Permission::grant(uri_string());  ;
+        $query = $this->alumno->showAllTiposSanguineos();
+        if ($query) {
+            $result['tipossanguineos'] = $this->alumno->showAllTiposSanguineos();
         }
         if(isset($result) && !empty($result)){
         echo json_encode($result);
@@ -84,6 +110,14 @@ class Alumno extends CI_Controller {
                 )
             ),
              array(
+                'field' => 'curp',
+                'label' => 'Nombre',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
+            ),
+             array(
                 'field' => 'matricula',
                 'label' => 'Nombre',
                 'rules' => 'trim|required',
@@ -107,6 +141,72 @@ class Alumno extends CI_Controller {
                     'required' => 'Campo obligatorio.'
                 )
             ), 
+             array(
+                'field' => 'lugarnacimiento',
+                'label' => 'Nombre',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
+            ),
+             array(
+                'field' => 'nacionalidad',
+                'label' => 'Nombre',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
+            ),
+             array(
+                'field' => 'domicilio',
+                'label' => 'Nombre',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
+            ),
+             array(
+                'field' => 'serviciomedico',
+                'label' => 'Nombre',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
+            ),
+             array(
+                'field' => 'idtiposanguineo',
+                'label' => 'Nombre',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
+            ),
+             array(
+                'field' => 'alergiaopadecimiento',
+                'label' => 'Nombre',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
+            ),
+             array(
+                'field' => 'estatura',
+                'label' => 'Nombre',
+                'rules' => 'trim|required|decimal',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.',
+                    'decimal'=>'Formato decimal'
+                )
+            ),
+             array(
+                'field' => 'peso',
+                'label' => 'Nombre',
+                'rules' => 'trim|required|decimal',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.',
+                    'decimal'=>'Formato decimal'
+                )
+            ),
               array(
                 'field' => 'fechanacimiento',
                 'label' => 'Fecha nacimiento',
@@ -132,6 +232,22 @@ class Alumno extends CI_Controller {
                     'required' => 'Campo obligatorio.'
                 )
             )
+             , 
+            array(
+                'field' => 'telefono',
+                'label' => 'Telefono',
+                'rules' => 'trim|regex_match[/^[0-9]{10}$/]',
+                'errors' => array( 
+                )
+            )
+             , 
+            array(
+                'field' => 'telefonoemergencia',
+                'label' => 'Telefono',
+                'rules' => 'trim|regex_match[/^[0-9]{10}$/]',
+                'errors' => array( 
+                )
+            )
         );
 
         $this->form_validation->set_rules($config);
@@ -139,13 +255,24 @@ class Alumno extends CI_Controller {
             $result['error'] = true;
             $result['msg'] = array(
                 'idespecialidad' => form_error('idespecialidad'),
+                'curp' => form_error('curp'),
                 'nombre' => form_error('nombre'),
                 'apellidop' => form_error('apellidop'), 
                 'matricula' => form_error('matricula'),
                 'fechanacimiento' => form_error('fechanacimiento'),
                 'correo' => form_error('correo'),
                 'password' => form_error('password'),
-                'sexo' => form_error('sexo')
+                'sexo' => form_error('sexo'),
+                'lugarnacimiento' => form_error('lugarnacimiento'),
+                'nacionalidad' => form_error('nacionalidad'),
+                'serviciomedico' => form_error('serviciomedico'),
+                'domicilio' => form_error('domicilio'),
+                'idtiposanguineo' => form_error('idtiposanguineo'),
+                'alergiaopadecimiento' => form_error('alergiaopadecimiento'),
+                'estatura' => form_error('estatura'),
+                'peso' => form_error('peso'),
+                'telefono' => form_error('telefono'),
+                'telefonoemergencia' => form_error('telefonoemergencia')
             );
         } else {
 
@@ -156,16 +283,31 @@ class Alumno extends CI_Controller {
                     'idplantel'=> $this->session->idplantel,
                     'idespecialidad'=>  trim($this->input->post('idespecialidad')),
                     'matricula' => trim($this->input->post('matricula')),
+                    'curp' => strtoupper(trim($this->input->post('curp'))),
                     'nombre' => strtoupper($this->input->post('nombre')),
                     'apellidop' => strtoupper($this->input->post('apellidop')),
                     'apellidom' => strtoupper($this->input->post('apellidom')),
+                    'lugarnacimiento' => strtoupper($this->input->post('lugarnacimiento')),
+                    'nacionalidad' => strtoupper($this->input->post('nacionalidad')),
+                    'domicilio' => strtoupper($this->input->post('domicilio')),
+                    'telefono' => strtoupper($this->input->post('telefono')),
+                    'telefonoemergencia' => strtoupper($this->input->post('telefonoemergencia')),
+                    'serviciomedico' => strtoupper($this->input->post('serviciomedico')),
+                    'idtiposanguineo' => strtoupper($this->input->post('idtiposanguineo')),
+                    'alergiaopadecimiento' => strtoupper($this->input->post('alergiaopadecimiento')),
+                    'peso' => strtoupper($this->input->post('peso')),
+                    'estatura' => strtoupper($this->input->post('estatura')),
+                    'numfolio' => strtoupper($this->input->post('numfolio')),
+                    'numacta' => strtoupper($this->input->post('numacta')),
+                    'numlibro' => strtoupper($this->input->post('numlibro')),
                     'fechanacimiento' => $this->input->post('fechanacimiento'), 
                     'foto' => '', 
                     'sexo' => $this->input->post('sexo'), 
                     'correo' => $this->input->post('correo'),
                     'password' => password_hash($this->input->post('password'), PASSWORD_DEFAULT),
                     'idusuario' => $this->session->user_id,
-                    'fecharegistro' => date('Y-m-d H:i:s')
+                    'fecharegistro' => date('Y-m-d H:i:s'),
+
                      
                 );
               $idalumno =  $this->alumno->addAlumno($data); 
@@ -230,7 +372,7 @@ class Alumno extends CI_Controller {
     }
      public function updateAlumno() {
         Permission::grant(uri_string());
-        $config = array(
+      $config = array(
              array(
                 'field' => 'idespecialidad',
                 'label' => 'Nombre',
@@ -239,7 +381,15 @@ class Alumno extends CI_Controller {
                     'required' => 'Campo obligatorio.'
                 )
             ),
-              array(
+             array(
+                'field' => 'curp',
+                'label' => 'Nombre',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
+            ),
+             array(
                 'field' => 'matricula',
                 'label' => 'Nombre',
                 'rules' => 'trim|required',
@@ -262,29 +412,131 @@ class Alumno extends CI_Controller {
                 'errors' => array(
                     'required' => 'Campo obligatorio.'
                 )
-            ),
+            ), 
              array(
-                'field' => 'fechanacimiento',
-                'label' => 'Fecha de nacimiento',
+                'field' => 'lugarnacimiento',
+                'label' => 'Nombre',
                 'rules' => 'trim|required',
                 'errors' => array(
                     'required' => 'Campo obligatorio.'
                 )
-            ) 
-
-            
+            ),
+             array(
+                'field' => 'nacionalidad',
+                'label' => 'Nombre',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
+            ),
+             array(
+                'field' => 'domicilio',
+                'label' => 'Nombre',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
+            ),
+             array(
+                'field' => 'serviciomedico',
+                'label' => 'Nombre',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
+            ),
+             array(
+                'field' => 'idtiposanguineo',
+                'label' => 'Nombre',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
+            ),
+             array(
+                'field' => 'alergiaopadecimiento',
+                'label' => 'Nombre',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
+            ),
+             array(
+                'field' => 'estatura',
+                'label' => 'Nombre',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
+            ),
+             array(
+                'field' => 'peso',
+                'label' => 'Nombre',
+               'rules' => 'trim|required|decimal',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.',
+                    'decimal'=>'Formato decimal'
+                )
+            ),
+              array(
+                'field' => 'fechanacimiento',
+                'label' => 'Fecha nacimiento',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
+            ),  
+            array(
+                'field' => 'sexo',
+                'label' => 'Sexo',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
+            )
+             , 
+            array(
+                'field' => 'telefono',
+                'label' => 'Telefono',
+                'rules' => 'trim|regex_match[/^[0-9]{10}$/]',
+                'errors' => array( 
+                )
+            )
+             , 
+            array(
+                'field' => 'telefonoemergencia',
+                'label' => 'Telefono',
+                'rules' => 'trim|regex_match[/^[0-9]{10}$/]',
+                'errors' => array( 
+                )
+            )
         );
 
         $this->form_validation->set_rules($config);
         if ($this->form_validation->run() == FALSE) {
             $result['error'] = true;
             $result['msg'] = array(
+                'idespecialidad' => form_error('idespecialidad'),
+                'curp' => form_error('curp'),
                 'nombre' => form_error('nombre'),
                 'apellidop' => form_error('apellidop'), 
                 'matricula' => form_error('matricula'),
+                'fechanacimiento' => form_error('fechanacimiento'),
                 'correo' => form_error('correo'),
-                'fechanacimiento' => form_error('fechanacimiento'), 
+                //'password' => form_error('password'),
+                'sexo' => form_error('sexo'),
+                'lugarnacimiento' => form_error('lugarnacimiento'),
+                'nacionalidad' => form_error('nacionalidad'),
+                'serviciomedico' => form_error('serviciomedico'),
+                'domicilio' => form_error('domicilio'),
+                'idtiposanguineo' => form_error('idtiposanguineo'),
+                'alergiaopadecimiento' => form_error('alergiaopadecimiento'),
+                'estatura' => form_error('estatura'),
+                'peso' => form_error('peso'),
+                'telefono' => form_error('telefono'),
+                'telefonoemergencia' => form_error('telefonoemergencia')
             );
+            
         } else {
             $idalumno = $this->input->post('idalumno');
             $matricula = trim($this->input->post('matricula'));
@@ -292,16 +544,32 @@ class Alumno extends CI_Controller {
             if($validar == false){
             $data = array(
                     'idplantel'=> $this->session->idplantel,
-                    'idespecialidad' => $this->input->post('idespecialidad'),
-                    'matricula' => $this->input->post('matricula'),
+                    'idespecialidad'=>  trim($this->input->post('idespecialidad')),
+                    'matricula' => trim($this->input->post('matricula')),
+                    'curp' => strtoupper(trim($this->input->post('curp'))),
                     'nombre' => strtoupper($this->input->post('nombre')),
                     'apellidop' => strtoupper($this->input->post('apellidop')),
-                    'apellidom' => strtoupper($this->input->post('apellidom')), 
-                    'fechanacimiento' => $this->input->post('fechanacimiento'),
-                    'sexo' => $this->input->post('sexo'),  
-                    'correo' => $this->input->post('correo'), 
+                    'apellidom' => strtoupper($this->input->post('apellidom')),
+                    'lugarnacimiento' => strtoupper($this->input->post('lugarnacimiento')),
+                    'nacionalidad' => strtoupper($this->input->post('nacionalidad')),
+                    'domicilio' => strtoupper($this->input->post('domicilio')),
+                    'telefono' => strtoupper($this->input->post('telefono')),
+                    'telefonoemergencia' => strtoupper($this->input->post('telefonoemergencia')),
+                    'serviciomedico' => strtoupper($this->input->post('serviciomedico')),
+                    'idtiposanguineo' => strtoupper($this->input->post('idtiposanguineo')),
+                    'alergiaopadecimiento' => strtoupper($this->input->post('alergiaopadecimiento')),
+                    'peso' => strtoupper($this->input->post('peso')),
+                    'estatura' => strtoupper($this->input->post('estatura')),
+                    'numfolio' => strtoupper($this->input->post('numfolio')),
+                    'numacta' => strtoupper($this->input->post('numacta')),
+                    'numlibro' => strtoupper($this->input->post('numlibro')),
+                    'fechanacimiento' => $this->input->post('fechanacimiento'), 
+                    //'foto' => '', 
+                    'sexo' => $this->input->post('sexo'), 
+                    'correo' => $this->input->post('correo'),
+                    //'password' => password_hash($this->input->post('password'), PASSWORD_DEFAULT),
                     'idusuario' => $this->session->user_id,
-                    'fecharegistro' => date('Y-m-d H:i:s')
+                    'fecharegistro' => date('Y-m-d H:i:s'),
                      
                 );
             $this->alumno->updateAlumno($idalumno,$data); 
@@ -595,7 +863,7 @@ tblcalificacion  {border-collapse:collapse}
             }
            $calificacion_final = $suma_calificacion / $total_periodo;
         }
-        
+        $tutores= $this->alumno->showAllTutorAlumno($id);
 
     	$data = array(
     		'id'=>$id,
@@ -608,7 +876,8 @@ tblcalificacion  {border-collapse:collapse}
             'kardex'=>$kardex,
             'cicloescolar'=>$cicloescolar_activo,
             'becaalumno'=>$beca_alumno,
-            'becas'=>$becas
+            'becas'=>$becas,
+            'tutores'=>$tutores
     	);
     	$this->load->view('admin/header');
 		$this->load->view('admin/alumno/detalle',$data);
@@ -690,14 +959,16 @@ tblcalificacion  {border-collapse:collapse}
      $total_unidad = 0;
      $total_materia = 0;
      $suma_calificacion = 0; 
-       foreach($unidades as $block):
-        $total_unidad += 1;
-       endforeach; 
+     $promedio = 0;
  
       $c = 1;
       if (isset($materias) && !empty($materias)) {
-
-      foreach($materias as $row){
+      
+        foreach($unidades as $block):
+        $total_unidad += 1;
+       endforeach; 
+      
+       foreach($materias as $row){
        $total_materia +=1;
       
        foreach($unidades as $block):
@@ -711,8 +982,9 @@ tblcalificacion  {border-collapse:collapse}
       
 
       }
+      $promedio = ($suma_calificacion / $total_unidad) / $total_materia;
   } 
-  $promedio = ($suma_calificacion / $total_unidad) / $total_materia;
+  
       return $promedio;
 
     }
@@ -880,6 +1152,8 @@ tblcalificacion  {border-collapse:collapse}
     public function generarHorarioPDF($idhorario = '',$idalumno='')
     {
         Permission::grant(uri_string());
+        $idhorario = $this->decode($idhorario);
+         $idalumno = $this->decode($idalumno);
         if((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno)) ){
  
         $lunes = $this->horario->showAllDiaHorario($idhorario,1);
@@ -1298,7 +1572,7 @@ return $tabla;
   public function boleta($idhorario='',$idalumno = '',$idunidad = '')
   {
       Permission::grant(uri_string());
-       $detalle_logo = $this->alumno->logo($this->session->idplantel);
+        $detalle_logo = $this->alumno->logo($this->session->idplantel);
         $logo = base_url() . '/assets/images/escuelas/'.$detalle_logo[0]->logoplantel;
         $logo2 = base_url() . '/assets/images/escuelas/'.$detalle_logo[0]->logosegundo;
         

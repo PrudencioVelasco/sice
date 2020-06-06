@@ -13,7 +13,8 @@
                 <div class="form-group">
                     <label><font color="red">*</font> Ciclo Escolar</label>
                      <select v-model="newHorario.idperiodo"  :class="{'is-invalid': formValidate.idperiodo}"class="form-control">
-                        <option   v-for="option in periodos" v-bind:value="option.idperiodo">
+                      <option value="" selected>-- SELECCIONAR --</option>   
+                     <option   v-for="option in periodos" v-bind:value="option.idperiodo">
                         {{ option.mesinicio }}  {{ option.yearinicio }} - {{option.mesfin}}  {{ option.yearfin }}
                       </option>
                     </select>
@@ -26,7 +27,8 @@
                 <div class="form-group">
                     <label><font color="red">*</font> Grupo</label>
                    <select v-model="newHorario.idgrupo"  :class="{'is-invalid': formValidate.idgrupo}"class="form-control">
-                        <option   v-for="option in grupos" v-bind:value="option.idgrupo">
+                    <option value="" selected>-- SELECCIONAR --</option>    
+                   <option   v-for="option in grupos" v-bind:value="option.idgrupo">
                         {{ option.nombrenivel }} - {{ option.nombregrupo }}  - {{ option.nombreturno }} - {{ option.nombreespecialidad }}
                       </option>
                     </select>
@@ -57,7 +59,8 @@
                 <div class="form-group">
                     <label><font color="red">*</font> Ciclo Escolar</label>
                      <select class="form-control" v-model="chooseHorario.idperiodo" >
-                  <option v-for="option in periodos"  :selected="option.idperiodo == chooseHorario.idperiodo ? 'selected' : ''" :value="option.idperiodo" >
+                 <option value="" >-- SELECCIONAR --</option>
+                     <option v-for="option in periodos"  :selected="option.idperiodo == chooseHorario.idperiodo ? 'selected' : ''" :value="option.idperiodo" >
                      {{ option.mesinicio }}  {{ option.yearinicio }} - {{option.mesfin}}  {{ option.yearfin }}</small>
                   </option>
              </select>
@@ -70,7 +73,8 @@
                 <div class="form-group">
                     <label><font color="red">*</font> Grupo</label>
                      <select class="form-control" v-model="chooseHorario.idgrupo" >
-                  <option v-for="option in grupos"  :selected="option.idgrupo == chooseHorario.idgrupo ? 'selected' : ''" :value="option.idgrupo" >
+                 <option value=""  >-- SELECCIONAR --</option>
+                     <option v-for="option in grupos"  :selected="option.idgrupo == chooseHorario.idgrupo ? 'selected' : ''" :value="option.idgrupo" >
                      {{ option.nombrenivel }} - {{ option.nombregrupo }} - {{ option.nombreturno }} - {{ option.nombreespecialidad }}
                   </option>
              </select>

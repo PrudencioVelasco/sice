@@ -14,13 +14,13 @@
 
                      <div id="app">
                             <div class="container">
-                                <div class="row">
+                                 
                                     <transition
                                         enter-active-class="animated fadeInLeft"
                                         leave-active-class="animated fadeOutRight">
                                         <div class="notification is-success text-center px-5 top-middle" v-if="successMSG" @click="successMSG = false">{{successMSG}}</div>
                                     </transition>
-                                    <div class="col-md-12">
+                                   
 
                                         <div class="row">
                                             <div class="col-md-6 col-sm-12 col-xs-12 ">
@@ -28,7 +28,7 @@
 
 
                                             </div>
-                                            <div class="col-md-6 col-sm-12 col-xs-12 ">
+                                            <div class="col-md-6 col-sm-12 col-xs-12 "> </div>
                                         </div>
                                         <div class="row">
                                              <div class="col-md-6 col-sm-12 col-xs-12 ">
@@ -92,9 +92,9 @@
                                             </tr>
                                             </tfoot>
                                         </table>
-                                    </div>
-                                </div> 
-                            </div>
+                                    
+                               
+                            
                             <?php include 'modal.php'; ?>
                         </div>
                     

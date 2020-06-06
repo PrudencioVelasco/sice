@@ -70,6 +70,7 @@ class Tutor_model extends CI_Model {
          if (isset($idplantel) && !empty($idplantel)) {
         $this->db->where('a.idplantel',$idplantel); 
         }  
+        $this->db->order_by('a.nombre ASC');
          $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();
@@ -77,6 +78,24 @@ class Tutor_model extends CI_Model {
             return false;
         }
     } 
+
+       public function validadAddTutor($idplantel = '',$nombre = '', $apellidop = '', $apellidom = '') {
+        $this->db->select('a.*');
+        $this->db->from('tbltutor a'); 
+         if (isset($idplantel) && !empty($idplantel)) {
+        $this->db->where('a.idplantel',$idplantel); 
+        }  
+        $this->db->where('a.nombre',$nombre);
+        $this->db->where('a.apellidop',$apellidop);
+        $this->db->where('a.apellidom',$apellidom);
+         $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    } 
+
           public function validarAddTutor($correo = '', $idplantel = '') {
         $this->db->select('t.*');
         $this->db->from('tbltutor t'); 

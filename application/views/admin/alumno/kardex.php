@@ -44,7 +44,7 @@
           <br>
           <div class="row">   
             <?php
-              if (isset($tabla)) {
+              if (isset($tabla) && !empty($tabla)) {
                 echo $tabla;
               }
             ?> 
@@ -52,7 +52,7 @@
           <div class="row">
               <div class="col-md-12 col-sm-12 col-xs-12 " align="right">
                 <?php
-                  if (isset($unidades) && !empty($unidades)) {
+                  if ((isset($unidades) && !empty($unidades))&& (isset($calificacion) && !empty($calificacion))) {
                     foreach ($unidades as $value) { ?>
                      <a  target="_blank" href="<?php echo site_url('alumno/boleta/'.$idhorario.'/'.$idalumno.'/'.$value->idunidad) ?>" class="btn btn-info"><i class="fa fa-print"></i> BOLETA <?php echo $value->nombreunidad ?></a>
                       <?php

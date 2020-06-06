@@ -45,14 +45,29 @@ var v = new Vue({
         //deleteModal:false,
         alumnos:[], 
         especialidades:[], 
+        tipossanguineos: [], 
         search: {text: ''},
         emptyResult:false,
         newAlumno:{
             idespecialidad:'',
             matricula:'',
+            curp: '',
             nombre:'',
             apellidop:'',
             apellidom:'', 
+            lugarnacimiento: '',
+            nacionalidad: '',
+            domicilio: '',
+            telefono: '',
+            telefonoemergencia: '',
+            serviciomedico:'',
+            idtiposanguineo: '',
+            alergiaopadecimiento: '',
+            peso: '',
+            estatura: '',
+            numfolio: '',
+            numacta: '',
+            numlibro: '',
             fechanacimiento:'', 
             foto:'', 
             sexo:'',
@@ -73,6 +88,7 @@ var v = new Vue({
      created(){
       this.showAll(); 
       this.showAllEspecialidades(); 
+       this.showAllTiposSanguineos();
     },
     methods:{
          orderBy(sortFn) {
@@ -91,7 +107,12 @@ var v = new Vue({
           axios.get(this.url+"Alumno/showAllEspecialidades/")
                     .then(response => (this.especialidades = response.data.especialidades));
 
-        },  
+        }, 
+      showAllTiposSanguineos() {
+        axios.get(this.url + "Alumno/showAllTiposSanguineos/")
+          .then(response => (this.tipossanguineos = response.data.tipossanguineos));
+
+      },  
           searchAlumno(){
             var formData = v.formData(v.search);
               axios.post(this.url+"Alumno/searchAlumno", formData).then(function(response){
@@ -243,13 +264,24 @@ var v = new Vue({
         },
         clearAll(){
             v.newAlumno = {
-            matricula:'',
-            nombre:'',
-            apellidop:'',
-            apellidom:'', 
-            fechanacimiento:'', 
-            foto:'',
-            sexo:'', 
+              matricula: '',
+              curp: '',
+              nombre: '',
+              apellidop: '',
+              apellidom: '',
+              lugarnacimiento: '',
+              nacionalidad: '',
+              domicilio: '',
+              telefono: '',
+              telefonoemergencia: '',
+              serviciomedico: '',
+              idtiposanguineo: '',
+              alergiaopadecimiento: '',
+              peso: '',
+              estatura: '',
+              fechanacimiento: '',
+              foto: '',
+              sexo: '',
             correo:'',
             password:'',
             smserror:''};

@@ -14,15 +14,15 @@
         <div class="x_content">
           <div class="row">  
              <div class="col-md-6 col-sm-12 col-xs-12 " >
-               *MATERIA/CLASE: <label style="color:#000;"><?php echo $tarea[0]->nombreclase; ?></label>
+               <h4><label style="color:#000;">*MATERIA/CLASE:</label> <?php echo $tarea[0]->nombreclase; ?>
              </div> 
              <div class="col-md-6 col-sm-12 col-xs-12 " align="right" >
-               *FECHA DE ENTREGA: <label style="color:#000;"><?php echo $tarea[0]->fecha; ?></label>
+              <h4> <label style="color:#000;">*FECHA DE ENTREGA:</label> <?php echo $tarea[0]->fecha; ?>
              </div> 
           </div>
           <div class="row">
                 <div class="col-md-12 col-sm-12 col-xs-12 " >
-                  *TAREA:
+                  <h4><label style="color:#000;">*TAREA:</label></h4>
                   <?php
                     echo $tarea[0]->tarea;
                   ?>

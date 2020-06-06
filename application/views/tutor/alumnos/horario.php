@@ -17,7 +17,7 @@
              <div id="appd">
                   <div class="row">
                            <div class="col-md-12" align="right"> 
-                              <a target="_blank" class="btn btn-round btn-primary" href="<?php echo base_url(); ?>/alumno/generarHorarioPDF/<?php echo $idhorario."/".$idalumno ?>"> <i class="fa fa-print"></i> Imprimir Horario</a>
+                              <a target="_blank" class="btn btn-round btn-primary" href="<?php echo base_url(); ?>/Alumno/generarHorarioPDF/<?php echo $controller->encode($idhorario)."/".$controller->encode($idalumno) ?>"> <i class="fa fa-print"></i> Imprimir Horario</a>
                             </div> 
                   </div> 
                    <table class="table">

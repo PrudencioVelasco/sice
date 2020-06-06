@@ -13,7 +13,8 @@
                 <div class="form-group">
                     <label><font color="red">*</font> Materia</label>
                      <select v-model="newHorario.idmateria"  :class="{'is-invalid': formValidate.idmateria}"class="form-control">
-                        <option   v-for="option in materias" v-bind:value="option.idprofesormateria">
+                      <option value="" selected>-- SELECCIONAR --</option>  
+                     <option   v-for="option in materias" v-bind:value="option.idprofesormateria">
                         {{ option.nombreclase }} - {{option.nombre}} {{option.apellidop}} {{option.apellidom}}</small>
                       </option>
                     </select>
@@ -26,7 +27,8 @@
                 <div class="form-group">
                     <label><font color="red">*</font> Dia</label>
                     <select v-model="newHorario.iddia"  :class="{'is-invalid': formValidate.iddia}"class="form-control">
-                        <option   v-for="option in dias" v-bind:value="option.iddia">
+                     <option value="" selected>-- SELECCIONAR --</option>   
+                    <option   v-for="option in dias" v-bind:value="option.iddia">
                         {{ option.nombredia }}
                       </option>
                     </select>
@@ -76,7 +78,8 @@
                 <div class="form-group">
                     <label><font color="red">*</font> Dia</label>
                     <select v-model="newHorario.iddia"  :class="{'is-invalid': formValidate.iddia}"class="form-control">
-                        <option   v-for="option in dias" v-bind:value="option.iddia">
+                     <option value="" selected>-- SELECCIONAR --</option>   
+                    <option   v-for="option in dias" v-bind:value="option.iddia">
                         {{ option.nombredia }}
                       </option>
                     </select>
@@ -173,7 +176,8 @@
                 <div class="form-group">
                     <label><font color="red">*</font> Materia</label>
                      <select class="form-control" v-model="chooseHorario.idprofesormateria" >
-                  <option v-for="option in materias" :selected="option.idprofesormateria == chooseHorario.idprofesormateria ? 'selected' : ''"  :value="option.idprofesormateria">
+                  <option value="" >-- SELECCIONAR --</option>
+                     <option v-for="option in materias" :selected="option.idprofesormateria == chooseHorario.idprofesormateria ? 'selected' : ''"  :value="option.idprofesormateria">
                     {{ option.nombreclase }} - {{option.nombre}} {{option.apellidop}} {{option.apellidom}}</small>
                   </option>
              </select> 
@@ -190,7 +194,8 @@
                 <div class="form-group">
                     <label><font color="red">*</font> Dia</label>
                    <select class="form-control" v-model="chooseHorario.iddia" >
-                  <option v-for="option in dias"  :selected="option.iddia == chooseHorario.iddia ? 'selected' : ''" :value="option.iddia" >
+                  <option value="" >-- SELECCIONAR --</option>
+                   <option v-for="option in dias"  :selected="option.iddia == chooseHorario.iddia ? 'selected' : ''" :value="option.iddia" >
                        {{ option.nombredia }}
                   </option>
              </select>
@@ -290,7 +295,8 @@
                 <div class="form-group">
                     <label><font color="red">*</font> Dia</label>
                     <select v-model="chooseHorario.iddia"  :class="{'is-invalid': formValidate.iddia}"class="form-control">
-                        <option   v-for="option in dias" :selected="option.iddia == chooseHorario.iddia ? 'selected' : ''"  v-bind:value="option.iddia">
+                     <option value="" >-- SELECCIONAR --</option>   
+                    <option   v-for="option in dias" :selected="option.iddia == chooseHorario.iddia ? 'selected' : ''"  v-bind:value="option.iddia">
                         {{ option.nombredia }}
                       </option>
                     </select>

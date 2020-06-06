@@ -15,7 +15,7 @@
                     <label><font color="red">*</font> Tutor</label>
                    
                   <select v-model="newTutor.idtutor"   :class="{'is-invalid': formValidate.idtutor}" class="form-control select2_single">
-                    <option value="">--Seleccione--</option>
+                    <option value="" selected>-- SELECCIONAR --</option>
                         <option   v-for="option in tutoresdisponibles" v-bind:value="option.idtutor">
                         {{ option.nombre }}  {{ option.apellidop }} {{option.apellidom}}  
                       </option>

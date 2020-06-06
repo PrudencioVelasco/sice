@@ -15,13 +15,13 @@
 
                   <div class="row"> 
                   
-                   <table class="table">
+                  <table id="tutor_tarea" class="table table-striped table-bordered">
                     <thead>
                       <tr>
-                        <th>#</th> 
-                        <th>Clase</th>
+                        <th>#</th>
+                        <th>Materia</th>
                         <th>Tarea</th> 
-                        <th>F. Entrega</th>
+                        <th>Fecha de entrega</th> 
                       </tr>
                     </thead>
                     <tbody>
@@ -33,14 +33,23 @@
                              <tr>
                               <th scope="row"><?php echo $i++; ?></th> 
                               <td scope="row"><?php echo $value->nombreclase ?><br><small><strong><?php echo $value->nombre." ".$value->apellidop." ".$value->apellidom; ?></strong></small></td>
-                              <td><?php echo $value->tarea; ?></td>
+                              <td>
+                                <?php 
+                                     if(strlen($value->tarea) > 50){
+                                        echo $cadena = substr($value->tarea,0,50)."..."; ?>
+                                        <a href="<?php echo site_url('Tutores/detalletarea/'.$controller->encode($value->idtarea)); ?>"> leer mas </a>
+                                      <?php }else{
+                                        echo $value->tarea;
+                                      }  
+                                ?>
+                              </td>
                               <td>
                                  <?php
                                 setlocale(LC_ALL, 'es_ES');
-                        $date = new Datetime($value->fechaentrega);
-                        $fecha = strftime("%A, %d de %B", $date->getTimestamp());
-                        echo $fecha;
-                        ?>
+                                $date = new Datetime($value->fechaentrega);
+                                $fecha = strftime("%A, %d de %B", $date->getTimestamp());
+                                echo $fecha;
+                                ?>
                               </td>
                             </tr>
                             <?php
@@ -83,4 +92,4 @@
     <div id="notif-group" class="tabbed_notifications"></div>
   </div> 
 
-
+ 

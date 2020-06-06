@@ -15,7 +15,7 @@
 
                   <div class="row"> 
                   
-                   <table class="table">
+                   <table id="tutor_mensaje" class="table table-striped table-bordered">
                     <thead>
                       <tr>
                         <th>#</th> 
@@ -31,7 +31,17 @@
                             ?>
                              <tr>
                               <th scope="row"><?php echo $i++; ?></th> 
-                              <td scope="row"><?php echo $value->mensaje ?></td>
+                              <td scope="row">
+                                <?php  
+                               if(strlen($value->mensaje) > 20){
+                                 echo $cadena = substr($value->mensaje,0,50)."..."; ?>
+                                   <a href="<?php echo site_url('Tutores/detallemensaje/'.$controller->encode($value->idmensaje)); ?>"> leer mas </a>
+                                <?php }else{
+                                  echo $value->mensaje;
+                                }  
+                               
+                                ?>
+                              </td>
                               <td><strong><?php echo $value->fecha; ?></strong></td> 
                             </tr>
                             <?php

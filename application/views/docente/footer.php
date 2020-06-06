@@ -7,8 +7,8 @@
   <script src="<?php echo base_url(); ?>/assets/js/nicescroll/jquery.nicescroll.min.js"></script>
   <!-- icheck -->
   <script src="<?php echo base_url(); ?>/assets/js/icheck/icheck.min.js"></script>
-
   <script src="<?php echo base_url(); ?>/assets/js/custom.js"></script>
+  <script src="<?php echo base_url(); ?>/assets/js/tablas.js"></script>
   <!-- pace -->
   <script src="<?php echo base_url(); ?>/assets/js/pace/pace.min.js"></script>
 

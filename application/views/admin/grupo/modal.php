@@ -13,7 +13,8 @@
                 <div class="form-group">
                     <label><font color="red">*</font> Nivel Escolar</label>
                      <select v-model="newGrupo.idnivelestudio"  :class="{'is-invalid': formValidate.idnivelestudio}"class="form-control">
-                        <option   v-for="option in niveles" v-bind:value="option.idnivelestudio">
+                     <option value="" selected>-- SELECCIONAR --</option>  
+                     <option   v-for="option in niveles" v-bind:value="option.idnivelestudio">
                         {{ option.nombrenivel }}   
                       </option>
                     </select>
@@ -24,7 +25,7 @@
                 <div class="form-group">
                     <label><font color="red">*</font> Especialidad</label> 
                       <select v-model="newGrupo.idespecialidad"  :class="{'is-invalid': formValidate.idespecialidad}"class="form-control">
-                        <option value="">--Seleccione--</option>
+                        <option value="" selected>-- SELECCIONAR --</option>
                         <option   v-for="option in especialidades" v-bind:value="option.idespecialidad">
                         {{ option.nombreespecialidad }}   
                       </option>
@@ -45,6 +46,7 @@
                 <div class="form-group">
                     <label><font color="red">*</font> Turno</label>
                      <select v-model="newGrupo.idturno"  :class="{'is-invalid': formValidate.idturno}"class="form-control">
+                       <option value="" selected>-- SELECCIONAR --</option>
                         <option   v-for="option in turnos" v-bind:value="option.idturno">
                         {{ option.nombreturno }}   
                       </option>
@@ -76,6 +78,7 @@
                 <div class="form-group">
                     <label><font color="red">*</font> Ciclo Escolar</label>
                      <select class="form-control" v-model="chooseGrupo.idnivelestudio" >
+                          <option value="" >-- SELECCIONAR --</option>
                   <option v-for="option in niveles"  :selected="option.idnivelestudio == chooseGrupo.idnivelestudio ? 'selected' : ''" :value="option.idnivelestudio" >
                      {{ option.nombrenivel }}</small>
                   </option>
@@ -87,7 +90,8 @@
                 <div class="form-group">
                     <label><font color="red">*</font> Especialidad</label> 
                       <select v-model="chooseGrupo.idespecialidad"  :class="{'is-invalid': formValidate.idespecialidad}"class="form-control">
-                        <option   v-for="option in especialidades" selected="option.idespecialidad == chooseGrupo.idespecialidad ? 'selected' : ''" v-bind:value="option.idespecialidad">
+                       <option value="" >-- SELECCIONAR --</option> 
+                      <option   v-for="option in especialidades" selected="option.idespecialidad == chooseGrupo.idespecialidad ? 'selected' : ''" v-bind:value="option.idespecialidad">
                         {{ option.nombreespecialidad }}   
                       </option>
                     </select>
@@ -107,6 +111,7 @@
                 <div class="form-group">
                     <label><font color="red">*</font> Turno</label>
                      <select class="form-control" v-model="chooseGrupo.idturno" >
+                          <option value="" >-- SELECCIONAR --</option>
                   <option v-for="option in turnos"  :selected="option.idturno == chooseGrupo.idturno ? 'selected' : ''" :value="option.idturno" >
                      {{ option.nombreturno }}
                   </option>

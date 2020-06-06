@@ -49,6 +49,7 @@ var ve = new Vue({
         editModal:false,
         eliminarModalP: false,
         mostrar:false,
+        mostrar_error:false,
         noresultado:false,
         noresultadoinicio:false,
         addPagoColegiaturaModal:false,
@@ -107,9 +108,11 @@ var ve = new Vue({
 
     },
     methods:{
-      searchSolicitud() { 
+      searchSolicitud() {  
+            if (this.$refs.idperiodo.value != ""){
              this.mostrar = true; 
-            ve.idperiodobuscado = this.$refs.idperiodo.value;
+             ve.mostrar_error = false;
+             ve.idperiodobuscado = this.$refs.idperiodo.value;
              axios.get(this.url+"EstadoCuenta/estadoCuenta/", {
                  params: {
                      idperiodo: this.$refs.idperiodo.value,
@@ -145,6 +148,9 @@ var ve = new Vue({
             });
              ve.idperiodobuscado = this.$refs.idperiodo.value;
           //then(response => (this.solicitudes = response.data))  
+            }else{
+                ve.mostrar_error = true;
+        }
 
          },
          estadocuentaAll(idperiodo){ 

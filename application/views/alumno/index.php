@@ -61,7 +61,7 @@
                                 <?php
                                 if(strlen($value->tarea) > 20){
                                  echo $cadena = substr($value->tarea,0,50)."..."; ?>
-                                   <a href="<?php echo site_url('Aalumno/detalletarea/'.$value->idtarea); ?>"> leer mas </a>
+                                   <a href="<?php echo site_url('Aalumno/detalletarea/'.$controller->encode($value->idtarea)); ?>"> leer mas </a>
                                 <?php }else{
                                   echo $value->tarea;
                                 }  
@@ -108,7 +108,7 @@
                                
                                if(strlen($value->mensaje) > 20){
                                  echo $cadena = substr($value->mensaje,0,50)."..."; ?>
-                                   <a href="<?php echo site_url('Aalumno/detallemensaje/'.$value->idmensaje); ?>"> leer mas </a>
+                                   <a href="<?php echo site_url('Aalumno/detallemensaje/'.$controller->encode($value->idmensaje)); ?>"> leer mas </a>
                                 <?php }else{
                                   echo $value->mensaje;
                                 }  

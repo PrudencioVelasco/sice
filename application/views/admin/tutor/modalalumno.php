@@ -13,7 +13,8 @@
                 <div class="form-group">
                     <label><font color="red">*</font> Nombre de alumno</label>
                     <select v-model="newAlumno.idalumno"  :class="{'is-invalid': formValidate.idperiodo}"class="form-control">
-                        <option   v-for="option in alumnosposibles" v-bind:value="option.idalumno">
+                    <option value="" selected>-- SELECCIONAR --</option>    
+                    <option   v-for="option in alumnosposibles" v-bind:value="option.idalumno">
                         {{ option.nombre }}  {{ option.apellidop }} {{option.apellidom}}  
                       </option>
                     </select>

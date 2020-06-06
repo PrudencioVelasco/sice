@@ -257,12 +257,12 @@
                               </tr>
                               <tr>
                                 <th style="width:50%">Subtotal:</th>
-                                <td>$<?php echo $descuento; ?></td>
+                                <td>$<?php echo number_format($descuento,2); ?></td>
                               </tr>
                                
                               <tr>
                                 <th>Total:</th>
-                                <td>$<?php echo $descuento; ?></td>
+                                <td>$<?php echo number_format($descuento,2); ?></td>
                               </tr>
                             </tbody>
                           </table>

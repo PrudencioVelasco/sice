@@ -63,7 +63,7 @@
                   <div class="col-md-12 col-sm-12 col-xs-12 "> 
                   <div id="tblalumnos">
                    
-                     <table class="table">
+                     <table  id="docente_mensaje" class="table table-striped table-bordered">
                     <thead>
                       <tr>
                         <th>#</th>
@@ -80,7 +80,15 @@
                           foreach ($mensajes as $value) { ?>
                             <tr>
                             <th scope="row"><?php echo $i++ ?></th> 
-                            <td><?php echo $value->mensaje ?></td>
+                            <td><?php
+                            
+                               if(strlen($value->mensaje) > 50){
+                                 echo $cadena = substr($value->mensaje,0,50)."..."; ?>
+                                 <?php }else{
+                                  echo $value->mensaje;
+                                }
+
+                            ?></td>
                             <td>
                               <?php
                               setlocale(LC_ALL, 'es_ES');
