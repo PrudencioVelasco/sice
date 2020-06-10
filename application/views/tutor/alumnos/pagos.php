@@ -70,6 +70,43 @@
                           }
                         }
                       ?>
+                       <?php
+                        if(isset($pago_colegiaturas) && !empty($pago_colegiaturas)){
+                           
+                          foreach ($pago_colegiaturas as  $value) {
+                            ?>
+                             <tr> 
+                                 <td><?php echo $i++; ?></td>
+                                 <td><?php echo $value->nombretipopago ?></td>
+                                 <td>
+                                   <?php
+                                    if($value->online == 0){
+                                      echo '<label class="label label-default">EN OFICINA</label>';
+                                    }else{
+                                       echo '<label class="label label-primary">EN LINEA</label>';
+                                    }
+                                   ?>
+                                 </td>
+                                 <td>
+                                   <?php
+                                    if($value->pagado == 1){
+                                      echo '<label class="label label-success">PAGADO</label>';
+                                    }elseif($value->online == 1 && $value->pagado == 0){
+                                       echo '<label class="label label-warning">EN PROCESO</label>';
+                                    }
+                                    else{
+                                       echo '<label class="label label-warning">SIN DEFINIR</label>';
+                                    }
+                                   ?>
+                                 </td>
+                                 <td><?php echo $value->concepto.' DE '.$value->nombremes; ?></td>
+                                 <td><strong>$<?php echo $value->descuento ?> </strong></td>
+                                 <td><?php echo $value->fecharegistro ?> </td>
+                            </tr>
+                            <?php
+                          }
+                        }
+                      ?>
                      
                     </tbody>
                   </table>

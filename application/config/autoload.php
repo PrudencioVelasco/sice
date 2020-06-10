@@ -135,6 +135,7 @@ $autoload['language'] = array();
 */  
 $autoload['model'] = array(
     'Mensaje_model',
+    'Calificacion_model',
     'WebHook_model',
     'CorteCaja_model',
     'Colegiatura_model',

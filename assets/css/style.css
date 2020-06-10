@@ -16,6 +16,7 @@
 
 }
 
+
 /* Material Icons ============================== */
 .material-icons.md-18 {
   font-size: 18px; }
@@ -3586,9 +3587,16 @@ section.content {
     font-size: 17px; }
 
 /* Modals ====================================== */
+
+.modal-header { 
+  background-color: #2196F3 !important;
+  color: #FFF;
+ }
 .modal .modal-header {
   border: none;
-  padding: 25px 25px 5px 25px; }
+  padding: 25px 25px 5px 25px;
+  background-color: #2196F3 !important;
+ }
   .modal .modal-header .modal-title {
     font-weight: bold;
     font-size: 16px; }
@@ -6144,6 +6152,7 @@ fieldset[disabled] .form-control {
       -ms-text-overflow: ellipsis;
       -o-text-overflow: ellipsis;
       text-overflow: ellipsis;
+      
       overflow: hidden;
       margin-top: 5px;
       font-size: 13px; }

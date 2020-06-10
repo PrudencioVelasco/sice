@@ -13,6 +13,7 @@ class Phorario extends CI_Controller {
         $this->load->model('data_model');
          $this->load->model('grupo_model','grupo'); 
           $this->load->model('horario_model','horario');  
+          $this->load->model('alumno_model','alumno');  
         date_default_timezone_set("America/Mexico_City");
         $this->load->library('permission');
         $this->load->library('session');
@@ -38,21 +39,390 @@ class Phorario extends CI_Controller {
 	{
         Permission::grant(uri_string()); 
         $idhorario = "";
+        $tabla = "";
         $result = $this->grupo->showAllGruposProfesor($this->session->idprofesor);
         //var_dump($result);
         if($result != false){
              $idhorario = $result[0]->idhorario;
+            $tabla =  $this->generarHorarioPDF($idhorario);
         }
+       
        
         $data = array( 
             'id'=>$idhorario,
-            'controller'=>$this
+            'controller'=>$this,
+            'tabla'=>$tabla
         );
 	    $this->load->view('docente/header');
         $this->load->view('docente/horario/index',$data);
         $this->load->view('docente/footer');
 
-	} 
+  } 
+      public function generarHorarioPDF($idhorario = '')
+    {
+     /* $idhorario = $this->decode($idhorario);
+      $idalumno = $this->decode($idalumno);
+        if((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno)) ){
+        */
+        $detalle_logo = $this->alumno->logo($this->session->idplantel);
+        $logo = base_url() . '/assets/images/escuelas/'.$detalle_logo[0]->logoplantel;
+        $logo2 = base_url() . '/assets/images/escuelas/'.$detalle_logo[0]->logosegundo;
+        
+        $dias = $this->alumno->showAllDias(); 
+        $this->load->library('tcpdf');  
+        $hora = date("h:i:s a");
+        //$linkimge = base_url() . '/assets/images/woorilogo.png';
+        $fechaactual = date('d/m/Y');
+        $pdf = new Pdf('P', 'mm', 'A4', true, 'UTF-8', false);
+        $pdf->SetTitle('Horario de clases.');
+        $pdf->SetHeaderMargin(30);
+        $pdf->SetTopMargin(10);
+        $pdf->setFooterMargin(20);
+        $pdf->SetAutoPageBreak(true);
+        $pdf->SetAuthor('Author');
+        $pdf->SetDisplayMode('real', 'default');
+        $pdf->setPrintHeader(false);
+        $pdf->setPrintFooter(false);
+
+        $pdf->AddPage();
+        $tabla = '
+        <style type="text/css">
+    .txtn{
+        font-size:12px;
+    }
+    .direccion{
+        font-size:12px;
+    }
+    .nombreplantel{
+        font-size:16px;
+        font-weight:bolder;
+    }
+    .telefono{
+          font-size:12px;
+    }
+    .boleta{
+         font-size:9px;
+         font-weight:bolder;
+    }
+     .periodo{
+         font-size:9px;
+         font-weight:bolder;
+    }
+    .txtgeneral{
+         font-size:8px;
+         font-weight:bolder; 
+    }
+    .txtnota{
+         font-size:6px;
+         font-weight:bolder; 
+    } 
+    .txtcalificacion{
+        font-size:10px;
+         font-weight:bolder; 
+    } 
+    .imgtitle{
+        width:55px;
+
+    }
+    .titulo{
+     font-family:Verdana, Geneva, sans-serif;
+      font-size:11px; 
+    font-weight:bold;
+    border-bottom:solid 1px #000000;
+}
+.result{
+     font-family:Verdana, Geneva, sans-serif;
+      font-size:12px; 
+    font-weight:bold;
+}.nombreclase{
+   font-size:12px;
+   font-weight: bold;
+}
+.txthorario{
+   font-size:10px;
+}
+.txttutor{
+   font-size:10px;
+}
+.txtdia{
+  font-size:15px;
+   font-weight: bold;
+   background-color:#ccc;
+}
+</style>
+<div id="areimprimir">  
+          <table width="950" border="0" cellpadding="2" cellspacing="0">
+  <tr>
+    <td width="101" align="center"><img   class="imgtitle" src="' . $logo2 . '" /></td>
+    <td colspan="2" align="center">
+            <label class="nombreplantel">'.$detalle_logo[0]->nombreplantel.'</label><br>
+            <label class="txtn">'.$detalle_logo[0]->asociado.'</label><br>
+            <label class="direccion">'.$detalle_logo[0]->direccion.'</label><br>
+            <label class="telefono">TELÉFONO: '.$detalle_logo[0]->telefono.' EXT 1</label>
+    </td>
+    <td width="137" align="center"><img   class="imgtitle" src="' . $logo . '" /></td>
+  </tr>  
+  </table> <br/>';
+
+       $tabla .= '<table  width="950" border="1">
+      <thead> 
+    ';
+       foreach($dias as $dia):
+        $tabla .= '<th align="center" class="txtdia text-center">'.$dia->nombredia.'</th>';
+       endforeach; 
+
+      $tabla .= '</thead>';
+      $c = 1; 
+        //$alumn = $al->getAlumn();
+       
+        $tabla .= '<tr valign="top">';
+      foreach($dias as $block):
+       $lunes = $this->horario->showAllDiaHorario($idhorario,$block->iddia);
+        $tabla .= '<td>';
+        $tabla .= '<table   border="0" >';
+        if($lunes != false ){ 
+          foreach($lunes as $row){
+              $tabla .= '<tr>
+              <td width="200" style="border-bottom:solid #ccc 1px; height:70px; padding-left:5px; padding-right:5px;">';
+             if(strtoupper($row->opcion) == "NORMAL"){ 
+                 $tabla .='<ul>';
+                 $tabla .='<li class="nombreclase">'.$row->nombreclase.'</li>';
+                  $tabla .='<li class="txthorario">'.date('h:i A', strtotime($row->horainicial)).' - '.date('h:i A', strtotime($row->horafinal)).'</li>';
+                   $tabla .='<li class="txttutor">'.$row->nombre.' '.$row->apellidop.' '.$row->apellidom.'</li>';
+                 $tabla .='</ul>';
+             }
+            if(strtoupper($row->opcion) == "DESCANSO"){
+              $tabla.='<label class="nombreclase"> '.$row->nombreclase.'</label>';
+            }
+             if(strtoupper($row->opcion) == "SIN CLASES"){
+              //$tabla.='<label class="nombreclase">SIN CLASES</label>';
+            }
+            $tabla .= '</td>
+            </tr>';
+         }
+        }else{
+           $tabla .='<label>No registrado</label>';
+        } 
+         $tabla .= '</table>';
+      $tabla .= '</td>';
+      endforeach;
+
+        $tabla .= '</tr>';
+      
+
+      
+      $tabla .= '</table></div>';  
+      
+      return $tabla;  
+      
+      
+        }
+
+            public function descargar($idhorario = '')
+        { 
+          $idhorario = $this->decode($idhorario);
+          if((isset($idhorario) && !empty($idhorario))){
+        $detalle_logo = $this->alumno->logo($this->session->idplantel);
+        $logo = base_url() . '/assets/images/escuelas/'.$detalle_logo[0]->logoplantel;
+        $logo2 = base_url() . '/assets/images/escuelas/'.$detalle_logo[0]->logosegundo;
+       
+        $dias = $this->alumno->showAllDias(); 
+        $this->load->library('tcpdf');  
+        $hora = date("h:i:s a");
+        //$linkimge = base_url() . '/assets/images/woorilogo.png';
+        $fechaactual = date('d/m/Y');
+        $pdf = new Pdf('P', 'mm', 'A4', true, 'UTF-8', false);
+        $pdf->SetTitle('Horario de clases.');
+        $pdf->SetHeaderMargin(30);
+        $pdf->SetTopMargin(10);
+        $pdf->setFooterMargin(20);
+        $pdf->SetAutoPageBreak(true);
+        $pdf->SetAuthor('Author');
+        $pdf->SetDisplayMode('real', 'default');
+        $pdf->setPrintHeader(false);
+        $pdf->setPrintFooter(false);
+
+        $pdf->AddPage();
+        $tabla = '
+        <style type="text/css">
+    .txtn{
+        font-size:12px;
+    }
+    .direccion{
+        font-size:12px;
+    }
+    .nombreplantel{
+        font-size:16px;
+        font-weight:bolder;
+    }
+    .telefono{
+          font-size:12px;
+    }
+    .boleta{
+         font-size:9px;
+         font-weight:bolder;
+    }
+     .periodo{
+         font-size:9px;
+         font-weight:bolder;
+    }
+    .txtgeneral{
+         font-size:8px;
+         font-weight:bolder; 
+    }
+    .txtnota{
+         font-size:6px;
+         font-weight:bolder; 
+    } 
+    .txtcalificacion{
+        font-size:10px;
+         font-weight:bolder; 
+    } 
+    .imgtitle{
+        width:55px;
+
+    }
+    .titulo{
+     font-family:Verdana, Geneva, sans-serif;
+      font-size:10px; 
+    font-weight:bold;
+    border-bottom:solid 1px #000000; 
+}
+@page{
+  size:0;
+  margin-leff:20px;
+  margin-right:20px;
+  margin-top:5px;
+}
+@media print{
+  #btnimprimir2{
+    display:none;
+  }
+}
+ul{
+      list-style-type: none;
+      margin: 0;
+      padding: 0; 
+    }
+.result{
+     font-family:Verdana, Geneva, sans-serif;
+      font-size:9px; 
+    font-weight:bold;
+}.nombreclase{
+   font-size:10px;
+   font-weight: bold;
+}
+.txthorario{
+   font-size:9px;
+}
+.txttutor{
+   font-size:9px;
+}
+.txtdia{
+  font-size:15px;
+   font-weight: bold;
+   background-color:#ccc;
+   border:1px  solid #ccc;
+}
+   table {
+            border-collapse:collapse; 
+            }
+   .tblhorario tr td
+                {
+                    border:0px  solid black;
+                }
+
+</style>
+<div id="areaimprimir">  
+          <table width="950" border="0" >
+  <tr>
+    <td width="101" align="center"><img   class="imgtitle" src="' . $logo2 . '" /></td>
+    <td colspan="2" align="center">
+            <label class="nombreplantel">'.$detalle_logo[0]->nombreplantel.'</label><br>
+            <label class="txtn">'.$detalle_logo[0]->asociado.'</label><br>
+            <label class="direccion">'.$detalle_logo[0]->direccion.'</label><br>
+            <label class="telefono">TELÉFONO: '.$detalle_logo[0]->telefono.' EXT 1</label>
+    </td>
+    <td width="137" align="center"><img   class="imgtitle" src="' . $logo . '" /></td>
+  </tr> 
+ 
+  </table> <br/>';
+
+       $tabla .= '<table class="tblepr"  width="950" border="0">
+      <thead> 
+    ';
+       foreach($dias as $dia):
+        $tabla .= '<th align="center" class="txtdia text-center">'.$dia->nombredia.'</th>';
+       endforeach; 
+
+      $tabla .= '</thead>';
+      $c = 1; 
+        //$alumn = $al->getAlumn();
+       
+        $tabla .= '<tr valign="top">';
+      foreach($dias as $block):
+       $lunes = $this->horario->showAllDiaHorario($idhorario,$block->iddia);
+        $tabla .= '<td>';
+        $tabla .= '<table   class="tblhorario"  border="0" >';
+        if($lunes != false ){ 
+          foreach($lunes as $row){
+              $tabla .= '<tr>
+              <td width="200" style="border:solid #ccc 1px; height:60px; padding-left:5px; padding-right:5px;">';
+             if(strtoupper($row->opcion) == "NORMAL"){ 
+                 $tabla .='<ul>';
+                 $tabla .='<li class="nombreclase">'.$row->nombreclase.'</li>';
+                  $tabla .='<li class="txthorario">'.date('h:i A', strtotime($row->horainicial)).' - '.date('h:i A', strtotime($row->horafinal)).'</li>';
+                   $tabla .='<li class="txttutor">'.$row->nombre.' '.$row->apellidop.' '.$row->apellidom.'</li>';
+                 $tabla .='</ul>';
+             }
+            if(strtoupper($row->opcion) == "DESCANSO"){
+              $tabla.='<label class="nombreclase"> '.$row->nombreclase.'</label>';
+            }
+             if(strtoupper($row->opcion) == "SIN CLASES"){
+              //$tabla.='<label class="nombreclase">SIN CLASES</label>';
+            }
+            $tabla .= '</td>
+            </tr>';
+         }
+        }else{
+           $tabla .='<label>No registrado</label>';
+        } 
+         $tabla .= '</table>';
+      $tabla .= '</td>';
+      endforeach;
+
+        $tabla .= '</tr>';
+      
+
+      
+      $tabla .= '</table></div>';
+      echo $tabla;
+      echo '<button type="button" id="btnimprimir2" onclick="imprimirDiv()" >IMPRIMIR</button>';
+      echo '
+      <script>
+ imprimirDiv();
+function imprimirDiv(){
+  //alert(divName);
+  var printContents =document.getElementById("areaimprimir").innerHTML;
+  var originalContents = document.body.innerHTML;
+  document.body.innerHTML = printContents; 
+  window.print();
+  document.body.innerHTML= originalContents;
+}
+$(document).ready(function(){
+  $("#btnimprimir2").trigger("click");
+});
+document.getElementById("btnimprimir2").onclick = imprimirDiv;
+</script>
+      ';
+       }else{
+        $data = array(
+            'heading'=>'Error',
+            'message'=>'Error intente mas tarde.'
+        );
+         $this->load->view('errors/html/error_general',$data);
+    }
+        }
      public function imprimirHorario($idhorario='')
  { 
     Permission::grant(uri_string());

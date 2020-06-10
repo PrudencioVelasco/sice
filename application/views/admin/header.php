@@ -57,6 +57,11 @@
           <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
           <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
         <![endif]-->
+        <style>
+   .swal2-popup{
+     font-size: 1.4rem;
+   }
+ </style>
  <style type="text/css">
                 .modal-mask {
                     position: fixed;
@@ -131,9 +136,9 @@
             <div class="menu_section">
               <h3>General</h3>
               <ul class="nav side-menu">
-<li><a href="<?= base_url('/Admin') ?>"><i class="fa fa-home"></i>  Inicio</a></li>
+              <li><a href="<?= base_url('/Admin') ?>"><i class="fa fa-home"></i>  Inicio</a></li>
+              <li><a href="<?= base_url('/Alumno/') ?>"><i class="fa fa-slideshare"></i>  Alumnos</a></li>
                <li><a href="<?= base_url('/Tutor/') ?>"><i class="fa fa-users"></i>  Tutores</a></li>
-               <li><a href="<?= base_url('/Alumno/') ?>"><i class="fa fa-slideshare"></i>  Alumnos</a></li>
                <li><a href="<?= base_url('/Profesor/') ?>"><i class="fa fa-user"></i>  Profesor</a></li>
                <li><a href="<?= base_url('/CicloEscolar/') ?>"><i class="fa fa-bookmark-o"></i>  Ciclo Escolar</a></li>
                <li><a href="<?= base_url('/Grupo/') ?>"><i class="fa fa-graduation-cap"></i>  Grupo</a></li>

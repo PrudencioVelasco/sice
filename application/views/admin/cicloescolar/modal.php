@@ -14,6 +14,7 @@
                     <label><font color="red">*</font> Mes inicio</label>
                      
                     <select v-model="newCiclo.idmesinicio"  :class="{'is-invalid': formValidate.idmesinicio}"class="form-control">
+                       <option value="" selected>-- SELECCIONAR --</option>
                         <option   v-for="option in meses" v-bind:value="option.idmes">
                         {{ option.nombremes }}   
                       </option>
@@ -26,6 +27,7 @@
                 <div class="form-group">
                     <label><font color="red">*</font> Año inicio</label>
                     <select v-model="newCiclo.idyearinicio"  :class="{'is-invalid': formValidate.idmesinicio}"class="form-control">
+                        <option value="" selected>-- SELECCIONAR --</option>
                         <option   v-for="option in years" v-bind:value="option.idyear">
                         {{ option.nombreyear }}   
                       </option>
@@ -41,6 +43,7 @@
                 <div class="form-group">
                     <label><font color="red">*</font> Mes termino</label>
                      <select v-model="newCiclo.idmesfin"  :class="{'is-invalid': formValidate.idmesfin}"class="form-control">
+                        <option value="" selected>-- SELECCIONAR --</option>
                         <option   v-for="option in meses" v-bind:value="option.idmes">
                         {{ option.nombremes }}   
                       </option>
@@ -54,6 +57,7 @@
                 <div class="form-group">
                     <label><font color="red">*</font> Año termino</label>
                     <select v-model="newCiclo.idyearfin"  :class="{'is-invalid': formValidate.idyearfin}"class="form-control">
+                       <option value="" selected>-- SELECCIONAR --</option>
                         <option   v-for="option in years" v-bind:value="option.idyear">
                         {{ option.nombreyear }}   
                       </option>

@@ -357,8 +357,8 @@
                                                 <span class="caret"></span>
                                             </button>
                                             <ul class="dropdown-menu">  
-                                                <li><a href="" ><i class="fa fa-print" style="color:blue;"></i> Imprimir</a></li> 
-                                                <li><a href="#"  @click="eliminarModalP = true; selectPrimerPago(pago)"> <i class="fa fa-trash" style="color: red;"></i> Eliminar</a></li>  
+                                                <li><a href="" v-if="pago.pagado==1" ><i class="fa fa-print" style="color:blue;"></i> Imprimir</a></li> 
+                                                <li><a v-if="pago.pagado==1"  @click="eliminarModalP = true; selectPrimerPago(pago)"> <i class="fa fa-trash" style="color: red;"></i> Eliminar</a></li>  
                                                
                                               
                                             </ul>
@@ -399,7 +399,7 @@
                                                
                                                
                                                <td>{{solicitud.mes}}</td> 
-                                               <td><strong>$ {{solicitud.descuento}}</strong></td>
+                                               <td><strong>${{solicitud.descuento}}</strong></td>
                                                <td>
                                                    <span v-if="solicitud.pagado==1" class="label label-success">PAGADO</span>
                                                    <span v-else class="label label-warning">EN PROCESO</span>
@@ -413,9 +413,9 @@
                                                 <span class="caret"></span>
                                             </button>
                                             <ul class="dropdown-menu"> 
-                                                <li v-if="solicitud.pagado==0"  @click="addModal = true; selectPeriodo(solicitud)"><a href="#" ><i class="fa fa-money" aria-hidden="true"></i> Pagar</a></li> 
-                                                <li v-if="solicitud.pagado==1"><a href="" ><i class="fa fa-print"></i> Imprimir</a></li> 
-                                                <li v-if="solicitud.pagado==1"><a href=""> <i class="fa fa-trash"></i> Eliminar</a></li>  
+                                                <!--<li v-if="solicitud.pagado==0"  @click="addModal = true; selectPeriodo(solicitud)"><a href="#" ><i class="fa fa-money" aria-hidden="true"></i> Pagar</a></li> -->
+                                                <li v-if="solicitud.pagado==1"><a href="" ><i class="fa fa-print"></i> Imprimir</a></li>  
+                                                <li  v-if="solicitud.pagado==1"><a @click="eliminarModalC = true; selectPeriodo(solicitud)"> <i class="fa fa-trash" style="color: red;"></i> Eliminar</a></li>  
                                                
                                               
                                             </ul>

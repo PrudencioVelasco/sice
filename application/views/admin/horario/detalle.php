@@ -25,7 +25,7 @@
 
                                  <button class="btn btn-round btn-primary" @click="addModalHoraSinClase= true"><i class='fa fa-plus'></i> Agregar Hora sin Clases</button> 
                               <?php } ?>
-                                <a  target="_blank" class="btn btn-round btn-info" href="<?php echo base_url(); ?>/horario/imprimirHorario/<?php echo $id ?>" class="btn btn-primary"><i class="fa fa-print"></i> Imprimir Horario</a>
+                                <a  target="_blank" class="btn btn-round btn-info" href="<?php echo base_url(); ?>Horario/descargar/<?php echo $id ?>" class="btn btn-primary"><i class="fa fa-print"></i> IMPRIMIR HORARIO</a>
                             </div> 
                   </div> 
                    <table class="table">

@@ -104,7 +104,103 @@ public function pagosInicio()
         }
    
 }
+public function descuentoPagoInicioInscripcion()
+{
+   $idalumno = $this->input->get('idalumno');
+   $idperiodo = $this->input->get('idperiodo');
+   $resultado = $this->estadocuenta->descuentoPagosInicio($idalumno,$idperiodo,1);
+    if($resultado){
+       $result['pagoinscripcion']=number_format($resultado[0]->beca,2);
+    }
+     if(isset($result) && !empty($result)){
+         echo json_encode($result);
+        }
+}
+public function descuentoPagoInicioReinscripcion()
+{
+   $idalumno = $this->input->get('idalumno');
+   $idperiodo = $this->input->get('idperiodo');
+   $resultado = $this->estadocuenta->descuentoPagosInicio($idalumno,$idperiodo,2);
+   //var_dump($resultado);
+    if($resultado){
+       $result['pagoreinscripcion']=number_format($resultado[0]->beca,2);
+    }
+     if(isset($result) && !empty($result)){
+         echo json_encode($result);
+        }
+}
+public function descuentoPagoColegiatura()
+{
+   $idalumno = $this->input->get('idalumno');
+   $idperiodo = $this->input->get('idperiodo');
+   $resultado = $this->estadocuenta->descuentoPagosInicio($idalumno,$idperiodo,3);
+    if($resultado){
+       $result['pagocolegiatura']=number_format($resultado[0]->beca,2);
+    }
+     if(isset($result) && !empty($result)){
+         echo json_encode($result);
+        }
+}
+public function eliminarColegiatura()
+{
+     $config = array(
+             array(
+                'field' => 'usuario',
+                'label' => 'Forma de Pago',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
+            ),
+             array(
+                'field' => 'password',
+                'label' => 'Forma de Pago',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
+            )
+            
+        );
 
+        $this->form_validation->set_rules($config);
+        if ($this->form_validation->run() == FALSE) {
+            $result['error'] = true;
+            $result['msg'] = array(
+                'usuario' => form_error('usuario'),
+                'password' => form_error('password')
+            );
+        } else {
+        $idpago = $this->input->post('idpago');
+        $usuario = $this->input->post('usuario');
+        $password = $this->input->post('password'); 
+        $detalle_usuario =  $this->usuario->validarUsuarioEliminar($usuario);
+        if($detalle_usuario){
+            if (password_verify($password, $detalle_usuario[0]->password)) {
+              
+              $data = array(
+                'eliminado'=>1
+              );
+              $this->estadocuenta->updateEstadoCuenta($idpago,$data);
+
+            }else{
+              $result['error'] = true;
+                $result['msg'] = array(
+                            'msgerror' => 'El Usuario o Contraseña no son validos.'
+                    );
+            }
+        } else{
+              $result['error'] = true;
+              $result['msg'] = array(
+                          'msgerror' => 'El Usuario o Contraseña no son validos.'
+                  );
+              
+        }
+  }
+  if(isset($result) && !empty($result)){
+         echo json_encode($result);
+        }
+}
 public function eliminarPrimerCobro()
 {
      $config = array(
@@ -174,6 +270,7 @@ public function eliminarPrimerCobro()
     //$idperiodo = 11;
   	$estadocuentap = array();
     $i = 0;
+    /*
   	$tabla_amoritzacion = $this->estadocuenta->showAllTableAmotizacion($idperiodo,$idalumno);
   	//var_dump($tabla_amoritzacion);
   	if($tabla_amoritzacion != false){
@@ -184,6 +281,7 @@ public function eliminarPrimerCobro()
   			  foreach ($estadocuenta_veri as $value2) {
   			            $estadocuentap[$i]                = array(); 
                         $estadocuentap[$i]['idamortizacion'] = $value2->idamortizacion;
+                        $estadocuentap[$i]['idpago'] = $value2->idestadocuenta;
                         $estadocuentap[$i]['idperiodo'] = $value2->idperiodo;
                         $estadocuentap[$i]['mes'] = $value2->mes; 
                         $estadocuentap[$i]['descuento']     = $value2->descuento;
@@ -196,6 +294,7 @@ public function eliminarPrimerCobro()
   				//NO PAGADO
                         $estadocuentap[$i]                = array(); 
                         $estadocuentap[$i]['idamortizacion'] = $value->idamortizacion;
+                         $estadocuentap[$i]['idpago'] = 0;
                         $estadocuentap[$i]['idperiodo'] = $value->idperiodo;
                         $estadocuentap[$i]['mes'] = $value->mes; 
                         $estadocuentap[$i]['descuento']     = $value->descuento;
@@ -209,15 +308,16 @@ public function eliminarPrimerCobro()
   }
 else{
 //PURO ESTADO DE CUENTA
-
+*/
   $vali = $this->estadocuenta->showAllEstadoCuentaTodos($idperiodo,$idalumno);
   if($vali != false){
   	  foreach ($vali as $value2) {
   			            $estadocuentap[$i]                = array(); 
                         $estadocuentap[$i]['idamortizacion'] = $value2->idamortizacion;
+                         $estadocuentap[$i]['idpago'] = $value2->idestadocuenta;
                         $estadocuentap[$i]['idperiodo'] = $value2->idperiodo;
                         $estadocuentap[$i]['mes'] = $value2->mes;
-                        $estadocuentap[$i]['year']     = $value2->yearp;
+                        //$estadocuentap[$i]['year']     = $value2->yearp;
                         $estadocuentap[$i]['descuento']     = $value2->descuento;
                         $estadocuentap[$i]['numeromes']   = $value2->numeromes;
                         $estadocuentap[$i]['pagado']       = $value2->pagado; 
@@ -225,7 +325,7 @@ else{
                          $i++;
   }
 }
-}
+//}
 
 
  function compare_lastname($a, $b)
@@ -323,11 +423,14 @@ public function addCobroColegiatura()
                   'idperiodo'=>$idperiodo,
                   'idalumno'=>$idalumno,
                   'idformapago'=>$idformapago,
-                  'descuento'=>$abono,
-                  'clave'=>'',
+                  'descuento'=>$abono, 
+                  'idopenpay'=>'',
+                  'idorden'=>'',
+                  'autorizacion'=>'',
                   'online'=>0,
                   'pagado'=>1,
                   'fechapago'=>date('Y-m-d H:i:s'),
+                  'eliminado'=>0,
                   'idusuario' => $this->session->user_id,
                   'fecharegistro' => date('Y-m-d H:i:s')
                 );
@@ -367,10 +470,13 @@ public function addCobroColegiatura()
                   'idalumno'=>$idalumno,
                   'idformapago'=>$idformapago,
                   'descuento'=>$abono,
-                  'clave'=>'',
+                  'idopenpay'=>'',
+                  'idorden'=>'',
+                  'autorizacion'=>'',
                   'online'=>0,
                   'pagado'=>1,
                   'fechapago'=>date('Y-m-d H:i:s'),
+                  'eliminado'=>0,
                   'idusuario' => $this->session->user_id,
                   'fecharegistro' => date('Y-m-d H:i:s')
                 );

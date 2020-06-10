@@ -29,7 +29,7 @@ class Alumno_model extends CI_Model {
 
     }
         public function logo($idplantel = '') {
-        $this->db->select('p.logoplantel, p.logosegundo');
+        $this->db->select('p.*');
         $this->db->from('tblplantel p'); 
         if (isset($idplantel) && !empty($idplantel)) {
         $this->db->where('p.idplantel',$idplantel); 
@@ -120,8 +120,8 @@ class Alumno_model extends CI_Model {
             return false;
         }
     }
-        public function showAllMateriasAlumno($idalumno = '') {
-        $this->db->select('pe.idperiodo, hd.idhorariodetalle,ma.nombreclase,p.nombre, p.apellidop, p.apellidom, g.nombregrupo,ne.nombrenivel, g.idgrupo, h.idhorario,m.nombremes as mesinicio,m2.nombremes as mesfin,y.nombreyear as yearinicio,y2.nombreyear as yearfin, pla.nombreplantel, pla.direccion, pla.telefono, a.matricula, ho.idhorario');
+        public function showAllMateriasAlumno($idalumno = '',$activo = '') {
+        $this->db->select('pe.idperiodo, hd.idhorariodetalle,ma.nombreclase,p.nombre, p.apellidop, p.apellidom, g.nombregrupo,ne.nombrenivel, g.idgrupo, h.idhorario,m.nombremes as mesinicio,m2.nombremes as mesfin,y.nombreyear as yearinicio,y2.nombreyear as yearfin, pla.nombreplantel,pla.asociado, pla.direccion, pla.telefono, a.matricula, ho.idhorario');
         $this->db->from('tblhorario_detalle hd'); 
         $this->db->join('tblprofesor_materia pm', 'pm.idprofesormateria = hd.idmateria');
         $this->db->join('tblprofesor p', 'p.idprofesor = pm.idprofesor');
@@ -139,7 +139,9 @@ class Alumno_model extends CI_Model {
         $this->db->join('tblalumno_grupo ag', 'ag.idgrupo = g.idgrupo');
         $this->db->join('tblalumno a', 'a.idalumno = ag.idalumno');
         $this->db->where('a.idalumno', $idalumno);
+        if(isset($activo) && empty($activo)){
         $this->db->where('(pe.activo = 1 or ho.activo = 1)');
+        }
         $this->db->where('(pe.idperiodo = ag.idperiodo)');
         $this->db->group_by('ma.idmateria');
         $this->db->group_by('h.idgrupo');
@@ -159,6 +161,22 @@ class Alumno_model extends CI_Model {
         $this->db->where('pi.idalumno', $idalumno); 
         $this->db->where('pi.idperiodo', $idperiodo); 
          $this->db->where('pi.eliminado', 0); 
+         $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+      public function showAllPagoColegiaturas($idalumno = '',$idperiodo = '') {
+        $this->db->select("tp.nombretipopago, 'MENSUALIDAD' AS concepto,m.nombremes, es.descuento,tp.nombretipopago, DATE_FORMAT(es.fechapago,'%d/%m/%Y') as fecharegistro, es.idformapago, es.online, es.pagado");
+        $this->db->from('tblestado_cuenta es'); 
+        $this->db->join('tbltipo_pago tp', 'tp.idtipopago = es.idformapago');  
+         $this->db->join('tblamotizacion a', 'a.idamortizacion = es.idamortizacion');
+         $this->db->join('tblmes m', 'a.idperiodopago = m.idmes');  
+        $this->db->where('es.idalumno', $idalumno); 
+        $this->db->where('es.idperiodo', $idperiodo); 
+         $this->db->where('es.eliminado', 0); 
          $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();
@@ -234,6 +252,7 @@ class Alumno_model extends CI_Model {
     public function showAllDias() {
         $this->db->select('d.*');
         $this->db->from('tbldia d'); 
+        $this->db->where('d.iddia NOT IN (6,7)');
          $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();
@@ -255,7 +274,7 @@ class Alumno_model extends CI_Model {
             return false;
         }
     }
-       public function showAllTipoAsistencia() {
+    public function showAllTipoAsistencia() {
         $this->db->select('a.*');
         $this->db->from('tblmotivo_asistencia a');  
          $query = $this->db->get();
@@ -264,7 +283,8 @@ class Alumno_model extends CI_Model {
         } else {
             return false;
         }
-    } 
+    }
+ 
     public function showAllTutorAlumno($idalumno = '') {
         $this->db->select('t.nombre,t.apellidop,t.apellidom,t.escolaridad,t.ocupacion,t.dondetrabaja, t.fnacimiento,direccion,telefono,correo');
         $this->db->from('tbltutor t');  

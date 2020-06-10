@@ -1,4 +1,12 @@
   <!-- page content -->
+    <style>
+    ul{
+      list-style-type: none;
+      margin: 0;
+      padding: 0; 
+    }
+     
+  </style>
   <div class="right_col" role="main">
 
 <div class=""> 
@@ -6,136 +14,28 @@
   <div class="row">
     <div class="col-md-12">
       <div class="x_panel">
-        <div class="x_title">
-          <h2><strong>HORARIO</strong></h2>
-         
+         <div class="x_title">
+           <div class="col-md-6 col-sm-12 col-xs-12 ">
+            <h2><strong> <i class="fa fa-clock-o"></i> HORARIO ESCOLAR</strong></h2>
+           </div>
+            <div class="col-md-6 col-sm-12 col-xs-12 " align="right">
+              <?php if(isset($id) && !empty($id)){ ?>
+              <a target="_blank" href="<?php echo site_url('Phorario/descargar/'.$controller->encode($id)) ?>" class="btn btn-primary">IMPRIMIR HORARIO</a>
+              <?php } ?>
+            </div>
           <div class="clearfix"></div>
         </div>
         <div class="x_content">
 
-          <div class="row"> 
+          <div class="row"  align="center"> 
 
-             <div id="appd">
-                  <div class="row">
-                           <div class="col-md-12" align="right"> 
-                            <?php if(isset($id) && !empty($id)){ ?>
- <a  target="_blank" class="btn btn-round btn-info" href="<?php echo base_url(); ?>/Phorario/imprimirHorario/<?php echo $controller->encode($id) ?>" class="btn btn-primary"><i class="fa fa-print"></i> IMPRIMIR HORARIO</a>
-                           <?php }?>
-                               
-                            </div> 
-                  </div> 
-                   <table class="table">
-                    <thead>
-                      <tr> 
-                        <th>LUNES</th>
-                        <th>MARTES</th>
-                        <th>MIERCOLES</th>
-                        <th>JUEVES</th>
-                        <th>VIERNES</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr> 
-                        <td >
-                          <div v-for="row in lunes">  
-                            <ul class="nav navbar-right panel_toolbox" style="border: 2px solid #ccc; border-radius: 4px; margin-bottom: 4px">
-                                <li><a class="collapse-link " style="color: #000"> 
-                                  <div  v-if="row.opcion == 'NORMAL'">
-                                    <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
-                                    <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small>
-                                  </div>
-                                  <div v-else-if="row.opcion == 'DESCANSO'">
-                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})
-                                  </div>
-                                  <div v-else>
-                                     <strong>SIN CLASES</strong> ({{row.horainicial}}-{{row.horafinal}})
-                                  </div>
-                                </a>
-                                </li>
-                              </ul> 
-                          </div>
-                       </td>
-                        <td>
-                          <div v-for="row in martes">  
-                             <ul class="nav navbar-right panel_toolbox" style="border: 2px solid #ccc; border-radius: 4px; margin-bottom: 4px">
-                               <li><a class="collapse-link " style="color: #000"> 
-                                  <div  v-if="row.opcion == 'NORMAL'">
-                                    <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
-                                    <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small>
-                                  </div>
-                                  <div v-else-if="row.opcion == 'DESCANSO'">
-                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})
-                                  </div>
-                                  <div v-else>
-                                     <strong>SIN CLASES</strong> ({{row.horainicial}}-{{row.horafinal}})
-                                  </div>
-                                </a>
-                                </li>
-                              </ul> 
-                          </div>
-                        </td> 
-                        <td>
-                          <div v-for="row in miercoles">  
-                             <ul class="nav navbar-right panel_toolbox" style="border: 2px solid #ccc; border-radius: 4px; margin-bottom: 4px">
-                               <li><a class="collapse-link " style="color: #000"> 
-                                  <div  v-if="row.opcion == 'NORMAL'">
-                                    <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
-                                    <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small>
-                                  </div>
-                                  <div v-else-if="row.opcion == 'DESCANSO'">
-                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})
-                                  </div>
-                                  <div v-else>
-                                     <strong>SIN CLASES</strong> ({{row.horainicial}}-{{row.horafinal}})
-                                  </div>
-                                </a>
-                                </li> 
-                              </ul> 
-                          </div></td>
-                        <td>
-                          <div v-for="row in jueves">  
-                            <ul class="nav navbar-right panel_toolbox" style="border: 2px solid #ccc; border-radius: 4px; margin-bottom: 4px">
-                               <li><a class="collapse-link " style="color: #000"> 
-                                  <div  v-if="row.opcion == 'NORMAL'">
-                                    <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
-                                    <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small>
-                                  </div>
-                                  <div v-else-if="row.opcion == 'DESCANSO'">
-                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})
-                                  </div>
-                                  <div v-else>
-                                     <strong>SIN CLASES</strong> ({{row.horainicial}}-{{row.horafinal}})
-                                  </div>
-                                </a>
-                                </li>
-                              </ul> 
-                          </div>
-                        </td>
-                        <td>
-                          <div v-for="row in viernes">  
-                            <ul class="nav navbar-right panel_toolbox" style="border: 2px solid #ccc; border-radius: 4px; margin-bottom: 4px">
-                              <li><a class="collapse-link " style="color: #000"> 
-                                  <div  v-if="row.opcion == 'NORMAL'">
-                                    <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
-                                    <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small>
-                                  </div>
-                                  <div v-else-if="row.opcion == 'DESCANSO'">
-                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})
-                                  </div>
-                                  <div v-else>
-                                     <strong>SIN CLASES</strong> ({{row.horainicial}}-{{row.horafinal}})
-                                  </div>
-                                </a>
-                                </li>
-                              </ul> 
-                          </div>
-                        </td>
-                      </tr>
-                      
-                    </tbody>
-                  </table> 
-
-             </div>
+          <?php
+           if(isset($tabla) && !empty($tabla)){
+              echo $tabla;
+            }else{
+              echo '<label align="center">No tiene registrado Horario de Clases.</label>';
+            }
+          ?>
             
 
           </div>

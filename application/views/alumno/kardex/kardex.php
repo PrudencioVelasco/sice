@@ -26,7 +26,7 @@
 
           <div class="row">
              <div class="col-md-4 col-sm-12 col-xs-12 " align="center">
-               <label>ALUMNO: </label><br><label style="color:#000;"><?php echo $datosalumno[0]->nombre.' '.$datosalumno[0]->apellidop.' '.$datosalumno[0]->apellidom ?></label>
+               <label>ALUMNO(A): </label><br><label style="color:#000;"><?php echo $datosalumno[0]->nombre.' '.$datosalumno[0]->apellidop.' '.$datosalumno[0]->apellidom ?></label>
              </div>
              <div class="col-md-4 col-sm-12 col-xs-12 " align="center">
                 <label>CICLO ESCOLAR: </label><br><label style="color: #000"> <?php echo $datoshorario->mesinicio.' '.$datoshorario->yearinicio.' - '.$datoshorario->mesfin.' '.$datoshorario->yearfin ?></label>
@@ -44,14 +44,21 @@
           <br>
           <div class="row">   
             <?php
-              if (isset($tabla)) {
+              if (isset($tabla) && !empty($tabla)) {
                 echo $tabla;
               }
             ?> 
           </div>
           <div class="row">
               <div class="col-md-12 col-sm-12 col-xs-12 " align="right">
-                <a target="_blank" href="<?php echo site_url('Aalumno/imprimirkardex/'.$controller->encode($idhorario).'/'.$controller->encode($idalumno)) ?>" class="btn btn-primary"><i class="fa fa-print"></i> Imprimir Kardex</a>
+                <?php
+                 if(isset($calificacion) && !empty($calificacion)){
+                   ?>
+                     <a target="_blank" href="<?php echo site_url('Aalumno/imprimirkardex/'.$controller->encode($idhorario).'/'.$controller->encode($idalumno)) ?>" class="btn btn-primary"><i class="fa fa-print"></i> IMPRIMIR KARDEX</a>
+                   <?php 
+                  }
+                ?>
+              
               </div>
           </div>
 

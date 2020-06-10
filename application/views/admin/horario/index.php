@@ -45,8 +45,6 @@
 
                                     <th class="text-white" v-column-sortable:mesinicio>Ciclo Escolar </th>
                                     <th class="text-white" v-column-sortable:nombrenivel>Nivel </th>
-                                    <th class="text-white" v-column-sortable:nombregrupo>Grupo </th>
-                                    <th class="text-white" v-column-sortable:nombreespecialidad>Especialidad </th>
                                     <th class="text-white" v-column-sortable:nombregrupo>Turno </th>
                                     <th class="text-white" v-column-sortable:activo>Proceso </th>
                                      <th class="text-center text-white">Opción </th>
@@ -55,10 +53,8 @@
                                         <tr v-for="horario in horarios" class="table-default">
 
                                             <td>{{horario.mesinicio}}-{{horario.yearinicio}} A {{horario.mesfin}}-{{horario.yearfin}}</td>
-                                            <td>{{horario.nombrenivel}}</td>
-                                            <td>{{horario.nombregrupo}}</td>
-                                            <td>{{horario.nombreespecialidad}}</td> 
-                                            <td>{{horario.nombreturno}}</td> 
+                                            <td>{{horario.nombrenivel}} - {{horario.nombregrupo}}</td>
+                                             <td>{{horario.nombreturno}}</td> 
                                             <td>
 
                                                         <span v-if="horario.activo==1" class="label label-success">En proceso</span>

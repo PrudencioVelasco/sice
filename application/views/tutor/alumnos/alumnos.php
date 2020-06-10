@@ -34,7 +34,7 @@
                               <td scope="row"><?php echo $value->nombre." ".$value->apellidop." ".$value->apellidom ?></td>
                               <td align="right">
                                  
-                                <a  href="<?php echo site_url('Tutores/detalle/'.$controller->encode($value->idalumno)) ?>" class="btn btn-info"> <i class=" fa fa-eye "></i> Ver Kardex</a>
+                                <a  href="<?php echo site_url('Tutores/detalle/'.$controller->encode($value->idalumno)) ?>" class="btn btn-primary"> <i class=" fa fa-eye "></i> Ver detalle</a>
                               </td> 
                             </tr>
                             <?php

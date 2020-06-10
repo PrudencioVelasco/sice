@@ -102,7 +102,41 @@
                                         ?>
                                    </td>
                                    <td><?php echo $value->concepto; ?></td>
-                                   <td><strong><?php echo $value->descuento; ?></strong></td>
+                                   <td><strong><?php echo number_format($value->descuento,2); ?></strong></td>
+                                   <td><?php echo $value->autorizacion; ?></td>
+                                   <td><?php echo $value->fecha; ?></td>
+                                </tr>
+                               <?php 
+                                    }
+                                }
+                             ?>
+                              <?php
+                                if(isset($pago_mensualidad) && !empty($pago_mensualidad)){ 
+                                    foreach($pago_mensualidad as $value){    
+                                ?>
+                               <tr>
+                                   <td><?php echo $value->nombre." ".$value->apellidop." ".$value->apellidom ?></td>
+                                   <td><?php echo  $value->nombretipopago; ?></td>
+                                    <td>
+                                        <?php
+                                            if($value->online == 0){
+                                                echo '<label class="label label-default">EN OFICINA</label>';
+                                            }else{
+                                                echo '<label class="label label-primary">EN LINEA</label>';
+                                            }
+                                        ?>
+                                    </td>
+                                   <td>
+                                       <?php
+                                            if($value->pagado == 1){
+                                                echo '<label class="label label-success">PAGADO</label>';
+                                            }else{
+                                                echo '<label class="label label-warning">EN PROCESO</label>';
+                                            }
+                                        ?>
+                                   </td>
+                                   <td><?php echo $value->concepto.' DE '.$value->nombremes; ?></td>
+                                   <td><strong><?php echo number_format($value->descuento,2); ?></strong></td>
                                    <td><?php echo $value->autorizacion; ?></td>
                                    <td><?php echo $value->fecha; ?></td>
                                 </tr>

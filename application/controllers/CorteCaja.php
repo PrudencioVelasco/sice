@@ -29,12 +29,15 @@ class CorteCaja extends CI_Controller {
            $pagoen = $this->input->post('pagoen');
            $estatus = $this->input->post('estatus');
            $pago_inicio  = ''; 
+           $pago_mensualidad  = ''; 
           
           if( !empty($fechainicio) && !empty($fechafin)){
            $pago_inicio = $this->cortecaja->showAllPagoInicio($fechainicio,$fechafin,$estatus,$pagoen);
+           $pago_mensualidad = $this->cortecaja->showAllPagoColegiaturas($fechainicio,$fechafin,$estatus,$pagoen);
             } 
           $data = array(
-              'pago_inicio'=>$pago_inicio
+              'pago_inicio'=>$pago_inicio,
+              'pago_mensualidad'=>$pago_mensualidad
           );
           $this->load->view('admin/header');
         $this->load->view('admin/cortecaja/index',$data);

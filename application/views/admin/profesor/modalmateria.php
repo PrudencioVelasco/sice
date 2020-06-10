@@ -13,6 +13,7 @@
                 <div class="form-group">
                     <label><font color="red">*</font> Materia</label>
                       <select v-model="newMateria.idmateria"  :class="{'is-invalid': formValidate.idmateria}"class="form-control">
+                       <option value="">-- SELECCIONAR --</option>
                         <option   v-for="option in clases" v-bind:value="option.idmateria">
                         {{ option.nombreclase }} 
                       </option>

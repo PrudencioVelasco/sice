@@ -24,6 +24,7 @@ class EstadoCuenta_model extends CI_Model {
          if (isset($idplantel) && !empty($idplantel)) {
         $this->db->where('p.idplantel',$idplantel); 
         }   
+        $this->db->order_by('p.idperiodo DESC');
          $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();
@@ -80,7 +81,7 @@ public function showAllFormasPago() {
 
 
     public function descuentoPagosInicio($idalumno = '',$idperiodo = '', $idtipo = '') {
-        $this->db->select("co.descuento, b.descuento as descuentobeca");
+        $this->db->select("co.descuento, b.descuento as descuentobeca,(co.descuento - (b.descuento / 100 * co.descuento)) as beca");
         $this->db->from('tblcolegiatura co');  
         $this->db->join('tblgrupo g ', ' g.idnivelestudio = co.idnivelestudio');
         $this->db->join('tblalumno_grupo ag ', ' ag.idgrupo = g.idgrupo');
@@ -149,6 +150,7 @@ FROM
 public function showAllEstadoCuenta($idperiodo='',$idalumno='',$idamortizacion = '')
 {
           $query =$this->db->query("SELECT 
+          ec.idestadocuenta,
     a.idamortizacion, 
     ec.descuento,
     ec.pagado,
@@ -176,7 +178,10 @@ FROM
     tblmes pp ON a.idperiodopago = pp.idmes
      JOIN
     tblestado_cuenta ec ON a.idamortizacion = ec.idamortizacion
-    WHERE a.idperiodo = $idperiodo AND a.idalumno = $idalumno  AND ec.idamortizacion = $idamortizacion"); 
+    WHERE a.idperiodo = $idperiodo 
+    AND a.idalumno = $idalumno  
+    AND ec.idamortizacion = $idamortizacion
+    AND ec.eliminado = 0"); 
         if ($query->num_rows() > 0) {
             return $query->result();
         } else {
@@ -187,6 +192,7 @@ FROM
  public function showAllEstadoCuentaTodos($idperiodo='',$idalumno='')
 {
           $query =$this->db->query("SELECT 
+          ec.idestadocuenta,
     a.idamortizacion, 
     ec.descuento,
     ec.pagado,
@@ -214,7 +220,8 @@ FROM
     tblmes pp ON a.idperiodopago = pp.idmes
      JOIN
     tblestado_cuenta ec ON a.idamortizacion = ec.idamortizacion
-    WHERE a.idperiodo = $idperiodo AND a.idalumno = $idalumno"); 
+    WHERE a.idperiodo = $idperiodo AND a.idalumno = $idalumno
+    AND ec.eliminado = 0"); 
         if ($query->num_rows() > 0) {
             return $query->result();
         } else {

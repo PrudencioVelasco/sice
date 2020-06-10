@@ -18,7 +18,6 @@ Vue.component('modal',{ //modal
 
 			      <div class="modal-header">
 				        <h5 class="modal-title"> <slot name="head"></slot></h5>
-				       <i class="fa fa-window-close  icon-md text-danger" @click="$emit('close')"></i>
 				      </div>
 
 			      <div class="modal-body" style="background-color:#fff;">

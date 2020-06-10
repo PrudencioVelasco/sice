@@ -31,7 +31,34 @@ class CorteCaja_model extends CI_Model {
         if($this->session->idrol != 14){
              $this->db->where('a.idplantel',$this->session->idplantel);
         }
-        
+        $this->db->where('pi.eliminado',0);
+         $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+      public function showAllPagoColegiaturas($fechainicio = '', $fechafin = '', $estatus = '', $pagoen = '') {
+        $this->db->select("aa.matricula,aa.nombre, aa.apellidop, aa.apellidom,tp.nombretipopago, 'MENSUALIDAD' AS concepto,m.nombremes, es.descuento,tp.nombretipopago, DATE_FORMAT(es.fechapago,'%d/%m/%Y') as fecha, es.idformapago, es.online, es.pagado, es.autorizacion");
+        $this->db->from('tblestado_cuenta es'); 
+        $this->db->join('tbltipo_pago tp', 'tp.idtipopago = es.idformapago');  
+         $this->db->join('tblamotizacion a', 'a.idamortizacion = es.idamortizacion');
+         $this->db->join('tblmes m', 'a.idperiodopago = m.idmes');  
+         $this->db->join('tblalumno aa','es.idalumno = aa.idalumno');
+        if((isset($fechainicio) && !empty($fechainicio)) && (isset($fechafin) && !empty($fechafin)) ){
+          $this->db->where('es.fechapago BETWEEN "'. $fechainicio. '" and "'. $fechafin.'"');
+        }
+        if(isset($pagoen) && !empty($pagoen)){
+            $this->db->where('es.online',$pagoen);
+        }
+         if(isset($estatus) && !empty($estatus)){
+            $this->db->where('es.pagado',$estatus);
+        }
+        if($this->session->idrol != 14){
+             $this->db->where('aa.idplantel',$this->session->idplantel);
+        }
+         $this->db->where('es.eliminado', 0); 
          $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();

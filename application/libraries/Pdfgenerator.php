@@ -22,6 +22,7 @@ require_once dirname(__FILE__) .'/dompdf/lib/Cpdf.php';
 defined('BASEPATH') OR exit('No direct script access allowed');
 // Dompdf namespace
 use Dompdf\Dompdf;
+use Dompdf\Options;
 class Pdfgenerator{
 public function __construct(){
 require_once dirname(__FILE__).'/dompdf/autoload.inc.php';

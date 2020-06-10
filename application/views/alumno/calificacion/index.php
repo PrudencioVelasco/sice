@@ -53,6 +53,12 @@
                             </tr>
                             <?php
                           }
+                        }else{
+                          echo '
+                            <tr align="center">
+                                <td colspan="4">Sin registro de Clases.</td>
+                            </tr>
+                          ';
                         }
                       ?>
                      

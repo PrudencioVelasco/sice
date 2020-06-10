@@ -108,7 +108,7 @@
                 <div class="form-group">
                     <label><font color="red">*</font> Tipo Sanguineo</label>
                      <select v-model="newAlumno.idtiposanguineo"  :class="{'is-invalid': formValidate.idtiposanguineo}" class="form-control">
-                        <option value="">-- SELECCIONAR --</option>
+                        <option value="" selected>-- SELECCIONAR --</option>
                         <option   v-for="option in tipossanguineos" v-bind:value="option.idtiposanguineo">
                                 {{ option.tiposanguineo  }} 
                         </option>
@@ -197,7 +197,7 @@
                 <div class="form-group">
                     <label><font color="red">*</font> Especialidad</label> 
                       <select v-model="newAlumno.idespecialidad"  :class="{'is-invalid': formValidate.idespecialidad}"class="form-control">
-                        <option value="">--Seleccione--</option>
+                        <option value="" selected>-- SELECCIONAR --</option>
                         <option   v-for="option in especialidades" v-bind:value="option.idespecialidad">
                         {{ option.nombreespecialidad }}   
                       </option>
