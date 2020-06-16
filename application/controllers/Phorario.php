@@ -158,7 +158,7 @@ class Phorario extends CI_Controller {
             <label class="nombreplantel">'.$detalle_logo[0]->nombreplantel.'</label><br>
             <label class="txtn">'.$detalle_logo[0]->asociado.'</label><br>
             <label class="direccion">'.$detalle_logo[0]->direccion.'</label><br>
-            <label class="telefono">TELÉFONO: '.$detalle_logo[0]->telefono.' EXT 1</label>
+            <label class="telefono">TELÉFONO: '.$detalle_logo[0]->telefono.'</label>
     </td>
     <td width="137" align="center"><img   class="imgtitle" src="' . $logo . '" /></td>
   </tr>  
@@ -341,7 +341,7 @@ ul{
             <label class="nombreplantel">'.$detalle_logo[0]->nombreplantel.'</label><br>
             <label class="txtn">'.$detalle_logo[0]->asociado.'</label><br>
             <label class="direccion">'.$detalle_logo[0]->direccion.'</label><br>
-            <label class="telefono">TELÉFONO: '.$detalle_logo[0]->telefono.' EXT 1</label>
+            <label class="telefono">TELÉFONO: '.$detalle_logo[0]->telefono.'</label>
     </td>
     <td width="137" align="center"><img   class="imgtitle" src="' . $logo . '" /></td>
   </tr> 

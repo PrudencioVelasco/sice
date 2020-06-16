@@ -118,8 +118,8 @@
                   </div>
                   <hr/>
                   <div class="row">
-                       <div class="col-md-4 col-sm-12 col-xs-12 "></div>
-                        <div class="col-md-8 col-sm-12 col-xs-12 " align="right">
+                       <div class="col-md-3 col-sm-12 col-xs-12 "></div>
+                        <div class="col-md-9 col-sm-12 col-xs-12 " align="right">
                                <div class="alert alert-danger print-error-msg-1" style="display:none"></div>
                             <form id="frmbuscar">
                                 <div class="row clearfix">
@@ -157,7 +157,7 @@
                                     <div class="col-lg-2 col-md-4 col-sm-4 col-xs-12">
                                       <input type="hidden" name="idhorario" value="<?php echo $idhorario ?>">
                                       <input type="hidden" name="idhorariodetalle" value="<?php echo $idhorariodetalle ?>">
-                                         <button type="button" id="btnbuscar" class="btn btn-primary"><i class='fa fa-search'></i> Buscar</button>
+                                         <button type="button" id="btnbuscar" class="btn btn-primary"><i class='fa fa-search'></i> BUSCAR</button>
                                     </div>
                                 </div>
                             </form>
@@ -217,8 +217,8 @@
        </div>
        <div class="modal-footer">
          <input type="hidden" name="horariodetalle" value="<?php echo $idhorariodetalle; ?>">
-        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</button>
-        <button type="button" id="btneliminarasistencia" class="btn btn-primary"><i class="fa fa-trash"></i> Eliminar</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> CERRAR</button>
+        <button type="button" id="btneliminarasistencia" class="btn btn-primary"><i class="fa fa-trash"></i> ELIMINAR</button>
       </div>
     </form>
   </div>
@@ -256,8 +256,8 @@
          </div> 
        </div>
        <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</button>
-        <button type="button" id="btnmodificar" class="btn btn-primary"><i class="fa fa-pencil"></i> Modificar</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> CERRAR</button>
+        <button type="button" id="btnmodificar" class="btn btn-primary"><i class="fa fa-pencil"></i> MODIFICAR</button>
       </div>
     </form>
   </div>
@@ -284,8 +284,8 @@
          </div> 
        </div>
        <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</button>
-        <button type="button" id="btneliminar" class="btn btn-primary"><i class="fa fa-trash"></i> Eliminar</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> CERRAR</button>
+        <button type="button" id="btneliminar" class="btn btn-primary"><i class="fa fa-trash"></i> ELIMINAR</button>
       </div>
     </form>
   </div>
@@ -300,232 +300,6 @@
     <div class="clearfix"></div>
     <div id="notif-group" class="tabbed_notifications"></div>
   </div> 
-<script type="text/javascript">
+ <script data-my_var_1="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/js/validar/tutor_asistencia.js"></script> 
 
-$(document).on( "click", '.edit_button',function(e) { 
-      var idasistencia= $(this).data('idasistencia');  
-      var nombre = $(this).data('alumno'); 
-
-      $(".idasistencia").val(idasistencia);    
-      $("#alumno").text(nombre);    
-    });
-     
-    $(document).on( "click", '.delete_button',function(e) { 
-      var idasistencia = $(this).data('idasistencia');  
-      var nombre = $(this).data('alumno'); 
-
-      $(".idasistencia").val(idasistencia);  
-      $("#alumnodelete").text(nombre);    
-    }); 
-
-    $("#btnguardar").click(function(){ 
-    $.ajax({
-      type: "POST",
-      url: "<?php echo site_url('Pgrupo/addAsistencia');?>",
-      data: $('#frmasistencia').serialize(),
-      success: function(data) {
-        var val = $.parseJSON(data);
-        //console.log(val.msg);
-         console.log(val.error);
-
-          
-         if((val.success === "Ok")){ 
-          //$(".print-success-msg").css('display','block'); 
-          //$(".print-success-msg").html("Las asistencias fueron registrado con Exito.");
-          //setTimeout(function() {
-          //  $('.print-error-msg').fadeOut('fast');
-          //  location.reload(); 
-          //}, 3000);
-           swal({
-                            position: 'center',
-                            type: 'success',
-                            title: 'Las asistencias fueron registrado con Exito!',
-                            text:'Dar clic en el boton.',
-                            showConfirmButton: true,
-                            //timer: 1500
-                         }).then(function(){
-                            location.reload();
-                          });
-        }else{ 
-            swal({
-               type: 'error',
-               title: 'Oops...', 
-               html: val.error,
-               customClass:'swal-wide',
-               footer: ''
-              }); 
-          //$(".print-error-msg").css('display','block'); 
-          //$(".print-error-msg").html(val.error);
-          //setTimeout(function() {$('.print-error-msg').fadeOut('fast');}, 6000);
-        }
- 
-      }
-    })
-  });
-
-        $("#btnbuscar").click(function(){ 
-          var fechainicio = $("#fechainicio").val();
-          var fechafin = $("#fechafin").val();
-          if(fechainicio != "" && fechafin != ""){
-              $.ajax({
-                type: "POST",
-                url: "<?php echo site_url('Pgrupo/buscarAsistencia');?>",
-                data: $('#frmbuscar').serialize(),
-                success: function(data) {
-                  //var val = $.parseJSON(data);
-                 // console.log(data);
-                 $("#tblalumnos").css('display','none'); 
-                  $('#tblasistencias').html(data);
-                   
-           
-                }
-              })
-          }else{
-          //$(".print-error-msg-1").css('display','block'); 
-          //$(".print-error-msg-1").html("Es necesario la Fecha.");
-          //setTimeout(function() {$('.print-error-msg-1').fadeOut('fast');}, 4000);
-           swal({
-               type: 'error',
-               title: 'Oops...', 
-               html: 'Es necesario la Fecha',
-               customClass:'swal-wide',
-               footer: ''
-              }); 
-
-}
-
-  });
-
-          $("#btneliminarasistencia").click(function(){ 
-          var fechainicio = $("#fechaeliminar").val(); 
-          if(fechainicio != ""){
-              $.ajax({
-                type: "POST",
-                url: "<?php echo site_url('Pgrupo/eliminarAsistenciaFecha');?>",
-                data: $('#frmeliminarasistencia').serialize(),
-                success: function(data) {
-                  //var val = $.parseJSON(data);
-                 // console.log(data);
-                 //$("#tblalumnos").css('display','none'); 
-                 // $('#tblasistencias').html(data);
-                   swal({
-                            position: 'center',
-                            type: 'success',
-                            title: 'Fue eliminado las Asistencias con Exito!',
-                            text:'Dar clic en el boton.',
-                            showConfirmButton: true,
-                            //timer: 1500
-                         }).then(function(){
-                            location.reload();
-                          });
-                   
-           
-                }
-              })
-          }else{
-          //$(".print-error-msg-1").css('display','block'); 
-          //$(".print-error-msg-1").html("Es necesario la Fecha.");
-          //setTimeout(function() {$('.print-error-msg-1').fadeOut('fast');}, 4000);
-           swal({
-               type: 'error',
-               title: 'Oops...', 
-               html: 'Es necesario la Fecha',
-               customClass:'swal-wide',
-               footer: ''
-              }); 
-
-}
-
-  });
-
-  $("#btneliminar").click(function(){ 
-    $.ajax({
-      type: "POST",
-      url: "<?php echo site_url('Pgrupo/eliminarAsistencia');?>",
-      data: $('#frmeliminar').serialize(),
-      success: function(data) {
-        var val = $.parseJSON(data); 
-         if((val.success === "Ok")){ 
-          //$(".print-success-msg").css('display','block'); 
-          //$(".print-success-msg").html("Fue eliminado la Asistencia con Exito.");
-          //setTimeout(function() {
-          //  $('.print-error-msg').fadeOut('fast');
-          //  location.reload(); 
-          //}, 3000);
-                        swal({
-                            position: 'center',
-                            type: 'success',
-                            title: 'Fue eliminado la Asistencia con Exito!',
-                            text:'Dar clic en el boton.',
-                            showConfirmButton: true,
-                            //timer: 1500
-                         }).then(function(){
-                            location.reload();
-                          });
-
-          //$(".print-error-msg").css('display','none'); 
-          //location.reload(); 
-        }else{ 
-            swal({
-               type: 'error',
-               title: 'Oops...', 
-               html: val.error,
-               customClass:'swal-wide',
-               footer: ''
-              }); 
-          //$(".print-error-msg").css('display','block'); 
-          //$(".print-error-msg").html(val.error);
-          //setTimeout(function() {$('.print-error-msg').fadeOut('fast');}, 6000);
-        }
- 
-      }
-    })
-  });
-
-
-  $("#btnmodificar").click(function(){ 
-    $.ajax({
-      type: "POST",
-      url: "<?php echo site_url('Pgrupo/updateAsistencia');?>",
-      data: $('#frmmodificar').serialize(),
-      success: function(data) {
-        var val = $.parseJSON(data); 
-         if((val.success === "Ok")){ 
-          //$(".print-success-msg").css('display','block'); 
-          //$(".print-success-msg").html("Fue modificado la Asistencia con Exito.");
-          //setTimeout(function() {
-           // $('.print-error-msg').fadeOut('fast');
-           // location.reload(); 
-          //}, 3000);
-            swal({
-                            position: 'center',
-                            type: 'success',
-                            title: 'Fue modificado la Asistencia con Exito!',
-                            text:'Dar clic en el boton.',
-                            showConfirmButton: true,
-                            //timer: 1500
-                         }).then(function(){
-                            location.reload();
-                          });
-          //$(".print-error-msg").css('display','none'); 
-          //location.reload(); 
-        }else{
-            swal({
-               type: 'error',
-               title: 'Oops...', 
-               html: val.error,
-               customClass:'swal-wide',
-               footer: ''
-              });  
-          //$(".print-error-msg").css('display','block'); 
-          //$(".print-error-msg").html(val.error);
-          //setTimeout(function() {$('.print-error-msg').fadeOut('fast');}, 6000);
-        }
- 
-      }
-    })
-  });
-
-
-</script>
 

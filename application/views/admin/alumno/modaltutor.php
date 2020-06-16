@@ -28,8 +28,8 @@
     </div>
     </div>
     <div slot="foot"> 
-        <button class="btn btn-danger" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
-        <button class="btn btn-primary" @click="addTutor"><i class='fa fa-floppy-o'></i> Agregar</button>
+        <button class="btn btn-danger waves-effect waves-black" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
+        <button class="btn btn-primary waves-effect waves-black" @click="addTutor"><i class='fa fa-floppy-o'></i> Agregar</button>
     </div>
 </modal>
  

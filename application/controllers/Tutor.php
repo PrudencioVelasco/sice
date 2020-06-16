@@ -118,7 +118,24 @@ class Tutor extends CI_Controller {
                 'errors' => array(
                     'required' => 'Campo obligatorio.'
                 )
+            ),
+            array(
+                'field' => 'rfc',
+                'label' => 'RFC',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
+            ),
+            array(
+                'field' => 'factura',
+                'label' => 'Factura',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
             )
+
         );
 
         $this->form_validation->set_rules($config);
@@ -131,9 +148,13 @@ class Tutor extends CI_Controller {
                 'telefono' => form_error('telefono'),
                 'correo' => form_error('correo'),
                 'direccion' => form_error('direccion'),
-                'password' => form_error('password')
+                'password' => form_error('password'),
+                'rfc' => form_error('rfc'),
+                'factura' => form_error('factura')
             );
         } else {
+            $factura = trim($this->input->post('factura'));
+            $rfc = trim($this->input->post('rfc')); 
             $correo = trim($this->input->post('correo'));
             $validar = $this->tutor->validarAddTutor($correo, $this->session->idplantel);
             if($validar == FALSE){
@@ -151,6 +172,8 @@ class Tutor extends CI_Controller {
                     'telefono' => $this->input->post('telefono'),
                     'correo' => $this->input->post('correo'),
                     'password' => $password_encrypted,
+                    'rfc'=> strtoupper($rfc),
+                    'factura'=> $factura,
                     'idusuario' => $this->session->user_id,
                     'fecharegistro' => date('Y-m-d H:i:s')
                      
@@ -174,6 +197,7 @@ class Tutor extends CI_Controller {
                            'msgerror' => "El correo electrico ya esta registrado."
                     );
         }
+
         }
          
       if(isset($result) && !empty($result)){

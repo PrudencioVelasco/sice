@@ -7,7 +7,7 @@
             <div class="col-md-12">
               <div class="x_panel">
                 <div class="x_title">
-                  <h2><strong>ADMINISTRAR PLANEACIÓN</strong></h2>
+                  <h2><strong>ADMINISTRAR PLANEACIONES</strong></h2>
                   
                   <div class="clearfix"></div>
                 </div>
@@ -73,7 +73,7 @@
                         <div class="modal-footer">
                           <input type="hidden" name="unidad" value="<?php echo $idunidad ?>">
                           <input type="hidden" name="horario" value="<?php echo $iddetallehorario ?>">
-                            <button type="button" id="btnguardad" class="btn btn-primary waves-effect"><i class='fa fa-floppy-o'></i> GUARDAR</button>
+                            <button type="button" id="btnguardar" class="btn btn-primary waves-effect"><i class='fa fa-floppy-o'></i> GUARDAR</button>
                             <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal"><i class='fa fa-close'></i> CERRAR</button>
                         </div>
                       </form>
@@ -233,118 +233,10 @@
   </div> 
 
   <script type="text/javascript">
-      $(document).on( "click", '.edit_button_planeacion',function(e) { 
-        var idplaneacion = $(this).data('idplaneacion'); 
-        var planeacion = $(this).data('planeacion');
-        var lugar = $(this).data('lugar');
-        var fechainicio = $(this).data('fechainicio');
-        var fechafin = $(this).data('fechafin'); 
-        CKEDITOR.instances['ckeditoredit'].setData(planeacion);
-        $(".idplaneacion").val(idplaneacion);  
-        $(".planeacion").val(planeacion);  
-        $(".lugar").val(lugar);
-        $(".fechainicio").val(fechainicio);   
-        $(".fechafin").val(fechafin);
-       // $("#entradanumeroparte_salida").text(numeroparte);    
-      });
-
-  $("#btnguardad").click(function(){
-    for ( instance in CKEDITOR.instances) {
-      CKEDITOR.instances[instance].updateElement();
-    } 
-    $.ajax({
-      type: "POST",
-      url: "<?php echo site_url('Pprofesor/addPlaneacion');?>",
-      data: $('#frmplaneacion').serialize(),
-      success: function(data) {
-        var val = $.parseJSON(data);
-        //console.log(val.msg);
-         console.log(val.error);
-
-          
-         if((val.success === "Ok")){ 
-          //$(".print-success-msg").css('display','block'); 
-          //$(".print-success-msg").html("Fue agregado la Actividad con Exito.");
-          //setTimeout(function() {
-          //  $('.print-error-msg').fadeOut('fast');
-          //  location.reload(); 
-          //}, 3000);
-          swal({
-                            position: 'center',
-                            type: 'success',
-                            title: 'Fue agregado la Actividad con Exito!',
-                            text:'Dar clic en el boton.',
-                            showConfirmButton: true,
-                            //timer: 1500
-                         }).then(function(){
-                            location.reload();
-                          });
-
-        }else{ 
-          //$(".print-error-msg").css('display','block'); 
-          //$(".print-error-msg").html(val.error);
-          //setTimeout(function() {$('.print-error-msg').fadeOut('fast');}, 6000);
-           swal({
-               type: 'error',
-               title: 'Oops...', 
-               html: val.error,
-               customClass:'swal-wide',
-               footer: ''
-              }); 
-        }
  
-      }
-    })
-  });
-    $("#btnmodificar").click(function(){
-    for ( instance in CKEDITOR.instances) {
-      CKEDITOR.instances[instance].updateElement();
-    } 
-    $.ajax({
-      type: "POST",
-      url: "<?php echo site_url('Pprofesor/updatePlaneacion');?>",
-      data: $('#frmplaneacionmodificar').serialize(),
-      success: function(data) {
-        var val = $.parseJSON(data);
-        //console.log(val.msg);
-         console.log(val.error);
-
-          
-         if((val.success === "Ok")){ 
-          //$(".print-success-msg").css('display','block'); 
-          //$(".print-success-msg").html("Fue modificado la Actividad con Exito.");
-          //setTimeout(function() {
-          //  $('.print-error-msg').fadeOut('fast');
-          //  location.reload(); 
-          //}, 3000);
-           swal({
-                            position: 'center',
-                            type: 'success',
-                            title: 'Fue modificado la Actividad con Exito!',
-                            text:'Dar clic en el boton.',
-                            showConfirmButton: true,
-                            //timer: 1500
-                         }).then(function(){
-                            location.reload();
-                          });
-
-        }else{ 
-          //$(".print-error-msg").css('display','block'); 
-          //$(".print-error-msg").html(val.error);
-          //setTimeout(function() {$('.print-error-msg').fadeOut('fast');}, 6000);
-           swal({
-               type: 'error',
-               title: 'Oops...', 
-               html: val.error,
-               customClass:'swal-wide',
-               footer: ''
-              }); 
-        }
- 
-      }
-    })
-  });
 
   </script>
+
+<script data-my_var_1="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/js/validar/tutor_planear.js"></script> 
 
 

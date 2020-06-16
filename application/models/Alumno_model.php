@@ -28,6 +28,7 @@ class Alumno_model extends CI_Model {
         }
 
     }
+ 
         public function logo($idplantel = '') {
         $this->db->select('p.*');
         $this->db->from('tblplantel p'); 
@@ -154,13 +155,18 @@ class Alumno_model extends CI_Model {
         }
     }
      public function showAllPagoInscripcion($idalumno = '',$idperiodo = '') {
-        $this->db->select("tp.nombretipopago, tp2.concepto, pi.descuento,tp.nombretipopago, DATE_FORMAT(pi.fecharegistro,'%d/%m/%Y') as fecharegistro, pi.idformapago, pi.online, pi.pagado");
+        $this->db->select("tp2.concepto,( SELECT
+         GROUP_CONCAT(CONCAT_WS(' ', tp.nombretipopago)
+                    SEPARATOR ', ') ) AS nombretipopago, tp.nombretipopago, DATE_FORMAT(pi.fecharegistro,'%d/%m/%Y') as fecharegistro, dpi.idformapago, pi.online, pi.pagado");
         $this->db->from('tblpago_inicio pi'); 
-        $this->db->join('tbltipo_pago tp', 'tp.idtipopago = pi.idformapago'); 
         $this->db->join('tbltipopagocol tp2', 'tp2.idtipopagocol = pi.idtipopagocol'); 
+        $this->db->join('tbldetalle_pago_inicio dpi','pi.idpago = dpi.idpago');
+        $this->db->join('tbltipo_pago tp', 'tp.idtipopago = dpi.idformapago'); 
         $this->db->where('pi.idalumno', $idalumno); 
         $this->db->where('pi.idperiodo', $idperiodo); 
          $this->db->where('pi.eliminado', 0); 
+          $this->db->group_by('dpi.idpago');
+         $this->db->select_sum('dpi.descuento');
          $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();
@@ -169,14 +175,20 @@ class Alumno_model extends CI_Model {
         }
     }
       public function showAllPagoColegiaturas($idalumno = '',$idperiodo = '') {
-        $this->db->select("tp.nombretipopago, 'MENSUALIDAD' AS concepto,m.nombremes, es.descuento,tp.nombretipopago, DATE_FORMAT(es.fechapago,'%d/%m/%Y') as fecharegistro, es.idformapago, es.online, es.pagado");
+        $this->db->select("'MENSUALIDAD' AS concepto,m.nombremes, ( SELECT
+         GROUP_CONCAT(CONCAT_WS(' ', tp.nombretipopago)
+                    SEPARATOR ', ') ) AS nombretipopago, tp.nombretipopago, DATE_FORMAT(es.fechapago,'%d/%m/%Y') as fecharegistro, dp.idformapago, es.online, es.pagado");
         $this->db->from('tblestado_cuenta es'); 
-        $this->db->join('tbltipo_pago tp', 'tp.idtipopago = es.idformapago');  
+        
          $this->db->join('tblamotizacion a', 'a.idamortizacion = es.idamortizacion');
          $this->db->join('tblmes m', 'a.idperiodopago = m.idmes');  
+         $this->db->join('tbldetalle_pago dp','es.idestadocuenta = dp.idestadocuenta');
+         $this->db->join('tbltipo_pago tp', 'tp.idtipopago = dp.idformapago');  
         $this->db->where('es.idalumno', $idalumno); 
         $this->db->where('es.idperiodo', $idperiodo); 
          $this->db->where('es.eliminado', 0); 
+          $this->db->group_by('es.idestadocuenta');
+         $this->db->select_sum('dp.descuento');
          $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();
@@ -352,7 +364,7 @@ class Alumno_model extends CI_Model {
             return false;
         }
     } 
-      public function showTareaAlumnoMateria($dhorario) {
+      public function showTareaAlumnoMateria($dhorario,$limitar_consulta = '') {
         $this->db->select('hd.idhorariodetalle,hd.idhorario, hd.horainicial, hd.horafinal, m.nombreclase,p.nombre, p.apellidop, p.apellidom,LEFT(t.tarea, 90) as tarea, t.idtarea, t.fechaentrega');
         $this->db->from('tblhorario_detalle hd'); 
         $this->db->join('tblprofesor_materia pm', 'hd.idmateria = pm.idprofesormateria');
@@ -360,6 +372,9 @@ class Alumno_model extends CI_Model {
         $this->db->join('tblprofesor p', 'p.idprofesor = pm.idprofesor');
         $this->db->join('tbltarea t', 't.idhorariodetalle = hd.idhorariodetalle');
         $this->db->where('hd.idhorario', $dhorario); 
+        if(isset($limitar_consulta) && !empty($limitar_consulta)){
+            $this->db->where('t.fechaentrega >=', $limitar_consulta); 
+        }
          $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();
@@ -433,6 +448,17 @@ class Alumno_model extends CI_Model {
             return false;
         }
     }
+      public function showAllMotivoAsistencia()
+    {
+        $this->db->select('t.*');
+        $this->db->from('tblmotivo_asistencia t');  
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
     public function detalleClase($idhorariodetalle = '') {
         $this->db->select('m.nombreclase');
         $this->db->from('tblhorario_detalle hd');
@@ -490,7 +516,7 @@ class Alumno_model extends CI_Model {
         }
     }
 
-      public function listaAlumnoPorGrupo($idgrupo = '', $idplantel = '')
+      public function listaAlumnoPorGrupo($idgrupo = '', $idplantel = '',$idcicloescolar = '')
     {
          $query =$this->db->query("SELECT 
                                     a.nombre,
@@ -511,7 +537,8 @@ class Alumno_model extends CI_Model {
                                 WHERE
                                     ag.idperiodo = h.idperiodo
                                         AND ag.activo = 1
-                                        AND ag.idgrupo = $idgrupo");
+                                        AND ag.idgrupo = $idgrupo 
+                                        ORDER BY a.apellidop ASC");
        //  return $query->result();
 
         if ($query->num_rows() > 0) {
@@ -609,7 +636,9 @@ class Alumno_model extends CI_Model {
                             y2.nombreyear AS yearfin,
                             g.nombregrupo,
                             ne.idnivelestudio,
-                            ne.nombrenivel
+                            ne.nombrenivel,
+                            en.idestatusnivel,
+                            en.nombreestatusnivel
                         FROM
                             tblperiodo p
                                 INNER JOIN
@@ -628,6 +657,7 @@ class Alumno_model extends CI_Model {
                             tblgrupo g ON ag.idgrupo = g.idgrupo
                                 INNER JOIN
                             tblnivelestudio ne ON ne.idnivelestudio = g.idnivelestudio
+                                INNER JOIN tblestatus_nivel en ON en.idestatusnivel = ag.idestatusnivel
                         WHERE
                             ag.idgrupo = h.idgrupo
                                 AND ag.idalumno = $idalumno
@@ -899,5 +929,50 @@ public function deleteAlumno($idalumno='')
             return false;
         }
 }
+
+public function obtenerPeriodo($idalumno)
+{
+        $this->db->select('a.idalumno,ag.idperiodo, ag.idgrupo, h.idhorario,a.idplantel');
+        $this->db->from('tblalumno a');  
+        $this->db->join('tblalumno_grupo ag','a.idalumno = ag.idalumno');
+        $this->db->join('tblhorario h','ag.idperiodo = h.idperiodo');
+         $this->db->join('tblhorario h2','ag.idgrupo = h2.idgrupo');
+        $this->db->where('ag.activo',1);
+        $this->db->where('ag.idestatusnivel IN (2,4)');
+        $this->db->where('a.idalumno',$idalumno);
+        //$this->db->where('ag.idgrupo','h.idgrupo');
+         $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    
+}
+      public function showAllCalificacionAlumno($idalumno ='', $idhorario = '',$idplantel = '')
+    {
+         $query =$this->db->query("SELECT 
+                        COALESCE((COALESCE(SUM(c.calificacion), 0) / (SELECT 
+                                        COUNT(*)
+                                    FROM
+                                        tblunidad u WHERE u.idplantel = $idplantel)),
+                                0) AS calificacion
+                    FROM
+                        tblhorario h
+                            INNER JOIN
+                        tblhorario_detalle hd ON h.idhorario = hd.idhorario
+                            INNER JOIN
+                        tblcalificacion c ON hd.idhorariodetalle = c.idhorariodetalle
+                    WHERE
+                        c.idalumno = $idalumno
+                    AND c.idhorario = $idhorario
+                    GROUP BY c.idhorariodetalle"); 
+        if ($query->num_rows() > 0) {
+             return $query->result();
+
+        } else {
+            return false;
+        }
+    }
 
 }

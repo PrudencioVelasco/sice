@@ -41,7 +41,8 @@
                                     <img align="right" style="padding-right: 5px" src="<?php echo base_url(); ?>/assets/images/visa.png" alt="Visa">
                                     <img align="right" style="padding-right: 5px" src="<?php echo base_url(); ?>/assets/images/mastercard.png" alt="Mastercard">
                                     <img align="right" style="padding-right: 5px" src="<?php echo base_url(); ?>/assets/images/american-express.png" alt="Americ" >   
-                                      <form id="payment-form2" method="POST" action="<?php echo site_url('Tutores/pagotarjetac');?>">  
+                                    
+                                    <form id="payment-form2" > 
                                           <input type="hidden" name="token_id" id="token_id">
                                     <div class="row">
                                             <div class="col-md-12 col-sm-12 col-xs-12 ">
@@ -199,7 +200,7 @@
                             </div>
                             <div role="tabpanel" <?php if(isset($formapago)){ if($formapago == 0){echo 'class="tab-pane fade active in"';}else{echo 'class="tab-pane fade"';} } ?>  id="tab_content2" aria-labelledby="profile-tab">
                                
-                            <form method="post" action="<?php echo site_url('Tutores/pagotiendac');?>">  
+                            <form id="frmefectivoc">  
                             <label>Pasos para pagar en Tiendas</label> 
                             <ul>
                                  <li>1. Seleccionar el mes a pagar.</li>
@@ -224,21 +225,21 @@
                                         </div>
                                      </div>
                                 </div>
-                               <?php if(isset($opcion) && !empty($opcion) && $opcion == 1){ ?>
-                              <div class="row" align="center">
-                                  <a href="https://sandbox-dashboard.openpay.mx/paynet-pdf/mds4bdhgvbese0knzu2x/<?php echo $referencia ?>" class="btn btn-app btn-success">
+                                
+                              <div class="row" align="center" id="pdfpagoc">
+                                  <a target="_blank" id="idurlc" href="" class="btn btn-app btn-success">
                                  <i class="fa fa-cloud-download" aria-hidden="true"></i> Descargar Documento
                                 </a>
                               </div>
-                               <?php } ?>
+                               
                               <input type="hidden" name="descuento" value="<?php echo $descuento ?>"/>
                                <input type="hidden" name="mensaje" value="<?php echo $mensaje ?>"/>
                                <input type="hidden" name="periodo" value="<?php echo $idperiodo ?>"/>
                                <input type="hidden" name="alumno" value="<?php echo $idalumno ?>"/>
                                <input type="hidden" name="nivel" value="<?php echo $idnivel ?>"/>
-                              <?php if(!isset($opcion)){ ?>
-                               <button class="subscribe btn btn-primary btn-block" type="submit"  > GENERAR DOCUMENTO </button>
-                              <?php } ?>
+                             
+                               <button class="subscribe btn btn-primary btn-block" id="btngenerarpdfc" type="button"  > GENERAR DOCUMENTO </button>
+                             
                               </form>
                             </div> 
                             </div>
@@ -277,6 +278,24 @@
           </div>
         </div>
 
+
+
+        <div class="modal fade" id="loadMe" tabindex="-1" role="dialog" aria-labelledby="loadMeLabel">
+        <div class="modal-dialog modal-sm" role="document">
+          <div class="modal-content">
+            <div class="modal-body text-center">
+              <div class="loader">
+                    <img src="<?php echo  base_url() . '/assets/loader/pagos.gif ' ?>" alt="">                             
+              </div>
+              <div clas="loader-txt">
+                  <h4>Procesando pago...</h4>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
         <!-- footer content -->
         <footer>
           <div class="copyright-info">
@@ -300,4 +319,6 @@
     <div id="notif-group" class="tabbed_notifications"></div>
   </div> 
 
-
+<script>
+  
+</script>

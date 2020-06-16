@@ -54,7 +54,7 @@
                 <?php
                   if (isset($unidades) && !empty($unidades)) {
                     foreach ($unidades as $value) { ?>
-                     <a  target="_blank" href="<?php echo site_url('alumno/boleta/'.$idhorario.'/'.$idalumno.'/'.$value->idunidad) ?>" class="btn btn-info"><i class="fa fa-print"></i> BOLETA DE <?php echo $value->nombreunidad ?></a>
+                     <a  target="_blank" href="<?php echo site_url('Tutores/boleta/'.$controller->encode($idhorario).'/'.$controller->encode($idalumno).'/'.$controller->encode($value->idunidad)) ?>" class="btn btn-info"><i class="fa fa-print"></i> BOLETA DE <?php echo $value->nombreunidad ?></a>
                       <?php
                     }
                   }

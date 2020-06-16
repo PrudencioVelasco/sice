@@ -7,7 +7,7 @@
             <div class="col-md-12">
               <div class="x_panel">
                 <div class="x_title">
-                  <h2><strong>ADMINISTRAR PLANEACIÓN</strong></h2>
+                  <h2><strong>ADMINISTRAR PLANEACIONES</strong></h2>
                   
                   <div class="clearfix"></div>
                 </div>

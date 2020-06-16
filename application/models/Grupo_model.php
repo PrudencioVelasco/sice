@@ -384,7 +384,7 @@ public function deleteAsistencia($idasistencia='')
                                 WHERE
                                      p.idperiodo = ag.idperiodo
                                     AND (h.activo = 1 OR  p.activo = 1) AND ag.activo = 1 
-                                    AND h.idhorario  = $idhorario ORDER BY a.apellidop DESC");
+                                    AND h.idhorario  = $idhorario ORDER BY a.apellidop ASC");
        //  return $query->result();
 
         if ($query->num_rows() > 0) {
@@ -407,6 +407,26 @@ public function deleteAsistencia($idasistencia='')
         $this->db->where('a.fecha', $fecha); 
         if(isset($idunidad) && !empty($idunidad) && $idunidad != 0){
         $this->db->where('a.idunidad', $idunidad); 
+        }
+        $query = $this->db->get();
+         if ($this->db->affected_rows() > 0) {
+       return $query->first_row();
+        }else{
+            return false;
+        }
+        }
+          public function listaAsistenciaBuscar($idalumno = '',$idhorario='',$fecha = '', $idhorariodetalle = '',$idmotivo = '')
+        {
+            # code...
+        $this->db->select('a.idasistencia,ma.idmotivo, a.fecha,ma.nombremotivo, ma.abreviatura');
+        $this->db->from('tblasistencia a');   
+         $this->db->join('tblmotivo_asistencia ma', 'a.idmotivo = ma.idmotivo'); 
+        $this->db->where('a.idalumno', $idalumno); 
+        $this->db->where('a.idhorario', $idhorario); 
+        $this->db->where('a.idhorariodetalle', $idhorariodetalle); 
+        $this->db->where('a.fecha', $fecha); 
+        if(isset($idmotivo) && !empty($idmotivo) && $idmotivo != 0){
+        $this->db->where('ma.idmotivo', $idmotivo); 
         }
         $query = $this->db->get();
          if ($this->db->affected_rows() > 0) {

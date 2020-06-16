@@ -40,8 +40,9 @@ class User_model extends CI_Model
 
     public function showAllPlanteles($idrol = '', $idplantel = '')
     {
-        $this->db->select('p.*');    
+        $this->db->select('p.*, n.nombreniveleducativo');    
         $this->db->from('tblplantel p');
+        $this->db->join('tblniveleducativo n','p.idniveleducativo = n.idniveleducativo');
          if(!empty($idrol) && $idrol != 14 ){
             $this->db->where('p.idplantel', $idplantel); 
         }
@@ -52,12 +53,16 @@ class User_model extends CI_Model
             return false;
         }
     }
-        public function showAllRoles()
+        public function showAllRoles($idrol = '')
     {
         $this->db->select('r.*');    
         $this->db->from('rol r'); 
         $this->db->where('r.id IN (13,14,15)'); 
-        
+        if(isset($idrol) && !empty($idrol)){
+            if($idrol != 14){
+             $this->db->where('r.id NOT IN (14)');    
+            }
+        }
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();
@@ -98,7 +103,7 @@ class User_model extends CI_Model
             return false;
         }
     }
-          public function validarUsuarioEliminar($usuario)
+          public function validarUsuarioEliminar($usuario,$idplantel = '')
     {
         # code...
         $this->db->select('p.*');    
@@ -108,6 +113,9 @@ class User_model extends CI_Model
         $this->db->where('ur.id_rol IN (13,14)'); 
         $this->db->where('u.idtipousuario', 2); 
         $this->db->where('p.usuario', $usuario); 
+        if(isset($idplantel) && !empty($idplantel)){
+        $this->db->where('p.idplantel',$idplantel);
+        }
         $query = $this->db->get();
         //$query = $this->db->get('permissions');
         if ($query->num_rows() > 0) {

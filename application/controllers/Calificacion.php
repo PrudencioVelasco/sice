@@ -28,19 +28,23 @@ class Calificacion extends CI_Controller {
         $c = 1;
         if (isset($materias) && !empty($materias)) { 
             foreach($unidades as $block):
-            $total_unidad += 1;
+                  $total_unidad += 1;
         endforeach;  
         foreach($materias as $row){
-        $total_materia +=1; 
-        foreach($unidades as $block):
-        $val = $this->calificacion->obtenerCalificacion($idalumno, $block->idunidad, $row->idhorariodetalle);
-         if($val != false ){ 
-            $suma_calificacion +=$val->calificacion; 
-            }  
+            $total_materia +=1; 
+            foreach($unidades as $block):
+            $val = $this->calificacion->obtenerCalificacion($idalumno, $block->idunidad, $row->idhorariodetalle);
+                if($val != false ){ 
+                     $suma_calificacion +=$val->calificacion; 
+                    }  
         endforeach;  
         }
-        $promedio = ($suma_calificacion / $total_unidad) / $total_materia;
+             $promedio = ($suma_calificacion / $total_unidad) / $total_materia;
         }
         return $promedio;
+    }
+    public function promedioGobalPrimaria($idalumno = '')
+    {
+        # code...
     }
 }

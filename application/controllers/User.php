@@ -57,7 +57,8 @@ class User extends CI_Controller
         public function showAllRoles()
     { 
         Permission::grant(uri_string());
-        $query = $this->user->showAllRoles();
+         $idrol = $this->session->idrol;
+        $query = $this->user->showAllRoles($idrol);
          
         if(isset($query) && !empty($query)){
          echo json_encode($query);
@@ -169,7 +170,7 @@ class User extends CI_Controller
              $datausuario     = array(
                 'idusuario' => $idpersonal,
                 'idtipousuario' => 2,
-                 'idusuario' => $this->session->user_id,
+                //'idusuario' => $this->session->user_id,
                 'fecharegistro' => date('Y-m-d H:i:s')
 
             );

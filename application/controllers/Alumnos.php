@@ -27,7 +27,8 @@ class Alumnos extends CI_Controller {
           $mensajes = "";
           if($grupo != false){
              $idhorario= $grupo->idhorario;
-             $tareas = $this->alumno->showTareaAlumnoMateria($idhorario);
+             $fecha = date('Y-m-d',strtotime(date('Y-m-d')."-4 days"));
+             $tareas = $this->alumno->showTareaAlumnoMateria($idhorario,$fecha);
              $mensajes = $this->mensaje->showAllMensajeAlumno($idhorario);
           }
          

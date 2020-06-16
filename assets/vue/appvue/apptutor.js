@@ -57,6 +57,8 @@ var v = new Vue({
             telefono:'',
             correo:'',
             password:'',
+            rfc:'',
+            factura:'',
             smserror:''},
         chooseTutor:{},
         formValidate:[],
@@ -231,6 +233,8 @@ var v = new Vue({
             telefono:'',
             correo:'',
             password:'',
+            rfc:'',
+            factura:'',
             smserror:''};
             v.formValidate = false;
             v.addModal= false;
@@ -244,8 +248,8 @@ var v = new Vue({
         noResult(){
 
                v.emptyResult = true;  // become true if the record is empty, print 'No Record Found'
-                      v.tutores = null
-                     v.totalTutores = 0 //remove current page if is empty
+               v.tutores = null
+             v.totalTutores = 0 //remove current page if is empty
 
         },
 

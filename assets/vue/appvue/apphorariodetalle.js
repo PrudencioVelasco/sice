@@ -50,6 +50,7 @@ var v = new Vue({
         editModal:false,
         editModalRecreo: false,
         editModalSinClases: false,
+        
         //deleteModal:false,
         horarios:[], 
         dias:[], 

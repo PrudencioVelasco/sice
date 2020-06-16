@@ -16,9 +16,11 @@
                   <div class="row">  
                     <?php if(isset($pago_inicio) && empty($pago_inicio)){ ?>
                   <a href="<?php echo site_url('Tutores/pagoi/'.$idalumno.'/'.$idperiodo.'/'.$idnivel.'/1') ?>" class="btn btn-primary"> <i class="fa fa-money"></i> PAGAR REINSCRIPCIÓN</a>
-                    <?php } ?>
+                    <?php } if(isset($meses) && !empty($meses)){ ?>
                   <a href="<?php echo site_url('Tutores/pagoc/'.$idalumno.'/'.$idperiodo.'/'.$idnivel.'/2') ?>" class="btn btn-primary"><i class="fa fa-money"></i> PAGAR COLEGIATURA</a>
+                    <?php } ?>
                   <hr>
+
                    <table class="table">
                     <thead>
                       <tr>
@@ -63,7 +65,7 @@
                                    ?>
                                  </td>
                                  <td><?php echo $value->concepto ?></td>
-                                 <td><strong>$<?php echo $value->descuento ?> </strong></td>
+                                 <td><strong>$<?php echo number_format($value->descuento,2) ?> </strong></td>
                                  <td><?php echo $value->fecharegistro ?> </td>
                             </tr>
                             <?php
@@ -72,7 +74,9 @@
                       ?>
                        <?php
                         if(isset($pago_colegiaturas) && !empty($pago_colegiaturas)){
-                           
+                           if(!isset($i)){
+                            $i = 1;
+                           }
                           foreach ($pago_colegiaturas as  $value) {
                             ?>
                              <tr> 
@@ -100,7 +104,7 @@
                                    ?>
                                  </td>
                                  <td><?php echo $value->concepto.' DE '.$value->nombremes; ?></td>
-                                 <td><strong>$<?php echo $value->descuento ?> </strong></td>
+                                 <td><strong>$<?php echo number_format($value->descuento,2) ?> </strong></td>
                                  <td><?php echo $value->fecharegistro ?> </td>
                             </tr>
                             <?php

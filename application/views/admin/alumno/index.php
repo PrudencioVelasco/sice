@@ -24,7 +24,8 @@
 
                                         <div class="row">
                                             <div class="col-md-6 col-sm-12 col-xs-12 ">
-                                                <button class="btn  btn-primary" @click="addModal= true"><i class='fa fa-plus'></i> Agregar Alumno</button> 
+                                             
+                                       <button class="btn  btn-primary waves-effect waves-black" @click="addModal= true"><i class='fa fa-plus'></i> Agregar Alumno</button> 
 
 
                                             </div>
@@ -34,7 +35,7 @@
                                              <div class="col-md-6 col-sm-12 col-xs-12 ">
                                             </div>
                                             <div class="col-md-6 col-sm-12 col-xs-12 ">
-                                                <input placeholder="Buscar" type="search" class="form-control" v-model="search.text" @keyup="searchAlumno" name="search">
+                                                <input placeholder="Buscar" :autofocus="'autofocus'" type="search" class="form-control btn-round" v-model="search.text" @keyup="searchAlumno" name="search">
                                             </div>
                                         </div>
                                         <br>

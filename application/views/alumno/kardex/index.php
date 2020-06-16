@@ -25,7 +25,15 @@
                   <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
-
+                  <div class="row">
+                    <div class="col-md-6 col-sm-12 col-xs-12 ">
+                        <h4><?php echo $detalle->nombre." ".$detalle->apellidop.' '.$detalle->apellidom ?></h4>
+                    </div>
+                     <div class="col-md-6 col-sm-12 col-xs-12 " align="right">
+                        <h4>C. FINAL: </h4>
+                     </div>
+                  </div>
+                  <hr>
                   <div class="row">
                   <table class="table"> 
                     <thead>
@@ -33,6 +41,7 @@
                         <th>Ciclo Escolar</th>
                         <th>Nivel</th>
                         <th>Grupo</th> 
+                         <th></th> 
                         <th></th>
                       </tr>
                     </thead>
@@ -47,16 +56,24 @@
                                     echo $row->mesinicio." ".$row->yearinicio." - ".$row->mesfin." ".$row->yearfin;
                                  ?> 
                                 </td> 
+                                <td><?php echo $row->nombrenivel; ?></td>
+                                <td><?php echo $row->nombregrupo;  ?> </td>
                                 <td>
                                   <?php
-                                    echo $row->nombrenivel;
+                                  if($row->idestatusnivel == 1){
+                                       echo '<label class="text-info">'.$row->nombreestatusnivel.'</label>';
+                                  }elseif($row->idestatusnivel == 2){
+                                         echo '<label class="text-success">'.$row->nombreestatusnivel.'</label>';
+                                  }elseif($row->idestatusnivel == 3){
+                                         echo '<label class="text-danger">'.$row->nombreestatusnivel.'</label>';
+                                  }elseif($row->idestatusnivel == 4){
+                                         echo '<label class="text-warning">'.$row->nombreestatusnivel.'</label>';
+                                  }else{
+                                    echo '<label>NO DEFINIDO</label>';
+                                  }
+                                   
                                   ?>
-                                </td>
-                                 <td>
-                                  <?php
-                                    echo $row->nombregrupo;
-                                  ?>
-                                </td>
+                                 </td>
                                 <td align="right">
                                   <a class="btn btn-primary" href="<?php echo site_url('Aalumno/historial/'.$controller->encode($row->idhorario)) ?>"><i class="fa fa-list-alt"></i> Calificaciones</a> 
 

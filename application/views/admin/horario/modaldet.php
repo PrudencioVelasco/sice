@@ -57,8 +57,8 @@
     </div>
     </div>
     <div slot="foot"> 
-        <button class="btn btn-danger" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
-        <button class="btn btn-primary" @click="addHorario"><i class='fa fa-floppy-o'></i> Agregar</button>
+        <button class="btn btn-danger waves-effect waves-black" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
+        <button class="btn btn-primary waves-effect waves-black" @click="addHorario"><i class='fa fa-floppy-o'></i> Agregar</button>
     </div>
 </modal>
 
@@ -102,14 +102,60 @@
                            <div class="text-danger" v-html="formValidate.horafinal"></div>
                 </div>
             </div> 
-        </div>  
- 
-  
+        </div>   
     </div>
     </div>
     <div slot="foot"> 
-        <button class="btn btn-danger" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
-        <button class="btn btn-primary" @click="addHoraSinClases"><i class='fa fa-floppy-o'></i> Agregar</button>
+        <button class="btn btn-danger waves-effect waves-black" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
+        <button class="btn btn-primary waves-effect waves-black" @click="addHoraSinClases"><i class='fa fa-floppy-o'></i> Agregar</button>
+    </div>
+</modal>
+
+<modal v-if="addModalHoraSinClase" @close="clearAll()">
+    <h3 slot="head" >Hora sin Clases</h3>
+    <div slot="body"  >
+        <div style=" height: 200px; overflow-x: hidden; overflow-y: scroll;">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12 ">
+                <div class="text-danger" v-html="formValidate.msgerror"></div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12 ">
+                <div class="form-group">
+                    <label><font color="red">*</font> Dia</label>
+                    <select v-model="newHorario.iddia"  :class="{'is-invalid': formValidate.iddia}"class="form-control">
+                     <option value="" selected>-- SELECCIONAR --</option>   
+                    <option   v-for="option in dias" v-bind:value="option.iddia">
+                        {{ option.nombredia }}
+                      </option>
+                    </select>
+                           <div class="text-danger" v-html="formValidate.iddia"></div>
+                </div>
+            </div>  
+        </div>
+          <div class="row">
+            <div class="col-md-6 col-sm-12 col-xs-12 ">
+                <div class="form-group">
+                    <label><font color="red">*</font> Hora inicial</label>
+                    <input type="time" v-model="newHorario.horainicial" class="form-control"  :class="{'is-invalid': formValidate.horainicial}" name="po"> 
+                           <div class="text-danger" v-html="formValidate.horainicial"></div>
+                </div>
+            </div> 
+            <div class="col-md-6 col-sm-12 col-xs-12 ">
+                <div class="form-group">
+                    <label><font color="red">*</font> Hora final</label>
+                    <input type="time" v-model="newHorario.horafinal" class="form-control"  :class="{'is-invalid': formValidate.horafinal}" name="po"> 
+                           <div class="text-danger" v-html="formValidate.horafinal"></div>
+                </div>
+            </div> 
+        </div>   
+    </div>
+    </div>
+    <div slot="foot"> 
+        <button class="btn btn-danger waves-effect waves-black" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
+        <button class="btn btn-primary waves-effect waves-black" @click="addHoraSinClases"><i class='fa fa-floppy-o'></i> Agregar</button>
     </div>
 </modal>
 <!--add modal-->
@@ -152,14 +198,12 @@
                            <div class="text-danger" v-html="formValidate.horafinal"></div>
                 </div>
             </div> 
-        </div>  
- 
-  
+        </div>   
     </div>
     </div>
     <div slot="foot"> 
-        <button class="btn btn-danger" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
-        <button class="btn btn-primary" @click="addReceso"><i class='fa fa-floppy-o'></i> Agregar</button>
+        <button class="btn btn-danger waves-effect waves-black" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
+        <button class="btn btn-primary waves-effect waves-black" @click="addReceso"><i class='fa fa-floppy-o'></i> Agregar</button>
     </div>
 </modal>
 <modal v-if="editModal" @close="clearAll()">
@@ -225,8 +269,8 @@
 </div>
     </div>
     <div slot="foot">
-        <button class="btn btn-danger" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
-        <button class="btn btn-primary" @click="updateHorario"><i class='fa fa-edit'></i> Modificar</button>
+        <button class="btn btn-danger waves-effect waves-black" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
+        <button class="btn btn-primary waves-effect waves-black" @click="updateHorario"><i class='fa fa-edit'></i> Modificar</button>
     </div>
 </modal>
 
@@ -275,8 +319,8 @@
         </div>
     </div>
     <div slot="foot">
-        <button class="btn btn-danger" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
-        <button class="btn btn-primary" @click="updateReceso"><i class='fa fa-edit'></i> Modificar</button>
+        <button class="btn btn-danger waves-effect waves-black" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
+        <button class="btn btn-primary waves-effect waves-black" @click="updateReceso"><i class='fa fa-edit'></i> Modificar</button>
     </div>
 </modal>
 
@@ -325,7 +369,7 @@
     </div>
     </div>
     <div slot="foot"> 
-        <button class="btn btn-danger" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
-        <button class="btn btn-primary" @click="updateHoraSinClases"><i class='fa fa-floppy-o'></i> Agregar</button>
+        <button class="btn btn-danger waves-effect waves-black" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
+        <button class="btn btn-primary waves-effect waves-black" @click="updateHoraSinClases"><i class='fa fa-floppy-o'></i> Agregar</button>
     </div>
 </modal

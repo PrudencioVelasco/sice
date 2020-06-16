@@ -42,17 +42,14 @@
                       <tr> 
                         <td >
                           <div v-for="row in lunes">  
-                            <ul class="nav navbar-right panel_toolbox" style="border: 2px solid #ccc; border-radius: 4px; margin-bottom: 4px">
-                                <li><a class="collapse-link " style="color: #000"> 
+                                                   <ul class="nav navbar-right panel_toolbox" style="border: 2px solid #ccc; border-radius: 4px; margin-bottom: 4px">
+                                <li><a class="collapse-link " style="color: #000">
                                   <div  v-if="row.opcion == 'NORMAL'">
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
                                     <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small>
                                   </div>
-                                  <div v-else-if="row.opcion == 'DESCANSO'">
-                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})
-                                  </div>
                                   <div v-else>
-                                     <strong>SIN CLASES</strong> ({{row.horainicial}}-{{row.horafinal}})
+                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})
                                   </div>
                                 </a>
                                 </li>
@@ -60,22 +57,21 @@
                                 <li class="dropdown">
                                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
                                   <ul class="dropdown-menu" role="menu">
-
-                                     <li v-if="row.opcion == 'NORMAL'"><a @click="editModal = true; selectHorario(row)" href="#">Editar</a>
-                                    </li>
-                                    <li v-else-if="row.opcion == 'DESCANSO'"><a @click="editModalRecreo = true; selectHorario(row)" href="#">Editar</a>
-                                    </li>
-                                    <li v-else><a @click="editModalSinClases = true; selectHorario(row)" href="#">Editar</a>
-                                    </li>
-
-
-                                   <li v-if="row.opcion == 'NORMAL'"><a href="#" @click="deleteHorario(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
-                                    </li>
-                                    <li v-else-if="row.opcion == 'DESCANSO'"><a href="#" @click="deleteReceso(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
-                                    </li>
-                                    <li v-else><a href="#" @click="deleteSinClases(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+                                    <li v-if="row.opcion == 'NORMAL'"><a @click="editModal = true; selectHorario(row)" href="#">Editar</a>
                                     </li>
                                     
+                                  <li v-if="row.opcion == 'DESCANSO'"><a @click="editModalRecreo = true; selectHorario(row)" href="#">Editar</a>
+                                    </li>
+                                  <li v-if="row.opcion == 'SIN CLASES'"><a @click="editModalSinClases = true; selectHorario(row)" href="#">Editar</a>
+                                    </li>
+                                    
+                                   <li v-if="row.opcion == 'NORMAL'"><a href="#" @click="deleteHorario(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+                                    </li>
+                                    
+                                  <li v-if="row.opcion == 'DESCANSO'"><a href="#" @click="deleteReceso(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+                                    </li>
+                                     <li v-if="row.opcion == 'SIN CLASES'"><a href="#" @click="deleteSinClases(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+                                    </li>
                                   </ul>
                                 </li> 
                               <?php } ?>
@@ -84,9 +80,9 @@
                        </td>
                         <td>
                           <div v-for="row in martes">  
-                             <ul class="nav navbar-right panel_toolbox" style="border: 2px solid #ccc; border-radius: 4px; margin-bottom: 4px">
+                                                      <ul class="nav navbar-right panel_toolbox" style="border: 2px solid #ccc; border-radius: 4px; margin-bottom: 4px">
                                 <li><a class="collapse-link " style="color: #000">
-                                  <div  v-if="row.opcion != 'Descanso'">
+                                  <div  v-if="row.opcion == 'NORMAL'">
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
                                     <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small>
                                   </div>
@@ -99,13 +95,20 @@
                                 <li class="dropdown">
                                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
                                   <ul class="dropdown-menu" role="menu">
-                                    <li v-if="row.opcion != 'Descanso'"><a @click="editModal = true; selectHorario(row)" href="#">Editar</a>
+                                    <li v-if="row.opcion == 'NORMAL'"><a @click="editModal = true; selectHorario(row)" href="#">Editar</a>
                                     </li>
-                                    <li v-else><a @click="editModalRecreo = true; selectHorario(row)" href="#">Editar</a>
+                                    
+                                  <li v-if="row.opcion == 'DESCANSO'"><a @click="editModalRecreo = true; selectHorario(row)" href="#">Editar</a>
                                     </li>
-                                  <li v-if="row.opcion != 'Descanso'"><a href="#" @click="deleteHorario(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+                                  <li v-if="row.opcion == 'SIN CLASES'"><a @click="editModalSinClases = true; selectHorario(row)" href="#">Editar</a>
                                     </li>
-                                    <li v-else><a href="#" @click="deleteReceso(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+                                    
+                                   <li v-if="row.opcion == 'NORMAL'"><a href="#" @click="deleteHorario(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+                                    </li>
+                                    
+                                  <li v-if="row.opcion == 'DESCANSO'"><a href="#" @click="deleteReceso(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+                                    </li>
+                                     <li v-if="row.opcion == 'SIN CLASES'"><a href="#" @click="deleteSinClases(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
                                     </li>
                                   </ul>
                                 </li> 
@@ -117,7 +120,7 @@
                           <div v-for="row in miercoles">  
                              <ul class="nav navbar-right panel_toolbox" style="border: 2px solid #ccc; border-radius: 4px; margin-bottom: 4px">
                                 <li><a class="collapse-link " style="color: #000">
-                                  <div  v-if="row.opcion != 'Descanso'">
+                                  <div  v-if="row.opcion == 'NORMAL'">
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
                                     <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small>
                                   </div>
@@ -130,13 +133,20 @@
                                 <li class="dropdown">
                                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
                                   <ul class="dropdown-menu" role="menu">
-                                   <li v-if="row.opcion != 'Descanso'"><a @click="editModal = true; selectHorario(row)" href="#">Editar</a>
+                                    <li v-if="row.opcion == 'NORMAL'"><a @click="editModal = true; selectHorario(row)" href="#">Editar</a>
                                     </li>
-                                    <li v-else><a @click="editModalRecreo = true; selectHorario(row)" href="#">Editar</a>
+                                    
+                                  <li v-if="row.opcion == 'DESCANSO'"><a @click="editModalRecreo = true; selectHorario(row)" href="#">Editar</a>
                                     </li>
-                                  <li v-if="row.opcion != 'Descanso'"><a href="#" @click="deleteHorario(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+                                  <li v-if="row.opcion == 'SIN CLASES'"><a @click="editModalSinClases = true; selectHorario(row)" href="#">Editar</a>
                                     </li>
-                                    <li v-else><a href="#" @click="deleteReceso(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+                                    
+                                   <li v-if="row.opcion == 'NORMAL'"><a href="#" @click="deleteHorario(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+                                    </li>
+                                    
+                                  <li v-if="row.opcion == 'DESCANSO'"><a href="#" @click="deleteReceso(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+                                    </li>
+                                     <li v-if="row.opcion == 'SIN CLASES'"><a href="#" @click="deleteSinClases(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
                                     </li>
                                   </ul>
                                 </li> 
@@ -145,9 +155,9 @@
                           </div></td>
                         <td>
                           <div v-for="row in jueves">  
-                            <ul class="nav navbar-right panel_toolbox" style="border: 2px solid #ccc; border-radius: 4px; margin-bottom: 4px">
+                                                      <ul class="nav navbar-right panel_toolbox" style="border: 2px solid #ccc; border-radius: 4px; margin-bottom: 4px">
                                 <li><a class="collapse-link " style="color: #000">
-                                  <div  v-if="row.opcion != 'Descanso'">
+                                  <div  v-if="row.opcion == 'NORMAL'">
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
                                     <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small>
                                   </div>
@@ -160,13 +170,20 @@
                                 <li class="dropdown">
                                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
                                   <ul class="dropdown-menu" role="menu">
-                                    <li v-if="row.opcion != 'Descanso'"><a @click="editModal = true; selectHorario(row)" href="#">Editar</a>
+                                    <li v-if="row.opcion == 'NORMAL'"><a @click="editModal = true; selectHorario(row)" href="#">Editar</a>
                                     </li>
-                                    <li v-else><a @click="editModalRecreo = true; selectHorario(row)" href="#">Editar</a>
+                                    
+                                  <li v-if="row.opcion == 'DESCANSO'"><a @click="editModalRecreo = true; selectHorario(row)" href="#">Editar</a>
                                     </li>
-                                   <li v-if="row.opcion != 'Descanso'"><a href="#" @click="deleteHorario(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+                                  <li v-if="row.opcion == 'SIN CLASES'"><a @click="editModalSinClases = true; selectHorario(row)" href="#">Editar</a>
                                     </li>
-                                    <li v-else><a href="#" @click="deleteReceso(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+                                    
+                                   <li v-if="row.opcion == 'NORMAL'"><a href="#" @click="deleteHorario(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+                                    </li>
+                                    
+                                  <li v-if="row.opcion == 'DESCANSO'"><a href="#" @click="deleteReceso(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+                                    </li>
+                                     <li v-if="row.opcion == 'SIN CLASES'"><a href="#" @click="deleteSinClases(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
                                     </li>
                                   </ul>
                                 </li> 
@@ -176,9 +193,9 @@
                         </td>
                         <td>
                           <div v-for="row in viernes">  
-                            <ul class="nav navbar-right panel_toolbox" style="border: 2px solid #ccc; border-radius: 4px; margin-bottom: 4px">
+                                                      <ul class="nav navbar-right panel_toolbox" style="border: 2px solid #ccc; border-radius: 4px; margin-bottom: 4px">
                                 <li><a class="collapse-link " style="color: #000">
-                                  <div  v-if="row.opcion != 'Descanso'">
+                                  <div  v-if="row.opcion == 'NORMAL'">
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
                                     <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small>
                                   </div>
@@ -191,13 +208,20 @@
                                 <li class="dropdown">
                                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
                                   <ul class="dropdown-menu" role="menu">
-                                   <li v-if="row.opcion != 'Descanso'"><a @click="editModal = true; selectHorario(row)" href="#">Editar</a>
+                                    <li v-if="row.opcion == 'NORMAL'"><a @click="editModal = true; selectHorario(row)" href="#">Editar</a>
                                     </li>
-                                    <li v-else><a @click="editModalRecreo = true; selectHorario(row)" href="#">Editar</a>
+                                    
+                                  <li v-if="row.opcion == 'DESCANSO'"><a @click="editModalRecreo = true; selectHorario(row)" href="#">Editar</a>
                                     </li>
-                                   <li v-if="row.opcion != 'Descanso'"><a href="#" @click="deleteHorario(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+                                  <li v-if="row.opcion == 'SIN CLASES'"><a @click="editModalSinClases = true; selectHorario(row)" href="#">Editar</a>
                                     </li>
-                                    <li v-else><a href="#" @click="deleteReceso(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+                                    
+                                   <li v-if="row.opcion == 'NORMAL'"><a href="#" @click="deleteHorario(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+                                    </li>
+                                    
+                                  <li v-if="row.opcion == 'DESCANSO'"><a href="#" @click="deleteReceso(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+                                    </li>
+                                     <li v-if="row.opcion == 'SIN CLASES'"><a href="#" @click="deleteSinClases(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
                                     </li>
                                   </ul>
                                 </li> 

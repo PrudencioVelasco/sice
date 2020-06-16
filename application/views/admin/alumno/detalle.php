@@ -114,7 +114,7 @@
                       </li>
                       <li>
                         <i class="fa fa-check-circle "></i> <label>Beca: <?php 
-                        if(isset($becaalumno) && !empty($becaalumno)) {echo $becaalumno."%"; }else{ echo 0;} 
+                        if(isset($becaalumno) && !empty($becaalumno)) {echo $becaalumno."%"; }else{ echo "0%";} 
                         ?></label>
                         <?php
                           if(isset($validargrupo) && !empty($validargrupo)) {
@@ -202,8 +202,8 @@
                                             <span class="caret"></span>
                                         </button>
                                         <ul class="dropdown-menu"> 
-                                            <li><a href="<?php echo site_url('alumno/historial/'.$row->idhorario.'/'.$id) ?>"><i class="fa fa-list-alt" aria-hidden="true"></i> Boleta</a></li> 
-                                            <li><a href="<?php echo site_url('alumno/horario/'.$row->idhorario.'/'.$id) ?>"><i class="fa fa-clock-o"></i> Horario</a></li> 
+                                            <li><a href="<?php echo site_url('Alumno/historial/'.$row->idhorario.'/'.$id) ?>"><i class="fa fa-list-alt" aria-hidden="true"></i> Boleta</a></li> 
+                                            <li><a href="<?php echo site_url('Alumno/horario/'.$row->idhorario.'/'.$id) ?>"><i class="fa fa-clock-o"></i> Horario</a></li> 
                                            <!-- <li><a href="<?php //echo site_url('alumno/asistencia/'.$row->idhorario.'/'.$id) ?>"> <i class="fa fa-check"></i> Asistencia</a></li>  -->
                                            
                                           
@@ -356,12 +356,10 @@
                                                  Opciones
                                                 <span class="caret"></span>
                                             </button>
-                                            <ul class="dropdown-menu">  
-                                                <li><a href="" v-if="pago.pagado==1" ><i class="fa fa-print" style="color:blue;"></i> Imprimir</a></li> 
-                                                <li><a v-if="pago.pagado==1"  @click="eliminarModalP = true; selectPrimerPago(pago)"> <i class="fa fa-trash" style="color: red;"></i> Eliminar</a></li>  
-                                               
-                                              
-                                            </ul>
+                                            <ul class="dropdown-menu">   
+                                                <li><a v-if="pago.pagado==1" ref="#"  @click="eliminarModalP = true; selectPrimerPago(pago)"> <i class="fa fa-trash" style="color: red;"></i> Eliminar</a></li>  
+                                                <li v-if="pago.pagado==1"><a  target="_blank" ref="#"  v-bind:href="'../../EstadoCuenta/imprimir/'+ pago.idpago+'/'+idperiodobuscado+'/'+idalumno+'/0'" ><i class="fa fa-print" style="color:blue;"></i> Imprimir</a></li>  
+                                             </ul>
                                         </div>
                                                </td> 
                                             </tr> 
@@ -414,9 +412,9 @@
                                             </button>
                                             <ul class="dropdown-menu"> 
                                                 <!--<li v-if="solicitud.pagado==0"  @click="addModal = true; selectPeriodo(solicitud)"><a href="#" ><i class="fa fa-money" aria-hidden="true"></i> Pagar</a></li> -->
-                                                <li v-if="solicitud.pagado==1"><a href="" ><i class="fa fa-print"></i> Imprimir</a></li>  
-                                                <li  v-if="solicitud.pagado==1"><a @click="eliminarModalC = true; selectPeriodo(solicitud)"> <i class="fa fa-trash" style="color: red;"></i> Eliminar</a></li>  
                                                
+                                                <li  v-if="solicitud.pagado==1"><a  ref="#" @click="eliminarModalC = true; selectPeriodo(solicitud)"> <i class="fa fa-trash" style="color: red;"></i> Eliminar</a></li>  
+                                                  <li v-if="solicitud.pagado==1"><a  target="_blank" ref="#"  v-bind:href="'../../EstadoCuenta/imprimir/'+ solicitud.idpago+'/'+idperiodobuscado+'/'+idalumno+'/1'" ><i class="fa fa-print" style="color:blue;"></i> Imprimir</a></li>  
                                               
                                             </ul>
                                         </div>
@@ -520,7 +518,7 @@
                                               <?php if(isset($becas) && !empty($becas)){ 
                                                 foreach($becas as $row){
                                                 ?>
-                                                <option value="<?php echo $row->idbeca ?>"><?php echo $row->descuento; ?></option>
+                                                <option value="<?php echo $row->idbeca ?>"><?php echo $row->descuento.'%'; ?></option>
                                              
                                               <?php  }  } ?>
                                         </select>

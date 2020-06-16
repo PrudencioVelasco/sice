@@ -173,6 +173,8 @@ class Tutor_model extends CI_Model {
         }
     }
 
+    
+
  public function deleteAlumno($id)
     {
         $this->db->where('idtutoralumno', $id);
@@ -276,6 +278,13 @@ class Tutor_model extends CI_Model {
             return false;
         }
 }
+
+  public function addDetallePagoInicio($data)
+    {
+        $this->db->insert('tbldetalle_pago_inicio', $data);
+        $insert_id = $this->db->insert_id(); 
+        return  $insert_id;
+    }
 
       
 

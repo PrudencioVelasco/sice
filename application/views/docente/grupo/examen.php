@@ -1,4 +1,4 @@
-
+ 
 <!-- page content -->
       <div class="right_col" role="main">
 
@@ -8,7 +8,7 @@
             <div class="col-md-12">
               <div class="x_panel">
                 <div class="x_title">
-                  <h2><strong>CALIFICACIONES DEL ALUMNO - <?php if(isset($nombreclase) && !empty($nombreclase)){echo $nombreclase;} ?></strong></h2>
+                  <h2><strong>CALIFICACIONES - <?php if(isset($nombreclase) && !empty($nombreclase)){echo $nombreclase;} ?></strong></h2>
                    
                   <div class="clearfix"></div>
                 </div>
@@ -48,8 +48,8 @@
                           </div>
                           <div class="modal-footer">
                             <input type="hidden" name="horariodetalle" value="<?php echo $idhorariodetalle; ?>">
-                            <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</button>
-                            <button type="button" id="btneliminarcalificacion" class="btn btn-primary"><i class="fa fa-trash"></i> Eliminar</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> CERRAR</button>
+                            <button type="button" id="btneliminarcalificacion" class="btn btn-primary"><i class="fa fa-trash"></i> ELIMINAR</button>
                           </div>
                         </form>
                       </div>
@@ -112,7 +112,7 @@
                                                     
                                                   </td> 
                                                   <td>
-                                                     <input type="text" name="calificacion[]" class="form-control" placeholder="Calificación">
+                                                     <input type="number" minlength="0.00" maxlength="10.00" name="calificacion[]" class="form-control" placeholder="Calificación">
                                                      <small>Formato decimal Ej. 10.00, 9.60, etc.</small>
                                                   </td>
                                                 </tr>
@@ -158,6 +158,7 @@
             </div>
           </div>
         </div>
+ 
 
         <!-- footer content -->
         <footer>
@@ -191,13 +192,13 @@
             <input class="form-control idcalificacion" type="hidden" name="idcalificacion"> 
           </div>
           <div class="form-group">
-           <label ><font color="red">*</font> Cantidad</label><br>
+           <label ><font color="red">*</font> Calificación</label><br>
            <input type="text" name="calificacion"  class="form-control calificacion">
          </div> 
        </div>
        <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</button>
-        <button type="button" id="btnmodificar" class="btn btn-primary"><i class="fa fa-pencil"></i> Modificar</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> CERRAR</button>
+        <button type="button" id="btnmodificar" class="btn btn-primary"><i class="fa fa-pencil"></i> MODIFICAR</button>
       </div>
     </form>
   </div>
@@ -240,204 +241,8 @@
     <div id="notif-group" class="tabbed_notifications"></div>
   </div> 
 <script type="text/javascript">
-     $(document).on( "click", '.edit_button',function(e) { 
-      var idcalificacion = $(this).data('idcalificacion'); 
-      var calificacion = $(this).data('calificacion');
-      var nombre = $(this).data('alumno'); 
-
-      $(".idcalificacion").val(idcalificacion);  
-      $(".calificacion").val(calificacion);   
-      $("#alumno").text(nombre);    
-    }); 
-    $(document).on( "click", '.delete_button',function(e) { 
-      var idcalificacion = $(this).data('idcalificacion');  
-      var nombre = $(this).data('alumno'); 
-
-      $(".idcalificacion").val(idcalificacion);  
-      $("#alumnodelete").text(nombre);    
-    }); 
-
-    $("#btnguardar").click(function(){ 
-    $.ajax({
-      type: "POST",
-      url: "<?php echo site_url('Pgrupo/addCalificacion');?>",
-      data: $('#frmasistencia').serialize(),
-      success: function(data) {
-        var val = $.parseJSON(data);
-        //console.log(val.msg);
-         //console.log(val.error);
-
-          
-         if((val.success === "Ok")){ 
-          //$(".print-success-msg").css('display','block'); 
-          //$(".print-success-msg").html("Fue registrado las Calificaciones con Exito.");
-          //setTimeout(function() {
-           // $('.print-error-msg').fadeOut('fast');
-           // location.reload(); 
-          //}, 3000);
-            swal({
-                            position: 'center',
-                            type: 'success',
-                            title: 'Fue registrado las Calificaciones con Exito!',
-                            text:'Dar clic en el boton.',
-                            showConfirmButton: true,
-                            //timer: 1500
-                          }).then(function(){
-                            location.reload();
-                          });
-        }else{ 
-        swal({
-               type: 'error',
-               title: 'Oops...', 
-               html: val.error,
-               customClass:'swal-wide',
-               footer: ''
-              }); 
-          //$(".print-error-msg").css('display','block'); 
-          //$(".print-error-msg").html(val.error);
-          //setTimeout(function() {$('.print-error-msg').fadeOut('fast');}, 6000);
-        }
- 
-      }
-    })
-  });
-
-    $("#btneliminarcalificacion").click(function(){ 
-    $.ajax({
-      type: "POST",
-      url: "<?php echo site_url('Pgrupo/eliminarCalificacionUnidad');?>",
-      data: $('#frmeliminarcalificacion').serialize(),
-      success: function(data) {
-        var val = $.parseJSON(data); 
-         if((val.success === "Ok")){ 
-          //$(".print-success-msg").css('display','block'); 
-          //$(".print-success-msg").html("Fue eliminado la Calificación con Exito.");
-          //setTimeout(function() {
-          //  $('.print-error-msg').fadeOut('fast');
-          //  location.reload(); 
-          //}, 3000);
-
-           swal({
-                            position: 'center',
-                            type: 'success',
-                            title: 'Fue eliminado la Calificación con Exito!',
-                            text:'Dar clic en el boton.',
-                            showConfirmButton: true,
-                            //timer: 1500
-                          }).then(function(){
-                            location.reload();
-                          });
-
-          //$(".print-error-msg").css('display','none'); 
-          //location.reload(); 
-        }else{ 
-          //$(".print-error-msg").css('display','block'); 
-          //$(".print-error-msg").html(val.error);
-          //setTimeout(function() {$('.print-error-msg').fadeOut('fast');}, 6000);
-          swal({
-               type: 'error',
-               title: 'Oops...', 
-               html: val.error,
-               customClass:'swal-wide',
-               footer: ''
-              }); 
-        }
- 
-      }
-    })
-  });
-  $("#btneliminar").click(function(){ 
-    $.ajax({
-      type: "POST",
-      url: "<?php echo site_url('Pgrupo/eliminarCalificacion');?>",
-      data: $('#frmeliminar').serialize(),
-      success: function(data) {
-        var val = $.parseJSON(data); 
-         if((val.success === "Ok")){ 
-          //$(".print-success-msg").css('display','block'); 
-          //$(".print-success-msg").html("Fue eliminado la Calificación con Exito.");
-          //setTimeout(function() {
-          //  $('.print-error-msg').fadeOut('fast');
-          //  location.reload(); 
-          //}, 3000);
-
-           swal({
-                            position: 'center',
-                            type: 'success',
-                            title: 'Fue eliminado la Calificación con Exito!',
-                            text:'Dar clic en el boton.',
-                            showConfirmButton: true,
-                            //timer: 1500
-                          }).then(function(){
-                            location.reload();
-                          });
-
-          //$(".print-error-msg").css('display','none'); 
-          //location.reload(); 
-        }else{ 
-          //$(".print-error-msg").css('display','block'); 
-          //$(".print-error-msg").html(val.error);
-          //setTimeout(function() {$('.print-error-msg').fadeOut('fast');}, 6000);
-          swal({
-               type: 'error',
-               title: 'Oops...', 
-               html: val.error,
-               customClass:'swal-wide',
-               footer: ''
-              }); 
-        }
- 
-      }
-    })
-  });
-
-
-  $("#btnmodificar").click(function(){ 
-    $.ajax({
-      type: "POST",
-      url: "<?php echo site_url('Pgrupo/updateCalificacion');?>",
-      data: $('#frmmodificar').serialize(),
-      success: function(data) {
-        var val = $.parseJSON(data); 
-         if((val.success === "Ok")){ 
-          //$(".print-success-msg").css('display','block'); 
-          //$(".print-success-msg").html("Fue modificado la Calificación con Exito.");
-          //setTimeout(function() {
-          //  $('.print-error-msg').fadeOut('fast');
-          //  location.reload(); 
-          //}, 3000);
-
-           swal({
-                            position: 'center',
-                            type: 'success',
-                            title: 'Fue modificado la Calificación con Exito!',
-                            text:'Dar clic en el boton.',
-                            showConfirmButton: true,
-                            //timer: 1500
-                          }).then(function(){
-                            location.reload();
-                          });
-
-          //$(".print-error-msg").css('display','none'); 
-          //location.reload(); 
-        }else{ 
-          //$(".print-error-msg").css('display','block'); 
-          //$(".print-error-msg").html(val.error);
-          //setTimeout(function() {$('.print-error-msg').fadeOut('fast');}, 6000);
-          swal({
-               type: 'error',
-               title: 'Oops...', 
-               html: val.error,
-               customClass:'swal-wide',
-               footer: ''
-              }); 
-        }
- 
-      }
-    })
-  });
-
- 
-
+    
 </script>
+ <script data-my_var_1="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/js/validar/tutor.js"></script> 
+
 

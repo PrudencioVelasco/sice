@@ -45,13 +45,19 @@ class Rol_model extends CI_Model {
         
     }
    
-      public function searchRol($match)
+      public function searchRol($match,$idrol = '')
     {
         $field = array(
             'rol'
         );
         $this->db->like('concat(' . implode(',', $field) . ')', $match);
-        $query = $this->db->get('rol');
+        $this->db->select('r.*');    
+        $this->db->from('rol r'); 
+        $this->db->where('r.id NOT IN (10,11,12)');
+         if(!empty($idrol) && $idrol != 14 ){
+           $this->db->where('r.id NOT IN (14)');
+        }
+         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();
         } else {

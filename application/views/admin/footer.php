@@ -31,9 +31,10 @@
 <script src="<?php echo base_url(); ?>/assets/js/datatables/dataTables.responsive.min.js"></script>
 <script src="<?php echo base_url(); ?>/assets/js/datatables/responsive.bootstrap.min.js"></script>
 <script src="<?php echo base_url(); ?>/assets/js/datatables/dataTables.scroller.min.js"></script>
-
+<script src="<?php echo base_url(); ?>/assets/plugins/node-waves/waves.js"></script>
     <!-- select2 -->
   <script src="<?php echo base_url(); ?>/assets/js/select/select2.full.js"></script>
+  <script src="<?php echo base_url(); ?>/assets/js/admin.js"></script>
 
    <script>
     $(document).ready(function() {

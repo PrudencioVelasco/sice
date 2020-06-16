@@ -378,20 +378,21 @@ public function searchHorario($match, $idplantel = '') {
                  't.nombreturno',
                  'e.nombreespecialidad'
         );
-        $this->db->select('h.idhorario,h.idperiodo,h.idgrupo,m.nombremes as mesinicio,m2.nombremes as mesfin,y.nombreyear as yearinicio,y2.nombreyear as yearfin,ne.nombrenivel,g.nombregrupo,h.activo, t.idturno, t.nombreturno, p.activo as periodoactivom e.idespecialidad, e.nombreespecialidad');    
+       $this->db->select('h.idhorario,h.idperiodo,h.idgrupo,m.nombremes as mesinicio,m2.nombremes as mesfin,y.nombreyear as yearinicio,y2.nombreyear as yearfin,ne.nombrenivel,g.nombregrupo,h.activo, t.idturno, t.nombreturno, p.activo as periodoactivo, e.idespecialidad, e.nombreespecialidad');    
         $this->db->from('tblhorario h');
         $this->db->join('tblperiodo p', 'p.idperiodo = h.idperiodo');
         $this->db->join('tblgrupo g', 'g.idgrupo = h.idgrupo'); 
         $this->db->join('tblnivelestudio ne', 'g.idnivelestudio = ne.idnivelestudio'); 
+          $this->db->join('tblespecialidad e', 'e.idespecialidad = g.idespecialidad'); 
         $this->db->join('tblturno t', 't.idturno = g.idturno'); 
-         $this->db->join('tblmes m ', ' p.idmesinicio = m.idmes'); 
-           $this->db->join('tblespecialidad e ', ' e.idespecialidad = g.idespecialidad'); 
+        $this->db->join('tblmes m ', ' p.idmesinicio = m.idmes'); 
         $this->db->join('tblmes m2 ', ' p.idmesfin = m2.idmes'); 
         $this->db->join('tblyear y ', ' p.idyearinicio = y.idyear');
-        $this->db->join('tblyear y2 ', ' p.idyearfin = y2.idyear');  
-        if (isset($idplantel) && !empty($idplantel)) {
-        $this->db->where('h.idplantel',$idplantel); 
-        }
+        $this->db->join('tblyear y2 ', ' p.idyearfin = y2.idyear'); 
+          if(!empty($idplantel)){
+        $this->db->where('h.idplantel',$idplantel);
+        } 
+        $this->db->order_by('h.idhorario DESC');
         $this->db->like('concat(' . implode(',', $field) . ')', $match);
         $query = $this->db->get();
         if ($query->num_rows() > 0) {

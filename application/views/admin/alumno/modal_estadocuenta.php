@@ -32,8 +32,8 @@
      </div>
    </div>
    <div slot="foot"> 
-    <button type="button" class="btn btn-danger"  @click="clearAll"> <i class="fa fa-times"></i> Cancelar</button>
-      <button class="btn btn-primary" @click="addCobro" ><i class="fa fa-check-circle"></i> Cobrar</button>
+    <button type="button" class="btn btn-danger waves-effect waves-black"  @click="clearAll"> <i class="fa fa-times"></i> Cancelar</button>
+      <button class="btn btn-primary waves-effect waves-black" @click="addCobro" ><i class="fa fa-check-circle"></i> Cobrar</button>
    </div>
 </modal>
 
@@ -96,8 +96,8 @@
  
    </div>
    <div slot="foot"> 
-    <button type="button" class="btn btn-danger"  @click="clearAll"> <i class="fa fa-times"></i> Cancelar</button>
-      <button class="btn btn-primary" @click="addCobroInicio" ><i class="fa fa-check-circle"></i> Cobrar</button>
+    <button type="button" class="btn btn-danger waves-effect waves-black"  @click="clearAll"> <i class="fa fa-times"></i> Cancelar</button>
+      <button class="btn btn-primary waves-effect waves-black" @click="addCobroInicio" ><i class="fa fa-check-circle"></i> Cobrar</button>
    </div>
 </modal>
 
@@ -154,8 +154,8 @@
      </div>
    </div>
    <div slot="foot"> 
-    <button type="button" class="btn btn-danger"  @click="clearAll"> <i class="fa fa-times"></i> Cancelar</button>
-      <button class="btn btn-primary" @click="addCobroColegiatura" ><i class="fa fa-check-circle"></i> Cobrar</button>
+    <button type="button" class="btn btn-danger waves-effect waves-black"  @click="clearAll"> <i class="fa fa-times"></i> Cancelar</button>
+      <button class="btn btn-primary waves-effect waves-black" @click="addCobroColegiatura" ><i class="fa fa-check-circle"></i> Cobrar</button>
    </div>
 </modal>
 
@@ -188,8 +188,8 @@
 </div>
     </div>
     <div slot="foot">
-        <button class="btn btn-danger" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
-        <button class="btn btn-primary" @click="eliminarPagoInicio"><i class='fa fa-edit'></i> Eliminar</button>
+        <button class="btn btn-danger waves-effect waves-black" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
+        <button class="btn btn-primary waves-effect waves-black" @click="eliminarPagoInicio"><i class='fa fa-edit'></i> Eliminar</button>
     </div>
 </modal>
 
@@ -222,7 +222,7 @@
 </div>
     </div>
     <div slot="foot">
-        <button class="btn btn-danger" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
-        <button class="btn btn-primary" @click="eliminarPagoColegiatura"><i class='fa fa-edit'></i> Eliminar</button>
+        <button class="btn btn-danger waves-effect waves-black" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
+        <button class="btn btn-primary waves-effect waves-black" @click="eliminarPagoColegiatura"><i class='fa fa-edit'></i> Eliminar</button>
     </div>
 </modal>

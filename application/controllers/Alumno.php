@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 date_default_timezone_set("America/Mexico_City");
+//include_once(dirname(__FILE__)."/Calificacion.php");
 class Alumno extends CI_Controller {
  
   function __construct() {
@@ -18,10 +19,9 @@ class Alumno extends CI_Controller {
         $this->load->model('data_model'); 
         $this->load->library('permission');
         $this->load->library('session');
-        $this->load->library('pdfgenerator'); 
-        $this->promedio_minimo = 7.00;
+        $this->load->library('pdfgenerator');  
         $this->load->helper('numeroatexto_helper');
-        $this->load->library('encryption');
+        $this->load->library('encryption');  
     }
 
 	public function index()
@@ -1405,13 +1405,16 @@ $suma_calificacion = 0;
 
     public function historial($idhorario = '',$idalumno = '')
     {
+       
         Permission::grant(uri_string());
         if((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno))){
         $tabla = $this->obtenerCalificacion($idhorario,$idalumno);
         $datosalumno = $this->alumno->showAllAlumnoId($idalumno);
         $datoshorario = $this->horario->showNivelGrupo($idhorario); 
         $unidades =  $this->grupo->unidades($this->session->idplantel); 
-          $data = array(
+       
+       
+        $data = array(
             'idhorario'=>$idhorario,
             'idalumno'=>$idalumno,
             'tabla'=>$tabla,
@@ -1471,6 +1474,7 @@ $suma_calificacion = 0;
                     'idperiodo' => $this->input->post('idcicloescolar'),
                     'idgrupo' => $this->input->post('idgrupo'), 
                     'idbeca'=>1,
+                    'idestatusnivel'=>1,
                     'activo'=>1,
                     'idusuario' => $this->session->user_id,
                     'fecharegistro' => date('Y-m-d H:i:s')

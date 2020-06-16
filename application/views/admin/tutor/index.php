@@ -37,7 +37,7 @@
                                             <div class="col-md-6">
                                             </div>
                                             <div class="col-md-6">
-                                                <input placeholder="Buscar" type="search" class="form-control" v-model="search.text" @keyup="searchTutor" name="search">
+                                                <input placeholder="Buscar" :autofocus="'autofocus'" type="search" class="form-control btn-round" v-model="search.text" @keyup="searchTutor" name="search">
                                             </div>
                                         </div>
                                         <br>

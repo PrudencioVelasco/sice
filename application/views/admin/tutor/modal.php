@@ -104,13 +104,35 @@
                 </div>
             </div> 
         </div>
+
+         <div class="row">
+            <div class="col-md-6 col-sm-12 col-xs-12 ">
+                <div class="form-group">
+                    <label><font color="red">*</font> RFC</label>
+                    <input type="text" v-model="newTutor.rfc" class="form-control"  :class="{'is-invalid': formValidate.rfc}" name="po"> 
+                    <div class="text-danger" v-html="formValidate.rfc"></div>
+                </div>
+            </div> 
+            <div class="col-md-6 col-sm-12 col-xs-12 ">
+                <div class="form-group">
+                    <label><font color="red">*</font> Factura</label>
+                    <div class="demo-radio-button" >  
+                        <input name="group5" type="radio" id="radio_31" class="with-gap radio-col-green" v-model="newTutor.factura" value="1" />
+                        <label for="radio_31">SI</label>
+                        <input name="group5" type="radio" id="radio_32" class="with-gap radio-col-red"  v-model="newTutor.factura" value="0" />
+                        <label for="radio_32">NO</label>
+                    </div>
+                    <div class="text-danger" v-html="formValidate.factura"></div>
+                </div>
+            </div> 
+        </div>
  
   
     </div>
     </div>
     <div slot="foot"> 
-        <button class="btn btn-danger" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
-        <button class="btn btn-primary" @click="addTutor"><i class='fa fa-floppy-o'></i> Agregar</button>
+        <button class="btn btn-danger waves-effect waves-black" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
+        <button class="btn btn-primary waves-effect waves-black" @click="addTutor"><i class='fa fa-floppy-o'></i> Agregar</button>
     </div>
 </modal>
 <modal v-if="editModal" @close="clearAll()">
@@ -209,15 +231,36 @@
                     <input type="text" v-model="chooseTutor.correo" class="form-control"  :class="{'is-invalid': formValidate.correo}" name="po"> 
                            <div class="text-danger" v-html="formValidate.correo"></div>
                 </div>
-            </div>  
+            </div> 
+            <div class="col-md-6 col-sm-12 col-xs-12 ">
+                <div class="form-group">
+                    <label><font color="red">*</font> RFC</label>
+                    <input type="text" v-model="chooseTutor.rfc" class="form-control"  :class="{'is-invalid': formValidate.rfc}" name="po"> 
+                           <div class="text-danger" v-html="formValidate.rfc"></div>
+                </div>
+            </div> 
+        </div>
+              <div class="row">
+                <div class="col-md-7 col-sm-12 col-xs-12 ">
+                 <div class="form-group">
+                <label for=""><font color="red">*</font> Factura</label><br> 
+                   <div class="demo-radio-button" >  
+                                <input name="group5" type="radio" id="radio_31" class="with-gap radio-col-green" v-model="chooseTutor.factura" value="1" :checked="chooseTutor.factura==1" />
+                                <label for="radio_31">SI</label>
+                                <input name="group5" type="radio" id="radio_32" class="with-gap radio-col-red"  v-model="chooseTutor.factura" value="0" :checked="chooseTutor.factura==0" />
+                                <label for="radio_32">NO</label>
+                            </div>
+
+             </div>
+         </div>
         </div>
  
  
 </div>
     </div>
     <div slot="foot">
-        <button class="btn btn-danger" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
-        <button class="btn btn-primary" @click="updateTutor"><i class='fa fa-edit'></i>  Modificar</button>
+        <button class="btn btn-danger waves-effect waves-black" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
+        <button class="btn btn-primary waves-effect waves-black" @click="updateTutor"><i class='fa fa-edit'></i>  Modificar</button>
     </div>
 </modal>
 
@@ -250,8 +293,8 @@
 </div>
     </div>
     <div slot="foot">
-        <button class="btn btn-danger" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
-        <button class="btn btn-primary" @click="updatePassword"><i class='fa fa-edit'></i> Modificar</button>
+        <button class="btn btn-danger waves-effect waves-black" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
+        <button class="btn btn-primary waves-effect waves-black" @click="updatePassword"><i class='fa fa-edit'></i> Modificar</button>
     </div>
 </modal>
 

@@ -111,7 +111,7 @@ var ve = new Vue({
       this.showAllTutoresDisponibles();
       this.showAllFormasPago(); 
       this.showAllTiposPago();
-         this.showAllMeses();
+      //this.showAllMeses();
 
     },
     methods:{
@@ -153,6 +153,22 @@ var ve = new Vue({
                          ve.btnpagar = false;
                     }
             });
+
+                axios.get(this.url + "EstadoCuenta/showAllMeses/", {
+                    params: {
+                        idperiodo: this.$refs.idperiodo.value,
+                        idalumno: my_var_2
+                    }
+                }).then(function (response) {
+                    //console.log(response.data);
+                    if (response.data.meses == null) {
+                        
+                    } else {
+                        ve.meses = response.data.meses
+                       
+                    }
+                });
+
 
                 axios.get(this.url + "EstadoCuenta/descuentoPagoInicioInscripcion/", {
                     params: {
@@ -219,6 +235,19 @@ var ve = new Vue({
                      ve.pagos = response.data.pagos
                      ve.noresultadoinicio = false;
                      ve.btnpagar = false;
+                 }
+             });
+             axios.get(this.url + "EstadoCuenta/showAllMeses/", {
+                 params: {
+                     idperiodo: ve.idperiodobuscado,
+                     idalumno: my_var_2
+                 }
+             }).then(function (response) { 
+                 if (response.data.meses == null) {
+
+                 } else {
+                     ve.meses = response.data.meses
+
                  }
              });
          },

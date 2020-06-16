@@ -18,6 +18,7 @@
   <link href="<?php echo base_url(); ?>/assets/css/animate.min.css" rel="stylesheet">
 
   <link href="<?php echo base_url(); ?>/assets/css/style.css" rel="stylesheet">
+    <link href="<?php echo base_url(); ?>/assets/plugins/node-waves/waves.css" rel="stylesheet">
   <!-- Custom styling plus plugins -->
   <link href="<?php echo base_url(); ?>/assets/css/custom.css" rel="stylesheet">
   <link href="<?php echo base_url(); ?>/assets/css/icheck/flat/green.css" rel="stylesheet">

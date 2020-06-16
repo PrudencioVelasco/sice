@@ -25,7 +25,7 @@
                                       <div class="form-group">
                                           <label><font color="red">*</font> Grupo/Nivel</label>
                                           <select name="grupo" class="form-control">
-                                            <option value="">--Seleccione--</option>
+                                            <option value="">-- SELECCIONAR --</option>
                                             <?php
                                               if(isset($grupos) && !empty($grupos)){
                                                 foreach ($grupos as  $value) {
@@ -43,7 +43,7 @@
                                       <div class="form-group">
                                           <label><font color="red">*</font> Ciclo Escolar</label>
                                            <select name="cicloescolar" class="form-control">
-                                             <option value="">--Seleccione--</option>
+                                             <option value="">-- SELECCIONAR --</option>
                                              <?php
                                               if(isset($cicloescolar) && !empty($cicloescolar)){
                                                 foreach ($cicloescolar as  $value) {
@@ -70,6 +70,11 @@
                       <div class="row">
                         <hr>
                           <div id="tabla"></div>
+                          <form method="post" action="">
+                          <input type="hidden" name="grupo" id="grupo"/>
+                          <input type="hidden" name="cicloescolar" id="cicloescolar"/>
+                          <button class="btn btn-primary"> ACEPTAR  <i class="fa fa-chevron-right"></i></button>
+                          </form>
                       </div>
 
                   </div> 
@@ -165,14 +170,20 @@
       success: function(data) {
         var val = $.parseJSON(data);
         //console.log(val.msg);
-         console.log(val.error);
+         //console.log(val.error);
 
           
          if((val.success === "Ok")){ 
 
           $('#tabla').html(val.tabla);
+          $('#grupo').val(val.idgrupo);
+          $('#cicloescolar').val(val.idcicloescolar);
 
-        }else{ 
+        }else if(val.success === "Error"){
+          $(".print-error-msg").css('display','block'); 
+          $(".print-error-msg").html(val.error);
+          setTimeout(function() {$('.print-error-msg').fadeOut('fast');}, 6000);
+        } else{ 
           $(".print-error-msg").css('display','block'); 
           $(".print-error-msg").html(val.error);
           setTimeout(function() {$('.print-error-msg').fadeOut('fast');}, 6000);

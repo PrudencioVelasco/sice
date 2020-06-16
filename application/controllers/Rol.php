@@ -121,7 +121,8 @@ class Rol extends CI_Controller {
     {
         //  Permission::grant(uri_string());
         $value = $this->input->post('text');
-        $query = $this->rol->searchRol($value);
+        $idrol = $this->session->idrol;
+        $query = $this->rol->searchRol($value,$idrol);
         if ($query) {
             $result['roles'] = $query;
         }

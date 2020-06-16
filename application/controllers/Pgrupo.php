@@ -76,7 +76,10 @@ class pGrupo extends CI_Controller {
             <th>#</th>
             <th>Nombre</th>';
             for($i=0;$i<$range;$i++):
-           $tabla .= '<th>'.date("D d-M",strtotime($fechainicio)+($i*(24*60*60))).'</th>';
+         setlocale(LC_ALL, 'es_ES');
+            $fecha = strftime("%A, %d de %B", strtotime($fechainicio)+($i*(24*60*60)));
+
+           $tabla .= '<th>'.$fecha.'</th>';
            //echo date("d-M",strtotime($_GET["start_at"])+($i*(24*60*60)));
            endfor;
            $tabla .= '</thead>';
@@ -187,7 +190,10 @@ echo $tabla;
             <th>#</th>
             <th>Nombre</th>';
             for($i=0;$i<$range;$i++):
-           $tabla .= '<th>'.date("D d-M",strtotime($fechainicio)+($i*(24*60*60))).'</th>';
+       setlocale(LC_ALL, 'es_ES');
+            $fecha = strftime("%A, %d de %B", strtotime($fechainicio)+($i*(24*60*60)));
+
+           $tabla .= '<th>'.$fecha.'</th>';
            //echo date("d-M",strtotime($_GET["start_at"])+($i*(24*60*60)));
            endfor;
            $tabla .= '</thead>';
@@ -454,7 +460,7 @@ return $tabla;
               array(
                 'field' => 'calificacion[]',
                 'label' => 'Calificacion',
-                'rules' => 'trim|required|decimal',
+                'rules' => 'trim|required|decimal|callback_maxNumber',
                 'errors' => array(
                     'required' => 'De de escribir las Calificaciones.',
                     'decimal' => 'Debe de ser Números decimales.'
@@ -471,6 +477,7 @@ return $tabla;
             $idalumno = $this->input->post('idalumno');
             $unidad = $this->input->post('unidad');
             $calificacion = $this->input->post('calificacion'); 
+            
             $validar = $this->grupo->validarAgregarCalificacion($unidad,$idhorariodetalle);
             if($validar == false){
             foreach ($idalumno as $key => $value) { 
@@ -837,7 +844,17 @@ public function eliminarAsistencia()
         echo json_encode(['error'=>'Error, Intente mas tarde.']);
     }
 }
-
+function maxNumber($num){
+    if($num >=0.00 && $num <= 10.00){
+        return true;
+    }else{
+        $this->form_validation->set_message(
+            'maxNumber',
+            'La Calificacion debe de ser entre 0.00 a 10.00'
+        );
+        return false;
+    }
+}
 public function updateCalificacion()
 {
      Permission::grant(uri_string());
@@ -845,7 +862,7 @@ public function updateCalificacion()
           array(
             'field' => 'calificacion',
             'label' => 'Calificacion',
-            'rules' => 'trim|required|decimal',
+            'rules' => 'trim|required|decimal|callback_maxNumber',
             'errors' => array(
                 'required' => 'De de escribir las Calificaciones.',
                 'decimal' => 'Debe de ser Números decimales.'

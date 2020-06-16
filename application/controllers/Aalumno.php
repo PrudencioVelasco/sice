@@ -1,8 +1,4 @@
 <?php
-
-use Dompdf\Dompdf;
-use Dompdf\Options;
-
 defined('BASEPATH') OR exit('No direct script access allowed');
 date_default_timezone_set("America/Mexico_City");
 class Aalumno extends CI_Controller {
@@ -153,7 +149,7 @@ class Aalumno extends CI_Controller {
             <label class="nombreplantel">'.$datelle_alumno[0]->nombreplantel.'</label><br>
             <label class="txtn">'.$datelle_alumno[0]->asociado.'</label><br>
             <label class="direccion">'.$datelle_alumno[0]->direccion.'</label><br>
-            <label class="telefono">TELÉFONO: '.$datelle_alumno[0]->telefono.' EXT 1</label>
+            <label class="telefono">TELÉFONO: '.$datelle_alumno[0]->telefono.'</label>
     </td>
     <td width="137" align="center"><img   class="imgtitle" src="' . $logo . '" /></td>
   </tr> 
@@ -358,7 +354,7 @@ ul{
             <label class="nombreplantel">'.$datelle_alumno[0]->nombreplantel.'</label><br>
             <label class="txtn">'.$datelle_alumno[0]->asociado.'</label><br>
             <label class="direccion">'.$datelle_alumno[0]->direccion.'</label><br>
-            <label class="telefono">TELÉFONO: '.$datelle_alumno[0]->telefono.' EXT 1</label>
+            <label class="telefono">TELÉFONO: '.$datelle_alumno[0]->telefono.'</label>
     </td>
     <td width="137" align="center"><img   class="imgtitle" src="' . $logo . '" /></td>
   </tr> 
@@ -457,7 +453,8 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
       # code...
         $idalumno = $this->session->idalumno;
         $kardex = $this->alumno->allKardex($this->session->idalumno);
-        $data = array('kardex' => $kardex,'id'=>$idalumno,'controller'=>$this );
+        $detalle = $this->alumno->detalleAlumno($idalumno);
+        $data = array('kardex' => $kardex,'detalle'=>$detalle,'id'=>$idalumno,'controller'=>$this );
           $this->load->view('alumno/header');
         $this->load->view('alumno/kardex/index',$data);
         $this->load->view('alumno/footer');  
@@ -544,10 +541,12 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
         
         $tabla .= '<table class="table">
             <thead>
-            <th>#</th>
-            <th>Nombre</th>';
+            <th>#</th> ';
             for($i=0;$i<$range;$i++):
-           $tabla .= '<th>'.date("D d-M",strtotime($fechainicio)+($i*(24*60*60))).'</th>';
+               setlocale(LC_ALL, 'es_ES');
+            $fecha = strftime("%A, %d de %B", strtotime($fechainicio)+($i*(24*60*60)));
+
+           $tabla .= '<th>'.$fecha.'</th>';
            //echo date("d-M",strtotime($_GET["start_at"])+($i*(24*60*60)));
            endfor;
            $tabla .= '</thead>';
@@ -555,8 +554,7 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
             foreach($alumns as $alumn){  
                $tabla .= ' <tr>';
                $tabla .='<td>'.$n++.'</td>';
-                $tabla .= '<td >'.$alumn->apellidop." ".$alumn->apellidom." ".$alumn->nombre.'</td>';
-             for($i=0;$i<$range;$i++):
+              for($i=0;$i<$range;$i++):
                     $date_at= date("Y-m-d",strtotime($fechainicio)+($i*(24*60*60)));
                    // $asist = AssistanceData::getByATD($alumn->id,$_GET["team_id"],$date_at);
                     $asist = $this->grupo->listaAsistencia($alumn->idalumno,$idhorario,$date_at,$idhorariodetalle);
@@ -600,6 +598,86 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
 $tabla .= '</table>';
 }
 return $tabla;
+
+    }
+      public function buscarAsistencia()
+    
+       { 
+      Permission::grant(uri_string());
+        $idalumno = $this->session->idalumno;
+        $idhorario = $this->input->post('idhorario');
+        $idmotivo = $this->input->post('motivo');
+        $idhorariodetalle = $this->input->post('idhorariodetalle');
+        $fechainicio = $this->input->post('fechainicio');
+        $fechafin = $this->input->post('fechafin');
+
+         $alumns = $this->alumno->showAllAlumnoId($idalumno);
+         $tabla = ""; 
+
+         if($alumns != false){
+        $range= ((strtotime($fechafin)-strtotime($fechainicio))+(24*60*60)) /(24*60*60);
+        //$range= ((strtotime($_GET["finish_at"])-strtotime($_GET["start_at"]))+(24*60*60)) /(24*60*60);
+        
+        $tabla .= '<table class="table">
+            <thead>
+            <th>#</th> ';
+            for($i=0;$i<$range;$i++):
+               setlocale(LC_ALL, 'es_ES');
+                       
+                        $fecha = strftime("%A, %d de %B", strtotime($fechainicio)+($i*(24*60*60)));
+
+           $tabla .= '<th>'.$fecha.'</th>';
+           //echo date("d-M",strtotime($_GET["start_at"])+($i*(24*60*60)));
+           endfor;
+           $tabla .= '</thead>';
+            $n = 1;
+            foreach($alumns as $alumn){  
+               $tabla .= ' <tr>';
+               $tabla .='<td>'.$n++.'</td>';
+              for($i=0;$i<$range;$i++):
+                    $date_at= date("Y-m-d",strtotime($fechainicio)+($i*(24*60*60)));
+                   // $asist = AssistanceData::getByATD($alumn->id,$_GET["team_id"],$date_at);
+                    $asist = $this->grupo->listaAsistenciaBuscar($alumn->idalumno,$idhorario,$date_at,$idhorariodetalle,$idmotivo);
+                        
+
+
+                $tabla .= '<td>';
+                 if($asist != false){ 
+                      switch ($asist->idmotivo) {
+                          case 1:
+                              # code...
+                             $tabla .='<span class="label label-success">'.$asist->nombremotivo.'</span>';
+                              break;
+                                  case 2:
+                                  $tabla .='<span class="label label-warning">'.$asist->nombremotivo.'</span>';
+                              # code...
+                              break;
+                                  case 3:
+                                  $tabla .='<span class="label label-info">'.$asist->nombremotivo.'</span>';
+                              # code...
+                              break;
+                                  case 4:
+                                  $tabla .='<span class="label label-danger">'.$asist->nombremotivo.'</span>';
+                              # code...
+                              break;
+                          
+                          default:
+                              # code...
+                              break;
+                      }
+                 }else{
+                    $tabla .= "No registrado";
+                 }
+                   
+                $tabla .= '</td>';
+             endfor; 
+                $tabla .= '</tr>';
+                
+
+            }
+$tabla .= '</table>';
+}
+echo $tabla;
 
     }
 
@@ -663,15 +741,19 @@ return $tabla;
       $datafin = $this->alumno->ultimaFechaAsistencia($idalumno,$idhorariodetalle);
       $datainicio = $this->alumno->primeraFechaAsistencia($idalumno,$idhorariodetalle);
      
-      if($datafin != false && $datainicio != false){
-        $tabla = $this->obetnerAsistencia($idhorario,$datainicio->fecha,$datafin->fecha,$idhorariodetalle);
-      }else{
- $tabla = $this->obetnerAsistencia($idhorario,date("Y-m-d"),date("Y-m-d"),$idhorariodetalle);
-      }
+      //if($datafin != false && $datainicio != false){
+      //  $tabla = $this->obetnerAsistencia($idhorario,$datainicio->fecha,$datafin->fecha,$idhorariodetalle);
+      //}else{
+          $tabla = $this->obetnerAsistencia($idhorario,date("Y-m-d"),date("Y-m-d"),$idhorariodetalle);
+      //}
+      $motivos = $this->alumno->showAllMotivoAsistencia();
       $data = array(
         //'tabla'=>$this->obtenerCalificacion($idhorario,$idhorariodetalle)
         'tabla'=>$tabla,
-        'nombreclase'=>$nombreclase
+        'nombreclase'=>$nombreclase,
+        'idhorario'=>$idhorario,
+        'idhorariodetalle'=>$idhorariodetalle,
+        'motivos'=>$motivos
       );
       $this->load->view('alumno/header');
         $this->load->view('alumno/calificacion/asistencia',$data);
@@ -1070,6 +1152,22 @@ public function detallemensaje($idmensaje = '')
         );
          $this->load->view('errors/html/error_general',$data);
     }
+}
+
+
+function obtenerCalificacionFinal($idalumno = '')
+{
+  $periodos = $this->alumno->obtenerPeriodo($idalumno);
+  $total_periodo = 0;
+  if($periodos){
+      foreach($periodos as $row){
+        $total_periodo += 1;
+        $idperiodo = $row->idperiodo;
+        $idgrupo = $row->idgrupo;
+        $idhorario = $row->idhorario;
+        $idplantel = $row->idplantel;
+      }
+  }
 }
 
 }

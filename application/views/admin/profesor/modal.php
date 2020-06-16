@@ -72,8 +72,8 @@
     </div>
     </div>
     <div slot="foot"> 
-        <button class="btn btn-danger" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
-        <button class="btn btn-primary" @click="addProfesor"><i class='fa fa-floppy-o'></i> Agregar</button>
+        <button class="btn btn-danger waves-effect waves-black" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
+        <button class="btn btn-primary waves-effect waves-black" @click="addProfesor"><i class='fa fa-floppy-o'></i> Agregar</button>
     </div>
 </modal>
 <modal v-if="addModalPassword" @close="clearAll()">
@@ -106,8 +106,8 @@
     </div>
     </div>
     <div slot="foot"> 
-        <button class="btn btn-danger" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
-        <button class="btn btn-primary" @click="updatePasswordProfesor"><i class='fa fa-floppy-o'></i> Agregar</button>
+        <button class="btn btn-danger waves-effect waves-black" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
+        <button class="btn btn-primary waves-effect waves-black" @click="updatePasswordProfesor"><i class='fa fa-floppy-o'></i> Agregar</button>
     </div>
 </modal>
 <modal v-if="editModal" @close="clearAll()">
@@ -177,8 +177,8 @@
 </div>
     </div>
     <div slot="foot">
-        <button class="btn btn-danger" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
-        <button class="btn btn-primary" @click="updateProfesor"><i class='fa fa-edit'></i> Modificar</button>
+        <button class="btn btn-danger waves-effect waves-black" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
+        <button class="btn btn-primary waves-effect waves-black" @click="updateProfesor"><i class='fa fa-edit'></i> Modificar</button>
     </div>
 </modal>
 

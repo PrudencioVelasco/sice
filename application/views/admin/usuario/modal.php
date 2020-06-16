@@ -57,7 +57,7 @@
              <select v-model="newUser.idplantel"  :class="{'is-invalid': formValidate.idplantel}"class="form-control">
                 <option value="" selected="">--Seleccionar--</option>
                 <option   v-for="option in planteles" v-bind:value="option.idplantel">
-                {{ option.nombreplantel }}
+                {{option.nombreniveleducativo}} - {{ option.nombreplantel }}
               </option>
             </select>
               <div class="text-danger" v-html="formValidate.idplantel"></div>
@@ -65,8 +65,8 @@
       </div>
    </div>
    <div slot="foot">
-    <button class="btn btn-danger" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
-      <button class="btn btn-primary" @click="addUser"><i class='fa fa-floppy-o'></i> Agregar</button>
+    <button class="btn btn-danger waves-effect waves-black" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
+      <button class="btn btn-primary waves-effect waves-black" @click="addUser"><i class='fa fa-floppy-o'></i> Agregar</button>
    </div>
 </modal>
 <!--update modal-->
@@ -144,8 +144,8 @@
 
    </div>
    <div slot="foot">
-      <button class="btn btn-danger" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
-      <button class="btn btn-primary" @click="updateUser"><i class='fa fa-edit'></i> Modificar</button>
+      <button class="btn btn-danger waves-effect waves-black" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
+      <button class="btn btn-primary waves-effect waves-black" @click="updateUser"><i class='fa fa-edit'></i> Modificar</button>
    </div>
 </modal>
 <!--Modificar passeord model-->
@@ -174,7 +174,7 @@
       </div>
    </div>
    <div slot="foot">
-      <button class="btn btn-danger" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
-      <button class="btn btn-primary" @click="passwordupdateUser"><i class='fa fa-edit'></i> Modificar</button>
+      <button class="btn btn-danger waves-effect waves-black" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
+      <button class="btn btn-primary waves-effect waves-black" @click="passwordupdateUser"><i class='fa fa-edit'></i> Modificar</button>
    </div>
 </modal>

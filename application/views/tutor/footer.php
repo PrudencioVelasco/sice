@@ -45,8 +45,10 @@
      <script src="<?php echo base_url(); ?>/assets/js/tablas.js"></script>
 
     <script  data-my_var_1="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/js/validar/direccion.js"></script>
-     <script  data-my_var_1="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/js/validar/pagotarjeta.js"></script>
-     <script  data-my_var_1="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/js/validar/pagotarjetam.js"></script>
+     <script  data-my_var_1="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/js/validar/pago_tarjeta_colegiatura.js"></script>
+     <script  data-my_var_1="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/js/validar/pago_tarjeta_reinscripcion.js"></script>
+      <script  data-my_var_1="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/js/validar/pago_efectivo_colegiatura.js"></script>
+      <script  data-my_var_1="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/js/validar/pago_efectivo_reinscripcion.js"></script>
 
 <script type="text/javascript">
   $(function () {
