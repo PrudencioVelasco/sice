@@ -39,6 +39,8 @@ var v = new Vue({
         url: my_var_1,
         addModal: false,
         editModal:false,
+        cargando:false,
+        error:false,
         //deleteModal:false,
         horarios:[], 
         periodos:[],
@@ -108,7 +110,7 @@ var v = new Vue({
                         type: 'success',
                         title: 'Eliminado!',
                         showConfirmButton: false,
-                        timer: 1500
+                        timer: 3000
                     });
                     v.clearAll();
                     v.clearMSG();
@@ -156,17 +158,21 @@ var v = new Vue({
             })
         },
           addHorario(){
+              v.cargando = true;
+              v.error = false;
             var formData = v.formData(v.newHorario);
               axios.post(this.url+"Horario/addHorario", formData).then(function(response){
                 if(response.data.error){
                     v.formValidate = response.data.msg;
+                    v.error = true;
+                    v.cargando = false;
                 }else{
                     swal({
 					  position: 'center',
 					  type: 'success',
 					  title: 'Exito!',
 					  showConfirmButton: false,
-					  timer: 1500
+					  timer: 3000
 					});
 
                     v.clearAll();
@@ -175,10 +181,13 @@ var v = new Vue({
                })
         },
         updateHorario(){
+            v.cargando =  true;
+            v.error = false;
             var formData = v.formData(v.chooseHorario); axios.post(this.url+"Horario/updateHorario", formData).then(function(response){
                 if(response.data.error){
-                    v.formValidate = response.data.msg;
-                    console.log(response.data.error)
+                    v.formValidate = response.data.msg; 
+                    v.error = true;
+                    v.cargando = false;
                 }else{
                     //v.successMSG = response.data.success;
                       swal({
@@ -186,7 +195,7 @@ var v = new Vue({
                             type: 'success',
                             title: 'Modificado!',
                             showConfirmButton: false,
-                            timer: 1500
+                            timer: 3000
                           });
                     v.clearAll();
                     v.clearMSG();
@@ -243,14 +252,16 @@ var v = new Vue({
             v.editModal=false;
             v.passwordModal=false;
             v.deleteModal=false;
+            v.cargando = false;
+            v.error = false;
             v.refresh()
 
         },
         noResult(){
 
                v.emptyResult = true;  // become true if the record is empty, print 'No Record Found'
-                      v.horarios = null
-                     v.totalHorarios = 0 //remove current page if is empty
+               v.horarios = null
+               v.totalHorarios = 0 //remove current page if is empty
 
         },
 

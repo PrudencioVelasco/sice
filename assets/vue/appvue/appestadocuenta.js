@@ -54,6 +54,11 @@ var ve = new Vue({
         noresultadoinicio:false,
         addPagoColegiaturaModal:false,
         btnpagar:false,
+        btnbuscar:true,
+        loaging_buscar:false,
+        cargando:false,
+        error:false,  
+        btnpagarcolegiatura:false,
         //deleteModal:false, 
         ciclos:[],
         pagos:[],
@@ -115,10 +120,15 @@ var ve = new Vue({
 
     },
     methods:{
+          
       searchSolicitud() {  
+            ve.loaging_buscar = true;
+            ve.btnbuscar = false;
             if (this.$refs.idperiodo.value != ""){
              this.mostrar = true; 
              ve.mostrar_error = false;
+                ve.btnbuscar = false;
+                ve.loaging_buscar = true;
              ve.idperiodobuscado = this.$refs.idperiodo.value;
              axios.get(this.url+"EstadoCuenta/estadoCuenta/", {
                  params: {
@@ -126,13 +136,15 @@ var ve = new Vue({
                      idalumno: my_var_2
                  }
              }).then(function(response){
-                //console.log(response.data);
+                
                  if(response.data == ''){
                       ve.solicitudes = null;
                       ve.noresultado = true;
+                     ve.dBuscandoAbtnbuscar();
                     }else{
                         ve.solicitudes = response.data
-                         ve.noresultado = false;
+                         ve.noresultado = false; 
+                      ve.dBuscandoAbtnbuscar();   
                     }
             });
 
@@ -146,11 +158,13 @@ var ve = new Vue({
                       ve.pagos = null;
                       ve.noresultadoinicio = true;
                       ve.btnpagar = true;
+                     ve.dBuscandoAbtnbuscar();
                     }else{
-                      console.log(response.data);
+                      
                         ve.pagos = response.data.pagos
                          ve.noresultadoinicio = false;
                          ve.btnpagar = false;
+                     ve.dBuscandoAbtnbuscar();
                     }
             });
 
@@ -162,9 +176,13 @@ var ve = new Vue({
                 }).then(function (response) {
                     //console.log(response.data);
                     if (response.data.meses == null) {
+                        ve.dBuscandoAbtnbuscar();
+                        ve.btnpagarcolegiatura = false;
                         
                     } else {
                         ve.meses = response.data.meses
+                        ve.btnpagarcolegiatura =  true;
+                        ve.dBuscandoAbtnbuscar();
                        
                     }
                 });
@@ -177,7 +195,9 @@ var ve = new Vue({
                     }
                 }).then(function (response) {
                     if (response.data.pagoinscripcion == null) { 
+                        ve.dBuscandoAbtnbuscar();
                     } else { 
+                        ve.dBuscandoAbtnbuscar();
                         ve.total_que_debe_pagar_inscripcion = response.data.pagoinscripcion;
                     }
                 });
@@ -188,7 +208,9 @@ var ve = new Vue({
                     }
                 }).then(function (response) {
                     if (response.data.pagoreinscripcion == null) {
+                        ve.dBuscandoAbtnbuscar();
                     } else {
+                        ve.dBuscandoAbtnbuscar();
                         ve.total_que_debe_pagar_reinscripcion = response.data.pagoreinscripcion;
                     }
                 });
@@ -199,26 +221,39 @@ var ve = new Vue({
                     }
                 }).then(function (response) {
                     if (response.data.pagocolegiatura == null) {
+                        ve.dBuscandoAbtnbuscar();
                     } else {
+                        ve.dBuscandoAbtnbuscar();
                         ve.total_que_debe_pagar_colegiatura = response.data.pagocolegiatura;
                     }
                 });
 
              //ve.idperiodobuscado = this.$refs.idperiodo.value;
           //then(response => (this.solicitudes = response.data))  
+              
             }else{
                 ve.mostrar_error = true;
+                ve.btnbuscar = true;
+                ve.loaging_buscar = false;
         }
 
          },
-         estadocuentaAll(idperiodo){ 
-             console.log(idperiodo);
+         estadocuentaAll(){  
              axios.get(this.url+"EstadoCuenta/estadoCuenta/", {
                  params: {
                      idperiodo: ve.idperiodobuscado,
                      idalumno: my_var_2
                  }
-             }).then(response => (this.solicitudes = response.data));
+             }).then(function (response) {
+
+                 if (response.data == '') {
+                     ve.solicitudes = null;
+                     ve.noresultado = true; 
+                 } else {
+                     ve.solicitudes = response.data
+                     ve.noresultado = false; 
+                 }
+             });
 
              axios.get(this.url + "EstadoCuenta/pagosInicio/", {
                  params: {
@@ -230,8 +265,7 @@ var ve = new Vue({
                      ve.pagos = null;
                      ve.noresultadoinicio = true;
                      ve.btnpagar = true;
-                 } else {
-                     console.log(response.data);
+                 } else { 
                      ve.pagos = response.data.pagos
                      ve.noresultadoinicio = false;
                      ve.btnpagar = false;
@@ -269,6 +303,10 @@ var ve = new Vue({
                 .then(response => (this.tipospago = response.data.tipospago));
 
         },
+        dBuscandoAbtnbuscar(){
+            ve.btnbuscar = true;
+            ve.loaging_buscar = false;
+        },
         showAllMeses() {
 
             axios.get(this.url + "EstadoCuenta/showAllMeses/")
@@ -291,6 +329,8 @@ var ve = new Vue({
               return formData;
         },
       addCobro(){
+          ve.error = false;
+          ve.cargando = true;
             var formData = v.formData(ve.newCobro);
                 formData.append('abono', ve.chooseSolicitud.descuento);
                 formData.append('idamortizacion', ve.chooseSolicitud.idamortizacion);
@@ -300,21 +340,25 @@ var ve = new Vue({
               axios.post(this.url+"EstadoCuenta/addCobro", formData).then(function(response){
                 if(response.data.error){
                     ve.formValidate = response.data.msg;
+                    ve.error = true;
+                    ve.cargando = false;
                 }else{
                     swal({
                       position: 'center',
                       type: 'success',
                       title: 'Exito!',
                       showConfirmButton: false,
-                      timer: 1800
+                      timer: 2000
                     });
 
                     ve.clearAll(); 
-                    ve.estadocuentaAll(ve.chooseSolicitud.idperiodo);
+                    ve.estadocuentaAll();
                 }
                })
         },
         addCobroColegiatura(){
+            ve.error = false;
+            ve.cargando = true;
             var formData = v.formData(ve.newCobroColegiatura); 
             formData.append('idperiodo', ve.idperiodobuscado);
             formData.append('idalumno', ve.idalumno);
@@ -324,62 +368,73 @@ var ve = new Vue({
             axios.post(this.url + "EstadoCuenta/addCobroColegiatura", formData).then(function (response) {
                 if (response.data.error) {
                     ve.formValidate = response.data.msg;
+                    ve.error = true;
+                    ve.cargando = false;
                 } else {
                     swal({
                         position: 'center',
                         type: 'success',
                         title: 'Exito!',
                         showConfirmButton: false,
-                        timer: 1800
+                        timer: 2000
                     });
 
                     ve.clearAll();
-                    ve.estadocuentaAll(ve.chooseSolicitud.idperiodo);
+                    ve.estadocuentaAll();
                 }
             })
         },
         eliminarPagoInicio(){
+            ve.error = false;
+            ve.cargando = true;
             var formData = v.formData(ve.eliminarPrimerCobro);
             formData.append('idpago', ve.choosePrimerPago.idpago);
             axios.post(this.url + "EstadoCuenta/eliminarPrimerCobro", formData).then(function (response) {
                 if (response.data.error) {
                     ve.formValidate = response.data.msg;
+                    ve.error = true;
+                    ve.cargando = false;
                 } else {
                     swal({
                         position: 'center',
                         type: 'success',
                         title: 'Exito!',
                         showConfirmButton: false,
-                        timer: 1800
+                        timer: 2000
                     });
 
                     ve.clearAll();
-                    ve.estadocuentaAll(ve.chooseSolicitud.idperiodo);
+                    ve.estadocuentaAll();
                 }
             })
         },
         eliminarPagoColegiatura() {
-            console.log(ve.idperiodobuscado);
+            ve.error = false;
+            ve.cargando = true;
             var formData = v.formData(ve.eliminarColegiatura);
             formData.append('idpago', ve.chooseSolicitud.idpago);
             axios.post(this.url + "EstadoCuenta/eliminarColegiatura", formData).then(function (response) {
                 if (response.data.error) {
                     ve.formValidate = response.data.msg;
+                    ve.error = true;
+                    ve.cargando = false;
                 } else {
                     swal({
                         position: 'center',
                         type: 'success',
                         title: 'Exito!',
                         showConfirmButton: false,
-                        timer: 1800
+                        timer: 2000
                     });
 
                     ve.clearAll();
-                    ve.estadocuentaAll(ve.idperiodobuscado);
+                    ve.estadocuentaAll();
                 }
             })
         },
             addCobroInicio(){
+                ve.error = false;
+                ve.cargando = true;
             var formData = v.formData(ve.newCobroInicio); 
                 formData.append('idperiodobuscado', ve.idperiodobuscado);
                 formData.append('idalumno', ve.idalumno);
@@ -389,17 +444,19 @@ var ve = new Vue({
               axios.post(this.url+"EstadoCuenta/addCobroInicio", formData).then(function(response){
                 if(response.data.error){
                     ve.formValidate = response.data.msg;
+                    ve.error = true;
+                    ve.cargando = false;
                 }else{
                     swal({
                       position: 'center',
                       type: 'success',
                       title: 'Exito!',
                       showConfirmButton: false,
-                      timer: 1800
+                        timer: 2000
                     });
 
                     ve.clearAll(); 
-                    ve.estadocuentaAll(ve.chooseSolicitud.idperiodo);
+                    ve.estadocuentaAll();
                     
                 }
                })
@@ -411,6 +468,8 @@ var ve = new Vue({
             ve.eliminarModalP = false;
             ve.eliminarModalC = false;
             ve.addPagoColegiaturaModal = false;
+            ve.error = false;
+            ve.cargando = false;
             
              
                 ve.eliminarPrimerCobro = { 

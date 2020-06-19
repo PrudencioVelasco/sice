@@ -40,6 +40,8 @@ var v = new Vue({
         addModal: false,
         editModal:false,
         editPasswordModal:false,
+        cargando:false,
+        error:false,
         //deleteModal:false,
         alumnos:[], 
         especialidades:[], 
@@ -123,12 +125,17 @@ var v = new Vue({
             })
         },
           addAlumno(){
+            v.error = false;
+            v.cargando = true;
             var formData = v.formData(v.newAlumno);
               axios.post(this.url+"Alumno/addAlumno", formData).then(function(response){
                 if(response.data.error){
-                    v.formValidate = response.data.msg;
-                }else{
-                  console.log("aqui");
+                    v.formValidate = response.data.msg; 
+                    v.cargando = false;
+                    v.error = true;
+                }else{ 
+                  v.clearAll();
+                  v.clearMSG();
                     swal({
         					  position: 'center',
         					  type: 'success',
@@ -137,18 +144,22 @@ var v = new Vue({
         					  timer: 1500
         					});
 
-                    v.clearAll();
-                    v.clearMSG();
+                  
                 }
                })
         },
         updateAlumno(){
+          v.error = false;
+          v.cargando = true;
             var formData = v.formData(v.chooseAlumno); axios.post(this.url+"Alumno/updateAlumno", formData).then(function(response){
                 if(response.data.error){
                     v.formValidate = response.data.msg;
-                    console.log(response.data.error)
+                    v.cargando = false;
+                    v.error = true;
                 }else{
                     //v.successMSG = response.data.success;
+                  v.clearAll();
+                  v.clearMSG();
                       swal({
                             position: 'center',
                             type: 'success',
@@ -156,13 +167,14 @@ var v = new Vue({
                             showConfirmButton: false,
                             timer: 1500
                           });
-                    v.clearAll();
-                    v.clearMSG();
+                  
 
                 }
             })
         },
         deleteAlumno(id) {
+          v.error = false;
+          v.cargando = true;
              Swal.fire({
           title: '¿Eliminar Alumno?',
           text: "Realmente desea eliminar el Alumno.",
@@ -182,6 +194,8 @@ var v = new Vue({
             }).then(function (response) {
                 if (response.data.alumnos == true) {
                     //v.noResult()
+                  v.clearAll();
+                  v.clearMSG();
                      swal({
                         position: 'center',
                         type: 'success',
@@ -189,25 +203,30 @@ var v = new Vue({
                         showConfirmButton: false,
                         timer: 1500
                     });
-                    v.clearAll();
-                    v.clearMSG();
+                  
                 } else {
                    swal("Error", "No se puede eliminar el Alumno", "error")
-                }
-                console.log(response);
+                   v.cargando = false;
+                } 
             }).catch((error) => {
                 swal("Error", "No se puede eliminar el Alumno", "error")
+              v.cargando = false;
             })
             }
             })
         },
         updatePasswordAlumno(){
+          v.error = false;
+          v.cargando = true;
             var formData = v.formData(v.chooseAlumno); axios.post(this.url+"Alumno/updatePasswordAlumno", formData).then(function(response){
                 if(response.data.error){
                     v.formValidate = response.data.msg;
-                    console.log(response.data.error)
+                  v.error = true;
+                  v.cargando = false;
                 }else{
                     //v.successMSG = response.data.success;
+                  v.clearAll();
+                  v.clearMSG();
                       swal({
                             position: 'center',
                             type: 'success',
@@ -215,23 +234,11 @@ var v = new Vue({
                             showConfirmButton: false,
                             timer: 1500
                           });
-                    v.clearAll();
-                    v.clearMSG();
+                  
 
                 }
             })
-        },
-         
-       /* deleteUser(){
-             var formData = v.formData(v.chooseUser);
-              axios.post(this.url+"user/deleteUser", formData).then(function(response){
-                if(!response.data.error){
-                     v.successMSG = response.data.success;
-                    v.clearAll();
-                    v.clearMSG();
-                }
-            })
-        },*/
+        }, 
          formData(obj){
 			var formData = new FormData();
 		      for ( var key in obj ) {
@@ -287,6 +294,8 @@ var v = new Vue({
             v.addModal= false;
             v.editPasswordModal=false;
             v.editModal=false;
+            v.error=false;
+            v.cargando=false;
             //v.passwordModal=false;
             //v.deleteModal=false;
             v.refresh()

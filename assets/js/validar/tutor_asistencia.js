@@ -60,13 +60,16 @@ $(document).ready(function () {
         })
     });
 
-    $("#btnbuscar").click(function () {
+    /*$("#btnbuscar").click(function () {
         $('#btnbuscar').prop("disabled", true);
         $('#btnbuscar').html(
             `<span class="fa fa-spinner spinner-border-sm" role="status" aria-hidden="true"></span> BUSCANDO...`
         );
         var fechainicio = $("#fechainicio").val();
         var fechafin = $("#fechafin").val();
+        var motivo = $("#motivo").val();
+        var idhorario = $("#idhorario").val();
+        var idhorariodetalle = $("#idhorariodetalle").val();
         if (fechainicio != "" && fechafin != "") {
             $.ajax({
                 type: "POST",
@@ -83,6 +86,21 @@ $(document).ready(function () {
 
                 }
             })
+       
+
+            if (fechainicio != "" && fechafin != "" && motivo != "") {
+                window.location = "<?php echo site_url('Aalumno/buscarAsistencia/'); ?>/" + idhorario + '/' + idhorariodetalle + '/' + fechainicio + '/' + fechafin + '/' + motivo + '/';
+            } else {
+                swal({
+                    type: 'error',
+                    title: 'Oops...',
+                    html: 'Todos los campos son obligatorios.',
+                    customClass: 'swal-wide',
+                    footer: ''
+                });
+            }
+
+            
         } else {
             $('#btnbuscar').prop("disabled", false);
             $('#btnbuscar').html(
@@ -98,7 +116,7 @@ $(document).ready(function () {
 
         }
 
-    });
+    });*/
 
     $("#btneliminarasistencia").click(function () {
         $('#btneliminarasistencia').prop("disabled", true);

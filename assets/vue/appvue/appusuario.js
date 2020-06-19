@@ -42,6 +42,8 @@ var v = new Vue({
         editModal:false,
         passwordModal:false,
         //deleteModal:false,
+        cargando:false,
+        error:false,
         users:[],
         roles:[],
         planteles:[], 
@@ -110,18 +112,22 @@ var v = new Vue({
             })
         },
           addUser(){
+            v.cargando = true;
+            v.error =  false;
             var formData = v.formData(v.newUser);
               axios.post(this.url+"User/addUser", formData).then(function(response){
                 if(response.data.error){
                     v.formValidate = response.data.msg;
+                    v.error = true;
+                    v.cargando = false;
                 }else{
                     swal({
-					  position: 'center',
-					  type: 'success',
-					  title: 'Exito!',
-					  showConfirmButton: false,
-					  timer: 1500
-					});
+                      position: 'center',
+                      type: 'success',
+                      title: 'Exito!',
+                      showConfirmButton: false,
+                      timer: 3000
+                    });
 
                     v.clearAll();
                     v.clearMSG();
@@ -129,10 +135,13 @@ var v = new Vue({
                })
         },
         updateUser(){
+          v.cargando = true;
+          v.error = false;
             var formData = v.formData(v.chooseUser); axios.post(this.url+"User/updateUser", formData).then(function(response){
                 if(response.data.error){
                     v.formValidate = response.data.msg;
-                    console.log(response.data.error)
+                   v.error = true;
+                   v.cargando = false;
                 }else{
                     //v.successMSG = response.data.success;
                       swal({
@@ -140,7 +149,7 @@ var v = new Vue({
                             type: 'success',
                             title: 'Modificado!',
                             showConfirmButton: false,
-                            timer: 1500
+                            timer: 3000
                           });
                     v.clearAll();
                     v.clearMSG();
@@ -149,9 +158,13 @@ var v = new Vue({
             })
         },
           passwordupdateUser(){
+            v.cargando = true;
+            v.error = false;
             var formData = v.formData(v.chooseUser); axios.post(this.url+"User/passwordupdateUser", formData).then(function(response){
                 if(response.data.error){
                     v.formValidate = response.data.msg;
+                    v.error = true;
+                    v.cargando = false;
                 }else{
 
                       swal({
@@ -159,7 +172,7 @@ var v = new Vue({
                             type: 'success',
                             title: 'Modificado!',
                             showConfirmButton: false,
-                            timer: 1800
+                            timer: 3000
                           });
                     v.successMSG = response.data.success;
                     v.clearAll();
@@ -215,6 +228,8 @@ var v = new Vue({
             v.editModal=false;
             v.passwordModal=false;
             v.deleteModal=false;
+            v.cargando = false;
+            v.error = false;
             v.refresh()
 
         },

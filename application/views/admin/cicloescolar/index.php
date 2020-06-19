@@ -27,7 +27,7 @@
 
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <button class="btn  btn-primary" @click="addModal= true"><i class='fa fa-plus'></i> Agregar Ciclo Escolar</button> 
+                                                <button class="btn  btn-primary waves-effect waves-black" @click="addModal= true"><i class='fa fa-plus'></i> Agregar Ciclo Escolar</button> 
 
 
                                             </div>
@@ -37,7 +37,7 @@
                                             <div class="col-md-6">
                                             </div>
                                             <div class="col-md-6">
-                                                <input placeholder="Buscar" type="search" class="form-control btn-round" :autofocus="'autofocus'"  v-model="search.text" @keyup="searchCiclo" name="search">
+                                                <input placeholder="Buscar" type="search" class="form-control btn-round waves-effect waves-black" :autofocus="'autofocus'"  v-model="search.text" @keyup="searchCiclo" name="search">
                                             </div>
                                         </div>
                                         <br>
@@ -64,10 +64,10 @@
                                                     <td align="right">
 
 
-                                                        <button type="button" class="btn btn-icons btn-success btn-sm" @click="editModal = true; selectCiclo(row)" title="Modificar Datos"> <i class="fa fa-edit" aria-hidden="true"></i>
+                                                        <button type="button" class="btn btn-icons btn-success btn-sm waves-effect waves-black" @click="editModal = true; selectCiclo(row)" title="Modificar Datos"> <i class="fa fa-edit" aria-hidden="true"></i>
                                                           Editar
                                                         </button>  
-                                                         <button type="button" class="btn btn-icons btn-danger btn-sm" @click="deleteCicloEscolar(row.idperiodo)" title="Eliminar Datos"> <i class="fa fa-trash" aria-hidden="true"></i>
+                                                         <button type="button" class="btn btn-icons btn-danger btn-sm waves-effect waves-black" @click="deleteCicloEscolar(row.idperiodo)" title="Eliminar Datos"> <i class="fa fa-trash" aria-hidden="true"></i>
                                                           Eliminar
                                                         </button>  
 

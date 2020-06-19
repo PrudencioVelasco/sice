@@ -41,6 +41,8 @@ var v = new Vue({
         addModal: false,
         editModal: false,
         //deleteModal:false,
+        cargando:false,
+        error:false,
         colegiaturas: [],
         niveles: [],
         conceptos: [],
@@ -104,17 +106,21 @@ var v = new Vue({
             })
         },
         addColegiatura() {
+            v.cargando = true;
+            v.error = false;
             var formData = v.formData(v.newColegiatura);
             axios.post(this.url + "Catalogo/addColegiatura", formData).then(function (response) {
                 if (response.data.error) {
                     v.formValidate = response.data.msg;
+                    v.error = true;
+                    v.cargando =false;
                 } else {
                     swal({
                         position: 'center',
                         type: 'success',
                         title: 'Exito!',
                         showConfirmButton: false,
-                        timer: 1500
+                        timer: 3000
                     });
 
                     v.clearAll();
@@ -123,9 +129,13 @@ var v = new Vue({
             })
         },
         updateColegiatura() {
+            v.cargando = true;
+            v.error = false;
             var formData = v.formData(v.chooseColegiatura); axios.post(this.url + "Catalogo/updateColegiatura", formData).then(function (response) {
                 if (response.data.error) {
                     v.formValidate = response.data.msg;
+                    v.error = true;
+                    v.cargando = false;
                     //console.log(response.data.error)
                 } else {
                     //v.successMSG = response.data.success;
@@ -134,7 +144,7 @@ var v = new Vue({
                         type: 'success',
                         title: 'Modificado!',
                         showConfirmButton: false,
-                        timer: 1500
+                        timer: 3000
                     });
                     v.clearAll();
                     v.clearMSG();
@@ -230,6 +240,8 @@ var v = new Vue({
             v.addModal = false;
             v.editModal = false;
             v.deleteModal = false;
+            v.cargando = false;
+            v.error = false;
             v.refresh()
 
         },

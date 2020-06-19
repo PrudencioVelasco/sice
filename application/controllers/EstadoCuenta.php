@@ -574,7 +574,7 @@ public function addCobroColegiatura()
                $descuento_correcto = $detalle_descuento[0]->descuento - ($detalle_descuento[0]->descuentobeca / 100 * $detalle_descuento[0]->descuento);
               if($abono == $descuento_correcto){
             if($idformapago == 1){
-
+              //FORMA DE PAGO EN EFECTIVO
               //1.- OBTENER DATOS DE LA TABLA AMORTIZACION Y PONER COMO PAGADO
               $data_add_amortizacion = array(
                 'idalumno'=>$idalumno,
@@ -620,6 +620,7 @@ public function addCobroColegiatura()
  
         } 
         elseif ($idformapago == 2 && !empty($autorizacion)) {
+          //FORMA DE PAGO EN TARJETA
             //1.- OBTENER DATOS DE LA TABLA AMORTIZACION Y PONER COMO PAGADO
                  $data_add_amortizacion = array(
                 'idalumno'=>$idalumno,

@@ -32,9 +32,9 @@
 
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <button class="btn btn-round btn-primary" @click="addModal= true"><i class='fa fa-plus'></i> Nuevo Usuario</button>
+                                                <button class="btn btn-round btn-primary waves-effect waves-black" @click="addModal= true"><i class='fa fa-plus'></i> Nuevo Usuario</button>
                                                 <?php if(isset($this->session->idrol) && !empty(isset($this->session->idrol)) && $this->session->idrol == 14){?>
-                                                <a  href="<?= base_url('/Rol/') ?>" class="btn btn-round btn-default">Rol</a>
+                                                <a  href="<?= base_url('/Rol/') ?>" class="btn btn-round btn-default waves-effect waves-black">Rol</a>
                                             <?php } ?>
 
 
@@ -71,10 +71,10 @@
                                                     <td align="right">
 
 
-                                                        <button type="button" class="btn btn-icons btn-rounded btn-success btn-sm" @click="editModal = true; selectUser(user)" title="Modificar Datos">
+                                                        <button type="button" class="btn btn-sm  btn-icons waves-effect waves-black btn-rounded btn-success btn-sm" @click="editModal = true; selectUser(user)" title="Modificar Datos">
                                                           <i class='fa fa-edit'></i> Editar
                                                         </button>
-                                                        <button type="button" class="btn btn-icons btn-rounded btn-primary btn-sm" @click="passwordModal = true; selectUser(user)">
+                                                        <button type="button" class="btn btn-sm waves-effect waves-black btn-icons btn-rounded btn-primary btn-sm" @click="passwordModal = true; selectUser(user)">
                                                             <i class='fa fa-key'></i> Cambiar Contraseña
                                                         </button>
 

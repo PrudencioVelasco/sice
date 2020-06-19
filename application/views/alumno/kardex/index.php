@@ -30,7 +30,7 @@
                         <h4><?php echo $detalle->nombre." ".$detalle->apellidop.' '.$detalle->apellidom ?></h4>
                     </div>
                      <div class="col-md-6 col-sm-12 col-xs-12 " align="right">
-                        <h4>C. FINAL: </h4>
+                       <!-- <h4>C. FINAL: </h4>-->
                      </div>
                   </div>
                   <hr>
@@ -51,10 +51,11 @@
                             foreach($kardex as $row){
                            ?>
                               <tr> 
-                                <td>
+                                <td><strong>
                                 <?php 
                                     echo $row->mesinicio." ".$row->yearinicio." - ".$row->mesfin." ".$row->yearfin;
                                  ?> 
+                                 </strong>
                                 </td> 
                                 <td><?php echo $row->nombrenivel; ?></td>
                                 <td><?php echo $row->nombregrupo;  ?> </td>

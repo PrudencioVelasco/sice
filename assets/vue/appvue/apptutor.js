@@ -41,6 +41,8 @@ var v = new Vue({
         addModal: false,
         editModal:false,
         editPasswordModal:false,
+        cargando:false,
+        error:false,
         //deleteModal:false,
         tutores:[], 
         search: {text: ''},
@@ -99,25 +101,29 @@ var v = new Vue({
             })
         },
           addTutor(){
+            v.cargando = true;
+            v.error = false;
             var formData = v.formData(v.newTutor);
               axios.post(this.url+"Tutor/addTutor", formData).then(function(response){
                 if(response.data.error){
                     v.formValidate = response.data.msg;
+                    v.error =  true;
+                    v.cargando = false;
                 }else{
                     swal({
-					  position: 'center',
-					  type: 'success',
-					  title: 'Exito!',
-					  showConfirmButton: false,
-					  timer: 1500
-					});
+                      position: 'center',
+                      type: 'success',
+                      title: 'Exito!',
+                      showConfirmButton: false,
+                      timer: 3000
+                    });
 
                     v.clearAll();
                     v.clearMSG();
                 }
                })
         },
-                deleteTutor(id) {
+          deleteTutor(id) {
              Swal.fire({
           title: '¿Eliminar Tutor?',
           text: "Realmente desea eliminar el Tutor.",
@@ -142,14 +148,13 @@ var v = new Vue({
                         type: 'success',
                         title: 'Eliminado!',
                         showConfirmButton: false,
-                        timer: 1500
+                        timer: 3000
                     });
                     v.clearAll();
                     v.clearMSG();
                 } else {
                    swal("Error", "No se puede eliminar el Tutor", "error")
-                }
-                console.log(response);
+                } 
             }).catch((error) => {
                 swal("Error", "No se puede eliminar el Tutor", "error")
             })
@@ -157,12 +162,14 @@ var v = new Vue({
             })
         },
         updateTutor(){
+          v.cargando = true;
+          v.error = false;
             var formData = v.formData(v.chooseTutor); axios.post(this.url+"Tutor/updateTutor", formData).then(function(response){
                 if(response.data.error){
                     v.formValidate = response.data.msg;
-                    console.log(response.data.error)
-                }else{
-                    //v.successMSG = response.data.success;
+                     v.error =true;
+                     v.cargando = false;
+                }else{ 
                       swal({
                             position: 'center',
                             type: 'success',
@@ -177,10 +184,13 @@ var v = new Vue({
             })
         },
          updatePassword(){
+           v.error = false;
+           v.cargando = true;
                var formData = v.formData(v.chooseTutor); axios.post(this.url+"Tutor/updatePassword", formData).then(function(response){
                 if(response.data.error){
                     v.formValidate = response.data.msg;
-                    console.log(response.data.error)
+                    v.error = true;
+                    v.cargando = false;
                 }else{
                     //v.successMSG = response.data.success;
                       swal({
@@ -242,6 +252,8 @@ var v = new Vue({
             v.editModal=false;
             v.passwordModal=false;
             v.deleteModal=false;
+            v.cargando=false;
+            v.error =false;
             v.refresh()
 
         },

@@ -46,6 +46,8 @@ var v = new Vue({
         idprofesor: my_var_2,
         addModal: false,
         editModal:false,
+        cargando:false,
+        error:false,
         //deleteModal:false,
         materias:[],
         clases:[], 
@@ -101,56 +103,79 @@ var v = new Vue({
             })
         },
           addMateria(){
+            v.cargando = true;
+            v.error = false;
             var formData = v.formData(v.newMateria);
               axios.post(this.url+"Profesor/addMateria", formData).then(function(response){
                 if(response.data.error){
                     v.formValidate = response.data.msg;
+                    v.error = true;
+                    v.cargando = false;
                 }else{
                     swal({
-					  position: 'center',
-					  type: 'success',
-					  title: 'Exito!',
-					  showConfirmButton: false,
-					  timer: 1500
-					});
+                    position: 'center',
+                    type: 'success',
+                    title: 'Exito!',
+                    showConfirmButton: false,
+                    timer: 3000
+                  });
 
                     v.clearAll();
                     v.clearMSG();
                 }
                })
         },
-        deleteMateria(id){
-       // var formData = v.formData(v.chooseHorario);
-        //console.log(id);
-             
-           Swal.fire({
-          title: '¿Eliminar elemento?',
-          text: "Realmente desea eliminar el elemento seleccionado",
-          type: 'info',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Eliminar',
-          cancelButtonText: 'Cancelar'
-        }).then((result) => {
-          if (result.value) {
-             axios.get(this.url+"Profesor/deleteMateria/"+id).then(function(response){
-                
-                  //console.log(response.data);
-                //v.cargar();
-                v.clearAll();
-                    v.clearMSG();
-            }) 
-          }
-        })
+        deleteMateria(id){ 
+          Swal.fire({
+            title: 'Quitar Materia?',
+            text: "Realmente desea quitar la Materia.",
+            type: 'info',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Quitar',
+            cancelButtonText: 'Cancelar'
+          }).then((result) => {
+            if (result.value) {
+
+              axios.get(this.url + "Profesor/deleteMateria", {
+                params: {
+                  id: id
+                }
+              }).then(function (response) {
+                if (response.data.profesores == true) {
+                  //v.noResult()
+                  v.clearAll();
+                  v.clearMSG();
+                  swal({
+                    position: 'center',
+                    type: 'success',
+                    title: 'Quitado!',
+                    showConfirmButton: false,
+                    timer: 3000
+                  });
+
+                } else {
+                  swal("Error", "No se puede quitar la Materia", "error")
+                  v.cargando = false;
+                }
+              }).catch((error) => {
+                swal("Error", "No se puede quitar la Materia", "error")
+                v.cargando = false;
+              })
+            }
+          })
 
              
         },
         updateMateria(){
+          v.cargando = true;
+          v.error = false;
             var formData = v.formData(v.chooseMateria); axios.post(this.url+"Profesor/updateMateria", formData).then(function(response){
                 if(response.data.error){
-                    v.formValidate = response.data.msg;
-                    console.log(response.data.error)
+                    v.formValidate = response.data.msg; 
+                    v.cargando = false;
+                    v.error = true;
                 }else{
                     //v.successMSG = response.data.success;
                       swal({
@@ -158,7 +183,7 @@ var v = new Vue({
                             type: 'success',
                             title: 'Modificado!',
                             showConfirmButton: false,
-                            timer: 1500
+                            timer: 3000
                           });
                     v.clearAll();
                     v.clearMSG();
@@ -214,6 +239,8 @@ var v = new Vue({
             v.editModal=false;
             v.passwordModal=false;
             v.deleteModal=false;
+            v.error = false;
+            v.cargando = false;
             v.refresh()
 
         },

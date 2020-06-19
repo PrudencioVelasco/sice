@@ -27,7 +27,7 @@
 
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <button class="btn btn-primary" @click="addModal= true"><i class='fa fa-plus'></i> Agregar Tutor</button> 
+                                                <button class="btn btn-primary waves-effect waves-black" @click="addModal= true"><i class='fa fa-plus'></i> Agregar Tutor</button> 
 
 
                                             </div>

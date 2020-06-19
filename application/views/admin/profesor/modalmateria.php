@@ -28,8 +28,20 @@
     </div>
     </div>
     <div slot="foot"> 
+        <div class="row">
+        <div  class="col-md-6 col-sm-12 col-xs-12 " align="center" >
+           <div v-if="cargando">
+               <img  style="width: 50px;" src="<?php echo base_url() . '/assets/loader/pagos.gif' ?>" alt=""> <strong>Procesando...</strong>
+           </div>
+           <div v-if="error"  align="left">
+               <label class="text-danger">*Corrija los errores en el formulario.</label>
+           </div>
+        </div>
+         <div class="col-md-6 col-sm-12 col-xs-12 "  align="right"  >
         <button class="btn btn-danger waves-effect waves-black" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
         <button class="btn btn-primary waves-effect waves-black" @click="addMateria"><i class='fa fa-floppy-o'></i> Agregar</button>
+         </div>
+        </div>
     </div>
 </modal>
 <modal v-if="editModal" @close="clearAll()">
@@ -59,8 +71,20 @@
 </div>
     </div>
     <div slot="foot">
+        <div class="row">
+        <div  class="col-md-6 col-sm-12 col-xs-12 " align="center" >
+           <div v-if="cargando">
+               <img  style="width: 50px;" src="<?php echo base_url() . '/assets/loader/pagos.gif' ?>" alt=""> <strong>Procesando...</strong>
+           </div>
+           <div v-if="error"  align="left">
+               <label class="text-danger">*Corrija los errores en el formulario.</label>
+           </div>
+        </div>
+         <div class="col-md-6 col-sm-12 col-xs-12 "  align="right"  >
         <button class="btn btn-danger waves-effect waves-black" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
         <button class="btn btn-primary waves-effect waves-black" @click="updateMateria"><i class='fa fa-edit'></i> Modificar</button>
+         </div>
+        </div>
     </div>
 </modal>
 

@@ -39,6 +39,8 @@ var v = new Vue({
         url: my_var_1,
         addModal: false,
         editModal:false, 
+        cargando:false,
+        error:false,
         //deleteModal:false,
         ciclos:[], 
         meses:[], 
@@ -103,18 +105,22 @@ var v = new Vue({
             })
         },
           addCiclo(){
+            v.cargando = true;
+            v.error = false;
             var formData = v.formData(v.newCiclo);
               axios.post(this.url+"CicloEscolar/addCiclo", formData).then(function(response){
                 if(response.data.error){
                     v.formValidate = response.data.msg;
+                    v.error = true;
+                    v.cargando = false;
                 }else{
                     swal({
-					  position: 'center',
-					  type: 'success',
-					  title: 'Exito!',
-					  showConfirmButton: false,
-					  timer: 1500
-					});
+                    position: 'center',
+                    type: 'success',
+                    title: 'Exito!',
+                    showConfirmButton: false,
+                    timer: 3000
+                  });
 
                     v.clearAll();
                     v.clearMSG();
@@ -122,10 +128,13 @@ var v = new Vue({
                })
         },
         updateCiclo(){
+          v.cargando = true;
+          v.error = false;
             var formData = v.formData(v.chooseCiclo); axios.post(this.url+"CicloEscolar/updateCiclo", formData).then(function(response){
                 if(response.data.error){
-                    v.formValidate = response.data.msg;
-                    console.log(response.data.error)
+                    v.formValidate = response.data.msg; 
+                    v.error = true;
+                    v.cargando = false
                 }else{
                     //v.successMSG = response.data.success;
                       swal({
@@ -133,7 +142,7 @@ var v = new Vue({
                             type: 'success',
                             title: 'Modificado!',
                             showConfirmButton: false,
-                            timer: 1500
+                            timer: 3000
                           });
                     v.clearAll();
                     v.clearMSG();
@@ -219,6 +228,8 @@ var v = new Vue({
             v.formValidate = false;
             v.addModal= false; 
             v.editModal=false;
+            v.error = false;
+            v.cargando = false;
             //v.passwordModal=false;
             //v.deleteModal=false;
             v.refresh()
@@ -238,7 +249,7 @@ var v = new Vue({
                 v.refresh()
         },
         refresh(){
-             v.search.text ? v.searchAlumno() : v.showAll(); //for preventing
+          v.search.text ? v.searchCiclo() : v.showAll(); //for preventing
 
         }
     }

@@ -45,6 +45,8 @@ var v = new Vue({
         idalumno: my_var_2,
         addModal: false,
         editModal:false,
+        cargando:false,
+        error:false,
         //deleteModal:false,
         tutores:[],
         tutoresdisponibles: [],
@@ -100,44 +102,69 @@ var v = new Vue({
             })
         },
           addTutor(){
+            v.error = false;
+            v.cargando = true;
             var formData = v.formData(v.newTutor);
               axios.post(this.url+"Alumno/addTutorAlumno", formData).then(function(response){
                 if(response.data.error){
                     v.formValidate = response.data.msg;
+                    v.error = true;
+                    v.cargando = false;
                 }else{
                     swal({
-					  position: 'center',
-					  type: 'success',
-					  title: 'Exito!',
-					  showConfirmButton: false,
-					  timer: 1500
-					});
+                  position: 'center',
+                  type: 'success',
+                  title: 'Exito!',
+                  showConfirmButton: false,
+                  timer: 1500
+                });
 
                     v.clearAll();
                     v.clearMSG();
                 }
                })
         }, 
-        deleteTutor(id){ 
-           Swal.fire({
-          title: '¿Quitar elemento?',
-          text: "Realmente desea eliminar el elemento seleccionado",
-          type: 'info',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Eliminar',
-          cancelButtonText: 'Cancelar'
-        }).then((result) => {
-          if (result.value) {
-             axios.get(this.url+"Alumno/deleteTutor/"+id).then(function(response){
-                
-                  //console.log(response.data);
-               v.clearAll();
-              v.clearMSG();
-            }) 
-          }
-        })   
+        deleteTutor(id){  
+          Swal.fire({
+            title: 'Quitar Tutor?',
+            text: "Realmente desea quitar el Tutor.",
+            type: 'info',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Eliminar',
+            cancelButtonText: 'Cancelar'
+          }).then((result) => {
+            if (result.value) {
+
+              axios.get(this.url + "Alumno/deleteTutor", {
+                params: {
+                  id: id
+                }
+              }).then(function (response) {
+                if (response.data.tutores == true) {
+                  //v.noResult()
+                  v.clearAll();
+                  v.clearMSG();
+                  swal({
+                    position: 'center',
+                    type: 'success',
+                    title: 'Quitado!',
+                    showConfirmButton: false,
+                    timer: 1500
+                  });
+
+                } else {
+                  swal("Error", "No se puede quitar el Tutor", "error")
+                  v.cargando = false;
+                }
+              }).catch((error) => {
+                swal("Error", "No se puede quitar el Tutor", "error")
+                v.cargando = false;
+              })
+            }
+          })
+          
         },
          
        /* deleteUser(){
@@ -188,6 +215,8 @@ var v = new Vue({
             v.editModal=false;
             //v.passwordModal=false;
             v.deleteModal=false;
+            v.cargando = false;
+            v.error = false;
             v.refresh()
 
         },

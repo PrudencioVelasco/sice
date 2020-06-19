@@ -22,7 +22,7 @@ class CorteCaja extends CI_Controller {
  
     public function index()
     { 
-            $idrol = $this->session->idrol;
+          $idrol = $this->session->idrol;
            $idplantel = $this->session->idplantel;
            $fechainicio = $this->input->post('fechainicio');
            $fechafin = $this->input->post('fechafin');
@@ -34,7 +34,8 @@ class CorteCaja extends CI_Controller {
           if( !empty($fechainicio) && !empty($fechafin)){
            $pago_inicio = $this->cortecaja->showAllPagoInicio($fechainicio,$fechafin,$estatus,$pagoen);
            $pago_mensualidad = $this->cortecaja->showAllPagoColegiaturas($fechainicio,$fechafin,$estatus,$pagoen);
-            } 
+        //var_dump($pago_mensualidad);   
+        } 
           $data = array(
               'pago_inicio'=>$pago_inicio,
               'pago_mensualidad'=>$pago_mensualidad

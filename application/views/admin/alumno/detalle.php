@@ -233,7 +233,7 @@
  
                                         <div class="row">
                                             <div class="col-md-6">
-                                               <button class="btn btn-round btn-primary" @click="addModal= true"><i class='fa fa-plus'></i> Asignar Tutor</button> 
+                                               <button class="btn btn-round btn-primary waves-effect waves-black" @click="addModal= true"><i class='fa fa-plus'></i> Asignar Tutor</button> 
                                             </div>
                                             <div class="col-md-6">
                                                 <input placeholder="Buscar" type="search" class="form-control" v-model="search.text" @keyup="searchTutor" name="search">
@@ -257,7 +257,7 @@
                                                     <td align="right">
 
 
-                                                        <button type="button" class="btn btn-icons btn-danger btn-sm" @click="deleteTutor(tutor.idtutoralumno)"> <i class="fa fa-trash" aria-hidden="true"></i>
+                                                        <button type="button" class="btn btn-icons btn-danger btn-sm waves-effect waves-black" @click="deleteTutor(tutor.idtutoralumno)"> <i class="fa fa-trash" aria-hidden="true"></i>
                                                           Quitar
                                                         </button> 
 
@@ -308,9 +308,17 @@
                                         </div>
                                     </div>  
                                     <div class="col-md-6 col-sm-12 col-xs-12 ">
-                                        <div class="form-group"> 
-                                             <button class="btn btn-primary"  @click.prevent="searchSolicitud()" style="margin-top: 0"><i class="fa fa-search"></i> Buscar</button>
-                                        </div>
+                                  
+                                        <div class="form-group" > 
+                                        <div v-if="btnbuscar">    
+                                        <button   class="btn btn-primary waves-effect waves-black"  @click.prevent="searchSolicitud()" style="margin-top: 0"><i class="fa fa-search"></i> Buscar</button>
+                                        </div>     
+                                           
+                                            <div v-if="loaging_buscar"  >
+                                                <img  style="width: 50px;" src="<?php echo base_url() . '/assets/loader/pagos.gif' ?>" alt=""> <strong>Buscando...</strong>
+                                            </div>
+                                             </div>
+                                              
                                     </div>
                                 </div>
                                 <div class="row">
@@ -318,7 +326,7 @@
                                   <div v-if="mostrar">
                                       <div class="row">
                                     <div class="col-md-12 col-sm-12 col-xs-12" align="left"> 
-                                      <button v-if="btnpagar"   @click="addPagoModal = true;" class="btn btn-default"> <i class="fa fa-plus-circle"></i> Agregar Pago</button>
+                                      <button v-if="btnpagar"   @click="addPagoModal = true;" class="btn btn-default waves-effect waves-black"> <i class="fa fa-plus-circle"></i> Agregar Pago</button>
                                     </div>
                                   </div>  
                                   <div class="row">
@@ -370,9 +378,9 @@
                                             </tr>
                                           </tbody> 
                                         </table>
-                                        <div class="row">
+                                        <div class="row" v-if="btnpagarcolegiatura">
                                           <div class="col-md-12 col-sm-12 col-xs-12">
-                                            <button class="btn btn-info"  @click="addPagoColegiaturaModal = true;"> <i class="fa fa-plus-circle"></i> Agregar Pago</button>
+                                            <button class="btn btn-info waves-effect waves-black"  @click="addPagoColegiaturaModal = true;"> <i class="fa fa-plus-circle"></i> Agregar Pago</button>
                                           </div>
                                         </div>
                                   <div class="row">
@@ -501,7 +509,7 @@
                       <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
                         </button>
-                        <h4 class="modal-title" id="myModalLabel2">Asgnar Beca</h4>
+                        <h4 class="modal-title" id="myModalLabel2">ASIGNAR BECA</h4>
                       </div>
                         <form method="post" id="frmasignarbeca" action="">
                       <div class="modal-body">
@@ -547,7 +555,7 @@
                       <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
                         </button>
-                        <h4 class="modal-title" id="myModalLabel2">Asgnar Grupo</h4>
+                        <h4 class="modal-title" id="myModalLabel2">ASIGNAR GRUPO</h4>
                       </div>
                         <form method="post" id="frmasignargrupo" action="">
                       <div class="modal-body">
@@ -608,7 +616,7 @@
                       <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
                         </button>
-                        <h4 class="modal-title" id="myModalLabel2">Grupo</h4>
+                        <h4 class="modal-title" id="myModalLabel2">GRUPO</h4>
                       </div>
                        <form method="post" id="frmcambiargrupo" action="">
                       <div class="modal-body">

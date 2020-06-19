@@ -7,9 +7,9 @@
     <div class="col-md-12">
       <div class="x_panel">
         <div class="x_title">
-          <h2><strong>BOLETA DEL ALUMNO(A)</strong></h2>
+          <h2><strong>BOLETA DE CALIFICACIONES</strong></h2>
           <ul class="nav navbar-right panel_toolbox">
-             <h3><small>Calificación: </small><strong style="color: green">
+             <h3><small>Calificación del Nivel: </small><strong style="color: green">
              <?php 
                 //$calificacion 
              if(isset($calificacion) && !empty($calificacion)){

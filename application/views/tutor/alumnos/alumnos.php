@@ -31,7 +31,7 @@
                             ?>
                              <tr>
                               <th scope="row"><?php echo $i++; ?></th> 
-                              <td scope="row"><?php echo $value->nombre." ".$value->apellidop." ".$value->apellidom ?></td>
+                              <td scope="row"><strong><?php echo $value->apellidop." ".$value->apellidom." ".$value->nombre; ?></strong></td>
                               <td align="right">
                                  
                                 <a  href="<?php echo site_url('Tutores/detalle/'.$controller->encode($value->idalumno)) ?>" class="btn btn-primary"> <i class=" fa fa-eye "></i> Ver detalle</a>

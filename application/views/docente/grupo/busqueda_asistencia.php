@@ -121,7 +121,7 @@
                        <div class="col-md-3 col-sm-12 col-xs-12 "></div>
                         <div class="col-md-9 col-sm-12 col-xs-12 " align="right">
                                <div class="alert alert-danger print-error-msg-1" style="display:none"></div>
-                            <form id="frmbuscar">
+                        <form id="frmbuscar">
                                 <div class="row clearfix">
                                   <div class="col-md-4 col-sm-12 col-xs-12 ">
                                   <div class="form-group"> 
@@ -165,7 +165,7 @@
 
                         </div>  
                       </div>  
-                               <div class="row"> 
+                  <div class="row"> 
                        <div class="col-lg-12 col-md-12 col-sm-4 col-xs-6">
                   <div id="tblalumnos">
                    <?php
@@ -299,7 +299,6 @@
   </div> 
  <script data-my_var_1="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/js/validar/tutor_asistencia.js"></script> 
 
-
 <script type="text/javascript"> 
 
         $("#btnbuscar").click(function(){  
@@ -329,7 +328,8 @@
 
 </script>
 
- <script type="text/javascript">
+
+<script type="text/javascript">
     $(document).ready(function () {
         $('#tablageneral2').DataTable({ 
             keys: true,

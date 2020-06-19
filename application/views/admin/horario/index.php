@@ -26,7 +26,7 @@
 
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <button class="btn btn-round btn-primary" @click="addModal= true"><i class='fa fa-plus'></i> Agregar Horario</button> 
+                                        <button class="btn btn-round btn-primary waves-effect waves-black"  @click="addModal= true"><i class='fa fa-plus'></i> Agregar Horario</button> 
 
 
                                     </div>
@@ -61,13 +61,13 @@
                                                         <span v-else class="label label-danger">Finalizado</span>
                                                     </td>
                                             <td align="right">
-                                                <a href="#" class="btn btn-danger" @click="deleteHorario(horario.idhorario)" title="Eliminar Datos"><i class="fa fa-trash"></i> Eliminar</a>
+                                                <a href="#" class="btn btn-danger  btn-sm waves-effect waves-black" @click="deleteHorario(horario.idhorario)" title="Eliminar Datos"><i class="fa fa-trash"></i> Eliminar</a>
 
-                                                <button v-if="horario.periodoactivo==1"  type="button" class="btn btn-success btn-sm" @click="editModal = true; selectHorario(horario)" title="Modificar Datos"> <i class="fa fa-edit" aria-hidden="true"></i>
+                                                <button v-if="horario.periodoactivo==1"  type="button" class="btn btn-success btn-sm waves-effect waves-black" @click="editModal = true; selectHorario(horario)" title="Modificar Datos"> <i class="fa fa-edit" aria-hidden="true"></i>
                                                   Editar
                                                 </button>
 
-                                               <a class="btn btn-info btn-sm" v-bind:href="'detalle/'+ horario.idhorario" ><i class="fa fa-graduation-cap" aria-hidden="true"></i>
+                                               <a class="btn btn-info btn-sm waves-effect waves-black" v-bind:href="'detalle/'+ horario.idhorario" ><i class="fa fa-graduation-cap" aria-hidden="true"></i>
                                                     Materias</a>
 
                                             </td>

@@ -378,11 +378,18 @@ class Tutor extends CI_Controller {
         }
          
     }
-    public function deleteAlumno($id)
-    {
-        # code...
+    public function deleteAlumno()
+    { 
         Permission::grant(uri_string());
-        $this->tutor->deleteAlumno($id);
+        $id = $this->input->get('id');
+        $query = $this->tutor->deleteAlumno($id);
+        if ($query) {
+            $result['alumnos'] = true;
+        } 
+       if(isset($result) && !empty($result)){
+         echo json_encode($result);
+        }
+
     }
       public function deleteTutor()
   {

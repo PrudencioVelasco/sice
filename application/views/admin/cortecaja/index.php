@@ -62,17 +62,19 @@
          
           <div class="row">
                <div class="col-md-12 col-sm-12 col-xs-12 ">
-              <table id="datatablereportealmacen" class="table">
+              <table id="datatablereportealmacen"  class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
                             <thead>
                                 <tr>
                                    <th scope="col">ALUMNO</th>
+                                    <th scope="col">FOLIO</th>
                                    <th scope="col">FORMA PAGO</th>
                                    <th scope="col">PAGÓ EN</th>
                                    <th scope="col">ESTATUS</th>
                                    <th scope="col">CONCEPTO</th>
                                    <th scope="col">DESCUENTO</th>
                                    <th scope="col">AUTORIZACIÓN</th>
-                                   <th scope="col">FECHA</th> 
+                                   <th scope="col">FECHA</th>
+                                   <th scope="col">COBRÓ</th> 
                                </tr>
                            </thead>
                            <tbody>
@@ -82,6 +84,7 @@
                                 ?>
                                <tr>
                                    <td><?php echo $value->nombre." ".$value->apellidop." ".$value->apellidom ?></td>
+                                   <td><?php echo  $value->folio; ?></td>
                                    <td><?php echo  $value->nombretipopago; ?></td>
                                     <td>
                                         <?php
@@ -105,6 +108,7 @@
                                    <td><strong><?php echo number_format($value->descuento,2); ?></strong></td>
                                    <td><?php echo $value->autorizacion; ?></td>
                                    <td><?php echo $value->fecha; ?></td>
+                                   <td><?php echo $value->usuario; ?></td>
                                 </tr>
                                <?php 
                                     }
@@ -116,6 +120,7 @@
                                 ?>
                                <tr>
                                    <td><?php echo $value->nombre." ".$value->apellidop." ".$value->apellidom ?></td>
+                                   <td><?php echo  $value->folio; ?></td>
                                    <td><?php echo  $value->nombretipopago; ?></td>
                                     <td>
                                         <?php
@@ -139,6 +144,7 @@
                                    <td><strong><?php echo number_format($value->descuento,2); ?></strong></td>
                                    <td><?php echo $value->autorizacion; ?></td>
                                    <td><?php echo $value->fecha; ?></td>
+                                   <td><?php echo $value->usuario; ?></td>
                                 </tr>
                                <?php 
                                     }
@@ -180,12 +186,13 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $('#datatablereportealmacen').DataTable({
-            "scrollX": false,
+              keys: true,
+            "scrollX": true,
             dom: 'Bfrtip',
            buttons: [
         'excelHtml5'
         ],
-            "order": [[0, "desc"]],
+            "order": [[0, "asc"]],
             "language": {
                 "sProcessing": "Procesando...",
                 "sLengthMenu": "Mostrar _MENU_ registros",

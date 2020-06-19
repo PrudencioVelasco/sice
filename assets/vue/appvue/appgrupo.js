@@ -40,6 +40,8 @@ var v = new Vue({
         url: my_var_1,
         addModal: false,
         editModal:false, 
+        cargando:false,
+        error:false,
         //deleteModal:false,
         grupos:[], 
         niveles:[], 
@@ -110,18 +112,22 @@ var v = new Vue({
             })
         },
           addGrupo(){
+            v.cargando =  true;
+            v.error = false;
             var formData = v.formData(v.newGrupo);
               axios.post(this.url+"Grupo/addGrupo", formData).then(function(response){
                 if(response.data.error){
                     v.formValidate = response.data.msg;
+                    v.error = true;
+                    v.cargando = false;
                 }else{
                     swal({
-					  position: 'center',
-					  type: 'success',
-					  title: 'Exito!',
-					  showConfirmButton: false,
-					  timer: 1500
-					});
+                    position: 'center',
+                    type: 'success',
+                    title: 'Exito!',
+                    showConfirmButton: false,
+                    timer: 3000
+                  });
 
                     v.clearAll();
                     v.clearMSG();
@@ -129,10 +135,13 @@ var v = new Vue({
                })
         },
         updateGrupo(){
+          v.cargando = true;
+          v.error = false;
             var formData = v.formData(v.chooseGrupo); axios.post(this.url+"Grupo/updateGrupo", formData).then(function(response){
                 if(response.data.error){
                     v.formValidate = response.data.msg;
-                    console.log(response.data.error)
+                  v.error = true;
+                  v.cargando = false;
                 }else{
                     //v.successMSG = response.data.success;
                       swal({
@@ -140,7 +149,7 @@ var v = new Vue({
                             type: 'success',
                             title: 'Modificado!',
                             showConfirmButton: false,
-                            timer: 1500
+                            timer: 3000
                           });
                     v.clearAll();
                     v.clearMSG();
@@ -173,14 +182,13 @@ var v = new Vue({
                         type: 'success',
                         title: 'Eliminado!',
                         showConfirmButton: false,
-                        timer: 1500
+                        timer: 3000
                     });
                     v.clearAll();
                     v.clearMSG();
                 } else {
                    swal("Error", "No se puede eliminar el Grupo", "error")
-                }
-                console.log(response);
+                } 
             }).catch((error) => {
                 swal("Error", "No se puede eliminar el Grupo", "error")
             })
@@ -224,6 +232,8 @@ var v = new Vue({
             v.formValidate = false;
             v.addModal= false; 
             v.editModal=false;
+            v.cargando =false;
+            v.error = false;
             //v.passwordModal=false;
             //v.deleteModal=false;
             v.refresh()

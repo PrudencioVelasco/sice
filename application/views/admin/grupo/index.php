@@ -26,7 +26,7 @@
 
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <button class="btn  btn-primary" @click="addModal= true"><i class='fa fa-plus'></i> Agregar Grupo</button> 
+                                                <button class="btn  btn-primary waves-effect waves-black" @click="addModal= true"><i class='fa fa-plus'></i> Agregar Grupo</button> 
 
 
                                             </div>
@@ -57,10 +57,10 @@
                                                     <td align="right">
 
 
-                                                        <button type="button" class="btn btn-icons btn-success btn-sm" @click="editModal = true; selectGrupo(row)" title="Modificar Datos"> <i class="fa fa-edit" aria-hidden="true"></i>
+                                                        <button type="button" class="btn btn-icons btn-success btn-sm waves-effect waves-black" @click="editModal = true; selectGrupo(row)" title="Modificar Datos"> <i class="fa fa-edit" aria-hidden="true"></i>
                                                           Editar
                                                         </button>  
-                                                         <button type="button" class="btn btn-icons btn-danger btn-sm" @click="deleteGrupo(row.idgrupo)" title="Eliminar Datos"> <i class="fa fa-trash" aria-hidden="true"></i>
+                                                         <button type="button" class="btn btn-icons btn-danger btn-sm waves-effect waves-black" @click="deleteGrupo(row.idgrupo)" title="Eliminar Datos"> <i class="fa fa-trash" aria-hidden="true"></i>
                                                           Eliminar
                                                         </button>  
 

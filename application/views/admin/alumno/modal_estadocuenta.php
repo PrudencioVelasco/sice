@@ -32,8 +32,20 @@
      </div>
    </div>
    <div slot="foot"> 
+      <div class="row">
+        <div  class="col-md-6 col-sm-12 col-xs-12 " align="center" >
+           <div v-if="cargando">
+               <img  style="width: 50px;" src="<?php echo base_url() . '/assets/loader/pagos.gif' ?>" alt=""> <strong>Procesando...</strong>
+           </div>
+           <div v-if="error"  align="left">
+               <label class="text-danger">*Corrija los errores en el formulario.</label>
+           </div>
+        </div>
+         <div class="col-md-6 col-sm-12 col-xs-12 "  align="right"  >
     <button type="button" class="btn btn-danger waves-effect waves-black"  @click="clearAll"> <i class="fa fa-times"></i> Cancelar</button>
       <button class="btn btn-primary waves-effect waves-black" @click="addCobro" ><i class="fa fa-check-circle"></i> Cobrar</button>
+   </div>
+      </div>
    </div>
 </modal>
 
@@ -96,8 +108,20 @@
  
    </div>
    <div slot="foot"> 
+      <div class="row">
+        <div  class="col-md-6 col-sm-12 col-xs-12 " align="center" >
+           <div v-if="cargando">
+               <img  style="width: 50px;" src="<?php echo base_url() . '/assets/loader/pagos.gif' ?>" alt=""> <strong>Procesando...</strong>
+           </div>
+           <div v-if="error"  align="left">
+               <label class="text-danger">*Corrija los errores en el formulario.</label>
+           </div>
+        </div>
+         <div class="col-md-6 col-sm-12 col-xs-12 "  align="right"  >
     <button type="button" class="btn btn-danger waves-effect waves-black"  @click="clearAll"> <i class="fa fa-times"></i> Cancelar</button>
       <button class="btn btn-primary waves-effect waves-black" @click="addCobroInicio" ><i class="fa fa-check-circle"></i> Cobrar</button>
+   </div>
+      </div>
    </div>
 </modal>
 
@@ -154,9 +178,21 @@
      </div>
    </div>
    <div slot="foot"> 
+      <div class="row">
+        <div  class="col-md-6 col-sm-12 col-xs-12 " align="center" >
+           <div v-if="cargando">
+               <img  style="width: 50px;" src="<?php echo base_url() . '/assets/loader/pagos.gif' ?>" alt=""> <strong>Procesando...</strong>
+           </div>
+           <div v-if="error"  align="left">
+               <label class="text-danger">*Corrija los errores en el formulario.</label>
+           </div>
+        </div>
+         <div class="col-md-6 col-sm-12 col-xs-12 "  align="right"  >
     <button type="button" class="btn btn-danger waves-effect waves-black"  @click="clearAll"> <i class="fa fa-times"></i> Cancelar</button>
       <button class="btn btn-primary waves-effect waves-black" @click="addCobroColegiatura" ><i class="fa fa-check-circle"></i> Cobrar</button>
    </div>
+      </div>
+    </div>
 </modal>
 
 <modal v-if="eliminarModalP" @close="clearAll()">
@@ -188,8 +224,20 @@
 </div>
     </div>
     <div slot="foot">
+       <div class="row">
+        <div  class="col-md-6 col-sm-12 col-xs-12 " align="center" >
+           <div v-if="cargando">
+               <img  style="width: 50px;" src="<?php echo base_url() . '/assets/loader/pagos.gif' ?>" alt=""> <strong>Procesando...</strong>
+           </div>
+           <div v-if="error"  align="left">
+               <label class="text-danger">*Corrija los errores en el formulario.</label>
+           </div>
+        </div>
+         <div class="col-md-6 col-sm-12 col-xs-12 "  align="right"  >
         <button class="btn btn-danger waves-effect waves-black" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
         <button class="btn btn-primary waves-effect waves-black" @click="eliminarPagoInicio"><i class='fa fa-edit'></i> Eliminar</button>
+    </div>
+       </div>
     </div>
 </modal>
 
@@ -222,7 +270,19 @@
 </div>
     </div>
     <div slot="foot">
+       <div class="row">
+        <div  class="col-md-6 col-sm-12 col-xs-12 " align="center" >
+           <div v-if="cargando">
+               <img  style="width: 50px;" src="<?php echo base_url() . '/assets/loader/pagos.gif' ?>" alt=""> <strong>Procesando...</strong>
+           </div>
+           <div v-if="error"  align="left">
+               <label class="text-danger">*Corrija los errores en el formulario.</label>
+           </div>
+        </div>
+         <div class="col-md-6 col-sm-12 col-xs-12 "  align="right"  >
         <button class="btn btn-danger waves-effect waves-black" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
         <button class="btn btn-primary waves-effect waves-black" @click="eliminarPagoColegiatura"><i class='fa fa-edit'></i> Eliminar</button>
+    </div>
+       </div>
     </div>
 </modal>

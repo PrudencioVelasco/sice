@@ -50,8 +50,8 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-2 col-md-4 col-sm-4 col-xs-12">
-                                      <input type="hidden" name="idhorario" value="<?php echo $idhorario ?>">
-                                      <input type="hidden" name="idhorariodetalle" value="<?php echo $idhorariodetalle ?>">
+                                      <input type="hidden" name="idhorario" id="idhorario" value="<?php echo $controller->encode($idhorario); ?>">
+                                      <input type="hidden" name="idhorariodetalle" id="idhorariodetalle" value="<?php echo $controller->encode($idhorariodetalle); ?>">
                                          <button type="button" id="btnbuscar" class="btn btn-primary"><i class='fa fa-search'></i> Buscar</button>
                                     </div>
                                 </div>
@@ -105,41 +105,63 @@
 
 <script type="text/javascript"> 
 
-        $("#btnbuscar").click(function(){ 
-          var fechainicio = $("#fechainicio").val();
-          var fechafin = $("#fechafin").val();
-           var motivo = $("#motivo").val();
-          if(fechainicio != "" && fechafin != "" && motivo != ""){
-              $.ajax({
-                type: "POST",
-                url: "<?php echo site_url('Aalumno/buscarAsistencia');?>",
-                data: $('#frmbuscar').serialize(),
-                success: function(data) {
-                  //var val = $.parseJSON(data);
-                 // console.log(data);
-                 $("#tblalumnos").css('display','none'); 
-                  $('#tblasistencias').html(data);
-                   
-           
-                }
-              })
-          }else{
-          //$(".print-error-msg-1").css('display','block'); 
-          //$(".print-error-msg-1").html("Es necesario la Fecha.");
-          //setTimeout(function() {$('.print-error-msg-1').fadeOut('fast');}, 4000);
-           swal({
-               type: 'error',
-               title: 'Oops...', 
-               html: 'Todos los campos son obligatorios.',
-               customClass:'swal-wide',
-               footer: ''
-              }); 
+        $("#btnbuscar").click(function(){  
 
-}
+            var fechainicio = $("#fechainicio").val();
+            var fechafin = $("#fechafin").val();
+            var motivo = $("#motivo").val(); 
+            var idhorario = $("#idhorario").val();
+            var idhorariodetalle = $("#idhorariodetalle").val();
+         
+          if(fechainicio != "" && fechafin != "" && motivo != "" ){
+            window.location = "<?php echo site_url('Aalumno/buscarAsistencia/'); ?>/"+idhorario+'/'+idhorariodetalle+'/'+fechainicio+'/'+fechafin+'/'+motivo+'/';
+          }else{
+              swal({
+                        type: 'error',
+                        title: 'Oops...',
+                        html: 'Todos los campos son obligatorios.',
+                        customClass: 'swal-wide',
+                        footer: ''
+                    });
+          }
+
 
   });
 
          
 
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#tablageneral2').DataTable({ 
+             keys: true,
+            "scrollX": true, 
+            "language": {
+                "sProcessing": "Procesando...",
+                "sLengthMenu": "Mostrar _MENU_ registros",
+                "sZeroRecords": "No se encontraron resultados",
+                "sEmptyTable": "Ningún dato disponible en esta tabla",
+                "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                "sInfoPostFix": "",
+                "sSearch": "Buscar:",
+                "sUrl": "",
+                "sInfoThousands": ",",
+                "sLoadingRecords": "Cargando...",
+                "oPaginate": {
+                    "sFirst": "Primero",
+                    "sLast": "Último",
+                    "sNext": "Siguiente",
+                    "sPrevious": "Anterior"
+                },
+                "oAria": {
+                    "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+                    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                }
+            }
+        });
+
+    });
 </script>
 

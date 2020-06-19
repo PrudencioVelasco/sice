@@ -32,8 +32,7 @@
     this.$avatarWrapper = this.$avatarModal.find('.avatar-wrapper');
     this.$avatarPreview = this.$avatarModal.find('.avatar-preview');
 
-    this.init();
-    console.log(this);
+    this.init(); 
   }
 
   CropAvatar.prototype = {
@@ -262,8 +261,7 @@
       this.$loading.fadeIn();
     },
 
-    submitDone: function (data) {
-      console.log(data);
+    submitDone: function (data) { 
 
       if ($.isPlainObject(data) && data.state === 200) {
          this.alertsuccess("Imagen subido con Exito.");

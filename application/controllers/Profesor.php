@@ -452,11 +452,18 @@ class Profesor extends CI_Controller {
          
     }
 
- public function deleteMateria($id)
- { 
+ public function deleteMateria()
+ {  
      Permission::grant(uri_string());
-    $eliminar = $this->profesor->deleteMateria($id);
-    // echo json_encode($this->input->post('idhorariodetalle'));
+        $id = $this->input->get('id');
+        $query = $this->profesor->deleteMateria($id);
+        if ($query) {
+            $result['profesores'] = true;
+        } 
+       if(isset($result) && !empty($result)){
+         echo json_encode($result);
+        }
+
  }
  public function deleteProfesor()
   {

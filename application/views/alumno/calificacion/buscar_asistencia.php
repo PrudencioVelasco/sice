@@ -7,17 +7,17 @@
             <div class="col-md-12">
               <div class="x_panel">
                 <div class="x_title">
-                  <h2><strong>ASISTENCIAS</strong></h2>
-                  
+                  <h2><strong>ASISTENCIAS - <?php if(isset($nombreclase) && !empty($nombreclase)){echo $nombreclase;} ?></strong></h2>
+                   
                   <div class="clearfix"></div>
                 </div>
-                <div class="x_content"> 
-                  <div class="row">
+                <div class="x_content">
+               <div class="row">
                        <div class="col-md-4 col-sm-12 col-xs-12 "></div>
                         <div class="col-md-8 col-sm-12 col-xs-12 " align="right">
                                <div class="alert alert-danger print-error-msg-1" style="display:none"></div>
                             <form id="frmbuscar">
-                                <div class="row clearfix"> 
+                                <div class="row clearfix">
                                   <div class="col-md-4 col-sm-12 col-xs-12 ">
                                   <div class="form-group">  
                                       <select name="motivo" required="" id="motivo" class="form-control">
@@ -35,24 +35,23 @@
                                        </select>
                                     </div>
                                 </div>
-                                    <div class="col-lg-3 col-md-5 col-sm-4 col-xs-6" aling="right">
+                                    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-6">
                                         <div class="form-group">
                                             <div class="form-line">
                                                 <input type="date" class="form-control" name="fechainicio" required="" placeholder="Fecha inicio" id="fechainicio">
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-3 col-md-5 col-sm-5 col-xs-6"  aling="right">
+                                    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-6">
                                         <div class="form-group">
                                             <div class="form-line">
                                                 <input type="date" class="form-control" name="fechafin" placeholder="Fecha fin" required="" id="fechafin">
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
-                                      <input type="hidden" name="idhorario" id="idhorario" value="<?php echo $controller->encode($idhorario) ?>">
-                                      <input type="hidden" name="idhorariodetalle" id="idhorariodetalle" value="<?php echo $controller->encode($idhorariodetalle) ?>">
-                                       <input type="hidden" name="idalumno" id="idalumno" value="<?php echo $controller->encode($idalumno) ?>">
+                                    <div class="col-lg-2 col-md-4 col-sm-4 col-xs-12">
+                                      <input type="hidden" name="idhorario" id="idhorario" value="<?php echo $controller->encode($idhorario); ?>">
+                                      <input type="hidden" name="idhorariodetalle" id="idhorariodetalle" value="<?php echo $controller->encode($idhorariodetalle); ?>">
                                          <button type="button" id="btnbuscar" class="btn btn-primary"><i class='fa fa-search'></i> Buscar</button>
                                     </div>
                                 </div>
@@ -60,14 +59,19 @@
 
 
                         </div>  
-                      </div>  
+                      </div>
                   <div class="row"> 
-                  <div id="tblalumnos">
-                   <?php
-                   echo $tabla;
-                   ?>
-                    </div> 
-                  
+                    <div id="tblalumnos">
+                    <?php if (isset($tabla)): 
+                    echo $tabla;
+                      
+                    endif ?>
+                    </div>
+                       <div id="tblasistencias">
+                      
+
+                    </div>
+
                   </div>
 
                 </div>
@@ -90,11 +94,7 @@
       <!-- /page content -->
     </div>
 
-  </div> 
-
-
- 
-
+  </div>
 
   <div id="custom_notifications" class="custom-notifications dsp_none">
     <ul class="list-unstyled notifications clearfix" data-tabbed_notifications="notif-group">
@@ -102,19 +102,19 @@
     <div class="clearfix"></div>
     <div id="notif-group" class="tabbed_notifications"></div>
   </div> 
-<script type="text/javascript">
 
-        $("#btnbuscar").click(function(){ 
-        
-          var fechainicio = $("#fechainicio").val();
-          var fechafin = $("#fechafin").val();
-          var motivo = $("#motivo").val();
-           var idalumno = $("#idalumno").val();
+<script type="text/javascript"> 
+
+        $("#btnbuscar").click(function(){  
+
+            var fechainicio = $("#fechainicio").val();
+            var fechafin = $("#fechafin").val();
+            var motivo = $("#motivo").val(); 
             var idhorario = $("#idhorario").val();
-             var idhorariodetalle = $("#idhorariodetalle").val();
+            var idhorariodetalle = $("#idhorariodetalle").val();
          
           if(fechainicio != "" && fechafin != "" && motivo != "" ){
-            window.location = "<?php echo site_url('Tutores/obetnerAsistenciaAlu/'); ?>/"+idalumno+'/'+idhorario+'/'+idhorariodetalle+'/'+fechainicio+'/'+fechafin+'/'+motivo+'/';
+            window.location = "<?php echo site_url('Aalumno/buscarAsistencia/'); ?>/"+idhorario+'/'+idhorariodetalle+'/'+fechainicio+'/'+fechafin+'/'+motivo+'/';
           }else{
               swal({
                         type: 'error',
@@ -125,21 +125,17 @@
                     });
           }
 
-  });
- 
 
+  });
+
+         
 
 </script>
-
 <script type="text/javascript">
     $(document).ready(function () {
         $('#tablageneral2').DataTable({ 
-           keys: true,
-            "scrollX": true,
-            dom: 'Bfrtip',
-           buttons: [
-        'excelHtml5'
-        ],
+             keys: true,
+            
             "language": {
                 "sProcessing": "Procesando...",
                 "sLengthMenu": "Mostrar _MENU_ registros",
@@ -168,3 +164,4 @@
 
     });
 </script>
+

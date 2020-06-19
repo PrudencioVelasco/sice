@@ -87,6 +87,7 @@ class Alumno_model extends CI_Model {
         $this->db->from('tbltutoralumno ta');   
         $this->db->join('tblalumno a', 'a.idalumno = ta.idalumno'); 
         $this->db->where('ta.idtutor', $idtutor); 
+        $this->db->order_by('a.apellidop ASC');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();
@@ -114,6 +115,7 @@ class Alumno_model extends CI_Model {
         $this->db->join('tblnivelestudio ne','g.idnivelestudio=ne.idnivelestudio'); 
         $this->db->where('ta.idtutor',$idtutor); 
         $this->db->where('ag.activo', 1); 
+        $this->db->order_by('a.apellidop ASC');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();
@@ -526,6 +528,7 @@ class Alumno_model extends CI_Model {
                                     a.idalumno,
                                     ag.idgrupo, 
                                     h.idhorario,
+                                    p.idniveleducativo,
                                   ( ( (SELECT COALESCE(SUM(c.calificacion),0) FROM tblcalificacion c WHERE c.idalumno = a.idalumno AND c.idhorario = h.idhorario) /   (SELECT COUNT(*) FROM tblunidad WHERE idplantel = $idplantel))/   (SELECT  count(distinct hd.idmateria) FROM tblhorario_detalle hd WHERE hd.idhorario  = h.idhorario )) as calificacion
                                   
                                 FROM
@@ -534,6 +537,7 @@ class Alumno_model extends CI_Model {
                                     tblalumno_grupo ag ON a.idalumno = ag.idalumno
                                         INNER JOIN
                                     tblhorario h ON ag.idgrupo = h.idgrupo
+                                        INNER JOIN tblplantel p ON p.idplantel = a.idplantel
                                 WHERE
                                     ag.idperiodo = h.idperiodo
                                         AND ag.activo = 1
@@ -782,7 +786,8 @@ class Alumno_model extends CI_Model {
          p.nombreplantel, 
          p.direccion, 
          p.telefono,
-         ts.tiposanguineo
+         ts.tiposanguineo,
+         p.idniveleducativo
          ');
         $this->db->from('tblalumno t'); 
         $this->db->join('tblespecialidad e', 'e.idespecialidad = t.idespecialidad');

@@ -19,13 +19,13 @@
                   <div class="row">
                            <div class="col-md-12">
                               <?php if($activo_horario == 1 && $activo_ciclo_escolar == 1){ ?>
-                                <button class="btn btn-round btn-primary" @click="addModal= true"><i class='fa fa-plus'></i> Agregar Materia</button> 
+                                <button class="btn btn-round btn-primary waves-effect waves-black" @click="addModal= true"><i class='fa fa-plus'></i> Agregar Materia</button> 
 
-                                <button class="btn btn-round btn-primary" @click="addModalRecreo= true"><i class='fa fa-plus'></i> Agregar Receso</button> 
+                                <button class="btn btn-round btn-primary waves-effect waves-black" @click="addModalRecreo= true"><i class='fa fa-plus'></i> Agregar Receso</button> 
 
-                                 <button class="btn btn-round btn-primary" @click="addModalHoraSinClase= true"><i class='fa fa-plus'></i> Agregar Hora sin Clases</button> 
+                                 <button class="btn btn-round btn-primary waves-effect waves-black" @click="addModalHoraSinClase= true"><i class='fa fa-plus'></i> Agregar Hora sin Clases</button> 
                               <?php } ?>
-                                <a  target="_blank" class="btn btn-round btn-info" href="<?php echo base_url(); ?>Horario/descargar/<?php echo $id ?>" class="btn btn-primary"><i class="fa fa-print"></i> IMPRIMIR HORARIO</a>
+                                <a  target="_blank" class="btn btn-round btn-info waves-effect waves-black" href="<?php echo base_url(); ?>Horario/descargar/<?php echo $id ?>" class="btn btn-primary"><i class="fa fa-print"></i> IMPRIMIR HORARIO</a>
                             </div> 
                   </div> 
                    <table class="table">

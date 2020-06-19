@@ -7,7 +7,7 @@
             <div class="col-md-12">
               <div class="x_panel">
                 <div class="x_title">
-                  <h2><strong>ALUMNO(A): <?php echo $detalle_alumno[0]->nombre." ".$detalle_alumno[0]->apellidop." ".$detalle_alumno[0]->apellidom ?></strong></h2>
+                  <h2><strong>ALUMNO(A): <?php echo $detalle_alumno[0]->apellidop." ".$detalle_alumno[0]->apellidom." ".$detalle_alumno[0]->nombre; ?></strong></h2>
                   
                   <div class="clearfix"></div>
                 </div>
@@ -22,6 +22,7 @@
                         <th>Año</th>
                         <th>Grupo</th> 
                         <th></th>
+                        <th></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -30,20 +31,26 @@
                             foreach($kardex as $row){
                            ?>
                               <tr> 
+                                <td>  <?php   echo "<label>".$row->mesinicio." ".$row->yearinicio." - ".$row->mesfin." ".$row->yearfin."</label>";  ?>   </td> 
+                                <td> <?php echo $row->nombrenivel;  ?>  </td>
+                                 <td> <?php echo $row->nombregrupo;  ?> </td>
                                 <td>
-                                <?php 
-                                    echo "<label>".$row->mesinicio." ".$row->yearinicio." - ".$row->mesfin." ".$row->yearfin."</label>";
-                                 ?> 
-                                </td> 
-                                <td>
+
                                   <?php
-                                    echo $row->nombrenivel;
+                                  if($row->idestatusnivel == 1){
+                                       echo '<label class="text-info">'.$row->nombreestatusnivel.'</label>';
+                                  }elseif($row->idestatusnivel == 2){
+                                         echo '<label class="text-success">'.$row->nombreestatusnivel.'</label>';
+                                  }elseif($row->idestatusnivel == 3){
+                                         echo '<label class="text-danger">'.$row->nombreestatusnivel.'</label>';
+                                  }elseif($row->idestatusnivel == 4){
+                                         echo '<label class="text-warning">'.$row->nombreestatusnivel.'</label>';
+                                  }else{
+                                    echo '<label>NO DEFINIDO</label>';
+                                  }
+                                   
                                   ?>
-                                </td>
-                                 <td>
-                                  <?php
-                                    echo $row->nombregrupo;
-                                  ?>
+                                  
                                 </td>
                                 <td align="right">
                                      <div class="btn-group" role="group">
@@ -65,7 +72,7 @@
 
                                 </td>
                              </tr>
-                       <?php } } else{ echo "<tr><td colspan='4'>No existe Kardex del alumno.</td></tr>"; }?>
+                       <?php } } else{ echo "<tr><td colspan='4' align='center'>No existe Kardex del alumno.</td></tr>"; }?>
                     </tbody>
                   </table>
                     

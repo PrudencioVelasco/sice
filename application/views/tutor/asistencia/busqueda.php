@@ -14,7 +14,7 @@
                 <div class="x_content"> 
                   <div class="row">
                        <div class="col-md-4 col-sm-12 col-xs-12 "></div>
-                        <div class="col-md-8 col-sm-12 col-xs-12 " align="right">
+                     <div class="col-md-8 col-sm-12 col-xs-12 " align="right">
                                <div class="alert alert-danger print-error-msg-1" style="display:none"></div>
                             <form id="frmbuscar">
                                 <div class="row clearfix"> 
@@ -56,18 +56,18 @@
                                          <button type="button" id="btnbuscar" class="btn btn-primary"><i class='fa fa-search'></i> Buscar</button>
                                     </div>
                                 </div>
-                            </form>
-
+                            </form> 
 
                         </div>  
                       </div>  
                   <div class="row"> 
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <div id="tblalumnos">
                    <?php
                    echo $tabla;
                    ?>
                     </div> 
-                  
+                        </div>
                   </div>
 
                 </div>
@@ -101,11 +101,11 @@
     </ul>
     <div class="clearfix"></div>
     <div id="notif-group" class="tabbed_notifications"></div>
-  </div> 
-<script type="text/javascript">
+  </div>  
 
+<script type="text/javascript"> 
         $("#btnbuscar").click(function(){ 
-        
+            
           var fechainicio = $("#fechainicio").val();
           var fechafin = $("#fechafin").val();
           var motivo = $("#motivo").val();
@@ -134,7 +134,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $('#tablageneral2').DataTable({ 
-           keys: true,
+             keys: true,
             "scrollX": true,
             dom: 'Bfrtip',
            buttons: [

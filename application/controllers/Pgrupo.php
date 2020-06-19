@@ -54,32 +54,38 @@ class pGrupo extends CI_Controller {
 
     }
 
-    public function buscarAsistencia()
+    public function buscarAsistencia($idhorario,$idhorariodetalle,$fechainicio,$fechafin,$idunidad)
     {
         # code...
          Permission::grant(uri_string());
-        $idhorario = $this->input->post('idhorario');
-        $idunidad = $this->input->post('unidad');
-        $idhorariodetalle = $this->input->post('idhorariodetalle');
-        $fechainicio = $this->input->post('fechainicio');
-        $fechafin = $this->input->post('fechafin');
-         $alumns = $this->grupo->alumnosGrupo($idhorario);
-         $tabla = "";
-         // $unidades = $this->grupo->unidades();
-       // var_dump($result);
+        $idhorario = $this->decode($idhorario);
+        //$idunidad = $this->input->post('unidad');
+        $idhorariodetalle =$this->decode($idhorariodetalle);
+        //$fechainicio = $this->input->post('fechainicio');
+        //$fechafin = $this->input->post('fechafin');
+        if((isset($idhorario) && !empty($idhorario)) &&
+        (isset($idhorario) && !empty($idhorario)) &&
+        (isset($fechainicio) && !empty($fechainicio)) &&
+        (isset($fechafin) && !empty($fechafin))  ){ 
+        $alumns = $this->grupo->alumnosGrupo($idhorario);
+         $tabla = ""; 
          if($alumns != false){
         $range= ((strtotime($fechafin)-strtotime($fechainicio))+(24*60*60)) /(24*60*60);
         //$range= ((strtotime($_GET["finish_at"])-strtotime($_GET["start_at"]))+(24*60*60)) /(24*60*60);
         
-        $tabla .= '<table class="table">
+         $tabla .= '  <table id="tablageneral2" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
             <thead>
             <th>#</th>
             <th>Nombre</th>';
             for($i=0;$i<$range;$i++):
          setlocale(LC_ALL, 'es_ES');
             $fecha = strftime("%A, %d de %B", strtotime($fechainicio)+($i*(24*60*60)));
-
-           $tabla .= '<th>'.$fecha.'</th>';
+ $domingo = date('N',strtotime($fechainicio)+($i*(24*60*60)));
+            if($domingo != '7' ){
+                 if($domingo != '6' ){
+                    $tabla .= '<th>'.$fecha.'</th>';
+                 }
+            }
            //echo date("d-M",strtotime($_GET["start_at"])+($i*(24*60*60)));
            endfor;
            $tabla .= '</thead>';
@@ -92,9 +98,10 @@ class pGrupo extends CI_Controller {
                     $date_at= date("Y-m-d",strtotime($fechainicio)+($i*(24*60*60)));
                    // $asist = AssistanceData::getByATD($alumn->id,$_GET["team_id"],$date_at);
                     $asist = $this->grupo->listaAsistencia($alumn->idalumno,$idhorario,$date_at,$idhorariodetalle,$idunidad);
-                        
+                          $domingo = date('N',strtotime($fechainicio)+($i*(24*60*60))); 
 
-
+ if($domingo != '7' ){
+                      if($domingo != '6' ){
                 $tabla .= '<td>';
                  if($asist != false){ 
                       switch ($asist->idmotivo) {
@@ -164,6 +171,8 @@ class pGrupo extends CI_Controller {
                  }
                    
                 $tabla .= '</td>';
+            }
+        }
              endfor; 
                 $tabla .= '</tr>';
                 
@@ -171,7 +180,31 @@ class pGrupo extends CI_Controller {
             }
 $tabla .= '</table>';
 }
-echo $tabla;
+ $unidades = $this->grupo->unidades($this->session->idplantel);
+   $motivo = $this->grupo->motivoAsistencia();
+    $detalle = $this->grupo->detalleClase($idhorariodetalle);
+  $nombreclase = $detalle[0]->nombreclase;
+    $alumns = $this->grupo->alumnosGrupo($idhorario);
+        $data = array( 
+             'alumnos'=>$alumns, 
+            'motivo'=>$motivo,
+            'idhorario'=>$idhorario,
+            'idhorariodetalle'=>$idhorariodetalle,
+            'tabla'=>$tabla,
+            'nombreclase'=>$nombreclase,
+            'unidades'=>$unidades,
+            'controller'=>$this
+        );
+        $this->load->view('docente/header');
+        $this->load->view('docente/grupo/busqueda_asistencia',$data);
+        $this->load->view('docente/footer');
+   }else{
+        $data = array(
+            'heading'=>'Error',
+            'message'=>'Intente mas tarde.'
+        );
+         $this->load->view('errors/html/error_general',$data);
+    }
 
     }
 
@@ -185,7 +218,7 @@ echo $tabla;
         $range= ((strtotime($fechafin)-strtotime($fechainicio))+(24*60*60)) /(24*60*60);
         //$range= ((strtotime($_GET["finish_at"])-strtotime($_GET["start_at"]))+(24*60*60)) /(24*60*60);
         
-        $tabla .= '<table class="table">
+        $tabla .= '  <table id="tablageneral2" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
             <thead>
             <th>#</th>
             <th>Nombre</th>';
@@ -193,7 +226,12 @@ echo $tabla;
        setlocale(LC_ALL, 'es_ES');
             $fecha = strftime("%A, %d de %B", strtotime($fechainicio)+($i*(24*60*60)));
 
-           $tabla .= '<th>'.$fecha.'</th>';
+          $domingo = date('N',strtotime($fechainicio)+($i*(24*60*60)));
+            if($domingo != '7' ){
+                 if($domingo != '6' ){
+                    $tabla .= '<th>'.$fecha.'</th>';
+                 }
+            }
            //echo date("d-M",strtotime($_GET["start_at"])+($i*(24*60*60)));
            endfor;
            $tabla .= '</thead>';
@@ -207,7 +245,10 @@ echo $tabla;
                    // $asist = AssistanceData::getByATD($alumn->id,$_GET["team_id"],$date_at);
                     $asist = $this->grupo->listaAsistencia($alumn->idalumno,$idhorario,$date_at,$idhorariodetalle);
                         
+      $domingo = date('N',strtotime($fechainicio)+($i*(24*60*60))); 
 
+ if($domingo != '7' ){
+                      if($domingo != '6' ){
 
                 $tabla .= '<td>';
                  if($asist != false){ 
@@ -281,6 +322,8 @@ echo $tabla;
                  }
                    
                 $tabla .= '</td>';
+            }
+        }
              endfor; 
                 $tabla .= '</tr>';
                 
@@ -300,7 +343,7 @@ return $tabla;
      $alumnos = $this->grupo->alumnosGrupo($idhorario);
      
       $tabla ="";
-       $tabla .= '<table class="table table-bordered table-hover">
+       $tabla .= ' <table id="tablageneral2" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
       <thead>
       <th>#</th>
       <th>Nombre</th>';
@@ -371,7 +414,8 @@ return $tabla;
             'idhorariodetalle'=>$idhorariodetalle,
             'tabla'=>$table,
             'nombreclase'=>$nombreclase,
-            'unidades'=>$unidades 
+            'unidades'=>$unidades,
+            'controller'=>$this
         );
         $this->load->view('docente/header');
         $this->load->view('docente/grupo/asistencia',$data);

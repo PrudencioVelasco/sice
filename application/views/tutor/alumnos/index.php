@@ -29,7 +29,7 @@
                                                      <tr >
                                                       <td><strong><?php echo $numero++; ?></strong></td>
                                                       <td><strong><?php echo $value->nombrenivel.' '.$value->nombregrupo; ?></strong></td> 
-                                                      <td><strong><?php echo $value->nombre.' '.$value->apellidop.' '.$value->apellidom ?></strong></td> 
+                                                      <td><strong><?php echo $value->apellidop.' '.$value->apellidom.' '.$value->nombre; ?></strong></td> 
                                                       <td align="right">
                                                          <div class="btn-group" role="group">
                                                             <div class="btn-group" role="group">

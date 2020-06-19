@@ -50,7 +50,8 @@ var v = new Vue({
         editModal:false,
         editModalRecreo: false,
         editModalSinClases: false,
-        
+        cargando:false,
+        error:false,
         //deleteModal:false,
         horarios:[], 
         dias:[], 
@@ -138,17 +139,21 @@ var v = new Vue({
 
         }, 
           addHorario(){
+              v.cargando = true;
+              v.error = false;
             var formData = v.formData(v.newHorario);
               axios.post(this.url+"Horario/addMateriaHorario", formData).then(function(response){
                 if(response.data.error){
                     v.formValidate = response.data.msg;
+                    v.error = true;
+                    v.cargando = false;
                 }else{
                     swal({
 					  position: 'center',
 					  type: 'success',
 					  title: 'Exito!',
 					  showConfirmButton: false,
-					  timer: 1500
+					  timer: 3000
 					});
 
                     v.clearAll();
@@ -158,18 +163,22 @@ var v = new Vue({
                })
         },
         addReceso(){
+            v.cargando = true;
+            v.error = false;
             var formData = v.formData(v.newHorario);
               axios.post(this.url+"Horario/addReceso", formData).then(function(response){
                 if(response.data.error){
                     v.formValidate = response.data.msg;
+                    v.cargando = false;
+                    v.error = true;
                 }else{
                     swal({
-            position: 'center',
-            type: 'success',
-            title: 'Exito!',
-            showConfirmButton: false,
-            timer: 1500
-          });
+                        position: 'center',
+                        type: 'success',
+                        title: 'Exito!',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
 
                     v.clearAll();
                     v.clearMSG();
@@ -178,18 +187,22 @@ var v = new Vue({
                })
         },
         addHoraSinClases(){
+            v.cargando = true;
+            v.error = false;
             var formData = v.formData(v.newHorario);
               axios.post(this.url+"Horario/addHoraSinClases", formData).then(function(response){
                 if(response.data.error){
                     v.formValidate = response.data.msg;
+                    v.cargando = false;
+                    v.error = true;
                 }else{
                     swal({
-            position: 'center',
-            type: 'success',
-            title: 'Exito!',
-            showConfirmButton: false,
-            timer: 1500
-          });
+                    position: 'center',
+                    type: 'success',
+                    title: 'Exito!',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
 
                     v.clearAll();
                     v.clearMSG();
@@ -198,11 +211,14 @@ var v = new Vue({
                })
         },
         updateHorario(){
+            v.cargando = true;
+            v.error = false;
             var formData = v.formData(v.chooseHorario); 
             axios.post(this.url+"Horario/updateMateriaHorario", formData).then(function(response){
                 if(response.data.error){
                     v.formValidate = response.data.msg;
-                    console.log(response.data.error)
+                    v.cargando = false;
+                    v.error = true;
                 }else{
                     //v.successMSG = response.data.success;
                       swal({
@@ -210,7 +226,7 @@ var v = new Vue({
                             type: 'success',
                             title: 'Modificado!',
                             showConfirmButton: false,
-                            timer: 1500
+                            timer: 3000
                           });
                     v.clearAll();
                     v.clearMSG();
@@ -220,11 +236,14 @@ var v = new Vue({
             })
         },
         updateReceso(){
+            v.cargando = true;
+            v.error = false;
             var formData = v.formData(v.chooseHorario); 
             axios.post(this.url+"Horario/updateReceso", formData).then(function(response){
                 if(response.data.error){
                     v.formValidate = response.data.msg;
-                    console.log(response.data.error)
+                    v.cargando = false;
+                    v.error = true;
                 }else{
                     //v.successMSG = response.data.success;
                       swal({
@@ -232,7 +251,7 @@ var v = new Vue({
                             type: 'success',
                             title: 'Modificado!',
                             showConfirmButton: false,
-                            timer: 1500
+                            timer: 3000
                           });
                     v.clearAll();
                     v.clearMSG();
@@ -242,11 +261,14 @@ var v = new Vue({
             })
         },
         updateHoraSinClases(){
+            v.cargando = true;
+            v.error = false;
             var formData = v.formData(v.chooseHorario); 
             axios.post(this.url+"Horario/updateHoraSinClases", formData).then(function(response){
                 if(response.data.error){
                     v.formValidate = response.data.msg;
-                    console.log(response.data.error)
+                    v.cargando = false;
+                    v.error = true;
                 }else{
                     //v.successMSG = response.data.success;
                       swal({
@@ -254,7 +276,7 @@ var v = new Vue({
                             type: 'success',
                             title: 'Modificado!',
                             showConfirmButton: false,
-                            timer: 1500
+                            timer: 3000
                           });
                     v.clearAll();
                     v.clearMSG();
@@ -430,6 +452,8 @@ var v = new Vue({
             v.addModalHoraSinClase = false;
             v.editModalHoraSinClase = false;
             v.editModalSinClases =false;
+            v.cargando = false;
+            v.error = false;
            // v.refresh()
 
         }

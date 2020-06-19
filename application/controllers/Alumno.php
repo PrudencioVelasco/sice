@@ -1436,11 +1436,19 @@ $suma_calificacion = 0;
 
     }
 
-    public function deleteTutor($id)
+    public function deleteTutor()
     {
         # code...
-        Permission::grant(uri_string());
-        $eliminar = $this->alumno->deleteTutor($id);
+        Permission::grant(uri_string()); 
+        $id = $this->input->get('id');
+        $query = $this->alumno->deleteTutor($id);
+        if ($query) {
+            $result['tutores'] = true;
+        } 
+       if(isset($result) && !empty($result)){
+         echo json_encode($result);
+        }
+
     }
 
     public function asignarGrupo()
@@ -1499,7 +1507,7 @@ $suma_calificacion = 0;
                 'label' => 'Ciclo Escolar',
                 'rules' => 'trim|required',
                 'errors' => array(
-                    'required' => 'Seleccione el Beca.'
+                    'required' => 'Seleccione la Beca.'
                 )
             )
         );

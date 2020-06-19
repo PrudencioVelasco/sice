@@ -41,6 +41,8 @@ var v = new Vue({
         editModal:false,
         //passwordModal:false,
         //deleteModal:false,
+        cargando:false,
+        error:false,
         roles:[],
         search: {text: ''},
         emptyResult:false,
@@ -86,18 +88,22 @@ var v = new Vue({
             })
         },
           addRol(){   
+            v.cargando = true;
+            v.error = false;
             var formData = v.formData(v.newRol);
               axios.post(this.url+"Rol/addRol", formData).then(function(response){
                 if(response.data.error){
                     v.formValidate = response.data.msg;
+                    v.error = true;
+                    v.cargando = false;
                 }else{
                     swal({
-					  position: 'center',
-					  type: 'success',
-					  title: 'Exito!',
-					  showConfirmButton: false,
-					  timer: 1500
-					});
+                    position: 'center',
+                    type: 'success',
+                    title: 'Exito!',
+                    showConfirmButton: false,
+                    timer: 3000
+                  });
 
                     v.clearAll();
                     v.clearMSG();
@@ -105,9 +111,13 @@ var v = new Vue({
                })
         },
         updateRol(){
+          v.cargando = true;
+          v.error = false;
             var formData = v.formData(v.chooseRol); axios.post(this.url+"Rol/updateRol", formData).then(function(response){
                 if(response.data.error){
                     v.formValidate = response.data.msg;
+                    v.error = true;
+                    v.cargando = false;
                 }else{
                     //v.successMSG = response.data.success;
                       swal({
@@ -115,7 +125,7 @@ var v = new Vue({
                             type: 'success',
                             title: 'Modificado!',
                             showConfirmButton: false,
-                            timer: 1500
+                            timer: 3000
                           });
                     v.clearAll();
                     v.clearMSG();
@@ -168,6 +178,8 @@ var v = new Vue({
             v.addModal= false;
             v.editModal=false; 
             v.deleteModal=false;
+            v.cargando = false;
+            v.error = false;
             v.refresh()
             
         },

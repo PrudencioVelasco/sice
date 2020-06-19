@@ -19,8 +19,25 @@ class Promover extends CI_Controller {
         $this->load->model('data_model'); 
         $this->load->library('permission');
         $this->load->library('session'); 
-         $this->promedio_minimo = 7.00;
+        //VARIABLES GLOBALES DE CONFIGURACION
+
+        //PRIMARIA
+        $this->promedio_minimo_primaria = 7.00;
+        $this->permitir_materia_reprobada_primaria = false;
+        //$this->total_materia_reprobada_primaria = 0;
+        
+        //SECUNDARIA
+        $this->promedio_minimo_secundaria = 7.00;
+        $this->permitir_materia_reprobada_secundaria = false;
+        //$this->total_materia_reprobada_segundaria = 0;
+        
+        //PREPARATORIA
+        $this->promedio_minimo_preparatoria = 7.00;
+        $this->permitir_materia_reprobada_preparatoria = false;
+        //$this->total_materia_reprobada_primaria = 0;
+        
         $this->load->helper('numeroatexto_helper');
+        //
     }
 
 	public function index()
@@ -81,6 +98,35 @@ class Promover extends CI_Controller {
                     <tbody> ';
                     $contador = 1;
               foreach ($alumnos as $value) {
+
+                $datos_calificacion = $this->alumno->obtenerCalificacionAlumno($value->idalumno,$idgrupo,$this->session->idplantel);
+                   if(isset($datos_calificacion) && !empty($datos_calificacion)){
+                   $total = 0;
+                   foreach ($datos_calificacion as  $row) {
+                     switch ($value->idniveleducativo) {
+                       case 1://PRIMARIA
+                          if($row->calificacionfinal <= $this->promedio_minimo_primaria ){
+                              $total = $total + 1;
+                            }
+                         break;
+                         case 2://SECUNDARIA
+                            if($row->calificacionfinal <= $this->promedio_minimo_secundaria ){
+                              $total = $total + 1;
+                            }
+                         break;
+                         case 3://PREPARATORIA
+                        if($row->calificacionfinal <= $this->promedio_minimo_preparatoria ){
+                              $total = $total + 1;
+                            }
+                         break;
+                       
+                       default:
+                         # code...
+                         break;
+                     }
+                    
+                   }
+
                   $tabla .='<tr>';
                   $tabla .='<td>'.$contador++.'</td>';
                   $tabla .= '<td>'.$value->apellidop.' '.$value->apellidom.' '.$value->nombre.'</td>';
@@ -92,21 +138,67 @@ class Promover extends CI_Controller {
                    }
                     $tabla .='</td>';
                    $tabla .='<td>';
-                    if($value->calificacion > $this->promedio_minimo){
-                    $tabla .='<label style="color:green;">APROVADO</label>';
-                    }else{
-                         $tabla .='<label style="color:red;">NO PROVADO</label>';
-                    }
+                  
+                   switch ($value->idniveleducativo) {
+                     case 1://PRIMARIA
+                            if($this->permitir_materia_reprobada_primaria){
+                                //PERMITIR MATERIAS REPROBADAS
+                                 if($value->calificacion >= $this->promedio_minimo_primaria){
+                                    $tabla .='<label style="color:green;">APROBADO</label>';
+                                    }else{
+                                        $tabla .='<label style="color:red;">NO PROVADO</label>';
+                                    }
+                            }else{
+                                //NO PERMITIR MATERIAS 
+                                if($total > 0){
+                                    $tabla .='<label style="color:red;">NO PROVADO</label>';
+                                }else{
+                                   $tabla .='<label style="color:green;">APROBADO</label>';
+                                }
+                            }
+                       break;
+                     case 2: //SECUNDARIA
+                      if($this->permitir_materia_reprobada_secundaria){
+                                //PERMITIR MATERIAS REPROBADAS
+                                 if($value->calificacion >= $this->promedio_minimo_secundaria){
+                                    $tabla .='<label style="color:green;">APROBADO</label>';
+                                    }else{
+                                        $tabla .='<label style="color:red;">NO PROVADO</label>';
+                                    }
+                            }else{
+                                //NO PERMITIR MATERIAS 
+                                if($total > 0){
+                                    $tabla .='<label style="color:red;">NO PROVADO</label>';
+                                }else{
+                                   $tabla .='<label style="color:green;">APROBADO</label>';
+                                }
+                            }
+                      break;
+                      case 3://PREPARATORIA
+                           if($this->permitir_materia_reprobada_preparatoria){
+                                //PERMITIR MATERIAS REPROBADAS
+                                 if($value->calificacion >= $this->promedio_minimo_preparatoria){
+                                    $tabla .='<label style="color:green;">APROBADO</label>';
+                                    }else{
+                                        $tabla .='<label style="color:red;">NO PROVADO</label>';
+                                    }
+                            }else{
+                                //NO PERMITIR MATERIAS 
+                                if($total > 0){
+                                    $tabla .='<label style="color:red;">NO PROVADO</label>';
+                                }else{
+                                   $tabla .='<label style="color:green;">APROBADO</label>';
+                                }
+                            }
+                        break;
+                     default:
+                       # code...
+                       break;
+                   }
+                   
                    $tabla .='</td>';
                    $tabla .='<td align="center">';
-                   $datos_calificacion = $this->alumno->obtenerCalificacionAlumno($value->idalumno,$idgrupo,$this->session->idplantel);
-                   if(isset($datos_calificacion) && !empty($datos_calificacion)){
-                   $total = 0;
-                   foreach ($datos_calificacion as  $row) {
-                      if($row->calificacionfinal <= $this->promedio_minimo){
-                        $total = $total + 1;
-                      }
-                   }
+                   
                    if($total > 0){
                     $tabla .='<label style="color:red;">'.$total.'</label>';
                    }else{
@@ -172,15 +264,41 @@ public function calificaciones()
         <td><strong>'.$row->nombreclase.'</strong><br><small>( '.$row->nombre.' '.$row->apellidop.' '.$row->apellidom.'</small>)</td>';
       foreach($unidades as $block):
       $val = $this->grupo->obtenerCalificacion($idalumno, $block->idunidad, $row->idhorariodetalle);
-      
+      $detalle_alumno = $this->alumno->detalleAlumno($idalumno);
         $tabla .= '<td>';
         if($val != false ){  
             $suma_calificacion = $suma_calificacion + $val->calificacion;
-          if($val->calificacion <= $this->promedio_minimo){
-             $tabla .='<label style="color:red;">'.$val->calificacion.'</label>';
-          }else{
-              $tabla .='<label style="color:green;">'.$val->calificacion.'</label>';
+           
+          switch ($detalle_alumno->idniveleducativo) {
+            case 1:
+              if($val->calificacion < $this->promedio_minimo_primaria){
+                  $tabla .='<label style="color:red;">'.$val->calificacion.'</label>';
+                }else{
+                    $tabla .='<label style="color:green;">'.$val->calificacion.'</label>';
+                }
+              break;
+             case 2:
+              if($val->calificacion < $this->promedio_minimo_secundaria){
+                  $tabla .='<label style="color:red;">'.$val->calificacion.'</label>';
+                }else{
+                    $tabla .='<label style="color:green;">'.$val->calificacion.'</label>';
+                }
+              break;
+             case 3:
+              if($val->calificacion < $this->promedio_minimo_preparatoria){
+                  $tabla .='<label style="color:red;">'.$val->calificacion.'</label>';
+                }else{
+                    $tabla .='<label style="color:green;">'.$val->calificacion.'</label>';
+                }
+              break;
+            
+            default:
+              # code...
+              break;
           }
+
+          
+
         }else{
            $tabla .='<label>No registrado</label>';
         } 

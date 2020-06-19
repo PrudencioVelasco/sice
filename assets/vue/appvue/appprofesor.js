@@ -40,6 +40,8 @@ var v = new Vue({
         addModal: false,
         addModalPassword: false,
         editModal:false,
+        cargando:false,
+        error:false,
         //deleteModal:false,
         profesores:[], 
         search: {text: ''},
@@ -93,17 +95,21 @@ var v = new Vue({
             })
         },
           addProfesor(){
+              v.cargando = true;
+              v.error = false;
             var formData = v.formData(v.newProfesor);
               axios.post(this.url+"Profesor/addProfesor", formData).then(function(response){
                 if(response.data.error){
                     v.formValidate = response.data.msg;
+                    v.error = true;
+                    v.cargando = false;
                 }else{
                     swal({
 					  position: 'center',
 					  type: 'success',
 					  title: 'Exito!',
 					  showConfirmButton: false,
-					  timer: 1500
+					  timer: 3000
 					});
 
                     v.clearAll();
@@ -136,7 +142,7 @@ var v = new Vue({
                         type: 'success',
                         title: 'Eliminado!',
                         showConfirmButton: false,
-                        timer: 1500
+                        timer: 3000
                     });
                     v.clearAll();
                     v.clearMSG();
@@ -151,10 +157,13 @@ var v = new Vue({
             })
         },
         updateProfesor(){
+            v.cargando = true;
+            v.error = false;
             var formData = v.formData(v.chooseProfesor); axios.post(this.url+"Profesor/updateProfesor", formData).then(function(response){
                 if(response.data.error){
-                    v.formValidate = response.data.msg;
-                    console.log(response.data.error)
+                    v.formValidate = response.data.msg; 
+                    v.error = true;
+                    v.cargando = false;
                 }else{
                     //v.successMSG = response.data.success;
                       swal({
@@ -171,10 +180,13 @@ var v = new Vue({
             })
         },
          updatePasswordProfesor(){
+             v.cargando = true;
+             v.error = false;
             var formData = v.formData(v.chooseProfesor); axios.post(this.url+"Profesor/updatePasswordProfesor", formData).then(function(response){
                 if(response.data.error){
-                    v.formValidate = response.data.msg;
-                    console.log(response.data.error)
+                    v.formValidate = response.data.msg; 
+                    v.error = true;
+                    v.cargando = false;
                 }else{
                     //v.successMSG = response.data.success;
                       swal({
@@ -182,7 +194,7 @@ var v = new Vue({
                             type: 'success',
                             title: 'Modificado!',
                             showConfirmButton: false,
-                            timer: 1500
+                            timer: 3000
                           });
                     v.clearAll();
                     v.clearMSG();
@@ -245,6 +257,8 @@ var v = new Vue({
             v.passwordModal=false;
             v.deleteModal=false;
             v.addModalPassword =false;
+            v.cargando = false;
+            v.error = false;
             v.refresh()
 
         },

@@ -41,6 +41,8 @@ var v = new Vue({
         addModal: false,
         editModal:false, 
         //deleteModal:false,
+        cargando:false,
+        error:false,
         materias:[], 
         niveles:[], 
         especialidades:[],  
@@ -105,18 +107,22 @@ var v = new Vue({
             })
         },
           addMateria(){
+            v.cargando = true;
+            v.error = false;
             var formData = v.formData(v.newMateria);
               axios.post(this.url+"Materia/addMateria", formData).then(function(response){
                 if(response.data.error){
                     v.formValidate = response.data.msg;
+                    v.error = true;
+                    v.cargando = false;
                 }else{
                     swal({
-					  position: 'center',
-					  type: 'success',
-					  title: 'Exito!',
-					  showConfirmButton: false,
-					  timer: 1500
-					});
+                    position: 'center',
+                    type: 'success',
+                    title: 'Exito!',
+                    showConfirmButton: false,
+                    timer: 3000
+                  });
 
                     v.clearAll();
                     v.clearMSG();
@@ -124,10 +130,13 @@ var v = new Vue({
                })
         },
         updateMateria(){
+          v.cargando = true;
+          v.error = false;
             var formData = v.formData(v.chooseMateria); axios.post(this.url+"Materia/updateMateria", formData).then(function(response){
                 if(response.data.error){
-                    v.formValidate = response.data.msg;
-                    console.log(response.data.error)
+                    v.formValidate = response.data.msg; 
+                    v.error = true;
+                    v.cargando = false;
                 }else{
                     //v.successMSG = response.data.success;
                       swal({
@@ -135,7 +144,7 @@ var v = new Vue({
                             type: 'success',
                             title: 'Modificado!',
                             showConfirmButton: false,
-                            timer: 1500
+                            timer: 3000
                           });
                     v.clearAll();
                     v.clearMSG();
@@ -222,6 +231,8 @@ var v = new Vue({
             v.formValidate = false;
             v.addModal= false; 
             v.editModal=false; 
+            v.cargando = false;
+            v.error = false;
             v.refresh()
 
         },

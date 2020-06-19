@@ -508,13 +508,14 @@ $tbl .='</table>
         $nombreclase = $detalle[0]->nombreclase;
         $data = array(
             'alumnos'=>$alumns, 
-            'motivo'=>$motivo,
+            'motivos'=>$motivo,
             'idhorario'=>$idhorario,
             'idhorariodetalle'=>$idhorariodetalle,
             'tabla'=>$table,
             'nombreclase'=>$nombreclase,
             'unidades'=>$unidades,
-            'idalumno'=>$idalumno
+            'idalumno'=>$idalumno,
+            'controller'=>$this
         );
         $this->load->view('tutor/header');
         $this->load->view('tutor/alumnos/asistencias',$data);
@@ -552,7 +553,10 @@ $tbl .='</table>
             <th>#</th>
             <th>Nombre</th>';
             for($i=0;$i<$range;$i++):
-           $tabla .= '<th>'.date("D d-M",strtotime($fechainicio)+($i*(24*60*60))).'</th>';
+               setlocale(LC_ALL, 'es_ES');
+            $fecha = strftime("%A, %d de %B", strtotime($fechainicio)+($i*(24*60*60)));
+
+           $tabla .= '<th>'.$fecha.'</th>';
            //echo date("d-M",strtotime($_GET["start_at"])+($i*(24*60*60)));
            endfor;
            $tabla .= '</thead>';
@@ -614,14 +618,18 @@ return $tabla;
     }
 
 
-      public function obetnerAsistenciaAlu()
+      public function obetnerAsistenciaAlu($idalumno,$idhorario,$idhorariodetalle,$fechainicio,$fechafin,$idmotivo)
     { 
         Permission::grant(uri_string());
-        $idhorario = $this->input->post('idhorario'); 
-        $idhorariodetalle = $this->input->post('idhorariodetalle');
-        $fechainicio = $this->input->post('fechainicio');
-        $fechafin = $this->input->post('fechafin');
-        $idalumno = $this->input->post('idalumno');
+        $idhorario =$this->decode($idhorario); 
+        $idhorariodetalle = $this->decode($idhorariodetalle); 
+        $idalumno = $this->decode($idalumno); 
+        if((isset($idhorario) && !empty($idhorario)) &&
+        (isset($idhorariodetalle) && !empty($idhorariodetalle)) &&
+        (isset($idalumno) && !empty($idalumno)) &&
+        (isset($fechainicio) && !empty($fechainicio)) &&
+        (isset($fechafin) && !empty($fechafin)) &&
+        (isset($idmotivo) ) ){
        //  $alumns = $this->grupo->alumnosGrupo($idhorario);
          $tabla = "";  
          $materias = $this->alumno->showAllMaterias($idhorario); 
@@ -630,12 +638,20 @@ return $tabla;
         $range= ((strtotime($fechafin)-strtotime($fechainicio))+(24*60*60)) /(24*60*60);
         //$range= ((strtotime($_GET["finish_at"])-strtotime($_GET["start_at"]))+(24*60*60)) /(24*60*60);
         
-        $tabla .= '<table class="table">
+        $tabla .= '  <table id="tablageneral2" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
             <thead>
             <th>#</th>
             <th>Nombre</th>';
             for($i=0;$i<$range;$i++):
-           $tabla .= '<th>'.date("D d-M",strtotime($fechainicio)+($i*(24*60*60))).'</th>';
+           setlocale(LC_ALL, 'es_ES');
+                       
+            $fecha = strftime("%A, %d de %B", strtotime($fechainicio)+($i*(24*60*60)));
+             $domingo = date('N',strtotime($fechainicio)+($i*(24*60*60)));
+            if($domingo != '7' ){
+                 if($domingo != '6' ){
+                    $tabla .= '<th>'.$fecha.'</th>';
+                 }
+            }
            //echo date("d-M",strtotime($_GET["start_at"])+($i*(24*60*60)));
            endfor;
            $tabla .= '</thead>';
@@ -646,11 +662,13 @@ return $tabla;
                $tabla .='<td><strong>'.$row->nombreclase.'</strong><br><small>( '.$row->nombre.' '.$row->apellidop.' '.$row->apellidom.'</small>)</td>';
              for($i=0;$i<$range;$i++):
                     $date_at= date("Y-m-d",strtotime($fechainicio)+($i*(24*60*60)));
+                        $domingo = date('N',strtotime($fechainicio)+($i*(24*60*60)));
                    // $asist = AssistanceData::getByATD($alumn->id,$_GET["team_id"],$date_at);
-                    $asist = $this->grupo->listaAsistencia($idalumno,$idhorario,$date_at,$idhorariodetalle);
+                    $asist = $this->grupo->listaAsistenciaBuscar($idalumno,$idhorario,$date_at,$idhorariodetalle,$idmotivo);
                         
 
-
+                  if($domingo != '7' ){
+                      if($domingo != '6' ){
                 $tabla .= '<td>';
                  if($asist != false){ 
                       switch ($asist->idmotivo) {
@@ -684,15 +702,38 @@ return $tabla;
                  }
                    
                 $tabla .= '</td>';
+                  }
+                }
              endfor; 
                 $tabla .= '</tr>';
                 
 
-            }
-$tabla .= '</table>';
- 
-echo $tabla;
-
+            } 
+             $tabla .= '</table>';
+            $detalle = $this->alumno->showAllMateriasAlumno($idalumno);
+             $motivo = $this->grupo->motivoAsistencia();
+        $unidades = $this->grupo->unidades($this->session->idplantel);
+          $nombreclase = $detalle[0]->nombreclase;
+        $data = array( 
+            'motivos'=>$motivo,
+            'idhorario'=>$idhorario,
+            'idhorariodetalle'=>$idhorariodetalle,
+            'tabla'=>$tabla,
+            'nombreclase'=>$nombreclase,
+            'unidades'=>$unidades,
+            'idalumno'=>$idalumno,
+            'controller'=>$this
+        );
+        $this->load->view('tutor/header');
+        $this->load->view('tutor/asistencia/busqueda',$data);
+        $this->load->view('tutor/footer'); 
+   }else{
+        $data = array(
+            'heading'=>'Error',
+            'message'=>'Intente mas tarde.'
+        );
+         $this->load->view('errors/html/error_general',$data);
+    }
 
     }
 function encode($string)
