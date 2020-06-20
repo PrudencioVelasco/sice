@@ -7,7 +7,7 @@
             <div class="col-md-12">
               <div class="x_panel">
                 <div class="x_title">
-                  <h2><strong>PAGOS</strong></h2>
+                  <h2><strong>PAGOS DE <?php if(isset($nombre_alumno) && !empty($nombre_alumno)){ echo $nombre_alumno;} ?></strong></h2>
                   
                   <div class="clearfix"></div>
                 </div>

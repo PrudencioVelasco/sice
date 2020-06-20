@@ -8,6 +8,10 @@ $(document).ready(function () {
     $('#pdfpagoc').hide();
 
     $("#btngenerarpdfc").click(function () {
+
+        var mespago = $('#mespago_efectivo').val();
+        
+        if(mespago != ""){
         $('#btngenerarpdfc').prop("disabled", true);
         $('#btngenerarpdfc').html(
             `<span class="fa fa-spinner spinner-border-sm" role="status" aria-hidden="true"></span> PROCESANDO...`
@@ -44,7 +48,14 @@ $(document).ready(function () {
                     $('#btngenerarpdfc').prop("disabled", true);
                 }
             }
-        })
+        });
+    }else{
+            Swal.fire({
+                type: 'error',
+                title: 'Oops...',
+                text:'Seleccione el Mes a Pagar.'
+            });
+    }
     });
 
 });

@@ -1,69 +1,37 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-?><!DOCTYPE html>
+?> 
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8">
-<title>Error</title>
-<style type="text/css">
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
-::selection { background-color: #E13300; color: white; }
-::-moz-selection { background-color: #E13300; color: white; }
+	<title>404 </title>
 
-body {
-	background-color: #fff;
-	margin: 40px;
-	font: 13px/20px normal Helvetica, Arial, sans-serif;
-	color: #4F5155;
-}
+	<!-- Google font -->
+	<link href="https://fonts.googleapis.com/css?family=Nunito:400,700" rel="stylesheet">
 
-a {
-	color: #003399;
-	background-color: transparent;
-	font-weight: normal;
-}
+	<!-- Custom stlylesheet -->
+	<link type="text/css" rel="stylesheet" href="<?php echo base_url(); ?>/assets/mensaje/css/style.css" /> 
 
-h1 {
-	color: #444;
-	background-color: transparent;
-	border-bottom: 1px solid #D0D0D0;
-	font-size: 19px;
-	font-weight: normal;
-	margin: 0 0 14px 0;
-	padding: 14px 15px 10px 15px;
-}
-
-code {
-	font-family: Consolas, Monaco, Courier New, Courier, monospace;
-	font-size: 12px;
-	background-color: #f9f9f9;
-	border: 1px solid #D0D0D0;
-	color: #002166;
-	display: block;
-	margin: 14px 0 14px 0;
-	padding: 12px 10px 12px 10px;
-}
-
-#container {
-	margin: 10px;
-	border: 1px solid #D0D0D0;
-	box-shadow: 0 0 8px #D0D0D0;
-}
-
-p {
-	margin: 12px 15px 12px 15px;
-}
-.txtmensaje{
-   padding-left: 10px;
-
-}
-</style>
 </head>
-<body>
-	<div id="container">
-		<h1><?php echo $heading; ?></h1>
 
-		<div class="txtmensaje"><h4><?php echo $message; ?></h4></div>
+<body>
+
+	<div id="notfound">
+		<div class="notfound">
+			<div class="notfound-404"></div>
+			<h1><?php echo $heading; ?></h1>
+			<h3>Oops! <?php echo $message; ?></h3>
+			<!--<p>Sorry but the page you are looking for does not exist, have been removed. name changed or is temporarily unavailable</p>-->
+			<a href="javascript:history.back()">Regresar</a>
+		</div>
 	</div>
-</body>
+
+</body><!-- This templates was made by Colorlib (https://colorlib.com) -->
+
 </html>

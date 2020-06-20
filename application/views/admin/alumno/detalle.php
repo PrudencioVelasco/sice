@@ -347,7 +347,7 @@
                                           </thead>
                                           <tbody>
                                             <tr v-for="pago in pagos" class="table-default">  
-                                               <td><label style="font-weight: bold;">${{pago.descuento}}</label></td> 
+                                               <td><label style="font-weight: bold;">{{pago.descuento | currency}}</label></td> 
                                                <td align="left">
                                                 <label v-if="pago.idtipopago == 1" class="label label-primary">{{pago.nombretipopago}}</label>
                                                 <label  v-else class="label label-default">{{pago.nombretipopago}}</label>
@@ -405,7 +405,7 @@
                                                
                                                
                                                <td>{{solicitud.mes}}</td> 
-                                               <td><strong>${{solicitud.descuento}}</strong></td>
+                                               <td><strong>{{solicitud.descuento | currency}}</strong></td>
                                                <td>
                                                    <span v-if="solicitud.pagado==1" class="label label-success">PAGADO</span>
                                                    <span v-else class="label label-warning">EN PROCESO</span>
@@ -682,6 +682,7 @@
     <div class="clearfix"></div>
     <div id="notif-group" class="tabbed_notifications"></div>
   </div>
+  <script src="<?php echo base_url(); ?>/assets/vue/vue2-filters.min.js"></script>
   <script data-my_var_1="<?php echo base_url() ?>" data-my_var_2="<?php echo $id ?>" src="<?php echo base_url(); ?>/assets/vue/appvue/appalumnotutor.js"></script> 
   <script data-my_var_1="<?php echo base_url() ?>" data-my_var_2="<?php echo $id ?>" src="<?php echo base_url(); ?>/assets/vue/appvue/appestadocuenta.js"></script> 
 

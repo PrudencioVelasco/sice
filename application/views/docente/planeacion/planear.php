@@ -175,7 +175,7 @@
                         $date_fin = new Datetime($value->fechafin);
                         $fecha_fin = strftime("%A, %d de %B", $date_fin->getTimestamp());
 
-                        echo "<strong>".$fecha_inicio." al ".$fecha_fin."</strong>";
+                       echo "<strong>". utf8_encode($fecha_inicio)." al ".utf8_encode($fecha_fin)."</strong>";
                         ?> </td>
                             <td align="right">
                                  <a  href="javascript:void(0)"  class="edit_button_planeacion btn btn-primary btn-sm"

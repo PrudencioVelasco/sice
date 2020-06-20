@@ -16,7 +16,7 @@ Vue.component('modal',{ //modal
    <transition name="modal">
       <div class="modal-mask">
         <div class="modal-wrapper">
-          <div class="modal-dialog">
+          <div class="modal-dialog modal-lg">
 			    <div class="modal-content">
 
 
@@ -58,6 +58,8 @@ var ve = new Vue({
         loaging_buscar:false,
         cargando:false,
         error:false,  
+        mostar_error_formapago:false,
+        error_formapago:'',
         btnpagarcolegiatura:false,
         //deleteModal:false, 
         ciclos:[],
@@ -68,6 +70,14 @@ var ve = new Vue({
         meses: [], 
         search: {text: ''},
         emptyResult:false,
+       
+        error_pago:false,
+        array_formapago:'',
+        array_descuento:'',
+        array_autorizacion:'',
+        array_pago_colegiatura:[],
+        
+
         total_que_debe_pagar_inscripcion:0.00,
         total_que_debe_pagar_reinscripcion: 0.00,
         total_que_debe_pagar_colegiatura: 0.00,
@@ -120,7 +130,59 @@ var ve = new Vue({
 
     },
     methods:{
-          
+        agregar_forma_pago_colegiatura() {
+            ve.mostar_error_formapago = false;
+            ve.error_pago = false;
+            ve.error_formapago = "";
+            if (ve.array_formapago != '' && ve.array_descuento !=''){
+                if (ve.validatCantidad(ve.array_descuento)){
+            if (ve.array_formapago == 2){
+                if (ve.array_autorizacion != ""){
+                var forma_pago = { idformapago: ve.array_formapago, descuento: ve.array_descuento, autorizacion:ve.array_autorizacion } //creamos la variable personas, con la variable nombre y apellidos
+                ve.array_pago_colegiatura.push(forma_pago);//añadimos el la variable persona al array
+                //Limpiamos los campos
+                ve.array_formapago = "";
+                ve.array_descuento = "";
+                ve.array_autorizacion = "";
+                }else{
+                    ve.mostar_error_formapago = true; 
+                    ve.error_pago = false;
+                    ve.error_formapago = "Número de Autorización.";
+                    ve.error = false;
+                }
+            }else{
+                var forma_pago = { idformapago: ve.array_formapago, descuento: ve.array_descuento, autorizacion: ve.array_autorizacion } //creamos la variable personas, con la variable nombre y apellidos
+                ve.array_pago_colegiatura.push(forma_pago);//añadimos el la variable persona al array
+                //Limpiamos los campos
+                ve.array_formapago = "";
+                ve.array_descuento = "";
+                ve.array_autorizacion = "";
+            }
+        }else{
+                    ve.mostar_error_formapago = true;
+                    ve.error_formapago = "Total a Pagar no valido.";
+                    ve.error_pago = false;
+                    ve.error = false;
+        }
+
+
+        }else{
+                ve.mostar_error_formapago = true;
+                ve.error_formapago = "Forma de pago y Descuento son requeridos."
+                ve.error_pago = false;
+        }
+        },
+        deleteItem(index) {
+            ve.array_pago_colegiatura.splice(index, 1); 
+        },
+        validatCantidad(cantidad) {
+            //var re = new RegExp("/^[+]?([0-9]+(?:[\.][0-9]*)?|\.[0-9]+)$/");
+            if (cantidad.match(/^[+]?([0-9]+(?:[\.][0-9]*)?|\.[0-9]+)$/)) {
+                return true;
+            } else {
+                return false;
+            }
+            }, 
       searchSolicitud() {  
             ve.loaging_buscar = true;
             ve.btnbuscar = false;
@@ -356,15 +418,21 @@ var ve = new Vue({
                 }
                })
         },
-        addCobroColegiatura(){
-            ve.error = false;
+        addCobroColegiatura(){ 
+            ve.error_pago = false;
             ve.cargando = true;
+            ve.mostar_error_formapago = false;
+            if (ve.array_pago_colegiatura.length > 0){
+            ve.error = false;
+            //ve.cargando = true;
             var formData = v.formData(ve.newCobroColegiatura); 
             formData.append('idperiodo', ve.idperiodobuscado);
             formData.append('idalumno', ve.idalumno);
-            // for (var value of formData.values()) {
-            //                  console.log(value); 
-            //               }
+            formData.append('formapago', JSON.stringify(ve.array_pago_colegiatura));
+            
+            for (var value of formData.values()) {
+                              console.log(value); 
+                           }
             axios.post(this.url + "EstadoCuenta/addCobroColegiatura", formData).then(function (response) {
                 if (response.data.error) {
                     ve.formValidate = response.data.msg;
@@ -383,6 +451,10 @@ var ve = new Vue({
                     ve.estadocuentaAll();
                 }
             })
+        }else{
+                ve.cargando = false;
+                ve.error_pago = true;
+        }
         },
         eliminarPagoInicio(){
             ve.error = false;
@@ -433,11 +505,14 @@ var ve = new Vue({
             })
         },
             addCobroInicio(){
-                ve.error = false;
+                ve.error_pago = false;
                 ve.cargando = true;
-            var formData = v.formData(ve.newCobroInicio); 
+                if (ve.array_pago_colegiatura.length > 0) {
+                    ve.error = false;
+                 var formData = v.formData(ve.newCobroInicio); 
                 formData.append('idperiodobuscado', ve.idperiodobuscado);
                 formData.append('idalumno', ve.idalumno);
+                    formData.append('formapago', JSON.stringify(ve.array_pago_colegiatura));
             // for (var value of formData.values()) {
             //                  console.log(value); 
             //               }
@@ -459,7 +534,11 @@ var ve = new Vue({
                     ve.estadocuentaAll();
                     
                 }
-               })
+               });
+                } else {
+                    ve.cargando = false;
+                    ve.error_pago = true;
+                }
         },
         clearAll(){ 
             ve.formValidate = false;
@@ -470,7 +549,9 @@ var ve = new Vue({
             ve.addPagoColegiaturaModal = false;
             ve.error = false;
             ve.cargando = false;
-            
+            ve.array_pago_colegiatura = [];
+            ve.mostar_error_formapago = true; 
+            ve.error_pago = false; 
              
                 ve.eliminarPrimerCobro = { 
                     usuario: '',

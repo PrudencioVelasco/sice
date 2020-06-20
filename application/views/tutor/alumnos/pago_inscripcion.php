@@ -6,7 +6,7 @@
             <div class="col-md-12">
               <div class="x_panel">
                 <div class="x_title">
-                  <h2><strong>PAGOS</strong></h2>
+                    <h2><strong>PAGOS DE <?php if(isset($nombre_alumno) && !empty($nombre_alumno)){ echo $nombre_alumno;} ?></strong></h2>
                   
                   <div class="clearfix"></div>
                 </div>
@@ -55,7 +55,7 @@
                                         
                                         <div class="form-group">
                                             <label><font color="red">*</font> Titular de la Tarjeta</label>
-                                            <input type="text" class="form-control" name="nombretitular" required=""  autocomplete="off" data-openpay-card="holder_name"> 
+                                            <input type="text" class="form-control" name="nombretitular" id="nombretitular" required=""  autocomplete="off" data-openpay-card="holder_name"> 
                                               
                                         </div>
                                     </div>  
@@ -64,7 +64,7 @@
                                     <div class="col-md-12 col-sm-12 col-xs-12 ">
                                         <div class="form-group">
                                             <label><font color="red">*</font> Número de Tarjeta</label>
-                                            <input type="text" class="form-control" name="numerotarjeta"  required="" autocomplete="off" data-openpay-card="card_number"> 
+                                            <input type="text" class="form-control" name="numerotarjeta" id="numerotarjeta"  required="" autocomplete="off" data-openpay-card="card_number"> 
                                                 
                                         </div>
                                     </div>

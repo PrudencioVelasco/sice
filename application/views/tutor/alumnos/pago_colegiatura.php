@@ -6,7 +6,7 @@
             <div class="col-md-12">
               <div class="x_panel">
                 <div class="x_title">
-                  <h2><strong>PAGOS</strong></h2>
+                  <h2><strong>PAGOS DE <?php if(isset($nombre_alumno) && !empty($nombre_alumno)){ echo $nombre_alumno;} ?></strong></h2>
                   
                   <div class="clearfix"></div>
                 </div>
@@ -55,7 +55,7 @@
                                         
                                         <div class="form-group">
                                             <label><font color="red">*</font> Titular de la Tarjeta</label>
-                                            <input type="text" class="form-control" name="nombretitular" required=""  autocomplete="off" data-openpay-card="holder_name"> 
+                                            <input type="text" class="form-control" id="cnombretitular" name="nombretitular" required=""  autocomplete="off" data-openpay-card="holder_name"> 
                                               
                                         </div>
                                     </div>  
@@ -64,7 +64,7 @@
                                     <div class="col-md-12 col-sm-12 col-xs-12 ">
                                         <div class="form-group">
                                             <label><font color="red">*</font> Número de Tarjeta</label>
-                                            <input type="text" class="form-control" name="numerotarjeta"  required="" autocomplete="off" data-openpay-card="card_number"> 
+                                            <input type="text" class="form-control" name="numerotarjeta" id="cnumerotarjeta"  required="" autocomplete="off" data-openpay-card="card_number"> 
                                                 
                                         </div>
                                     </div>
@@ -105,7 +105,7 @@
                                     <label data-toggle="tooltip" title=""
                                         data-original-title="3 digitos al reverso de la tarjeta.">CVV <i
                                             class="fa fa-question-circle"></i></label>
-                                    <input type="password" class="form-control" name="codigo" required="required" autocomplete="off" data-openpay-card="cvv2" id="codigo">
+                                    <input type="password" class="form-control" name="codigo" required="required" autocomplete="off" data-openpay-card="cvv2" id="ccodigo">
                                 </div> <!-- form-group.// -->
                             </div>
                         </div> <!-- row.// -->
@@ -119,14 +119,14 @@
                                      <div class="col-md-4 col-sm-12 col-xs-12 ">
                                          <div class="form-group">
                                             <label><font color="red">*</font> Codigo Postal</label>
-                                            <input type="text" class="form-control" name="cp" id="cp"  autocomplete="off" require />
+                                            <input type="text" class="form-control" name="cp"  id="cp"  autocomplete="off" require />
                                             
                                         </div>
                                      </div>
                                       <div class="col-md-8 col-sm-12 col-xs-12 ">
                                         <div class="form-group">
                                             <label><font color="red">*</font> Calle</label>
-                                            <input type="text" class="form-control" name="calletitular" id="calle"  >
+                                            <input type="text" class="form-control" name="calletitular" id="ccalle"  >
                                             
                                         </div>
                                      </div>
@@ -136,7 +136,7 @@
                                      <div class="col-md-4 col-sm-12 col-xs-12 ">
                                          <div class="form-group">
                                             <label><font color="red">*</font> Num. Exterior</label>
-                                            <input type="text" class="form-control" name="numerocasa" required="" id="numerocasa" >
+                                            <input type="text" class="form-control" name="numerocasa" required="" id="cnumerocasa" >
                                             
                                         </div>
                                      </div>
@@ -212,7 +212,7 @@
                                      <div class="col-md-12 col-sm-12 col-xs-12 ">
                                         <div class="form-group">
                                             <label><font color="red">*</font> Mes a pagar</label>
-                                           <select class="form-control" name="mespago" id="mespago" required />
+                                           <select class="form-control" name="mespago" id="mespago_efectivo" required />
                                                <option value="">--SELECCIONAR--</option>
                                                <?php
                                                 if(isset($meses) && !empty($meses)){

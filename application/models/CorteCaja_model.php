@@ -90,7 +90,7 @@ class CorteCaja_model extends CI_Model {
          $this->db->join('tbltipo_pago tp', 'tp.idtipopago = dp.idformapago'); 
          $this->db->join('users u','u.id = dp.idusuario');
         if((isset($fechainicio) && !empty($fechainicio)) && (isset($fechafin) && !empty($fechafin)) ){
-          $this->db->where('es.fechapago BETWEEN "'. $fechainicio. '" and "'. $fechafin.'"');
+          $this->db->where('( DATE(es.fechapago) >= "'. $fechainicio. '" and  DATE(es.fechapago) <= "'. $fechafin.'")');
         }
         if(isset($pagoen) && !empty($pagoen)){
             $this->db->where('es.online',$pagoen);

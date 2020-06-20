@@ -639,7 +639,7 @@ return $tabla;
                        
                         $fecha = strftime("%A, %d de %B", strtotime($fechainicio)+($i*(24*60*60)));
 
-           $tabla .= '<th>'.$fecha.'</th>';
+           $tabla .= '<th>'. utf8_encode($fecha).'</th>';
            //echo date("d-M",strtotime($_GET["start_at"])+($i*(24*60*60)));
            endfor;
            $tabla .= '</thead>';

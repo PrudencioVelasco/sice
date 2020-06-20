@@ -95,7 +95,7 @@
                                $date_fin = new Datetime($value->fecharegistro);
                         $fecha_fin = strftime("%A, %d de %B", $date_fin->getTimestamp());
 
-                        echo "<strong>".$fecha_fin."</strong>";
+                        echo "<strong>". utf8_encode($fecha_fin)."</strong>";
                         ?>
                             </td>
                             <td align="right">

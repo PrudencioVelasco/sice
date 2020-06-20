@@ -83,7 +83,7 @@ class pGrupo extends CI_Controller {
  $domingo = date('N',strtotime($fechainicio)+($i*(24*60*60)));
             if($domingo != '7' ){
                  if($domingo != '6' ){
-                    $tabla .= '<th>'.$fecha.'</th>';
+                    $tabla .= '<th>'. utf8_encode($fecha).'</th>';
                  }
             }
            //echo date("d-M",strtotime($_GET["start_at"])+($i*(24*60*60)));
@@ -824,7 +824,7 @@ public function eliminarTarea($idhorario,$idhorariodetalle,$idtarea)
   $idhorariodetalle  = $this->decode($idhorariodetalle);
   $idtarea  = $this->decode($idtarea);
   $this->grupo->eliminarTarea($idtarea);
-  redirect('pGrupo/tarea/'.$this->encode($idhorario).'/'.$this->encode($idhorariodetalle));
+  redirect('Pgrupo/tarea/'.$this->encode($idhorario).'/'.$this->encode($idhorariodetalle));
 }
 public function eliminarMensaje($idhorario,$idhorariodetalle,$idmensaje)
 {
@@ -837,7 +837,7 @@ public function eliminarMensaje($idhorario,$idhorariodetalle,$idmensaje)
       'eliminado'=>1
   );
   $this->mensaje->updateMensaje($idmensaje,$data);
-  redirect('pGrupo/tarea/'.$this->encode($idhorario).'/'.$this->encode($idhorariodetalle));
+  redirect('Pgrupo/mensaje/'.$this->encode($idhorario).'/'.$this->encode($idhorariodetalle));
 }
  
 public function mensaje($idhorario='',$idhorariodetalle = '')

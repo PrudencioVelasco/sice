@@ -114,6 +114,17 @@ $(document).ready(function () {
                     //Deshabilitamos el boton de pagar
                     swal("Exito!", val.msg, "success");
                     $("#pay-buttonir").prop("disabled", true);
+
+                    $('#nombretitular').val('');
+                    $('#numerotarjeta').val('');
+                    $("option:selected").prop("selected", false)
+                    $('#codigo').val('');
+                    $('#cp').val('');
+                    $('#calle').val('');
+                    $('#numerocasa').val(''); 
+                    $('#colonia').empty().append('<option value="">--SELECCIONAR--</option>');
+                    $('#municipio').empty().append('<option value="">--SELECCIONAR--</option>');
+                    $('#estado').empty().append('<option value="">--SELECCIONAR--</option>');
                 }
             }
         });

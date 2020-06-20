@@ -510,15 +510,7 @@ else{
   }
 public function addCobroColegiatura()
 {
-   $config = array(
-             array(
-                'field' => 'idformapago',
-                'label' => 'Forma de Pago',
-                'rules' => 'trim|required',
-                'errors' => array(
-                    'required' => 'Campo obligatorio.'
-                )
-            ),
+   $config = array( 
              array(
                 'field' => 'idperiodo',
                 'label' => 'Forma de Pago',
@@ -526,16 +518,7 @@ public function addCobroColegiatura()
                 'errors' => array(
                     'required' => 'Campo obligatorio.'
                 )
-            ),
-              array(
-                'field' => 'descuento',
-                'label' => 'Forma de Pago',
-                'rules' => 'trim|required|decimal',
-                'errors' => array(
-                    'required' => 'Campo obligatorio.',
-                    'decimal' =>'Formato decimal.'
-                )
-            ),
+            ), 
             array(
                 'field' => 'idmes',
                 'label' => 'Forma de Pago',
@@ -552,35 +535,35 @@ public function addCobroColegiatura()
         if ($this->form_validation->run() == FALSE) {
             $result['error'] = true;
             $result['msg'] = array(
-                'idformapago' => form_error('idformapago'),
+                //'idformapago' => form_error('idformapago'),
                 'idmes' => form_error('idmes'),
-                'descuento' => form_error('descuento'),
+                //'descuento' => form_error('descuento'),
                 'msgerror' => form_error('idperiodo')
             );
         } else {
-
-            $idformapago =  trim($this->input->post('idformapago')); 
-            $autorizacion =  trim($this->input->post('autorizacion'));
+           $array_formapago =  json_decode($this->input->post('formapago')); 
+         //var_dump($array_formapago);
             $idperiodo =  trim($this->input->post('idperiodo'));
             $idalumno =  trim($this->input->post('idalumno'));
             $idmes =  trim($this->input->post('idmes')); 
-            $abono =  trim($this->input->post('descuento')); 
-            $validar = $this->estadocuenta->validarAddColegiatura($idalumno,$idperiodo,$idmes);
+           $validar = $this->estadocuenta->validarAddColegiatura($idalumno,$idperiodo,$idmes);
              $folio = generateRandomString();
             if($validar == false){
-              $detalle_descuento = $this->estadocuenta->descuentoPagosInicio($idalumno,$idperiodo,3);
+              $descuento_enviado = 0;
+                  foreach($array_formapago as $row){ 
+                    $descuento_enviado += $row->descuento;
+                  }
+                   $detalle_descuento = $this->estadocuenta->descuentoPagosInicio($idalumno,$idperiodo,3);
             if($detalle_descuento){
+                 $descuento_correcto = $detalle_descuento[0]->descuento - ($detalle_descuento[0]->descuentobeca / 100 * $detalle_descuento[0]->descuento);
+              if($descuento_enviado == $descuento_correcto){
 
-               $descuento_correcto = $detalle_descuento[0]->descuento - ($detalle_descuento[0]->descuentobeca / 100 * $detalle_descuento[0]->descuento);
-              if($abono == $descuento_correcto){
-            if($idformapago == 1){
-              //FORMA DE PAGO EN EFECTIVO
-              //1.- OBTENER DATOS DE LA TABLA AMORTIZACION Y PONER COMO PAGADO
+                 //1.- OBTENER DATOS DE LA TABLA AMORTIZACION Y PONER COMO PAGADO
               $data_add_amortizacion = array(
                 'idalumno'=>$idalumno,
                 'idperiodo'=>$idperiodo,
                 'idperiodopago'=>$idmes,
-                'descuento'=>$abono,
+                'descuento'=>$descuento_enviado,
                 'pagado'=>1,
                 'idusuario' => $this->session->user_id,
                 'fecharegistro' => date('Y-m-d H:i:s')
@@ -592,7 +575,7 @@ public function addCobroColegiatura()
                   'idperiodo'=>$idperiodo,
                   'idalumno'=>$idalumno,
                   //'idformapago'=>$idformapago,
-                  'descuento'=>$abono, 
+                  'descuento'=>$descuento_enviado, 
                   'idopenpay'=>'',
                   'idorden'=>'',
                   //'autorizacion'=>'',
@@ -606,6 +589,15 @@ public function addCobroColegiatura()
 
                 $idestadocuenta = $this->estadocuenta->addEstadoCuenta($data_estadocuenta);
 
+
+           foreach($array_formapago as $row){ 
+
+            $idformapago =  $row->idformapago;
+            $autorizacion = $row->autorizacion; 
+            $abono =  $row->descuento;  
+            if($idformapago == 1){
+              //FORMA DE PAGO EN EFECTIVO
+             
                 $data_detallepago = array(
                   'idestadocuenta'=>$idestadocuenta,
                   'idformapago'=>$idformapago,
@@ -615,43 +607,10 @@ public function addCobroColegiatura()
                   'idusuario' => $this->session->user_id,
                   'fecharegistro' => date('Y-m-d H:i:s')
                 );
-                $this->estadocuenta->addDetalleEstadoCuenta($data_detallepago);
-              
- 
+                $this->estadocuenta->addDetalleEstadoCuenta($data_detallepago); 
         } 
         elseif ($idformapago == 2 && !empty($autorizacion)) {
-          //FORMA DE PAGO EN TARJETA
-            //1.- OBTENER DATOS DE LA TABLA AMORTIZACION Y PONER COMO PAGADO
-                 $data_add_amortizacion = array(
-                'idalumno'=>$idalumno,
-                'idperiodo'=>$idperiodo,
-                'idperiodopago'=>$idmes,
-                'descuento'=>$abono,
-                'pagado'=>1,
-                'idusuario' => $this->session->user_id,
-                'fecharegistro' => date('Y-m-d H:i:s')
-              );
-              $idamortizacion = $this->estadocuenta->addAmortizacion($data_add_amortizacion);
-                 //Se modifico el estatus de pagado
-                $data_estadocuenta = array(
-                  'folio'=>$folio,
-                  'idamortizacion'=>$idamortizacion,
-                  'idperiodo'=>$idperiodo,
-                  'idalumno'=>$idalumno,
-                  //'idformapago'=>$idformapago,
-                  'descuento'=>$abono,
-                  'idopenpay'=>'',
-                  'idorden'=>'',
-                  //'autorizacion'=>'',
-                  'online'=>0,
-                  'pagado'=>1,
-                  'fechapago'=>date('Y-m-d H:i:s'),
-                  'eliminado'=>0,
-                  'idusuario' => $this->session->user_id,
-                  'fecharegistro' => date('Y-m-d H:i:s')
-                );
-
-                $idestadocuenta = $this->estadocuenta->addEstadoCuenta($data_estadocuenta);
+          //FORMA DE PAGO EN TARJETA 
 
                 $data_detallepago = array(
                   'idestadocuenta'=>$idestadocuenta,
@@ -671,9 +630,9 @@ public function addCobroColegiatura()
                 'msgerror' => 'Es necesario registrar el Número Autorización.'
             );
            
-          } 
-
-            } else{
+          }  
+            }
+             } else{
              $result['error'] = true;
             $result['msg'] = array(
                 'msgerror' => 'El pago debe de ser de: '. number_format($descuento_correcto,2)
@@ -681,8 +640,7 @@ public function addCobroColegiatura()
            
           } 
 
-
-          }   
+               }   
         else{
              $result['error'] = true;
             $result['msg'] = array(
@@ -690,15 +648,20 @@ public function addCobroColegiatura()
             );
            
           } 
-        } else{
+
+
+
+ } else{
              $result['error'] = true;
             $result['msg'] = array(
                 'msgerror' => 'El pago de este mes ya esta abonado.'
             );
            
           } 
-        }
-         
+
+
+            
+          }
        if(isset($result) && !empty($result)){
          echo json_encode($result);
         }
@@ -847,59 +810,42 @@ public function addCobro()
                 'errors' => array(
                     'required' => 'Campo obligatorio.'
                 )
-            ),
-            array(
-                'field' => 'descuento',
-                'label' => 'descuento',
-                'rules' => 'trim|required|decimal',
-                'errors' => array(
-                    'required' => 'Campo obligatorio.',
-                    'decimal' =>'Formato decimal.'
-                )
-            ),
-             array(
-                'field' => 'idformapago',
-                'label' => 'Forma de pago',
-                'rules' => 'trim|required',
-                'errors' => array(
-                    'required' => 'Campo obligatorio.'
-                )
-            )
+            ) 
         );
 
         $this->form_validation->set_rules($config);
         if ($this->form_validation->run() == FALSE) {
             $result['error'] = true;
             $result['msg'] = array(
-                'idperiodobuscado' => form_error('idperiodobuscado'),
-                'descuento' => form_error('descuento'), 
-                'idformapago' => form_error('idformapago'),
+                'idperiodobuscado' => form_error('idperiodobuscado'), 
                 'idtipopagocol' => form_error('idtipopagocol')
             );
         } else {
- 
-            $idformapago =  trim($this->input->post('idformapago')); 
-            $autorizacion =  trim($this->input->post('autorizacion'));
+              $array_formapago =  json_decode($this->input->post('formapago')); 
+               $descuento_enviado = 0;
+                  foreach($array_formapago as $row){ 
+                    $descuento_enviado += $row->descuento;
+                  }
+            //$idformapago =  trim($this->input->post('idformapago')); 
+            //$autorizacion =  trim($this->input->post('autorizacion'));
             $idperiodo =  trim($this->input->post('idperiodobuscado'));
             $idalumno =  trim($this->input->post('idalumno')); 
-            $descuento =  trim($this->input->post('descuento')); 
+            //$descuento =  trim($this->input->post('descuento')); 
             //$idamortizacion =  trim($this->input->post('idamortizacion'));
             $idtipopagocol =  trim($this->input->post('idtipopagocol'));
             $detalle_descuento = $this->estadocuenta->descuentoPagosInicio($idalumno,$idperiodo,$idtipopagocol);
             if($detalle_descuento){
               //$descuento_correcto  = $detalle_descuento[0]->descuento;
               $descuento_correcto = $detalle_descuento[0]->descuento - ($detalle_descuento[0]->descuentobeca / 100 * $detalle_descuento[0]->descuento);
-              if($descuento == $descuento_correcto){
+              if($descuento_enviado == $descuento_correcto){
             $folio = generateRandomString();
-            if($idformapago == 1){ 
-              //EFECTIVO FORMA PAGO 
-                $data_estadocuenta = array( 
+               $data_estadocuenta = array( 
                   'folio'=>$folio,
                   'idperiodo'=>$idperiodo,
                   'idalumno'=>$idalumno,
                   //'idformapago'=>$idformapago,
                   'idtipopagocol'=>$idtipopagocol,
-                  'descuento'=>$descuento,
+                  'descuento'=>$descuento_enviado,
                   //'autorizacion'=>'',
                   'online'=>0,
                   'pagado'=>1,
@@ -909,6 +855,14 @@ public function addCobro()
                 );
 
                $idestadocuenta = $this->estadocuenta->addPagoInicio($data_estadocuenta); 
+              
+            foreach($array_formapago as $row){
+                  $idformapago =  $row->idformapago;
+                  $autorizacion = $row->autorizacion; 
+                  $descuento =  $row->descuento; 
+            if($idformapago == 1){ 
+              //EFECTIVO FORMA PAGO  
+              
                $data_detalle = array(
                  'idpago' =>$idestadocuenta,
                  'idformapago'=>$idformapago,
@@ -918,42 +872,29 @@ public function addCobro()
                   'fecharegistro' => date('Y-m-d H:i:s')
                );
                $this->estadocuenta->addDetallePagoInicio($data_detalle);
-        } 
-        elseif ($idformapago == 2 && !empty($autorizacion)) {
-            //TARJETA
-                $data_estadocuenta = array(
-                  'folio'=>$folio,
-                  'idperiodo'=>$idperiodo,
-                  'idalumno'=>$idalumno,
-                  //'idformapago'=>$idformapago,
-                  'idtipopagocol'=>$idtipopagocol,
-                  'descuento'=>$descuento,
-                  //'autorizacion'=>$autorizacion,
-                  'online'=>0,
-                  'pagado'=>1,
-                  'fechapago'=>date('Y-m-d H:i:s'),
-                  'idusuario' => $this->session->user_id,
-                  'fecharegistro' => date('Y-m-d H:i:s')
+            } 
+            elseif ($idformapago == 2 && !empty($autorizacion)) {
+                //TARJETA 
+                    
+                    $data_detalle = array(
+                    'idpago' =>$idestadocuenta,
+                    'idformapago'=>$idformapago,
+                      'autorizacion'=>$autorizacion,
+                    'descuento'=>$descuento,
+                    'idusuario' => $this->session->user_id,
+                      'fecharegistro' => date('Y-m-d H:i:s')
+                  );
+                  $this->estadocuenta->addDetallePagoInicio($data_detalle);
+            }
+            else{
+                $result['error'] = true;
+                $result['msg'] = array(
+                    'msgerror' => 'Es necesario registrar el Número Autorización.'
                 );
+              
+              } 
+            }
 
-                $idestadocuenta = $this->estadocuenta->addPagoInicio($data_estadocuenta); 
-                $data_detalle = array(
-                 'idpago' =>$idestadocuenta,
-                 'idformapago'=>$idformapago,
-                  'autorizacion'=>$autorizacion,
-                 'descuento'=>$descuento,
-                 'idusuario' => $this->session->user_id,
-                  'fecharegistro' => date('Y-m-d H:i:s')
-               );
-               $this->estadocuenta->addDetallePagoInicio($data_detalle);
-        }
-        else{
-             $result['error'] = true;
-            $result['msg'] = array(
-                'msgerror' => 'Es necesario registrar el Número Autorización.'
-            );
-           
-          } 
         } else{
              $result['error'] = true;
             $result['msg'] = array(

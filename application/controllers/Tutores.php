@@ -556,7 +556,7 @@ $tbl .='</table>
                setlocale(LC_ALL, 'es_ES');
             $fecha = strftime("%A, %d de %B", strtotime($fechainicio)+($i*(24*60*60)));
 
-           $tabla .= '<th>'.$fecha.'</th>';
+           $tabla .= '<th>'. utf8_encode($fecha).'</th>';
            //echo date("d-M",strtotime($_GET["start_at"])+($i*(24*60*60)));
            endfor;
            $tabla .= '</thead>';
@@ -649,7 +649,7 @@ return $tabla;
              $domingo = date('N',strtotime($fechainicio)+($i*(24*60*60)));
             if($domingo != '7' ){
                  if($domingo != '6' ){
-                    $tabla .= '<th>'.$fecha.'</th>';
+                    $tabla .= '<th>'. utf8_encode($fecha).'</th>';
                  }
             }
            //echo date("d-M",strtotime($_GET["start_at"])+($i*(24*60*60)));
@@ -762,13 +762,16 @@ function decode($string)
         $pago_inicio = $this->alumno->showAllPagoInscripcion($idalumno,$idperiodo); 
         $pago_colegiaturas = $this->alumno->showAllPagoColegiaturas($idalumno,$idperiodo); 
         $meses = $this->tutor->showAllMeses($idalumno,$idperiodo);
+        $detalle_alumno = $this->alumno->detalleAlumno($idalumno);
+         $nombre_alumno = $detalle_alumno->apellidop.' '.$detalle_alumno->apellidom.' '.$detalle_alumno->nombre;
         $data = array(
             'pago_inicio'=>$pago_inicio,
             'pago_colegiaturas'=>$pago_colegiaturas,
             'idalumno'=>$this->encode($idalumno),
             'idperiodo'=>$this->encode($idperiodo),
             'idnivel'=>$this->encode($idnivel), 
-            'meses'=>$meses
+            'meses'=>$meses,
+             'nombre_alumno'=>$nombre_alumno
         );
         $this->load->view('tutor/header');
         $this->load->view('tutor/alumnos/pagos',$data);
@@ -803,13 +806,16 @@ function decode($string)
 
         if($detalle != false){
          $descuento = $detalle[0]->descuento;
+          $detalle_alumno = $this->alumno->detalleAlumno($idalumno);
+         $nombre_alumno = $detalle_alumno->apellidop.' '.$detalle_alumno->apellidom.' '.$detalle_alumno->nombre;
          $data = array( 
             'idalumno'=>$this->encode($idalumno),
             'idperiodo'=>$this->encode($idperiodo),
             'descuento'=>$descuento,
             'mensaje'=>$mensaje,
             'idnivel'=>$this->encode($idnivel),
-            'formapago'=>1
+            'formapago'=>1,
+            'nombre_alumno'=>$nombre_alumno
         );
          $this->load->view('tutor/header');
         $this->load->view('tutor/alumnos/pago_inscripcion',$data);
@@ -853,6 +859,8 @@ function decode($string)
         if($detalle != false){
          $descuento = $detalle[0]->descuento;
          $meses = $this->tutor->showAllMeses($idalumno,$idperiodo);
+         $detalle_alumno = $this->alumno->detalleAlumno($idalumno);
+         $nombre_alumno = $detalle_alumno->apellidop.' '.$detalle_alumno->apellidom.' '.$detalle_alumno->nombre;
          $data = array( 
             'idalumno'=>$this->encode($idalumno),
             'idperiodo'=>$this->encode($idperiodo),
@@ -860,7 +868,8 @@ function decode($string)
             'mensaje'=>$mensaje,
             'meses'=>$meses,
             'idnivel'=>$this->encode($idnivel),
-            'formapago'=>1
+            'formapago'=>1,
+            'nombre_alumno'=>$nombre_alumno
         );
          $this->load->view('tutor/header');
         $this->load->view('tutor/alumnos/pago_colegiatura',$data);
@@ -1422,7 +1431,7 @@ function decode($string)
                         //AGREGAR COBRO A TABLA DETALLE DE PAGO INICIO
                         $data_detalle_cobro = array(
                           'idpago'=>$idpago,
-                          'idformapago'=>2,
+                          'idformapago'=>1,
                           'autorizacion'=>$autorizacion,
                           'descuento'=>$descuento,
                           'idusuario'=> $this->session->user_id,
@@ -1733,7 +1742,7 @@ function decode($string)
                         $idestadocuenta = $this->tutor->addEstadoCuenta($add_estadocuenta);
                         $add_detalle_pago = array(
                             'idestadocuenta'=>$idestadocuenta,
-                            'idformapago'=>2,
+                            'idformapago'=>1,
                             'descuento'=>$descuento,
                             'autorizacion'=>$autorizacion,
                             'fechapago'=>date('Y-m-d H:i:s'), 
