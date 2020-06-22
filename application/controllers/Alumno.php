@@ -238,6 +238,7 @@ function decode($string)
                 'label' => 'Telefono',
                 'rules' => 'trim|regex_match[/^[0-9]{10}$/]',
                 'errors' => array( 
+                    'regex_match'=>'Formato incorrecto.'
                 )
             )
              , 
@@ -246,6 +247,7 @@ function decode($string)
                 'label' => 'Telefono',
                 'rules' => 'trim|regex_match[/^[0-9]{10}$/]',
                 'errors' => array( 
+                     'regex_match'=>'Formato incorrecto.'
                 )
             )
         );
@@ -1476,7 +1478,14 @@ $suma_calificacion = 0;
         if ($this->form_validation->run() == FALSE) {
             $errors = validation_errors();
         echo json_encode(['error'=>$errors]);
-        } else {
+        } else { 
+            $idalumno =  $this->input->post('idalumno');
+            $idperiodo =  $this->input->post('idcicloescolar');
+            $idgrupo = $this->input->post('idgrupo');
+            $datelle_alumno = $this->alumno->showAllAlumnoId($idalumno);
+            $idplantel = $datelle_alumno[0]->idplantel; 
+            $validar_add = $this->alumno->validarAddAlumnoGrupo($idperiodo,$idalumno,$idgrupo,$idplantel);
+            if($validar_add == false){
             $data = array( 
                     'idalumno' => $this->input->post('idalumno'),
                     'idperiodo' => $this->input->post('idcicloescolar'),
@@ -1494,6 +1503,9 @@ $suma_calificacion = 0;
              }else{
                 echo json_encode(['error'=>'Error... Intente mas tarde.']);
              }
+            }else{
+                   echo json_encode(['error'=>'Ya esta asignado al Grupo.']);
+            }
 
     }
     }

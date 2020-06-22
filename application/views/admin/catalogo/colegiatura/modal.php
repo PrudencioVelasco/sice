@@ -5,7 +5,7 @@
         <div style=" height: 200px; overflow-x: hidden; overflow-y: scroll;">
         <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12 ">
-                <div class="text-danger" v-html="formValidate.msgerror"></div>
+                <div class="col-red" v-html="formValidate.msgerror"></div>
             </div>
         </div>
         <div class="row">
@@ -18,7 +18,7 @@
                         {{ option.nombrenivel }}
                       </option>
                     </select>
-                    <div class="text-danger" v-html="formValidate.idnivel"></div>
+                    <div class="col-red" v-html="formValidate.idnivel"></div>
                 </div>
             </div>   
             <div class="col-md-6 col-sm-12 col-xs-12 ">
@@ -30,7 +30,7 @@
                         {{ option.concepto  }}
                       </option>
                     </select>
-                    <div class="text-danger" v-html="formValidate.idconcepto"></div>
+                    <div class="col-red" v-html="formValidate.idconcepto"></div>
                 </div>
             </div>  
         </div>
@@ -39,7 +39,7 @@
                 <div class="form-group">
                     <label><font color="red">*</font> Colegiatura</label>
                     <input type="text" v-model="newColegiatura.descuento" class="form-control"  :class="{'is-invalid': formValidate.descuento}" name="po"> 
-                           <div class="text-danger" v-html="formValidate.descuento"></div>
+                           <div class="col-red" v-html="formValidate.descuento"></div>
                 </div>
             </div>
         </div>  
@@ -53,7 +53,7 @@
                <img  style="width: 50px;" src="<?php echo base_url() . '/assets/loader/pagos.gif' ?>" alt=""> <strong>Procesando...</strong>
            </div>
            <div v-if="error"  align="left">
-               <label class="text-danger">*Corrija los errores en el formulario.</label>
+               <label class="col-red">*Corrija los errores en el formulario.</label>
            </div>
         </div>
          <div class="col-md-6 col-sm-12 col-xs-12 "  align="right"  >
@@ -69,7 +69,7 @@
          <div style=" height: 200px;overflow-x: hidden; overflow-y: scroll;">
          <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12 ">
-                <div class="text-danger" v-html="formValidate.msgerror"></div>
+                <div class="col-red" v-html="formValidate.msgerror"></div>
             </div>
         </div>
         <div class="row">
@@ -81,7 +81,7 @@
                             {{ option.nombrenivel }} 
                         </option>
                     </select>
-                    <div class="text-danger" v-html="formValidate.idnivel"></div>
+                    <div class="col-red" v-html="formValidate.idnivel"></div>
                 </div>
             </div>  
             <div class="col-md-6 col-sm-12 col-xs-12 ">
@@ -92,7 +92,7 @@
                             {{ option.concepto }} 
                         </option>
                     </select>
-                    <div class="text-danger" v-html="formValidate.idconcepto"></div>
+                    <div class="col-red" v-html="formValidate.idconcepto"></div>
                 </div>
             </div>
         </div>
@@ -101,7 +101,7 @@
                 <div class="form-group">
                     <label><font color="red">*</font> Colegiatura</label>
                     <input type="text" class="form-control" :class="{'is-invalid': formValidate.descuento}" name="usuario" v-model="chooseColegiatura.descuento"  >
-                    <div class="text-danger" v-html="formValidate.descuento"></div>
+                    <div class="col-red" v-html="formValidate.descuento"></div>
                 </div>
             </div>
                 <div class="col-md-6 col-sm-12 col-xs-12 ">
@@ -128,7 +128,7 @@
                <img  style="width: 50px;" src="<?php echo base_url() . '/assets/loader/pagos.gif' ?>" alt=""> <strong>Procesando...</strong>
            </div>
            <div v-if="error"  align="left">
-               <label class="text-danger">*Corrija los errores en el formulario.</label>
+               <label class="col-red">*Corrija los errores en el formulario.</label>
            </div>
         </div>
          <div class="col-md-6 col-sm-12 col-xs-12 "  align="right"  >

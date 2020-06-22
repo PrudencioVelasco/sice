@@ -61,11 +61,7 @@
                         </div>  
                       </div>
                   <div class="row"> 
-                    <div id="tblalumnos">
-                    <?php if (isset($tabla)): 
-                    echo $tabla;
-                      
-                    endif ?>
+                    <div id="tblalumnos"> 
                     </div>
                        <div id="tblasistencias">
                       

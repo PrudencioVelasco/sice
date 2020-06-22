@@ -120,8 +120,8 @@ var v = new Vue({
         deleteProfesor(id) {
              Swal.fire({
           title: '¿Eliminar Profesor?',
-          text: "Realmente desea eliminar el Tutor.",
-          type: 'info',
+          text: "Realmente desea eliminar el Profesor.",
+          type: 'question',
           showCancelButton: true,
           confirmButtonColor: '#3085d6',
           cancelButtonColor: '#d33',
@@ -147,11 +147,10 @@ var v = new Vue({
                     v.clearAll();
                     v.clearMSG();
                 } else {
-                   swal("Error", "No se puede eliminar el Profesor", "error")
-                }
-                console.log(response);
+                    swal("Información", "No se puede eliminar el Profesor", "info")
+                } 
             }).catch((error) => {
-                swal("Error", "No se puede eliminar el Profesor", "error")
+                swal("Información", "No se puede eliminar el Profesor", "info")
             })
             }
             })

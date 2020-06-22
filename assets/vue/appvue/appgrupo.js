@@ -161,7 +161,7 @@ var v = new Vue({
             Swal.fire({
           title: '¿Eliminar Grupo?',
           text: "Realmente desea eliminar el Grupo.",
-          type: 'info',
+          type: 'question',
           showCancelButton: true,
           confirmButtonColor: '#3085d6',
           cancelButtonColor: '#d33',
@@ -187,10 +187,10 @@ var v = new Vue({
                     v.clearAll();
                     v.clearMSG();
                 } else {
-                   swal("Error", "No se puede eliminar el Grupo", "error")
+                   swal("Información", "No se puede eliminar el Grupo", "info")
                 } 
             }).catch((error) => {
-                swal("Error", "No se puede eliminar el Grupo", "error")
+              swal("Información", "No se puede eliminar el Grupo", "info")
             })
             }
             })

@@ -925,7 +925,7 @@ public function tarea($idhorario,$idhorariodetalle,$idmateria)
        $datelle_alumno = $this->alumno->showAllMateriasAlumno($idalumno,1);
         $fechaactual = date('d/m/Y');
         $pdf = new Pdf('P', 'mm', 'A4', true, 'UTF-8', false);
-        $pdf->SetTitle('karde de Calificaciones.');
+        $pdf->SetTitle('kardex de Calificaciones.');
         $pdf->SetHeaderMargin(30);
         $pdf->SetTopMargin(10);
         $pdf->setFooterMargin(20);

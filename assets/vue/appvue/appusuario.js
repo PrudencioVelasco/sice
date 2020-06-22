@@ -211,8 +211,7 @@ var v = new Vue({
         },
 
         selectUser(user){
-            v.chooseUser = user;
-            console.log(user);
+            v.chooseUser = user; 
         },
         clearMSG(){
             setTimeout(function(){

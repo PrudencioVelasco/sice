@@ -241,6 +241,14 @@ class Tutor extends CI_Controller {
                 )
             ),
             array(
+                'field' => 'rfc',
+                'label' => 'RFC',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
+            ), 
+            array(
                 'field' => 'telefono',
                 'label' => 'Telefono',
                 'rules' => 'trim|required|integer|exact_length[10]',
@@ -249,16 +257,7 @@ class Tutor extends CI_Controller {
                     'integer'=>'Debe de ser solo número.',
                     'exact_length'=>'Debe de ser 10 digitos.'
                 )
-            ),
-            array(
-                'field' => 'correo',
-                'label' => 'Correo',
-                'rules' => 'trim|required|valid_email',
-                'errors' => array(
-                    'required' => 'Campo obligatorio.',
-                    'valid_email' => 'Correo no valido.'
-                )
-            ),
+                ),
             array(
                 'field' => 'password',
                 'label' => 'Contraseña',
@@ -279,6 +278,7 @@ class Tutor extends CI_Controller {
                 'telefono' => form_error('telefono'),
                 'correo' => form_error('correo'),
                 'direccion' => form_error('direccion'),
+                'rfc' => form_error('rfc'),
                 'password' => form_error('password')
             );
         } else {
@@ -298,6 +298,8 @@ class Tutor extends CI_Controller {
                     'direccion' =>  strtoupper($this->input->post('direccion')),
                     'telefono' => $this->input->post('telefono'),
                     'correo' => $this->input->post('correo'),
+                     'rfc' => $this->input->post('rfc'),
+                      'factura' => $this->input->post('factura'),
                     'idusuario' => $this->session->user_id,
                     'fecharegistro' => date('Y-m-d H:i:s')
                      

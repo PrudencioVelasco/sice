@@ -5,7 +5,7 @@
         <div style=" height: 200px; overflow-x: hidden; overflow-y: scroll;">
         <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12 ">
-                <label style="color: red" v-html="formValidate.msgerror"></label>
+                <label class="col-red" v-html="formValidate.msgerror"></label>
             </div>
         </div>
         <div class="row">
@@ -18,7 +18,7 @@
                         {{ option.nombrenivel }}   
                       </option>
                     </select>
-                    <div class="text-danger" v-html="formValidate.idnivelestudio"></div>
+                    <div class="col-red" v-html="formValidate.idnivelestudio"></div>
                 </div>
             </div>
               <div class="col-md-6 col-sm-12 col-xs-12 ">
@@ -30,7 +30,7 @@
                         {{ option.nombreespecialidad }}   
                       </option>
                     </select>
-                     <div class="text-danger" v-html="formValidate.idespecialidad"></div>
+                     <div class="col-red" v-html="formValidate.idespecialidad"></div>
                 </div>
             </div> 
         </div>
@@ -39,14 +39,14 @@
                 <div class="form-group">
                     <label><font color="red">*</font> Nombre Materia</label>
                     <input type="text" v-model="newMateria.nombreclase" class="form-control"  :class="{'is-invalid': formValidate.nombreclase}" name="po"> 
-                           <div class="text-danger" v-html="formValidate.nombreclase"></div>
+                           <div class="col-red" v-html="formValidate.nombreclase"></div>
                 </div>
             </div>    
               <div class="col-md-6 col-sm-12 col-xs-12 ">
                 <div class="form-group">
                     <label><font color="red">*</font> Clave</label> 
                        <input type="text" v-model="newMateria.clave" class="form-control"  :class="{'is-invalid': formValidate.clave}" name="po"> 
-                    <div class="text-danger" v-html="formValidate.clave"></div>
+                    <div class="col-red" v-html="formValidate.clave"></div>
                 </div>
             </div> 
         </div> 
@@ -55,7 +55,7 @@
                 <div class="form-group">
                     <label><font color="red">*</font> Credito</label>
                     <input type="text" v-model="newMateria.credito" class="form-control"  :class="{'is-invalid': formValidate.credito}" name="po"> 
-                           <div class="text-danger" v-html="formValidate.credito"></div>
+                           <div class="col-red" v-html="formValidate.credito"></div>
                 </div>
             </div>    
         </div> 
@@ -70,7 +70,7 @@
                <img  style="width: 50px;" src="<?php echo base_url() . '/assets/loader/pagos.gif' ?>" alt=""> <strong>Procesando...</strong>
            </div>
            <div v-if="error"  align="left">
-               <label class="text-danger">*Corrija los errores en el formulario.</label>
+               <label class="col-red">*Corrija los errores en el formulario.</label>
            </div>
         </div>
          <div class="col-md-6 col-sm-12 col-xs-12 "  align="right"  >
@@ -86,7 +86,7 @@
          <div style=" height: 200px;overflow-x: hidden; overflow-y: scroll;">
          <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12 ">
-                <label style="color: red" v-html="formValidate.msgerror"></label>
+                <label class="col-red" v-html="formValidate.msgerror"></label>
             </div>
         </div>
         <div class="row">
@@ -98,7 +98,7 @@
                      {{ option.nombrenivel }}</small>
                   </option>
              </select>
-                     <div class="text-danger" v-html="formValidate.idnivelestudio"></div>
+                     <div class="col-red" v-html="formValidate.idnivelestudio"></div>
                 </div>
             </div> 
              <div class="col-md-6 col-sm-12 col-xs-12 ">
@@ -109,7 +109,7 @@
                         {{ option.nombreespecialidad }}   
                       </option>
                     </select>
-                     <div class="text-danger" v-html="formValidate.idespecialidad"></div>
+                     <div class="col-red" v-html="formValidate.idespecialidad"></div>
                 </div>
             </div>
         </div>
@@ -118,14 +118,14 @@
                 <div class="form-group">
                     <label><font color="red">*</font> Nombre Materia</label>
                     <input type="text" v-model="chooseMateria.nombreclase" class="form-control"  :class="{'is-invalid': formValidate.nombreclase}" name="po"> 
-                           <div class="text-danger" v-html="formValidate.nombreclase"></div>
+                           <div class="col-red" v-html="formValidate.nombreclase"></div>
                 </div>
             </div>    
             <div class="col-md-6 col-sm-12 col-xs-12 ">
                 <div class="form-group">
                      <label><font color="red">*</font> Clave</label>
                     <input type="text" v-model="chooseMateria.clave" class="form-control"  :class="{'is-invalid': formValidate.clave}" name="po"> 
-                           <div class="text-danger" v-html="formValidate.clave"></div>
+                           <div class="col-red" v-html="formValidate.clave"></div>
                 </div>
             </div> 
         </div> 
@@ -134,7 +134,7 @@
                 <div class="form-group">
                     <label><font color="red">*</font> Credito</label>
                     <input type="text" v-model="chooseMateria.credito" class="form-control"  :class="{'is-invalid': formValidate.credito}" name="po"> 
-                           <div class="text-danger" v-html="formValidate.credito"></div>
+                           <div class="col-red" v-html="formValidate.credito"></div>
                 </div>
             </div>     
         </div> 
@@ -149,7 +149,7 @@
                <img  style="width: 50px;" src="<?php echo base_url() . '/assets/loader/pagos.gif' ?>" alt=""> <strong>Procesando...</strong>
            </div>
            <div v-if="error"  align="left">
-               <label class="text-danger">*Corrija los errores en el formulario.</label>
+               <label class="col-red">*Corrija los errores en el formulario.</label>
            </div>
         </div>
          <div class="col-md-6 col-sm-12 col-xs-12 "  align="right"  >

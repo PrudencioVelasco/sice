@@ -129,7 +129,7 @@ var v = new Vue({
           Swal.fire({
             title: 'Quitar Materia?',
             text: "Realmente desea quitar la Materia.",
-            type: 'info',
+            type: 'question',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
@@ -156,11 +156,11 @@ var v = new Vue({
                   });
 
                 } else {
-                  swal("Error", "No se puede quitar la Materia", "error")
+                  swal("Información", "No se puede quitar la Materia", "info")
                   v.cargando = false;
                 }
               }).catch((error) => {
-                swal("Error", "No se puede quitar la Materia", "error")
+                swal("Información", "No se puede quitar la Materia", "info")
                 v.cargando = false;
               })
             }

@@ -156,7 +156,7 @@ var v = new Vue({
             Swal.fire({
           title: '¿Eliminar Materia?',
           text: "Realmente desea eliminar la Materia.",
-          type: 'info',
+          type: 'question',
           showCancelButton: true,
           confirmButtonColor: '#3085d6',
           cancelButtonColor: '#d33',
@@ -182,11 +182,10 @@ var v = new Vue({
                     v.clearAll();
                     v.clearMSG();
                 } else {
-                   swal("Error", "No se puede eliminar la Materia", "error")
-                }
-                console.log(response);
+                  swal("Información", "No se puede eliminar la Materia", "info")
+                } 
             }).catch((error) => {
-                swal("Error", "No se puede eliminar la Materia", "error")
+              swal("Información", "No se puede eliminar la Materia", "info")
             })
             }
             })

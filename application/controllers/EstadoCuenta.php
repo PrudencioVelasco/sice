@@ -644,7 +644,7 @@ public function addCobroColegiatura()
         else{
              $result['error'] = true;
             $result['msg'] = array(
-                'msgerror' => 'No esta registrado el Pago para el Nivel.'
+                'msgerror' => 'No esta registrado el costo para cobrar.'
             );
            
           } 
@@ -906,7 +906,7 @@ public function addCobro()
         else{
              $result['error'] = true;
             $result['msg'] = array(
-                'msgerror' => 'No esta registrado el Pago para el Nivel.'
+                'msgerror' => 'No esta registrado el costo para cobrar.'
             );
            
           } 

@@ -154,7 +154,7 @@ var v = new Vue({
             Swal.fire({
           title: '¿Eliminar Ciclo Escolar?',
           text: "Realmente desea eliminar el Ciclo Escolar.",
-          type: 'info',
+          type: 'question',
           showCancelButton: true,
           confirmButtonColor: '#3085d6',
           cancelButtonColor: '#d33',
@@ -180,11 +180,11 @@ var v = new Vue({
                     v.clearAll();
                     v.clearMSG();
                 } else {
-                   swal("Error", "No se puede eliminar el Ciclo Escolar", "error")
+                   swal("Información", "No se puede eliminar el Ciclo Escolar", "info")
                 }
                 console.log(response);
             }).catch((error) => {
-                swal("Error", "No se puede eliminar el Ciclo Escolar", "error")
+              swal("Información", "No se puede eliminar el Ciclo Escolar", "info")
             })
             }
             })

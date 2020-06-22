@@ -5,7 +5,7 @@
         <div style=" height: 200px; overflow-x: hidden; overflow-y: scroll;">
         <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12 ">
-                <label style="color: red" v-html="formValidate.msgerror"></label>
+                <label class="col-red" v-html="formValidate.msgerror"></label>
             </div>
         </div>
         <div class="row">
@@ -18,7 +18,7 @@
                         {{ option.nombrenivel }}   
                       </option>
                     </select>
-                    <div class="text-danger" v-html="formValidate.idnivelestudio"></div>
+                    <div class="col-red" v-html="formValidate.idnivelestudio"></div>
                 </div>
             </div>
               <div class="col-md-6 col-sm-12 col-xs-12 ">
@@ -30,7 +30,7 @@
                         {{ option.nombreespecialidad }}   
                       </option>
                     </select>
-                     <div class="text-danger" v-html="formValidate.idespecialidad"></div>
+                     <div class="col-red" v-html="formValidate.idespecialidad"></div>
                 </div>
             </div> 
         </div>
@@ -39,7 +39,7 @@
                 <div class="form-group">
                     <label><font color="red">*</font> Nombre Grupo</label>
                     <input type="text" v-model="newGrupo.nombregrupo" class="form-control"  :class="{'is-invalid': formValidate.nombregrupo}" name="po"> 
-                           <div class="text-danger" v-html="formValidate.nombregrupo"></div>
+                           <div class="col-red" v-html="formValidate.nombregrupo"></div>
                 </div>
             </div>    
               <div class="col-md-6 col-sm-12 col-xs-12 ">
@@ -51,7 +51,7 @@
                         {{ option.nombreturno }}   
                       </option>
                     </select>
-                    <div class="text-danger" v-html="formValidate.idturno"></div>
+                    <div class="col-red" v-html="formValidate.idturno"></div>
                 </div>
             </div> 
         </div> 
@@ -66,7 +66,7 @@
                <img  style="width: 50px;" src="<?php echo base_url() . '/assets/loader/pagos.gif' ?>" alt=""> <strong>Procesando...</strong>
            </div>
            <div v-if="error"  align="left">
-               <label class="text-danger">*Corrija los errores en el formulario.</label>
+               <label class="col-red">*Corrija los errores en el formulario.</label>
            </div>
         </div>
          <div class="col-md-6 col-sm-12 col-xs-12 "  align="right"  >
@@ -82,7 +82,7 @@
          <div style=" height: 200px;overflow-x: hidden; overflow-y: scroll;">
          <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12 ">
-                <label style="color: red" v-html="formValidate.msgerror"></label>
+                <label  class="col-red" v-html="formValidate.msgerror"></label>
             </div>
         </div>
         <div class="row">
@@ -95,7 +95,7 @@
                      {{ option.nombrenivel }}</small>
                   </option>
              </select>
-                     <div class="text-danger" v-html="formValidate.idnivelestudio"></div>
+                     <div class="col-red" v-html="formValidate.idnivelestudio"></div>
                 </div>
             </div> 
              <div class="col-md-6 col-sm-12 col-xs-12 ">
@@ -107,7 +107,7 @@
                         {{ option.nombreespecialidad }}   
                       </option>
                     </select>
-                     <div class="text-danger" v-html="formValidate.idespecialidad"></div>
+                     <div class="col-red" v-html="formValidate.idespecialidad"></div>
                 </div>
             </div>
         </div>
@@ -116,7 +116,7 @@
                 <div class="form-group">
                     <label><font color="red">*</font> Nombre Grupo</label>
                     <input type="text" v-model="chooseGrupo.nombregrupo" class="form-control"  :class="{'is-invalid': formValidate.nombregrupo}" name="po"> 
-                           <div class="text-danger" v-html="formValidate.nombregrupo"></div>
+                           <div class="col-red" v-html="formValidate.nombregrupo"></div>
                 </div>
             </div>    
             <div class="col-md-6 col-sm-12 col-xs-12 ">
@@ -128,7 +128,7 @@
                      {{ option.nombreturno }}
                   </option>
              </select>
-                     <div class="text-danger" v-html="formValidate.idturno"></div>
+                     <div class="col-red" v-html="formValidate.idturno"></div>
                 </div>
             </div> 
         </div> 
@@ -143,7 +143,7 @@
                <img  style="width: 50px;" src="<?php echo base_url() . '/assets/loader/pagos.gif' ?>" alt=""> <strong>Procesando...</strong>
            </div>
            <div v-if="error"  align="left">
-               <label class="text-danger">*Corrija los errores en el formulario.</label>
+               <label class="col-red">*Corrija los errores en el formulario.</label>
            </div>
         </div>
          <div class="col-md-6 col-sm-12 col-xs-12 "  align="right"  >

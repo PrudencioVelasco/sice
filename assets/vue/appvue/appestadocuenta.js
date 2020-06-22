@@ -134,6 +134,9 @@ var ve = new Vue({
             ve.mostar_error_formapago = false;
             ve.error_pago = false;
             ve.error_formapago = "";
+            ve.msgerror = '';
+            ve.formValidate = false;
+            ve.error = false;
             if (ve.array_formapago != '' && ve.array_descuento !=''){
                 if (ve.validatCantidad(ve.array_descuento)){
             if (ve.array_formapago == 2){
@@ -144,11 +147,15 @@ var ve = new Vue({
                 ve.array_formapago = "";
                 ve.array_descuento = "";
                 ve.array_autorizacion = "";
+                    ve.msgerror = '';
+                    ve.formValidate = false;
                 }else{
                     ve.mostar_error_formapago = true; 
                     ve.error_pago = false;
                     ve.error_formapago = "Número de Autorización.";
                     ve.error = false;
+                    ve.msgerror = '';
+                    ve.formValidate = false;
                 }
             }else{
                 var forma_pago = { idformapago: ve.array_formapago, descuento: ve.array_descuento, autorizacion: ve.array_autorizacion } //creamos la variable personas, con la variable nombre y apellidos
@@ -157,18 +164,22 @@ var ve = new Vue({
                 ve.array_formapago = "";
                 ve.array_descuento = "";
                 ve.array_autorizacion = "";
+                ve.msgerror = '';
+                ve.formValidate = false;
             }
         }else{
                     ve.mostar_error_formapago = true;
-                    ve.error_formapago = "Total a Pagar no valido.";
+                    ve.error_formapago = "El total a pagar no debe de contener (,).";
                     ve.error_pago = false;
                     ve.error = false;
+                    ve.msgerror = '';
+                    ve.formValidate = false;
         }
 
 
         }else{
                 ve.mostar_error_formapago = true;
-                ve.error_formapago = "Forma de pago y Descuento son requeridos."
+                ve.error_formapago = "Forma de pago y Total a pagar son requeridos."
                 ve.error_pago = false;
         }
         },
@@ -420,6 +431,9 @@ var ve = new Vue({
         },
         addCobroColegiatura(){ 
             ve.error_pago = false;
+            ve.error = false;
+            ve.msgerror = '';
+            ve.formValidate = false;
             ve.cargando = true;
             ve.mostar_error_formapago = false;
             if (ve.array_pago_colegiatura.length > 0){
@@ -506,7 +520,11 @@ var ve = new Vue({
         },
             addCobroInicio(){
                 ve.error_pago = false;
+                ve.error = false;
+                ve.msgerror = '';
+                ve.formValidate = false;
                 ve.cargando = true;
+                ve.mostar_error_formapago = false;
                 if (ve.array_pago_colegiatura.length > 0) {
                     ve.error = false;
                  var formData = v.formData(ve.newCobroInicio); 

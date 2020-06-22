@@ -128,11 +128,11 @@ var v = new Vue({
           Swal.fire({
             title: 'Quitar Tutor?',
             text: "Realmente desea quitar el Tutor.",
-            type: 'info',
+            type: 'question',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Eliminar',
+            confirmButtonText: 'Quitar',
             cancelButtonText: 'Cancelar'
           }).then((result) => {
             if (result.value) {
@@ -155,11 +155,11 @@ var v = new Vue({
                   });
 
                 } else {
-                  swal("Error", "No se puede quitar el Tutor", "error")
+                  swal("Información", "No se puede quitar el Tutor", "info")
                   v.cargando = false;
                 }
               }).catch((error) => {
-                swal("Error", "No se puede quitar el Tutor", "error")
+                swal("Información", "No se puede quitar el Tutor", "info")
                 v.cargando = false;
               })
             }

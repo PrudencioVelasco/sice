@@ -114,9 +114,9 @@ var v = new Vue({
         deleteAlumno(id){ 
 
           Swal.fire({
-            title: '¿Eliminar Alumno?',
+            title: 'Quitar Alumno?',
             text: "Realmente desea quitar el Alumno.",
-            type: 'info',
+            type: 'question',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
@@ -142,10 +142,10 @@ var v = new Vue({
                   v.clearAll();
                   v.clearMSG();
                 } else {
-                  swal("Error", "No se puede quitar el Alumno", "error")
+                  swal("Información", "No se puede quitar el Alumno", "info")
                 }
               }).catch((error) => {
-                swal("Error", "No se puede quitar el Alumno", "error")
+                swal("Información", "No se puede quitar el Alumno", "info")
               })
             }
           })

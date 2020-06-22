@@ -26,7 +26,7 @@
 
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <button class="btn  btn-primary waves-effect waves-black" @click="addModal= true"><i class='fa fa-plus'></i> Agregar Colegiatura</button> 
+                                                <button class="btn  btn-primary waves-effect waves-black"   @click="addModal= true"><i class='fa fa-plus'></i> Agregar Colegiatura</button> 
 
 
                                             </div>
@@ -36,7 +36,7 @@
                                             <div class="col-md-6">
                                             </div>
                                             <div class="col-md-6">
-                                                <input placeholder="Buscar" type="search" class="form-control" v-model="search.text" @keyup="searchColegiatura" name="search">
+                                                <input placeholder="Buscar" type="search" class="form-control btn-round" :autofocus="'autofocus'"  v-model="search.text" @keyup="searchColegiatura" name="search">
                                             </div>
                                         </div>
                                         <br>
@@ -70,12 +70,12 @@
                                                       </td>
                                                 </tr>
                                                 <tr v-if="emptyResult">
-                                                    <td colspan="6" class="text-center h4">No encontrado</td>
+                                                    <td colspan="5" class="text-center h4">No encontrado</td>
                                                 </tr>
                                             </tbody>
                                             <tfoot>
                                                 <tr>
-                                                    <td colspan="6" align="right">
+                                                    <td colspan="5" align="right">
                                             <pagination
                                                 :current_page="currentPage"
                                                 :row_count_page="rowCountPage"

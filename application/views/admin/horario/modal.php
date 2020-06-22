@@ -5,7 +5,7 @@
         <div style=" height: 200px; overflow-x: hidden; overflow-y: scroll;">
         <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12 ">
-                <label style="color: red" v-html="formValidate.msgerror"></label>
+                <label class="col-red" v-html="formValidate.msgerror"></label>
             </div>
         </div>
         <div class="row">
@@ -18,7 +18,7 @@
                         {{ option.mesinicio }}  {{ option.yearinicio }} - {{option.mesfin}}  {{ option.yearfin }}
                       </option>
                     </select>
-                    <div class="text-danger" v-html="formValidate.idperiodo"></div>
+                    <div class="col-red" v-html="formValidate.idperiodo"></div>
                 </div>
             </div> 
         </div>
@@ -32,7 +32,7 @@
                         {{ option.nombrenivel }} - {{ option.nombregrupo }}  - {{ option.nombreturno }} - {{ option.nombreespecialidad }}
                       </option>
                     </select>
-                           <div class="text-danger" v-html="formValidate.idgrupo"></div>
+                           <div class="col-red" v-html="formValidate.idgrupo"></div>
                 </div>
             </div> 
         </div> 
@@ -47,7 +47,7 @@
                <img  style="width: 50px;" src="<?php echo base_url() . '/assets/loader/pagos.gif' ?>" alt=""> <strong>Procesando...</strong>
            </div>
            <div v-if="error"  align="left">
-               <label class="text-danger">*Corrija los errores en el formulario.</label>
+               <label class="col-red">*Corrija los errores en el formulario.</label>
            </div>
         </div>
          <div class="col-md-6 col-sm-12 col-xs-12 "  align="right"  >
@@ -63,7 +63,7 @@
          <div style=" height: 200px;overflow-x: hidden; overflow-y: scroll;">
          <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12 ">
-                <label style="color: red" v-html="formValidate.msgerror"></label>
+                <label class="col-red" v-html="formValidate.msgerror"></label>
             </div>
         </div>
         <div class="row">
@@ -76,7 +76,7 @@
                      {{ option.mesinicio }}  {{ option.yearinicio }} - {{option.mesfin}}  {{ option.yearfin }}</small>
                   </option>
              </select>
-                     <div class="text-danger" v-html="formValidate.idperiodo"></div>
+                     <div class="col-red" v-html="formValidate.idperiodo"></div>
                 </div>
             </div> 
         </div>
@@ -90,7 +90,7 @@
                      {{ option.nombrenivel }} - {{ option.nombregrupo }} - {{ option.nombreturno }} - {{ option.nombreespecialidad }}
                   </option>
              </select>
-                     <div class="text-danger" v-html="formValidate.idgrupo"></div>
+                     <div class="col-red" v-html="formValidate.idgrupo"></div>
                 </div>
             </div> 
         </div>
@@ -120,7 +120,7 @@
                <img  style="width: 50px;" src="<?php echo base_url() . '/assets/loader/pagos.gif' ?>" alt=""> <strong>Procesando...</strong>
            </div>
            <div v-if="error"  align="left">
-               <label class="text-danger">*Corrija los errores en el formulario.</label>
+               <label class="col-red">*Corrija los errores en el formulario.</label>
            </div>
         </div>
          <div class="col-md-6 col-sm-12 col-xs-12 "  align="right"  >

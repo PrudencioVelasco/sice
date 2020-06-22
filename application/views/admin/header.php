@@ -62,6 +62,9 @@
    .swal2-popup{
      font-size: 1.4rem;
    }
+   .is-invalid{
+     border-color: red;
+   }
  </style>
  <style type="text/css">
                 .modal-mask {

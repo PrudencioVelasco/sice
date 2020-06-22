@@ -157,7 +157,7 @@ var v = new Vue({
             Swal.fire({
                 title: '¿Eliminar Colegiatura?',
                 text: "Realmente desea eliminar la Colegiatura.",
-                type: 'info',
+                type: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
@@ -183,11 +183,11 @@ var v = new Vue({
                             v.clearAll();
                             v.clearMSG();
                         } else {
-                            swal("Error", "No se puede eliminar la Colegiatura", "error")
+                            swal("Información", "No se puede eliminar la Colegiatura", "info")
                         }
                         console.log(response);
                     }).catch((error) => {
-                        swal("Error", "No se puede eliminar la Colegiatura", "error")
+                        swal("Información", "No se puede eliminar la Colegiatura", "info")
                     })
                 }
             })

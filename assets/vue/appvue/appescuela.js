@@ -134,7 +134,7 @@ var v = new Vue({
             Swal.fire({
           title: '¿Eliminar Escuela?',
           text: "Realmente desea eliminar la Escuela.",
-          type: 'info',
+          type: 'question',
           showCancelButton: true,
           confirmButtonColor: '#3085d6',
           cancelButtonColor: '#d33',
@@ -160,11 +160,10 @@ var v = new Vue({
                     v.clearAll();
                     v.clearMSG();
                 } else {
-                   swal("Error", "No se puede eliminar la Escuela", "error")
-                }
-                console.log(response);
+                   swal("Información", "No se puede eliminar la Escuela", "info")
+                }  
             }).catch((error) => {
-                swal("Error", "No se puede eliminar la Escuela", "error")
+                swal("Información", "No se puede eliminar la Escuela", "info")
             })
             }
             })

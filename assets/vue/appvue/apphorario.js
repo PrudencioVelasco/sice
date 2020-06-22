@@ -89,7 +89,7 @@ var v = new Vue({
              Swal.fire({
           title: '¿Eliminar Horario?',
           text: "Realmente desea eliminar el Horario.",
-          type: 'info',
+          type: 'question',
           showCancelButton: true,
           confirmButtonColor: '#3085d6',
           cancelButtonColor: '#d33',
@@ -115,11 +115,11 @@ var v = new Vue({
                     v.clearAll();
                     v.clearMSG();
                 } else {
-                   swal("Error", "No se puede eliminar el Horario", "error")
+                   swal("Información", "No se puede eliminar el Horario", "info")
                 }
                 //console.log(response);
             }).catch((error) => {
-                swal("Error", "No se puede eliminar el Horario", "error")
+                swal("Información", "No se puede eliminar el Horario", "info")
             })
             }
             })

@@ -312,6 +312,24 @@ class Alumno_model extends CI_Model {
         }
     } 
 
+     public function validarAddAlumnoGrupo($idcicloescolar = '',$idalumno = '', $idgrupo = '',$idplantel = '') {
+        $this->db->select('ag.*');
+        $this->db->from('tblalumno_grupo ag');
+        $this->db->join('tblalumno a','a.idalumno = ag.idalumno'); 
+        $this->db->where('ag.idperiodo',$idcicloescolar); 
+        $this->db->where('ag.idalumno',$idalumno); 
+        $this->db->where('ag.idgrupo',$idgrupo); 
+        if(!empty($idplantel)){
+        $this->db->where('a.idplantel',$idplantel);
+        }
+         $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    } 
+
     public function validarMatricula($matricula = '',$idalumno = '', $idplantel = '') {
         $this->db->select('a.*');
         $this->db->from('tblalumno a'); 

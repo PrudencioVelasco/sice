@@ -3,7 +3,7 @@
    <h3 slot="head" >Agregar Usuario</h3>
    <div slot="body" class="row">
     <div class="col-md-12">
-       <div class="text-danger" v-html="formValidate.smserror"> </div>
+       <div class="col-red" v-html="formValidate.smserror"> </div>
     </div>
       <div class="col-md-6">
 
@@ -11,17 +11,17 @@
          <div class="form-group">
             <label><font color="red">*</font> Usuario</label>
             <input type="text" class="form-control" :class="{'is-invalid': formValidate.usuario}" name="usuario" v-model="newUser.usuario" autcomplete="off">
-            <div class="text-danger" v-html="formValidate.usuario"> </div>
+            <div class="col-red" v-html="formValidate.usuario"> </div>
          </div>
           <div class="form-group">
             <label><font color="red">*</font> Apellido P.</label>
             <input type="text" class="form-control" :class="{'is-invalid': formValidate.apellidop}" name="apellidop" v-model="newUser.apellidop" autcomplete="off">
-            <div class="text-danger" v-html="formValidate.apellidop"> </div>
+            <div class="col-red" v-html="formValidate.apellidop"> </div>
          </div>
           <div class="form-group">
             <label><font color="red">*</font> Contraseña</label>
             <input type="password" class="form-control" :class="{'is-invalid': formValidate.password2}" name="password2" v-model="newUser.password2" autcomplete="off" >
-            <div class="text-danger" v-html="formValidate.password2"></div>
+            <div class="col-red" v-html="formValidate.password2"></div>
          </div>
           <div class="form-group">
             <label><font color="red">*</font> Rol</label>
@@ -32,24 +32,24 @@
                 {{ option.rol }}
               </option>
             </select>
-              <div class="text-danger" v-html="formValidate.rol"></div>
+              <div class="col-red" v-html="formValidate.rol"></div>
          </div>
       </div>
       <div class="col-md-6">
          <div class="form-group">
             <label><font color="red">*</font> Nombre</label>
             <input type="text" class="form-control" :class="{'is-invalid': formValidate.nombre}" name="nombre" v-model="newUser.nombre" autcomplete="off">
-            <div class="text-danger" v-html="formValidate.nombre"></div>
+            <div class="col-red" v-html="formValidate.nombre"></div>
          </div>
          <div class="form-group">
             <label> Apellido M.</label>
             <input type="text" class="form-control" :class="{'is-invalid': formValidate.apellidom}" name="apellidom" v-model="newUser.apellidom" autcomplete="off">
-            <div class="text-danger" v-html="formValidate.apellidom"></div>
+            <div class="col-red" v-html="formValidate.apellidom"></div>
          </div>
           <div class="form-group">
             <label><font color="red">*</font> Repita Contraseña</label>
             <input class="form-control" :class="{'is-invalid': formValidate.password1}" name="password1" v-model="newUser.password1" type="password" autcomplete="off">
-            <div class="text-danger" v-html="formValidate.password1"></div>
+            <div class="col-red" v-html="formValidate.password1"></div>
          </div> 
           <div class="form-group">
             <label><font color="red">*</font> Plantel</label>
@@ -60,7 +60,7 @@
                 {{option.nombreniveleducativo}} - {{ option.nombreplantel }}
               </option>
             </select>
-              <div class="text-danger" v-html="formValidate.idplantel"></div>
+              <div class="col-red" v-html="formValidate.idplantel"></div>
          </div>
       </div>
    </div>
@@ -71,7 +71,7 @@
                <img  style="width: 50px;" src="<?php echo base_url() . '/assets/loader/pagos.gif' ?>" alt=""> <strong>Procesando...</strong>
            </div>
            <div v-if="error"  align="left">
-               <label class="text-danger">*Corrija los errores en el formulario.</label>
+               <label class="col-red">*Corrija los errores en el formulario.</label>
            </div>
         </div>
          <div class="col-md-6 col-sm-12 col-xs-12 "  align="right"  >
@@ -86,7 +86,7 @@
    <h3 slot="head" >Editar usuario</h3>
    <div slot="body" class="row">
      <div class="col-md-12">
-       <div class="text-danger" v-html="formValidate.smserror"> </div>
+       <div class="col-red" v-html="formValidate.smserror"> </div>
     </div>
     <div class="row">
       <div class="col-md-6">
@@ -95,12 +95,12 @@
          <div class="form-group">
             <label><font color="red">*</font> Usuario</label>
             <input type="text" class="form-control" :class="{'is-invalid': formValidate.usuario}" name="usuario" v-model="chooseUser.usuario" autcomplete="off" disabled="">
-            <div class="text-danger" v-html="formValidate.usuario"> </div>
+            <div class="col-red" v-html="formValidate.usuario"> </div>
          </div>
           <div class="form-group">
             <label><font color="red">*</font> Apellido P.</label>
             <input type="text" class="form-control" :class="{'is-invalid': formValidate.apellidop}" name="apellidop" v-model="chooseUser.apellidop" autcomplete="off">
-            <div class="text-danger" v-html="formValidate.apellidop"> </div>
+            <div class="col-red" v-html="formValidate.apellidop"> </div>
          </div> 
            <div class="form-group">
             <label><font color="red">*</font> Rol</label>
@@ -117,12 +117,12 @@
        <div class="form-group">
             <label><font color="red">*</font> Nombre</label>
             <input type="text" class="form-control" :class="{'is-invalid': formValidate.nombre}" name="nombre" v-model="chooseUser.nombre" autcomplete="off">
-            <div class="text-danger" v-html="formValidate.nombre"></div>
+            <div class="col-red" v-html="formValidate.nombre"></div>
          </div>
          <div class="form-group">
             <label> Apellido M.</label>
             <input type="text" class="form-control" :class="{'is-invalid': formValidate.apellidom}" name="apellidom" v-model="chooseUser.apellidom" autcomplete="off">
-            <div class="text-danger" v-html="formValidate.apellidom"></div>
+            <div class="col-red" v-html="formValidate.apellidom"></div>
          </div>
              <div class="form-group">
             <label><font color="red">*</font> Plantel</label>
@@ -162,7 +162,7 @@
                <img  style="width: 50px;" src="<?php echo base_url() . '/assets/loader/pagos.gif' ?>" alt=""> <strong>Procesando...</strong>
            </div>
            <div v-if="error"  align="left">
-               <label class="text-danger">*Corrija los errores en el formulario.</label>
+               <label class="col-red">*Corrija los errores en el formulario.</label>
            </div>
         </div>
          <div class="col-md-6 col-sm-12 col-xs-12 "  align="right"  >
@@ -182,7 +182,7 @@
 
 
              <input type="password" class="form-control" :class="{'is-invalid': formValidate.password1}" name="password1" v-model="chooseUser.password1">
-            <div class="text-danger" v-html="formValidate.password1"></div>
+            <div class="col-red" v-html="formValidate.password1"></div>
 
          </div>
 
@@ -191,7 +191,7 @@
          <div class="form-group">
             <label><font color="red">*</font> Repita contraseña</label>
            <input type="password" class="form-control" :class="{'is-invalid': formValidate.password2}" name="password2" v-model="chooseUser.password2">
-            <div class="text-danger" v-html="formValidate.password2"></div>
+            <div class="col-red" v-html="formValidate.password2"></div>
          </div>
 
 
@@ -204,7 +204,7 @@
                <img  style="width: 50px;" src="<?php echo base_url() . '/assets/loader/pagos.gif' ?>" alt=""> <strong>Procesando...</strong>
            </div>
            <div v-if="error"  align="left">
-               <label class="text-danger">*Corrija los errores en el formulario.</label>
+               <label class="col-red">*Corrija los errores en el formulario.</label>
            </div>
         </div>
          <div class="col-md-6 col-sm-12 col-xs-12 "  align="right"  >

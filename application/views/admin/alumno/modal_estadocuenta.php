@@ -3,7 +3,7 @@
    <div slot="body">
       <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12 ">
-                <label style="color: red" v-html="formValidate.msgerror"></label>
+                <label class="col-red" v-html="formValidate.msgerror"></label>
             </div>
         </div>
         <div class="row">
@@ -21,12 +21,12 @@
                         {{ option.nombretipopago }} 
                   </option>
          </select>
-           <div class="text-danger" v-html="formValidate.idformapago"></div>
+           <div class="col-red" v-html="formValidate.idformapago"></div>
          </div>
           <div class="form-group">
             <label>Número Autorización</label>
              <input type="text" v-model="newCobro.autorizacion" class="form-control"  :class="{'is-invalid': formValidate.autorizacion}" name="po"> 
-              <div class="text-danger" v-html="formValidate.autorizacion"></div>
+              <div class="col-red" v-html="formValidate.autorizacion"></div>
          </div> 
       </div>
      </div>
@@ -38,7 +38,7 @@
                <img  style="width: 50px;" src="<?php echo base_url() . '/assets/loader/pagos.gif' ?>" alt=""> <strong>Procesando...</strong>
            </div>
            <div v-if="error"  align="left">
-               <label class="text-danger">*Corrija los errores en el formulario.</label>
+               <label class="col-red">*Corrija los errores en el formulario.</label>
            </div>
         </div>
          <div class="col-md-6 col-sm-12 col-xs-12 "  align="right"  >
@@ -51,7 +51,7 @@
 
 
 <modal v-if="addPagoModal" @close="clearAll()">
-   <h3 slot="head" >Agregar Cobro -  | I. ${{ve.total_que_debe_pagar_inscripcion}} | R. ${{ve.total_que_debe_pagar_reinscripcion}}|</h3>
+   <h3 slot="head" >Agregar Cobro -  | Inscripción: ${{ve.total_que_debe_pagar_inscripcion}} | Reinscripción: ${{ve.total_que_debe_pagar_reinscripcion}}</h3>
    <div slot="body">
          <div style=" height: 300px; overflow-x: hidden; overflow-y: scroll;">
       <div class="row">
@@ -69,14 +69,14 @@
                         {{ option.concepto }} 
                   </option>
          </select>
-           <div class="text-danger" v-html="formValidate.idtipopagocol"></div>
+           <div class="col-red" v-html="formValidate.idtipopagocol"></div>
          </div>
         </div>
       </div>
 
               <div class="row" v-if="mostar_error_formapago">
                  <div class="col-md-12 col-sm-12 col-xs-12 ">
-                         <label class="text-danger">{{error_formapago}}</label>
+                         <label class="col-red">{{error_formapago}}</label>
                  </div>
          </div>
          <div class="row">
@@ -90,7 +90,7 @@
                         {{ option.nombretipopago }} 
                      </option>
                   </select>
-                  <div class="text-danger" v-html="formValidate.idformapago"></div>
+                  <div class="col-red" v-html="formValidate.idformapago"></div>
                </div>
             </div>
             <div class="col-md-3 col-sm-3 col-xs-12 ">
@@ -98,14 +98,14 @@
                   <label><font color="red">*</font> Total a pagar</label>
                   <input type="text" v-model="array_descuento" class="form-control"  :class="{'is-invalid': formValidate.descuento}" name="po" > 
                   <small>Ejemplo: 300.00, 500.50, etc.</small>
-                  <div class="text-danger" v-html="formValidate.descuento"></div>
+                  <div class="col-red" v-html="formValidate.descuento"></div>
                </div>
             </div>
             <div class="col-md-3 col-sm-3 col-xs-12 ">
                <div class="form-group">
                   <label>Número Autorización</label>
                   <input type="text" v-model="array_autorizacion" class="form-control"  :class="{'is-invalid': formValidate.autorizacion}" name="po"> 
-                  <div class="text-danger" v-html="formValidate.autorizacion"></div>
+                  <div class="col-red" v-html="formValidate.autorizacion"></div>
                </div>
             </div>
               <div class="col-md-2 col-sm-2 col-xs-12 ">
@@ -148,10 +148,10 @@
                <img  style="width: 50px;" src="<?php echo base_url() . '/assets/loader/pagos.gif' ?>" alt=""> <strong>Procesando...</strong>
            </div>
            <div v-if="error"  align="left">
-               <label class="text-danger">*Corrija los errores en el formulario.</label>
+               <label class="col-red">*Corrija los errores en el formulario.</label>
            </div>
                <div v-if="error_pago"  align="left">
-               <label class="text-danger">*Agregar detalle de Forma de Pago.</label>
+               <label class="col-red">*Agregar detalle de Forma de Pago.</label>
             </div>
         </div>
          <div class="col-md-6 col-sm-12 col-xs-12 "  align="right"  >
@@ -163,7 +163,7 @@
 </modal>
 
 <modal v-if="addPagoColegiaturaModal" @close="clearAll()">
-   <h3 slot="head" >Agregar Cobro | C. ${{ve.total_que_debe_pagar_colegiatura}}</h3>
+   <h3 slot="head" >Agregar Cobro | Colegiatura: ${{ve.total_que_debe_pagar_colegiatura}}</h3>
    <div slot="body">
       <div style=" height: 300px; overflow-x: hidden; overflow-y: scroll;">
          <div class="row">
@@ -181,13 +181,13 @@
                         {{ option.nombremes }} 
                      </option>
                   </select>
-                  <div class="text-danger" v-html="formValidate.idmes"></div>
+                  <div class="col-red" v-html="formValidate.idmes"></div>
                </div>
             </div>
          </div>  
          <div class="row" v-if="mostar_error_formapago">
                  <div class="col-md-12 col-sm-12 col-xs-12 ">
-                         <label class="text-danger">{{error_formapago}}</label>
+                         <label class="col-red">{{error_formapago}}</label>
                  </div>
          </div>
          <div class="row">
@@ -201,7 +201,7 @@
                         {{ option.nombretipopago }} 
                      </option>
                   </select>
-                  <div class="text-danger" v-html="formValidate.idformapago"></div>
+                  <div class="col-red" v-html="formValidate.idformapago"></div>
                </div>
             </div>
             <div class="col-md-3 col-sm-3 col-xs-12 ">
@@ -209,14 +209,14 @@
                   <label><font color="red">*</font> Total a pagar</label>
                   <input type="text" v-model="array_descuento" class="form-control"  :class="{'is-invalid': formValidate.descuento}" name="po" > 
                   <small>Ejemplo: 300.00, 500.50, etc.</small>
-                  <div class="text-danger" v-html="formValidate.descuento"></div>
+                  <div class="col-red" v-html="formValidate.descuento"></div>
                </div>
             </div>
             <div class="col-md-3 col-sm-3 col-xs-12 ">
                <div class="form-group">
                   <label>Número Autorización</label>
                   <input type="text" v-model="array_autorizacion" class="form-control"  :class="{'is-invalid': formValidate.autorizacion}" name="po"> 
-                  <div class="text-danger" v-html="formValidate.autorizacion"></div>
+                  <div class="col-red" v-html="formValidate.autorizacion"></div>
                </div>
             </div>
               <div class="col-md-2 col-sm-2 col-xs-12 ">
@@ -259,10 +259,10 @@
                <img  style="width: 50px;" src="<?php echo base_url() . '/assets/loader/pagos.gif' ?>" alt=""> <strong>Procesando...</strong>
             </div>
             <div v-if="error"  align="left">
-               <label class="text-danger">*Corrija los errores en el formulario.</label>
+               <label class="col-red">*Corrija los errores en el formulario.</label>
             </div>
             <div v-if="error_pago"  align="left">
-               <label class="text-danger">*Agregar detalle de Forma de Pago.</label>
+               <label class="col-red">*Agregar detalle de Forma de Pago.</label>
             </div>
          </div>
          <div class="col-md-6 col-sm-12 col-xs-12 "  align="right"  >
@@ -280,7 +280,7 @@
          <div style=" height: 100px;overflow-x: hidden; overflow-y: scroll;">
          <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12 ">
-                <label class="text-danger" v-html="formValidate.msgerror"></label>
+                <label class="col-red" v-html="formValidate.msgerror"></label>
             </div>
         </div>
         <div class="row">
@@ -288,14 +288,14 @@
                 <div class="form-group">
                     <label><font color="red">*</font> Usuario</label>
                     <input type="password" v-model="eliminarPrimerCobro.usuario" class="form-control"  :class="{'is-invalid': formValidate.usuario}" name="po"> 
-                           <div class="text-danger" v-html="formValidate.usuario"></div>
+                           <div class="col-red" v-html="formValidate.usuario"></div>
                 </div>
             </div> 
             <div class="col-md-6 col-sm-12 col-xs-12 ">
                 <div class="form-group">
                     <label><font color="red">*</font> Contraseña</label>
                     <input type="password" v-model="eliminarPrimerCobro.password" class="form-control"  :class="{'is-invalid': formValidate.password}" name="po"> 
-                           <div class="text-danger" v-html="formValidate.password"></div>
+                           <div class="col-red" v-html="formValidate.password"></div>
                 </div>
             </div> 
         </div>  
@@ -309,7 +309,7 @@
                <img  style="width: 50px;" src="<?php echo base_url() . '/assets/loader/pagos.gif' ?>" alt=""> <strong>Procesando...</strong>
            </div>
            <div v-if="error"  align="left">
-               <label class="text-danger">*Corrija los errores en el formulario.</label>
+               <label class="col-red">*Corrija los errores en el formulario.</label>
            </div>
         </div>
          <div class="col-md-6 col-sm-12 col-xs-12 "  align="right"  >
@@ -326,7 +326,7 @@
          <div style=" height: 100px;overflow-x: hidden; overflow-y: scroll;">
          <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12 ">
-                <label class="text-danger" v-html="formValidate.msgerror"></label>
+                <label class="col-red" v-html="formValidate.msgerror"></label>
             </div>
         </div>
         <div class="row">
@@ -334,14 +334,14 @@
                 <div class="form-group">
                     <label><font color="red">*</font> Usuario</label>
                     <input type="password" v-model="eliminarColegiatura.usuario" class="form-control"  :class="{'is-invalid': formValidate.usuario}" name="po"> 
-                           <div class="text-danger" v-html="formValidate.usuario"></div>
+                           <div class="col-red" v-html="formValidate.usuario"></div>
                 </div>
             </div> 
             <div class="col-md-6 col-sm-12 col-xs-12 ">
                 <div class="form-group">
                     <label><font color="red">*</font> Contraseña</label>
                     <input type="password" v-model="eliminarColegiatura.password" class="form-control"  :class="{'is-invalid': formValidate.password}" name="po"> 
-                           <div class="text-danger" v-html="formValidate.password"></div>
+                           <div class="col-red" v-html="formValidate.password"></div>
                 </div>
             </div> 
         </div>  
@@ -355,7 +355,7 @@
                <img  style="width: 50px;" src="<?php echo base_url() . '/assets/loader/pagos.gif' ?>" alt=""> <strong>Procesando...</strong>
            </div>
            <div v-if="error"  align="left">
-               <label class="text-danger">*Corrija los errores en el formulario.</label>
+               <label class="col-red">*Corrija los errores en el formulario.</label>
            </div>
         </div>
          <div class="col-md-6 col-sm-12 col-xs-12 "  align="right"  >

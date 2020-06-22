@@ -299,7 +299,7 @@ var v = new Vue({
                    Swal.fire({
           title: '¿Eliminar Elemente?',
           text: "Realmente desea eliminar el Elemente.",
-          type: 'info',
+          type: 'question',
           showCancelButton: true,
           confirmButtonColor: '#3085d6',
           cancelButtonColor: '#d33',
@@ -326,11 +326,10 @@ var v = new Vue({
                     v.clearMSG();
                      v.cargar();
                 } else {
-                   swal("Error", "No se puede eliminar el Elemente", "error")
-                }
-                console.log(response);
+                   swal("Información", "No se puede eliminar el Elemente", "info")
+                } 
             }).catch((error) => {
-                swal("Error", "No se puede eliminar el Elemente", "error")
+                swal("Información", "No se puede eliminar el Elemente", "info")
             })
             }
             }) 
@@ -339,7 +338,7 @@ var v = new Vue({
              Swal.fire({
           title: '¿Eliminar Elemente?',
           text: "Realmente desea eliminar el Elemente.",
-          type: 'info',
+          type: 'question',
           showCancelButton: true,
           confirmButtonColor: '#3085d6',
           cancelButtonColor: '#d33',
@@ -366,11 +365,10 @@ var v = new Vue({
                     v.clearMSG();
                      v.cargar();
                 } else {
-                   swal("Error", "No se puede eliminar el Elemente", "error")
-                }
-                console.log(response);
+                    swal("Información", "No se puede eliminar el Elemente", "info")
+                } 
             }).catch((error) => {
-                swal("Error", "No se puede eliminar el Elemente", "error")
+                swal("Información", "No se puede eliminar el Elemente", "info")
             })
             }
             })
@@ -379,7 +377,7 @@ var v = new Vue({
         Swal.fire({
           title: '¿Eliminar Elemente?',
           text: "Realmente desea eliminar el Elemente.",
-          type: 'info',
+          type: 'question',
           showCancelButton: true,
           confirmButtonColor: '#3085d6',
           cancelButtonColor: '#d33',
@@ -406,11 +404,10 @@ var v = new Vue({
                     v.clearMSG();
                      v.cargar();
                 } else {
-                   swal("Error", "No se puede eliminar el Elemente", "error")
-                }
-                console.log(response);
+                    swal("Información", "No se puede eliminar el Elemente", "info")
+                } 
             }).catch((error) => {
-                swal("Error", "No se puede eliminar el Elemente", "error")
+                swal("Información", "No se puede eliminar el Elemente", "info")
             })
             }
             }) 

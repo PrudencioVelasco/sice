@@ -4,9 +4,9 @@
    <div slot="body" class="row">
       <div class="col-md-12">
          <div class="form-group">
-            <label><font color="red">*</font> Rol</label>
+            <label><font color="red">*</font> Nombre del Rol</label>
             <input type="text" class="form-control" :class="{'is-invalid': formValidate.rol}" name="rol" v-model="newRol.rol" autcomplete="off">
-            <div class="text-danger" v-html="formValidate.rol"> </div>
+            <div class="col-red" v-html="formValidate.rol"> </div>
          </div>
           
       </div> 
@@ -18,7 +18,7 @@
                <img  style="width: 50px;" src="<?php echo base_url() . '/assets/loader/pagos.gif' ?>" alt=""> <strong>Procesando...</strong>
            </div>
            <div v-if="error"  align="left">
-               <label class="text-danger">*Corrija los errores en el formulario.</label>
+               <label class="col-red">*Corrija los errores en el formulario.</label>
            </div>
         </div>
          <div class="col-md-6 col-sm-12 col-xs-12 "  align="right"  >
@@ -34,9 +34,9 @@
    <div slot="body" class="row">
       <div class="col-md-12">
          <div class="form-group">
-            <label><font color="red">*</font> Rol</label>
+            <label><font color="red">*</font> Nombre de Rol</label>
             <input type="text" class="form-control" :class="{'is-invalid': formValidate.rol}" name="rol" v-model="chooseRol.rol">
-            <div class="text-danger" v-html="formValidate.rol"> </div>
+            <div class="col-red" v-html="formValidate.rol"> </div>
          </div>
         
         
@@ -50,7 +50,7 @@
                <img  style="width: 50px;" src="<?php echo base_url() . '/assets/loader/pagos.gif' ?>" alt=""> <strong>Procesando...</strong>
            </div>
            <div v-if="error"  align="left">
-               <label class="text-danger">*Corrija los errores en el formulario.</label>
+               <label class="col-red">*Corrija los errores en el formulario.</label>
            </div>
         </div>
          <div class="col-md-6 col-sm-12 col-xs-12 "  align="right"  >

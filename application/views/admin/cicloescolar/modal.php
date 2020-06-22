@@ -5,7 +5,7 @@
         <div style=" height: 200px; overflow-x: hidden; overflow-y: scroll;">
         <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12 ">
-                <div class="text-danger" v-html="formValidate.msgerror"></div>
+                <div class="col-red" v-html="formValidate.msgerror"></div>
             </div>
         </div>
         <div class="row">
@@ -19,7 +19,7 @@
                         {{ option.nombremes }}   
                       </option>
                     </select>
-                    <div class="text-danger" v-html="formValidate.idmesinicio"></div>
+                    <div class="col-red" v-html="formValidate.idmesinicio"></div>
                            
                 </div>
             </div>  
@@ -32,7 +32,7 @@
                         {{ option.nombreyear }}   
                       </option>
                     </select>
-                           <div class="text-danger" v-html="formValidate.idyearinicio"></div>
+                           <div class="col-red" v-html="formValidate.idyearinicio"></div>
                            
                 </div>
             </div>
@@ -48,7 +48,7 @@
                         {{ option.nombremes }}   
                       </option>
                     </select>
-                           <div class="text-danger" v-html="formValidate.idmesfin"></div>
+                           <div class="col-red" v-html="formValidate.idmesfin"></div>
                            
                 </div>
             </div> 
@@ -62,7 +62,7 @@
                         {{ option.nombreyear }}   
                       </option>
                     </select>
-                    <div class="text-danger" v-html="formValidate.idyearfin"></div>
+                    <div class="col-red" v-html="formValidate.idyearfin"></div>
                           
                 </div>
             </div> 
@@ -79,7 +79,7 @@
                <img  style="width: 50px;" src="<?php echo base_url() . '/assets/loader/pagos.gif' ?>" alt=""> <strong>Procesando...</strong>
            </div>
            <div v-if="error"  align="left">
-               <label class="text-danger">*Corrija los errores en el formulario.</label>
+               <label class="col-red">*Corrija los errores en el formulario.</label>
            </div>
         </div>
          <div class="col-md-6 col-sm-12 col-xs-12 "  align="right"  >
@@ -95,7 +95,7 @@
          <div style=" height: 200px;overflow-x: hidden; overflow-y: scroll;">
          <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12 ">
-                <div class="text-danger" v-html="formValidate.msgerror"></div>
+                <div class="col-red" v-html="formValidate.msgerror"></div>
             </div>
         </div>
          <div class="row">
@@ -108,7 +108,7 @@
                         {{ option.nombremes }}   
                       </option>
                     </select>
-                    <div class="text-danger" v-html="formValidate.idmesinicio"></div>
+                    <div class="col-red" v-html="formValidate.idmesinicio"></div>
                            
                 </div>
             </div>  
@@ -120,7 +120,7 @@
                         {{ option.nombreyear }}   
                       </option>
                     </select>
-                           <div class="text-danger" v-html="formValidate.idyearinicio"></div>
+                           <div class="col-red" v-html="formValidate.idyearinicio"></div>
                            
                 </div>
             </div>
@@ -135,7 +135,7 @@
                         {{ option.nombremes }}   
                       </option>
                     </select>
-                           <div class="text-danger" v-html="formValidate.idmesfin"></div>
+                           <div class="col-red" v-html="formValidate.idmesfin"></div>
                            
                 </div>
             </div> 
@@ -148,7 +148,7 @@
                         {{ option.nombreyear }}   
                       </option>
                     </select>
-                    <div class="text-danger" v-html="formValidate.idyearfin"></div>
+                    <div class="col-red" v-html="formValidate.idyearfin"></div>
                           
                 </div>
             </div> 
@@ -181,7 +181,7 @@
                <img  style="width: 50px;" src="<?php echo base_url() . '/assets/loader/pagos.gif' ?>" alt=""> <strong>Procesando...</strong>
            </div>
            <div v-if="error"  align="left">
-               <label class="text-danger">*Corrija los errores en el formulario.</label>
+               <label class="col-red">*Corrija los errores en el formulario.</label>
            </div>
         </div>
          <div class="col-md-6 col-sm-12 col-xs-12 "  align="right"  >
