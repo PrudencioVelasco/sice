@@ -46,28 +46,32 @@
                                 <div class="col-md-6"></div>
                              </div>
                               <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                   <br>
-                                 <table class="table">
+                                 <table class="table  table-hover table-striped">
                                   <tr>
-                                    <td><strong>Nombre del Permiso</strong></td>
+                                    <td><strong>Descripción</strong></td>
+                                      <td><strong>Permiso</strong></td>
                                     <td><strong>Opción</strong></td>
                                   </tr>
                                   <form method="POST" action="<?= base_url('Rol/agregarrolpermiso') ?>">
                                   <?php foreach($permisos as $permiso) { ?>
                                     <tr>
                                       <td>
-                                         <?php   if($permiso["description"] != "") { echo $permiso["description"]."  - ".$permiso["uri"]; }else{ echo "Sin descripcion"."  - ".$permiso["uri"];} ?>
+                                          <?php   if($permiso["description"] != "") { echo $permiso["description"];}else{ echo "Sin descripcion";} ?>
+                                      </td>
+                                      <td>
+                                         <?php   if($permiso["description"] != "") { echo  $permiso["uri"]; }else{ echo  $permiso["uri"];} ?>
                                       </td> 
                                        <td>
                                           <div class="switch">
-                                    <label>OFF<input type="checkbox" name="permiso[]" value="<?php echo $permiso["id"] ?>"  <?php if($permiso["status"]=="1"){echo "checked";} ?>><span class="lever"></span>ON</label>
+                                    <label>NO<input type="checkbox" name="permiso[]" value="<?php echo $permiso["id"] ?>"  <?php if($permiso["status"]=="1"){echo "checked";} ?>><span class="lever"></span>SI</label>
                                 </div>
 
                                        </td>
                                     <?php } ?>
                                     <tr>
-                                      <td colspan="2">
+                                      <td colspan="3">
                                         <input type="hidden" name="rol" value="<?php echo $permiso["rol"] ?>">
                                      <button type="submit"  class="btn btn-primary btn-fw"><i class='fa fa-floppy-o'></i> Guardar</button>
                                       </td>
@@ -75,9 +79,7 @@
                                     
                                   </form>
                                 </div>
-                                <div class="col-md-6">
-                                    
-                                </div>
+                                
                              </div>
                              
                            </div>

@@ -21,7 +21,7 @@ Vue.component('modal',{ //modal
 
 
 			      <div class="modal-header">
-				        <h5 class="modal-title"> <slot name="head"></slot></h5>
+				         <h4 class="modal-title" id="defaultModalLabel"><slot name="head"></slot></h4>
 				      </div>
 
 			      <div class="modal-body" style="background-color:#fff;">
@@ -76,6 +76,9 @@ var v = new Vue({
             // sort your array data like this.userArray
             this.tutores.sort(sortFn);
         },
+      abrirAddModal() {
+        $('#addTutor').modal('show');
+      },
          showAll(){ axios.get(this.url+"Alumno/showAllTutores/"+this.idalumno).then(function(response){
                  if(response.data.tutores == null){
                      v.noResult()
@@ -155,11 +158,11 @@ var v = new Vue({
                   });
 
                 } else {
-                  swal("Información", "No se puede quitar el Tutor", "info")
+                  swal("Información", "No se puede quitar el Tutor porque tiene permiso o dependencia.", "info")
                   v.cargando = false;
                 }
               }).catch((error) => {
-                swal("Información", "No se puede quitar el Tutor", "info")
+                swal("Información", "No se puede quitar el Tutor  porque tiene permiso o dependencia.", "info")
                 v.cargando = false;
               })
             }
@@ -206,6 +209,7 @@ var v = new Vue({
 			 },3000); // disappearing message success in 2 sec
         },
         clearAll(){
+          $('#addTutor').modal('hide');
             v.newTutor = {  
             idalumno:my_var_2,
             idtutor:'',

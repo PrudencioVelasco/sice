@@ -17,14 +17,15 @@ class Alumno extends CI_Controller {
         $this->load->model('user_model','user');
         $this->load->model('cicloescolar_model','cicloescolar');  
         $this->load->model('data_model'); 
-        $this->load->library('permission');
-        $this->load->library('session');
+        
         $this->load->library('pdfgenerator');  
         $this->load->helper('numeroatexto_helper');
         $this->load->library('encryption');  
+        $this->load->library('permission');
+        $this->load->library('session');
     }
 
-	public function index()
+	public function inicio()
 	{
          Permission::grant(uri_string());
 		$this->load->view('admin/header');
@@ -47,9 +48,9 @@ function decode($string)
     return $this->encryption->decrypt($string);
 } 
 	  public function showAll() {
-        Permission::grant(uri_string()); 
+        //Permission::grant(uri_string()); 
         $idplantel = $this->session->idplantel;
-        $query = $this->alumno->showAll();
+        $query = $this->alumno->showAll($idplantel);
         if ($query) {
             $result['alumnos'] = $this->alumno->showAll($idplantel);
         }
@@ -57,8 +58,17 @@ function decode($string)
         echo json_encode($result);
         }
     }
+    public function showAllEstatusAlumno() { 
+        $query = $this->alumno->showAllEstatusAlumno();
+        if ($query) {
+            $result['estatusalumno'] = $this->alumno->showAllEstatusAlumno();
+        }
+        if(isset($result) && !empty($result)){
+        echo json_encode($result);
+        }
+    }
       public function showAllEspecialidades() {
-        Permission::grant(uri_string()); 
+        //Permission::grant(uri_string()); 
         $idplantel = $this->session->idplantel;
         $query = $this->alumno->showAllEspecialidades($idplantel);
         if ($query) {
@@ -69,7 +79,7 @@ function decode($string)
         }
     }
      public function showAllTiposSanguineos() {
-        Permission::grant(uri_string());  ;
+       //Permission::grant(uri_string());  ;
         $query = $this->alumno->showAllTiposSanguineos();
         if ($query) {
             $result['tipossanguineos'] = $this->alumno->showAllTiposSanguineos();
@@ -88,7 +98,7 @@ function decode($string)
         echo json_encode($result);
     }
     public function showAllTutoresDisponibles() {
-        Permission::grant(uri_string()); 
+        //Permission::grant(uri_string()); 
         $query = $this->alumno->showAllTutoresDisponibles();
         if ($query) {
             $result['tutores'] = $this->alumno->showAllTutoresDisponibles();
@@ -97,9 +107,10 @@ function decode($string)
         echo json_encode($result);
         }
     }
-
+ 
     public function addAlumno() {
-        Permission::grant(uri_string());
+      if(Permission::grantValidar(uri_string()) ==  1){
+      
         $config = array(
              array(
                 'field' => 'idespecialidad',
@@ -210,7 +221,7 @@ function decode($string)
               array(
                 'field' => 'fechanacimiento',
                 'label' => 'Fecha nacimiento',
-                'rules' => 'trim|required',
+                'rules' => 'trim|required|callback_validarFecha',
                 'errors' => array(
                     'required' => 'Campo obligatorio.'
                 )
@@ -307,6 +318,7 @@ function decode($string)
                     'sexo' => $this->input->post('sexo'), 
                     'correo' => $this->input->post('correo'),
                     'password' => password_hash($this->input->post('password'), PASSWORD_DEFAULT),
+                    'idalumnoestatus' => 1,
                     'idusuario' => $this->session->user_id,
                     'fecharegistro' => date('Y-m-d H:i:s'),
 
@@ -333,13 +345,54 @@ function decode($string)
         	 
           } 
         }
-        if(isset($result) && !empty($result)){
+        
+      
+          }else{
+             $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
+            );
+        	 
+          }
+               if(isset($result) && !empty($result)){
         echo json_encode($result);
-        }
-    	 
+        } 
     }
-     public function addTutorAlumno() {
-        Permission::grant(uri_string());
+      public function addTutorAlumnotest() { 
+           echo Permission::grantValidar(uri_string());
+           if(Permission::grantValidar(uri_string()) ==  NULL){
+            //echo 0;
+           }else{
+              // echo 1;
+           }
+    }
+//$numeroSemana = date("W"); 
+    function validarFecha($fecha){
+        $parts = explode("/",$fecha);
+        if(count($parts) == 3){
+        if(checkdate($parts[1],$parts[0],$parts[2])){
+            return true;
+        }else{
+         $this->form_validation->set_message(
+            'validarFecha',
+            'Formato no valido.'
+        );
+             return false; 
+           }
+        }else{
+            $this->form_validation->set_message(
+            'validarFecha',
+            'Formato no valido.'
+        );
+            return false;
+        }
+        
+  
+}
+
+     public function addTutorAlumno() { 
+         
+       if(Permission::grantValidar(uri_string()) ==  1){
         $config = array(
              array(
                 'field' => 'idtutor',
@@ -358,22 +411,37 @@ function decode($string)
                 'idtutor' => form_error('idtutor')
             );
         } else {
+            $idtutor=  $this->input->post('idtutor');
+            $idalumno =  $this->input->post('idalumno');
+            $validar = $this->alumno->validarAsignarTutor($idalumno,$idtutor,$this->session->idplantel);
+            if(!$validar){
             $data = array(
                     'idtutor' => $this->input->post('idtutor'),
                     'idalumno' => $this->input->post('idalumno')
                      
                 );
-            $this->alumno->addTutorAlumno($data);
-              $result['error']   = false;
-                $result['success'] = 'User updated successfully'; 
+            $this->alumno->addTutorAlumno($data); 
+        }else{
+              $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => 'Ya esta asignado el Tutor al Alumno.'
+            );
         }
+        }
+         }else{
+              $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => 'NO TIENE PERMISOS PARA REALIZAR ESTA ACCIÓN.'
+            );
+        }
+       
          if(isset($result) && !empty($result)){
-        echo json_encode($result);
-    }
+                echo json_encode($result);
+            }
          
     }
      public function updateAlumno() {
-        Permission::grant(uri_string());
+           if(Permission::grantValidar(uri_string()) ==  1){
       $config = array(
              array(
                 'field' => 'idespecialidad',
@@ -496,6 +564,14 @@ function decode($string)
                     'required' => 'Campo obligatorio.'
                 )
             )
+             ,  array(
+                'field' => 'idestatusalumno',
+                'label' => 'Estatus Alumno',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
+            )
              , 
             array(
                 'field' => 'telefono',
@@ -536,7 +612,8 @@ function decode($string)
                 'estatura' => form_error('estatura'),
                 'peso' => form_error('peso'),
                 'telefono' => form_error('telefono'),
-                'telefonoemergencia' => form_error('telefonoemergencia')
+                'telefonoemergencia' => form_error('telefonoemergencia'),
+                'idestatusalumno' => form_error('idestatusalumno')
             );
             
         } else {
@@ -570,6 +647,7 @@ function decode($string)
                     'sexo' => $this->input->post('sexo'), 
                     'correo' => $this->input->post('correo'),
                     //'password' => password_hash($this->input->post('password'), PASSWORD_DEFAULT),
+                     'idalumnoestatus' =>  $this->input->post('idestatusalumno'),
                     'idusuario' => $this->session->user_id,
                     'fecharegistro' => date('Y-m-d H:i:s'),
                      
@@ -583,15 +661,22 @@ function decode($string)
             }
             
         }
+            }else{
+              $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => 'NO TIENE PERMISOS PARA REALIZAR ESTA ACCIÓN.'
+            );
+        }
          if(isset($result) && !empty($result)){
         echo json_encode($result);
     }
          
     }
     public function searchAlumno() {
-        Permission::grant(uri_string());
+        //Permission::grant(uri_string());
         $value = $this->input->post('text');
-        $query = $this->alumno->searchAlumno($value);
+        $idplantel = $this->session->idplantel;
+        $query = $this->alumno->searchAlumno($value,$idplantel);
         if ($query) {
             $result['alumnos'] = $query;
         }
@@ -600,7 +685,7 @@ function decode($string)
         }
     }
     public function searchTutor($idalumno) {
-        Permission::grant(uri_string());
+        //Permission::grant(uri_string());
         $value = $this->input->post('text');
         $query = $this->alumno->searchTutores($value,$idalumno);
         if ($query) {
@@ -614,7 +699,7 @@ function decode($string)
 
     public function imprimirkardex($idhorario='',$idalumno = '')
     {
-        Permission::grant(uri_string());
+        
         $alumno = $this->alumno->detalleAlumno($idalumno);
         $grupop = $this->horario->showNivelGrupo($idhorario);
         $unidades =  $this->grupo->unidades($this->session->idplantel);
@@ -1308,7 +1393,7 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
  
         public function obtenerCalificacion($idhorario='',$idalumno = '')
     {
-        Permission::grant(uri_string());
+        //Permission::grant(uri_string());
       # code...
      $unidades =  $this->grupo->unidades($this->session->idplantel);
      $materias = $this->alumno->showAllMaterias($idhorario);
@@ -1368,7 +1453,7 @@ $suma_calificacion = 0;
     }
        public function obtenerCalificacionAlumnoPorNivel($idhorario='',$idalumno = '')
     {
-        Permission::grant(uri_string());
+        //Permission::grant(uri_string());
       # code...
      $unidades =  $this->grupo->unidades($this->session->idplantel);
      $materias = $this->alumno->showAllMaterias($idhorario);
@@ -1441,12 +1526,16 @@ $suma_calificacion = 0;
     public function deleteTutor()
     {
         # code...
-        Permission::grant(uri_string()); 
+       if(Permission::grantValidar(uri_string()) ==  1){
         $id = $this->input->get('id');
         $query = $this->alumno->deleteTutor($id);
         if ($query) {
             $result['tutores'] = true;
         } 
+    }
+     else{
+          $result['tutores'] = false;
+     }
        if(isset($result) && !empty($result)){
          echo json_encode($result);
         }
@@ -1455,7 +1544,7 @@ $suma_calificacion = 0;
 
     public function asignarGrupo()
     {
-        Permission::grant(uri_string());
+          if(Permission::grantValidar(uri_string()) ==  1){
               $config = array(
             array(
                 'field' => 'idcicloescolar',
@@ -1508,11 +1597,14 @@ $suma_calificacion = 0;
             }
 
     }
+       }else{
+                   echo json_encode(['error'=>'NO TIENE PERMISO PARA REALIZAR ESYA ACCIÓN.']);
+            }
     }
 
         public function asignarBeca()
     {
-        Permission::grant(uri_string());
+          if(Permission::grantValidar(uri_string()) ==  1){
               $config = array(
             array(
                 'field' => 'idbeca',
@@ -1544,6 +1636,9 @@ $suma_calificacion = 0;
              }
 
     }
+   }else{
+                echo json_encode(['error'=>'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.']);
+             }
     }
 
     public function actualizarFoto()
@@ -1589,7 +1684,7 @@ $suma_calificacion = 0;
 
     public function generarHorarioPDF($idhorario = '',$idalumno='')
     {
-        Permission::grant(uri_string());
+        //Permission::grant(uri_string());
         $idhorario = $this->decode($idhorario);
          $idalumno = $this->decode($idalumno);
         if((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno)) ){
@@ -1831,8 +1926,7 @@ $this->dompdf->stream("Horario Escolar.pdf", array("Attachment"=>0));
         }
     public function updatePasswordAlumno()
     {
-        Permission::grant(uri_string());
-        # code...
+           if(Permission::grantValidar(uri_string()) ==  1){
               $config = array(
              array(
                 'field' => 'password1',
@@ -1878,6 +1972,13 @@ $this->dompdf->stream("Horario Escolar.pdf", array("Attachment"=>0));
                     );
         }
         }
+         }else{
+             $result['error'] = true;
+                    $result['msg'] = array(
+                           'msgerror' => "NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN."
+                    );
+        }
+          
          if(isset($result) && !empty($result)){
         echo json_encode($result);
         }
@@ -1885,7 +1986,7 @@ $this->dompdf->stream("Horario Escolar.pdf", array("Attachment"=>0));
 
    public function obetnerAsistencia($idhorario = '',$fechai = '',$fechaf = '',$idalumno = '',$motivo= '')
     { 
-        Permission::grant(uri_string());
+       // Permission::grant(uri_string());
         // $alumns = $this->grupo->alumnosGrupo($idhorario);
          
          $materias = $this->alumno->showAllMaterias($idhorario);
@@ -1974,7 +2075,7 @@ return $tabla;
 
   public function buscarAsistencia()
   { 
-           Permission::grant(uri_string());
+           //Permission::grant(uri_string());
             $materias = $this->input->post('materias');
             $idhorario = $this->input->post('idhorario');
             $idalumno = $this->input->post('idalumno');
@@ -1996,12 +2097,15 @@ return $tabla;
   }
   public function deleteAlumno()
   {
-      Permission::grant(uri_string());
+         if(Permission::grantValidar(uri_string()) ==  1){
         $idalumno = $this->input->get('idalumno');
         $query = $this->alumno->deleteAlumno($idalumno);
         if ($query) {
             $result['alumnos'] = true;
         } 
+         }else{
+              $result['alumnos'] = false;
+         }
        if(isset($result) && !empty($result)){
          echo json_encode($result);
         }
@@ -2009,7 +2113,7 @@ return $tabla;
 
   public function boleta($idhorario='',$idalumno = '',$idunidad = '')
   {
-      Permission::grant(uri_string());
+      //Permission::grant(uri_string());
         $detalle_logo = $this->alumno->logo($this->session->idplantel);
         $logo = base_url() . '/assets/images/escuelas/'.$detalle_logo[0]->logoplantel;
         $logo2 = base_url() . '/assets/images/escuelas/'.$detalle_logo[0]->logosegundo;

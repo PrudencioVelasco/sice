@@ -18,7 +18,7 @@ class Profesor extends CI_Controller {
         //$this->load->library('encrypt'); 
     }
 
-	public function index()
+	public function inicio()
 	{
          Permission::grant(uri_string());
 		$this->load->view('admin/header');
@@ -26,7 +26,7 @@ class Profesor extends CI_Controller {
 		$this->load->view('admin/footer');
 	}
 	  public function showAll() {
-        Permission::grant(uri_string()); 
+        //Permission::grant(uri_string()); 
          $idplantel = $this->session->idplantel;
         $query = $this->profesor->showAll($idplantel);
         if ($query) {
@@ -39,7 +39,7 @@ class Profesor extends CI_Controller {
 
 
     public function addProfesor() {
-       Permission::grant(uri_string());
+       if(Permission::grantValidar(uri_string()) ==  1){
         $config = array(
              array(
                 'field' => 'cedula',
@@ -140,7 +140,12 @@ class Profesor extends CI_Controller {
                     );
             }
         }
-         
+          }else{
+                 $result['error'] = true;
+                    $result['msg'] = array(
+                           'msgerror' => "NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN."
+                    );
+            }
        if(isset($result) && !empty($result)){
          echo json_encode($result);
         }
@@ -149,7 +154,7 @@ class Profesor extends CI_Controller {
     public function updateProfesor()
     {
         # code...
-        Permission::grant(uri_string());
+     if(Permission::grantValidar(uri_string()) ==  1){
             $config = array(
              array(
                 'field' => 'cedula',
@@ -237,14 +242,19 @@ class Profesor extends CI_Controller {
                     );
         }
         }
-         
+           }else{
+             $result['error'] = true;
+                    $result['msg'] = array(
+                           'msgerror' => "NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN."
+                    );
+        }
         if(isset($result) && !empty($result)){
          echo json_encode($result);
         }
     }
     public function updatePasswordProfesor()
     {
-        Permission::grant(uri_string());
+        if(Permission::grantValidar(uri_string()) ==  1){
               $config = array(
              array(
                 'field' => 'password1',
@@ -290,13 +300,18 @@ class Profesor extends CI_Controller {
                     );
         }
         }
-         
+          }else{
+             $result['error'] = true;
+                    $result['msg'] = array(
+                           'msgerror' => "NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN."
+                    );
+        }
        if(isset($result) && !empty($result)){
          echo json_encode($result);
         }
     }
     public function searchProfesor() {
-        Permission::grant(uri_string());
+        //Permission::grant(uri_string());
          $idplantel = $this->session->idplantel;
         $value = $this->input->post('text');
         $query = $this->profesor->searchProfesor($value,$idplantel);
@@ -324,7 +339,7 @@ class Profesor extends CI_Controller {
 
     //MATERIAS DEL PROFESOR
      public function showAllClases() {
-        Permission::grant(uri_string()); 
+        //Permission::grant(uri_string()); 
          $idplantel = $this->session->idplantel;
         $query = $this->profesor->showAllClases();
         if ($query) {
@@ -336,7 +351,7 @@ class Profesor extends CI_Controller {
     }
 
   public function searchllClases() {
-        Permission::grant(uri_string()); 
+        //Permission::grant(uri_string()); 
         $query = $this->profesor->searchMaterias();
         if ($query) {
             $result['clases'] = $this->profesor->searchMaterias();
@@ -348,7 +363,7 @@ class Profesor extends CI_Controller {
 
 
       public function showAllMaterias($idprofesor) {
-        Permission::grant(uri_string()); 
+        //Permission::grant(uri_string()); 
         $query = $this->profesor->showAllMateriasProfesor($idprofesor);
         if ($query) {
             $result['materias'] = $this->profesor->showAllMateriasProfesor($idprofesor);
@@ -359,7 +374,7 @@ class Profesor extends CI_Controller {
     }
 
      public function addMateria() {
-        Permission::grant(uri_string());
+         if(Permission::grantValidar(uri_string()) ==  1){
         $config = array(
              array(
                 'field' => 'idmateria',
@@ -398,14 +413,19 @@ class Profesor extends CI_Controller {
         }
 
         }
-         
+             }else{ 
+            $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => "NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN."
+            );
+        }
       if(isset($result) && !empty($result)){
          echo json_encode($result);
         }
          
     }
      public function updateMateria() {
-        Permission::grant(uri_string());
+       if(Permission::grantValidar(uri_string()) ==  1){
         $config = array(
              array(
                 'field' => 'idmateria',
@@ -445,7 +465,12 @@ class Profesor extends CI_Controller {
             );
           }
         }
-         
+          }else{
+              $result['error'] = true;
+              $result['msg'] = array(
+                'msgerror' => "NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN."
+            );
+          }
        if(isset($result) && !empty($result)){
          echo json_encode($result);
         }
@@ -454,12 +479,15 @@ class Profesor extends CI_Controller {
 
  public function deleteMateria()
  {  
-     Permission::grant(uri_string());
+    if(Permission::grantValidar(uri_string()) ==  1){
         $id = $this->input->get('id');
         $query = $this->profesor->deleteMateria($id);
         if ($query) {
             $result['profesores'] = true;
         } 
+    }else{
+          $result['profesores'] = false;
+    }
        if(isset($result) && !empty($result)){
          echo json_encode($result);
         }
@@ -467,12 +495,15 @@ class Profesor extends CI_Controller {
  }
  public function deleteProfesor()
   {
-      Permission::grant(uri_string());
+       if(Permission::grantValidar(uri_string()) ==  1){
         $idprofesor = $this->input->get('idprofesor');
         $query = $this->profesor->deleteProfesor($idprofesor);
         if ($query) {
             $result['profesores'] = true;
         } 
+    }else{
+         $result['profesores'] = false;
+    }
        if(isset($result) && !empty($result)){
          echo json_encode($result);
         }

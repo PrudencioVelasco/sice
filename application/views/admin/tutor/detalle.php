@@ -27,15 +27,15 @@
 
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <button class="btn btn-primary" @click="addModal= true"><i class='fa fa-plus'></i> Asignar Alumno</button> 
+                                                <button class="btn btn-primary" @click="  abrirAddModal()"><i class='fa fa-plus'></i> Asignar Alumno</button> 
 
 
                                             </div>
                                             <div class="col-md-6"></div>
                                         </div> 
                                         <br>
-                                        <table class="table table-striped responsive-utilities jambo_table bulk_action">
-                                            <thead class="text-white bg-dark" >
+                                           <table class="table table-hover table-striped">
+                                            <thead class="bg-teal">
 
                                             <th class="text-white" v-column-sortable:nombre>Nombre </th>
                                             <th class="text-white" v-column-sortable:apellidop>A. Paterno </th>

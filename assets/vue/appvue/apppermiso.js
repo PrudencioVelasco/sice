@@ -39,6 +39,8 @@ var v = new Vue({
        url:my_var_1,
         addModal: false,
         editModal:false,
+      cargando: false,
+      error: false,
         //passwordModal:false,
         //deleteModal:false,
         permisos:[],
@@ -67,6 +69,12 @@ var v = new Vue({
             // sort your array data like this.userArray
             this.permisos.sort(sortFn);
         },
+      abrirAddModal() {
+        $('#addRegister').modal('show');
+      },
+      abrirEditModal() {
+        $('#editRegister').modal('show');
+      },
          showAll(){ axios.get(this.url+"Permiso/showAll").then(function(response){
                  if(response.data.permisos == null){
                      v.noResult()
@@ -87,10 +95,14 @@ var v = new Vue({
             })
         },
           addPermiso(){   
+            v.error = false;
+            v.cargando = true;
             var formData = v.formData(v.newPermiso);
               axios.post(this.url+"Permiso/addPermiso", formData).then(function(response){
                 if(response.data.error){
                     v.formValidate = response.data.msg;
+                  v.cargando = false;
+                  v.error = true;
                 }else{
                     swal({
                       position: 'center',
@@ -106,9 +118,13 @@ var v = new Vue({
                })
         },
         updatePermiso(){
+          v.error = false;
+          v.cargando = true;
             var formData = v.formData(v.choosePermiso); axios.post(this.url+"Permiso/updatePermiso", formData).then(function(response){
                 if(response.data.error){
                     v.formValidate = response.data.msg;
+                  v.cargando = false;
+                  v.error = true;
                 }else{
                     //v.successMSG = response.data.success;
                       swal({
@@ -163,6 +179,10 @@ var v = new Vue({
        },3000); // disappearing message success in 2 sec
         },
         clearAll(){
+          v.error = false;
+          v.cargando = false;
+          $('#editRegister').modal('hide');
+          $('#addRegister').modal('hide');
             v.newPermiso = { 
             uri:'',
             description:'' };

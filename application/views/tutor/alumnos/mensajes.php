@@ -15,8 +15,8 @@
 
                   <div class="row"> 
                   
-                   <table id="tutor_mensaje" class="table table-striped table-bordered">
-                    <thead>
+                   <table id="tutor_mensaje" class="table table-striped  ">
+                       <thead class="bg-teal"> 
                       <tr>
                         <th>#</th> 
                         <th>Mensaje</th>

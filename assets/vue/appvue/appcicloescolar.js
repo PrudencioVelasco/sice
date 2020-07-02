@@ -75,6 +75,12 @@ var v = new Vue({
             // sort your array data like this.userArray
             this.ciclos.sort(sortFn);
         },
+      abrirAddModal() {
+        $('#addRegister').modal('show');
+      },
+      abrirEditModal() {
+        $('#editRegister').modal('show');
+      },
          showAll(){ axios.get(this.url+"CicloEscolar/showAll").then(function(response){
                  if(response.data.ciclos == null){
                      v.noResult()
@@ -218,6 +224,8 @@ var v = new Vue({
 			 },3000); // disappearing message success in 2 sec
         },
         clearAll(){
+          $('#editRegister').modal('hide');
+          $('#addRegister').modal('hide');
             v.newCiclo = {
             idmesinicio:'',
             idyearinicio:'',

@@ -63,8 +63,8 @@
                   <div class="col-md-12 col-sm-12 col-xs-12 "> 
                   <div id="tblalumnos">
                    
-                     <table  id="docente_mensaje" class="table table-striped table-bordered">
-                    <thead>
+                     <table  id="docente_mensaje" class="table table-striped  ">
+                       <thead class="bg-teal"> 
                       <tr>
                         <th>#</th>
                         <th>Mensaje</th>

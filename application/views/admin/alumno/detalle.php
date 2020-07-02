@@ -233,7 +233,7 @@
  
                                         <div class="row">
                                             <div class="col-md-6">
-                                               <button class="btn btn-round btn-primary waves-effect waves-black" @click="addModal= true"><i class='fa fa-plus'></i> Asignar Tutor</button> 
+                                               <button class="btn btn-round btn-primary waves-effect waves-black" @click="abrirAddModal()"><i class='fa fa-plus'></i> Asignar Tutor</button> 
                                             </div>
                                             <div class="col-md-6">
                                                 <input placeholder="Buscar" type="search" class="form-control" v-model="search.text" @keyup="searchTutor" name="search">
@@ -296,9 +296,8 @@
                                 <div class="container">
                                   <div class="row">
                                     <div class="col-md-6 col-sm-12 col-xs-12 ">
-                                        <div class="form-group"> 
-
-                                             <select v-model="newBuscarCiclo.idperiodo"  ref="idperiodo" :class="{'is-invalid': formValidate.idperiodo}"class="form-control">
+                                        <div class="form-group">  
+                                             <select style="border-bottom: solid #ebebeb 2px;"  v-model="newBuscarCiclo.idperiodo"  ref="idperiodo" :class="{'is-invalid': formValidate.idperiodo}"class="form-control">
                                               <option value="">-- CICLO ESCOLAR --</option>
                                                 <option   v-for="option in ciclos" v-bind:value="option.idperiodo">
                                                 {{ option.mesinicio }}  {{ option.yearinicio }} - {{option.mesfin}}  {{ option.yearfin }}
@@ -326,9 +325,10 @@
                                   <div v-if="mostrar">
                                       <div class="row">
                                     <div class="col-md-12 col-sm-12 col-xs-12" align="left"> 
-                                      <button v-if="btnpagar"   @click="addPagoModal = true;" class="btn btn-default waves-effect waves-black"> <i class="fa fa-plus-circle"></i> Agregar Pago</button>
+                                      <button v-if="btnpagar"   @click="abrirAddModalPrincipal();" class="btn btn-default waves-effect waves-black"> <i class="fa fa-plus-circle"></i> Agregar Pago</button>
                                     </div>
                                   </div>  
+                                  
                                   <div class="row">
                                     <div class="col-md-12 col-sm-12 col-xs-12" align="center">
                                       <small style="font-weight: bold;text-decoration: underline red; ">Pagos de Inscripcion o Reinscripcion</small>
@@ -365,7 +365,7 @@
                                                 <span class="caret"></span>
                                             </button>
                                             <ul class="dropdown-menu">   
-                                                <li><a v-if="pago.pagado==1" ref="#"  @click="eliminarModalP = true; selectPrimerPago(pago)"> <i class="fa fa-trash" style="color: red;"></i> Eliminar</a></li>  
+                                                <li><a v-if="pago.pagado==1" ref="#"  @click="abrirEliminarPrincipal(); selectPrimerPago(pago)"> <i class="fa fa-trash" style="color: red;"></i> Eliminar</a></li>  
                                                 <li v-if="pago.pagado==1"><a  target="_blank" ref="#"  v-bind:href="'../../EstadoCuenta/imprimir/'+ pago.idpago+'/'+idperiodobuscado+'/'+idalumno+'/0'" ><i class="fa fa-print" style="color:blue;"></i> Imprimir</a></li>  
                                              </ul>
                                         </div>
@@ -380,7 +380,7 @@
                                         </table>
                                         <div class="row" v-if="btnpagarcolegiatura">
                                           <div class="col-md-12 col-sm-12 col-xs-12">
-                                            <button class="btn btn-info waves-effect waves-black"  @click="addPagoColegiaturaModal = true;"> <i class="fa fa-plus-circle"></i> Agregar Pago</button>
+                                            <button class="btn btn-info waves-effect waves-black"  @click="abrirAddModalColegiatura()"> <i class="fa fa-plus-circle"></i> Agregar Pago</button>
                                           </div>
                                         </div>
                                   <div class="row">
@@ -421,7 +421,7 @@
                                             <ul class="dropdown-menu"> 
                                                 <!--<li v-if="solicitud.pagado==0"  @click="addModal = true; selectPeriodo(solicitud)"><a href="#" ><i class="fa fa-money" aria-hidden="true"></i> Pagar</a></li> -->
                                                
-                                                <li  v-if="solicitud.pagado==1"><a  ref="#" @click="eliminarModalC = true; selectPeriodo(solicitud)"> <i class="fa fa-trash" style="color: red;"></i> Eliminar</a></li>  
+                                                <li  v-if="solicitud.pagado==1"><a  ref="#" @click="abrirEliminarColegiatura() ; selectPeriodo(solicitud)"> <i class="fa fa-trash" style="color: red;"></i> Eliminar</a></li>  
                                                   <li v-if="solicitud.pagado==1"><a  target="_blank" ref="#"  v-bind:href="'../../EstadoCuenta/imprimir/'+ solicitud.idpago+'/'+idperiodobuscado+'/'+idalumno+'/1'" ><i class="fa fa-print" style="color:blue;"></i> Imprimir</a></li>  
                                               
                                             </ul>
@@ -521,7 +521,7 @@
                                 <div class="form-group">
                                     <label><font color="red">*</font> Beca</label>
                                    
-                                        <select name="idbeca" required=""  class="form-control" >
+                                        <select style="border-bottom: solid #ebebeb 2px;" name="idbeca" required=""  class="form-control" >
                                             <option value="">-- SELECCIONAR --</option>
                                               <?php if(isset($becas) && !empty($becas)){ 
                                                 foreach($becas as $row){
@@ -565,9 +565,10 @@
                                <div class="alert alert-danger print-error-msg" style="display:none"></div>
                                <div class="alert alert-success print-success-msg" style="display:none"></div>
                                 <div class="form-group">
+                      
                                     <label><font color="red">*</font> Ciclo Escolar</label>
                                    
-                                        <select name="idcicloescolar" required=""  class="form-control" >
+                                        <select style="border-bottom: solid #ebebeb 2px;" name="idcicloescolar" required=""  class="form-control" >
                                             <option value="">-- SELECCIONAR --</option>
                                               <?php if(isset($cicloescolar) && !empty($cicloescolar)){ 
                                                 foreach($cicloescolar as $row){
@@ -581,7 +582,7 @@
                                 <div class="form-group">
                                     <label><font color="red">*</font> Grupo</label>
                                    
-                                        <select name="idgrupo" required=""  class="form-control" >
+                                        <select style="border-bottom: solid #ebebeb 2px;" name="idgrupo" required=""  class="form-control" >
                                             <option value="">-- SELECCIONAR --</option>
                                               <?php if(isset($grupos) && !empty($grupos)){ 
                                                 foreach($grupos as $row){
@@ -628,7 +629,7 @@
                                 <div class="form-group">
                                     <label><font color="red">*</font> Grupo</label>
                                    
-                                        <select name="idgrupo" required=""  class="form-control" >
+                                        <select style="border-bottom: solid #ebebeb 2px;" name="idgrupo" required=""  class="form-control" >
                                             <option value="">-- SELECCIONAR --</option>
                                               <?php if(isset($grupos) && !empty($grupos)){ 
                                                 foreach($grupos as $row){
@@ -684,7 +685,7 @@
   </div>
   <script src="<?php echo base_url(); ?>/assets/vue/vue2-filters.min.js"></script>
   <script data-my_var_1="<?php echo base_url() ?>" data-my_var_2="<?php echo $id ?>" src="<?php echo base_url(); ?>/assets/vue/appvue/appalumnotutor.js"></script> 
-  <script data-my_var_1="<?php echo base_url() ?>" data-my_var_2="<?php echo $id ?>" src="<?php echo base_url(); ?>/assets/vue/appvue/appestadocuenta.js"></script> 
+  <script data-my_var_1="<?php echo base_url() ?>" data-my_var_2="<?php echo $id ?>" data-my_var_3="<?php echo $this->session->idrol; ?>" src="<?php echo base_url(); ?>/assets/vue/appvue/appestadocuenta.js"></script> 
 
 <script type="text/javascript">
     $(document).ready(function() {

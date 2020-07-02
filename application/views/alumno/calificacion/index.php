@@ -15,8 +15,8 @@
 
                   <div class="row"> 
                   
-                   <table class="table">
-                    <thead>
+                   <table class="table table-striped ">
+                     <thead class="bg-teal">
                       <tr>
                         <th>#</th>
                         <th>Materia</th>
@@ -37,7 +37,7 @@
                               <td>
                                 <div class="btn-group" role="group">
                                     <div class="btn-group" role="group">
-                                        <button type="button" class="btn btn-primary waves-effect dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <button type="button" class="btn btn-info waves-effect dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             <i class='fa fa-plus'></i>  Opción
                                             <span class="caret"></span>
                                         </button>

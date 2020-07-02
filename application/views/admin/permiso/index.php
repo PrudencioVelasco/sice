@@ -8,7 +8,7 @@
             <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                     <div class="x_title">
-                        <h2><strong>Administrar Permisos</strong></h2>
+                        <h2><strong>ADMINISTRAR PERSMISOS</strong></h2>
 
                         <div class="clearfix"></div>
                     </div>
@@ -24,7 +24,7 @@
                                     <div class="col-md-12">
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <button class="btn btn-round btn-primary" @click="addModal= true"><i class='fa fa-plus'></i>  Nuevo Permiso</button>
+                                                <button class="btn btn-round btn-primary" @click="abrirAddModal()"><i class='fa fa-plus'></i>  Nuevo Permiso</button>
                                                 <a  href="<?= base_url('/User/') ?>" class="btn btn-round btn-default">Usuarios</a>
                                                 <a  href="<?= base_url('/Rol/') ?>" class="btn btn-round btn-default">Rol</a>
 
@@ -39,18 +39,20 @@
                                             </div>
                                         </div>
                                         <br>
-                                       <table class="table table-striped responsive-utilities jambo_table bulk_action">
-                                            <thead class="text-white bg-dark" >
+                                        <table class="table table-hover table-striped">
+                                            <thead class="bg-teal">
+                                                 <th class="text-white" v-column-sortable:description>Descripción </th>
                                             <th class="text-white" v-column-sortable:uri>Permiso </th>
-                                            <th class="text-white" v-column-sortable:description>Descripción </th>
+                                           
                                             <th class="text-center text-white">Opción </th>
                                             </thead>
                                             <tbody class="table-light">
                                                 <tr v-for="permiso in permisos" class="table-default">
+                                                     <td>{{permiso.description}}</td> 
                                                     <td>{{permiso.uri}}</td> 
-                                                    <td>{{permiso.description}}</td> 
+                                                   
                                                     <td align="right">
-                                                        <button type="button" class="btn btn-icons btn-sm btn-rounded btn-success" @click="editModal = true; selectPermiso(permiso)" title="Modificar Datos">
+                                                        <button type="button" class="btn btn-icons btn-sm btn-rounded btn-success" @click="abrirEditModal(); selectPermiso(permiso)" title="Modificar Datos">
                                                            <i class='fa fa-edit'></i> Editar
                                                         </button>
                                                     </td>

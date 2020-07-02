@@ -12,9 +12,7 @@
                   <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
-
-                  <div class="row"> 
-
+ 
                      <div id="app">
                             <div class="container">
                                 <div class="row">
@@ -27,7 +25,7 @@
 
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <button class="btn btn-primary waves-effect waves-black" @click="addModal= true"><i class='fa fa-plus'></i> Agregar Tutor</button> 
+                                                <button class="btn btn-primary waves-effect waves-black" @click=" abrirAddModal()"><i class='fa fa-plus'></i> Agregar Tutor</button> 
 
 
                                             </div>
@@ -41,8 +39,9 @@
                                             </div>
                                         </div>
                                         <br>
-                                        <table class="table table-striped responsive-utilities jambo_table bulk_action">
-                                            <thead class="text-white bg-dark" >
+                                      
+                                        <table class="table table-hover table-striped">
+                                            <thead class="bg-teal">
 
                                             <th class="text-white" v-column-sortable:nombre>Nombre </th>
                                             <th class="text-white" v-column-sortable:apellidop>A. Paterno </th>
@@ -59,14 +58,14 @@
 
   <div class="btn-group" role="group">
                                     <div class="btn-group" role="group">
-                                        <button type="button" class="btn btn-primary waves-effect dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <button type="button" class="btn btn-info waves-effect dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             <i class='fa fa-plus'></i>  Opciones
                                             <span class="caret"></span>
                                         </button>
                                         <ul class="dropdown-menu"> 
                                             <li ><a href="#" @click="deleteTutor(tutor.idtutor)" title="Eliminar Datos"><i class="fa fa-trash"></i> Eliminar</a></li> 
-                                            <li><a href="#"@click="editModal = true; selectTutor(tutor)" title="Modificar Datos"><i class="fa fa-edit"></i> Editar</a></li>
-                                            <li><a href="#"  @click="editPasswordModal = true; selectTutor(tutor)" title="Modificar Datos"><i class="fa fa-key"></i>      Contraseña</a></li> 
+                                            <li><a href="#"@click="    abrirEditModal(); selectTutor(tutor)" title="Modificar Datos"><i class="fa fa-edit"></i> Editar</a></li>
+                                            <li><a href="#"  @click="  abrirPasswordModal() ; selectTutor(tutor)" title="Modificar Datos"><i class="fa fa-key"></i>      Contraseña</a></li> 
                                             <li> <a v-bind:href="'alumnos/'+ tutor.idtutor" ><i class="fa fa-graduation-cap" aria-hidden="true"></i> Alumno(s)</a></li>
                                         </ul>
                                     </div>
@@ -93,6 +92,7 @@
                                             </tr>
                                             </tfoot>
                                         </table>
+                                         
                                     </div>
                                 </div> 
                             </div>
@@ -100,7 +100,7 @@
                         </div>
                     
 
-                  </div>
+                 
 
                 </div>
               </div>

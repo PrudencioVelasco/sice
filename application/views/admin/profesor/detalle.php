@@ -25,15 +25,15 @@
 
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <button class="btn btn-round btn-primary waves-effect waves-black" @click="addModal= true"><i class='fa fa-plus'></i> Agregar Materia</button> 
+                                        <button class="btn btn-round btn-primary waves-effect waves-black" @click="   abrirAddModal()"><i class='fa fa-plus'></i> Agregar Materia</button> 
 
 
                                     </div>
                                     <div class="col-md-6"></div>
                                 </div> 
                                 <br>
-                                <table class="table table-striped responsive-utilities jambo_table bulk_action">
-                                    <thead class="text-white bg-dark" >
+                                  <table class="table table-hover table-striped">
+                                            <thead class="bg-teal">
                                     <th class="text-white" v-column-sortable:nombrenivel>Materia / Clase</th> 
                                      <th class="text-center text-white"> </th>
                                     </thead>
@@ -42,7 +42,7 @@
                                             <td>{{materia.nombreclase}}</td> 
                                              
                                             <td align="right">
-                                                <button type="button" class="btn btn-success btn-sm" @click="editModal = true; selectMateria(materia)" title="Modificar Datos"> <i class="fa fa-edit" aria-hidden="true"></i>
+                                                <button type="button" class="btn btn-success btn-sm" @click=" abrirEditModal(); selectMateria(materia)" title="Modificar Datos"> <i class="fa fa-edit" aria-hidden="true"></i>
                                                   Editar
                                                 </button> 
                                                  <button type="button" class="btn btn-danger btn-sm" @click="deleteMateria(materia.idprofesormateria)" title="Eliminar Datos"> <i class="fa fa-trash" aria-hidden="true"></i>

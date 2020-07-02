@@ -67,7 +67,13 @@ var v = new Vue({
         orderBy(sortFn) {
             // sort your array data like this.userArray
             this.roles.sort(sortFn);
-        },
+      }, 
+      abrirAddModal() {
+        $('#addRegister').modal('show');
+      },
+      abrirEditModal() {
+        $('#editRegister').modal('show');
+      },
          showAll(){ axios.get(this.url+"Rol/showAll").then(function(response){
                  if(response.data.roles == null){
                      v.noResult()
@@ -172,6 +178,8 @@ var v = new Vue({
 			 },3000); // disappearing message success in 2 sec
         },
         clearAll(){
+          $('#editRegister').modal('hide');
+          $('#addRegister').modal('hide');
             v.newRol = { 
             rol:'' };
             v.formValidate = false;

@@ -12,6 +12,22 @@
                     <p class="mb-0">Si requiere permiso solicitelo al administrador.</p>
                 </div>
             <?php endif ?>
+             <?php if (isset($_SESSION['informacion'])): ?>
+                <div class="alert alert-info" role="alert">
+                    <h4 class="alert-heading">INFORMACIÓN!</h4>
+                    <p>DEBE DE SELECCIÓN LA ESCUELA.</p>
+                    <hr>
+                    <p class="mb-0">Para hacer esto debe de seleccionar la escuela dentro de la opcion de cerrar sesión.</p>
+                </div>
+            <?php endif ?>
+               <?php if (isset($_SESSION['informacion_exito'])): ?>
+                <div class="alert alert-success" role="alert">
+                    <h4 class="alert-heading">EXITO!</h4>
+                    <p>LA ESCUELA FUE SELECCIONADO CON EXITO.</p>
+                    <hr>
+                    <p class="mb-0">Ya puede ver los registros para el plantel seleccionado..</p>
+                </div>
+            <?php endif ?>
         </div>  
     </div>
 

@@ -46,12 +46,14 @@ var v = new Vue({
         materias:[], 
         niveles:[], 
         especialidades:[],  
+        clasificacion_materia:[],
         search: {text: ''},
         emptyResult:false,
         newMateria:{
             idplantel:'',
             idnivelestudio:'',
             idespecialidad:'',
+            idclasificacionmateria:'',
             nombreclase:'', 
             clave:'', 
             credito:'', 
@@ -71,12 +73,19 @@ var v = new Vue({
       this.showAll();  
         this.showAllNiveles(); 
         this.showAllEspecialidades(); 
+       this.showAllClasificaciones();
     },
     methods:{
          orderBy(sortFn) {
             // sort your array data like this.userArray
             this.materias.sort(sortFn);
         },
+      abrirAddModal() {
+        $('#addRegister').modal('show');
+      },
+      abrirEditModal() {
+        $('#editRegister').modal('show');
+      },
          showAll(){ axios.get(this.url+"Materia/showAll").then(function(response){
                  if(response.data.materias == null){
                      v.noResult()
@@ -89,7 +98,12 @@ var v = new Vue({
           axios.get(this.url+"Materia/showAllEspecialidades/")
                     .then(response => (this.especialidades = response.data.especialidades));
 
-        },  
+        }, 
+      showAllClasificaciones() {
+        axios.get(this.url + "Materia/showAllClasificaciones/")
+          .then(response => (this.clasificacion_materia = response.data.clasificaciones));
+
+      },  
         showAllNiveles(){  
              axios.get(this.url+"Materia/showAllNiveles/")
                     .then(response => (this.niveles = response.data.niveles));
@@ -219,10 +233,13 @@ var v = new Vue({
 			 },3000); // disappearing message success in 2 sec
         },
         clearAll(){
+          $('#editRegister').modal('hide');
+          $('#addRegister').modal('hide');
             v.newMateria = {
               idplantel:'',
               idnivelestudio:'',
               idespecialidad:'',
+              idclasificacionmateria: '',
               nombreclase:'', 
               clave:'', 
               credito:'', 

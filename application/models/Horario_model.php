@@ -26,7 +26,7 @@ class Horario_model extends CI_Model {
         $this->db->join('tblmes m2 ', ' p.idmesfin = m2.idmes'); 
         $this->db->join('tblyear y ', ' p.idyearinicio = y.idyear');
         $this->db->join('tblyear y2 ', ' p.idyearfin = y2.idyear'); 
-          if(!empty($idplantel)){
+       if (isset($idplantel) && !empty($idplantel)) {
         $this->db->where('h.idplantel',$idplantel);
         } 
         $this->db->order_by('h.idhorario DESC');
@@ -42,7 +42,7 @@ class Horario_model extends CI_Model {
         $this->db->from('tblhorario h');
         $this->db->where('h.idperiodo', $idperiodo); 
          $this->db->where('h.idgrupo', $idgrupo); 
-          if(!empty($idplantel)){
+         if (isset($idplantel) && !empty($idplantel)) {
         $this->db->where('h.idplantel',$idplantel);
         } 
         $query = $this->db->get();
@@ -56,7 +56,7 @@ class Horario_model extends CI_Model {
         $this->db->select('h.*');    
         $this->db->from('tblhorario h');
         $this->db->where('h.idhorario', $idhorario); 
-          if(!empty($idplantel)){
+        if (isset($idplantel) && !empty($idplantel)) {
         $this->db->where('h.idplantel',$idplantel);
         } 
          $this->db->where('h.activo', 1 ); 
@@ -73,7 +73,7 @@ class Horario_model extends CI_Model {
         $this->db->where('h.idhorario', $idhorario); 
         $this->db->join('tblperiodo p', 'p.idperiodo = h.idperiodo'); 
         $this->db->where('p.activo', 1 ); 
-          if(!empty($idplantel)){
+         if (isset($idplantel) && !empty($idplantel)) {
         $this->db->where('h.idplantel',$idplantel);
         } 
         $query = $this->db->get();
@@ -89,7 +89,7 @@ class Horario_model extends CI_Model {
         $this->db->where('h.idperiodo', $idperiodo); 
         $this->db->where('h.idgrupo', $idgrupo); 
          $this->db->where('h.idhorario !=', $idhorario); 
-           if(!empty($idplantel)){
+        if (isset($idplantel) && !empty($idplantel)) {
         $this->db->where('h.idplantel',$idplantel);
         } 
         $query = $this->db->get();
@@ -202,7 +202,7 @@ class Horario_model extends CI_Model {
         $this->db->join('tblmes m2 ', ' p.idmesfin = m2.idmes'); 
         $this->db->join('tblyear y ', ' p.idyearinicio = y.idyear');
         $this->db->join('tblyear y2 ', ' p.idyearfin = y2.idyear');
-        if (isset($idplantel) && !empty($idplantel)) {
+       if (isset($idplantel) && !empty($idplantel)) {
         $this->db->where('p.idplantel',$idplantel);
            }   
         $this->db->where('p.activo',1);  
@@ -389,7 +389,7 @@ public function searchHorario($match, $idplantel = '') {
         $this->db->join('tblmes m2 ', ' p.idmesfin = m2.idmes'); 
         $this->db->join('tblyear y ', ' p.idyearinicio = y.idyear');
         $this->db->join('tblyear y2 ', ' p.idyearfin = y2.idyear'); 
-          if(!empty($idplantel)){
+        if (isset($idplantel) && !empty($idplantel)) {
         $this->db->where('h.idplantel',$idplantel);
         } 
         $this->db->order_by('h.idhorario DESC');

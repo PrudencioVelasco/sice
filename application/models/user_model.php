@@ -38,6 +38,39 @@ class User_model extends CI_Model
     }
 
 
+  public function validarPermiso($permiso) {
+
+        
+                      $this->db->select('tblpermiso.uri, tblrol.id');
+                      $this->db->from('permissions as tblpermiso');
+                      $this->db->join('permission_rol as tblpermisorol', 'tblpermiso.id = tblpermisorol.permission_id');
+                      $this->db->join('rol as tblrol', 'tblpermisorol.rol_id = tblrol.id');
+                      $this->db->join('users_rol as tblrolusuario', 'tblrol.id= tblrolusuario.id_rol');
+                      $this->db->join('users as tblusuario', 'tblrolusuario.id_user= tblusuario.id');
+                      $this->db->where('tblusuario.id', $this->session->user_id);
+                       $this->db->where('tblpermiso.uri', $permiso);
+                     
+         
+         $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    } 
+      public function showAllPlantelesUsuario($idplantel)
+    {
+        $this->db->select('p.idplantel, p.clave, n.nombreniveleducativo');    
+        $this->db->from('tblplantel p'); 
+        $this->db->join('tblniveleducativo n','p.idniveleducativo = n.idniveleducativo');
+        $this->db->where('p.idplantel !=', $idplantel);  
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
     public function showAllPlanteles($idrol = '', $idplantel = '')
     {
         $this->db->select('p.*, n.nombreniveleducativo');    
@@ -113,7 +146,7 @@ class User_model extends CI_Model
         $this->db->where('ur.id_rol IN (13,14)'); 
         $this->db->where('u.idtipousuario', 2); 
         $this->db->where('p.usuario', $usuario); 
-        if(isset($idplantel) && !empty($idplantel)){
+      if (isset($idplantel) && !empty($idplantel)) {
         $this->db->where('p.idplantel',$idplantel);
         }
         $query = $this->db->get();
@@ -133,6 +166,19 @@ class User_model extends CI_Model
         $this->db->join('tblplantel pla', 'a.idplantel = pla.idplantel');
         $this->db->where('a.matricula', $matricula); 
          $this->db->where('u.idtipousuario', 3);  
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+             return $query->first_row();
+        } else {
+            return false;
+        }
+    }
+        public function detallePlantel($idplantel)
+    {
+        $this->db->select('ne.nombreniveleducativo, pla.nombreplantel, pla.clave');    
+        $this->db->from('tblniveleducativo ne'); 
+        $this->db->join('tblplantel pla', 'pla.idniveleducativo = ne.idniveleducativo');
+        $this->db->where('pla.idplantel', $idplantel); 
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
              return $query->first_row();
@@ -172,10 +218,11 @@ class User_model extends CI_Model
     }
          public function loginAdmin($usuario)
     {
-        $this->db->select('u.id, p.nombre, p.apellidop, p.apellidom, p.idpersonal, pla.nombreplantel, pla.idplantel, ur.id_rol as idrol, p.password');    
+        $this->db->select('ne.nombreniveleducativo,u.id, p.nombre, p.apellidop, p.apellidom, p.idpersonal, pla.nombreplantel, pla.idplantel, ur.id_rol as idrol, p.password');    
         $this->db->from('tblpersonal p');
         $this->db->join('users u', 'u.idusuario = p.idpersonal');
         $this->db->join('tblplantel pla', 'pla.idplantel = p.idplantel');
+        $this->db->join('tblniveleducativo ne', 'ne.idniveleducativo = pla.idniveleducativo');
         $this->db->join('users_rol ur', 'u.id = ur.id_user');
         $this->db->where('p.usuario', $usuario); 
         $this->db->where('u.idtipousuario', 2);  

@@ -35,8 +35,8 @@
                   </div>
                   <hr>
                   <div class="row">
-                  <table class="table"> 
-                    <thead>
+                   <table class="table table-striped ">
+                     <thead class="bg-teal">
                       <tr> 
                         <th>Ciclo Escolar</th>
                         <th>Nivel</th>
@@ -76,7 +76,7 @@
                                   ?>
                                  </td>
                                 <td align="right">
-                                  <a class="btn btn-primary" href="<?php echo site_url('Aalumno/historial/'.$controller->encode($row->idhorario)) ?>"><i class="fa fa-list-alt"></i> Calificaciones</a> 
+                                  <a class="btn btn-info" href="<?php echo site_url('Aalumno/historial/'.$controller->encode($row->idhorario)) ?>"><i class="fa fa-list-alt"></i> Calificaciones</a> 
 
                                 </td>
                              </tr>

@@ -15,9 +15,19 @@
                 <div class="x_content">
                   <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12 ">
-                      <button type="button" class="btn btn-primary waves-effect m-r-20" data-toggle="modal" data-target="#largeModal"><i class='fa fa-plus'></i> Registrar Calificación</button>
-                       <button type="button" class="btn btn-danger waves-effect m-r-20" data-toggle="modal" data-target="#myModalDeleteAsistencia"><i class='fa fa-trash '></i> Eliminar Calificación</button>
-                       </div>
+                      <button type="button" class="btn btn-primary waves-effect m-r-20" data-toggle="modal" data-target="#largeModal"><i class='fa fa-plus'></i> Registrar</button>
+                       <button type="button" class="btn btn-danger waves-effect m-r-20" data-toggle="modal" data-target="#myModalDeleteAsistencia"><i class='fa fa-trash '></i> Eliminar</button>
+                      <?php
+                        if(isset($oportunidades) && !empty($oportunidades)){ 
+                            foreach($oportunidades as $row){
+                          ?>
+                          <a href="<?php echo site_url('Pgrupo/recuperacion/'.$idhorariodetalle.'/'.$row->idoportunidadexamen) ?>" class="btn btn-default waves-effect m-r-20"><?php echo $row->nombreoportunidad;  ?></a>
+                      <?php
+
+                            }
+                        }
+                      ?> 
+                      </div>
 
                   </div>
                    <br>
@@ -91,8 +101,9 @@
                             </div>
                             <div class="row">
                                <div class="col-md-12 col-sm-12 col-xs-12 " >
-                                         <table class="table">
-                                        <thead>
+                            
+                                         <table  class="table table-striped  ">
+                       <thead class="bg-teal"> 
                                           <tr>
                                             <th>#</th>
                                             <th>Alumno</th> 
@@ -139,11 +150,15 @@
                 </div>
             </div>
 
-                   
+                      <div class="row">
+                  <div class="col-md-12 col-sm-12 col-xs-12 "  align="right"> 
+                       <small>*Tiene 3 dias para modificar/eliminar las calificaciones despues de haberla registrado.</small>
+                  </div>
+                      </div>
            
                   <div class="row">
                   <div class="col-md-12 col-sm-12 col-xs-12 "> 
-                  <div id="tblalumnos">
+     <div id="tblalumnos">
                   <?php 
                     if(isset($tabla)){
                         echo $tabla;

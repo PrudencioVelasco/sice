@@ -14,8 +14,8 @@
 
                   <div class="row"> 
                     <div class="col-md-12 col-sm-12 col-xs-12 ">
-                                  <table class="table table-hover">
-                                            <thead  class="info">
+                                  <table class="table table-hover table-striped">
+                                            <thead class="bg-teal">
                                               <th>#</th>
                                               <th>Grupo</th>
                                               <th>Nombre</th>
@@ -33,7 +33,7 @@
                                                       <td align="right">
                                                          <div class="btn-group" role="group">
                                                             <div class="btn-group" role="group">
-                                                                <button type="button" class="btn btn-primary waves-effect dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                <button type="button" class="btn btn-info waves-effect dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                     <i class='fa fa-plus'></i>  Opciones
                                                                     <span class="caret"></span>
                                                                 </button>

@@ -14,12 +14,12 @@
                 <div class="x_content">
 
                   <div class="row"> 
-                  
-                   <table class="table">
-                    <thead>
+                  <div class="container">
+                    <table class="table table-hover table-striped">
+                                            <thead class="bg-teal"> 
                       <tr>
                         <th>#</th> 
-                        <th>Nombre</th> 
+                        <th>NOMBRE DEL ALUMNO</th> 
                         <th></th> 
                       </tr>
                     </thead>
@@ -34,7 +34,7 @@
                               <td scope="row"><strong><?php echo $value->apellidop." ".$value->apellidom." ".$value->nombre; ?></strong></td>
                               <td align="right">
                                  
-                                <a  href="<?php echo site_url('Tutores/detalle/'.$controller->encode($value->idalumno)) ?>" class="btn btn-primary"> <i class=" fa fa-eye "></i> Ver detalle</a>
+                                <a  href="<?php echo site_url('Tutores/detalle/'.$controller->encode($value->idalumno)) ?>" class="btn btn-info"> <i class=" fa fa-eye "></i> Ver detalle</a>
                               </td> 
                             </tr>
                             <?php
@@ -45,7 +45,7 @@
                     </tbody>
                   </table>
                     
-
+                  </div>
                   </div>
 
                 </div>

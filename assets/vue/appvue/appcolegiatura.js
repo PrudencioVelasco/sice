@@ -71,6 +71,12 @@ var v = new Vue({
         this.showAllConceptos();
     },
     methods: {
+        abrirAddModal() {
+            $('#addRegister').modal('show');
+        },
+        abrirEditModal() {
+            $('#editRegister').modal('show');
+        },
         orderBy(sortFn) {
             // sort e array data like this.userArray
             this.colegiaturas.sort(sortFn);
@@ -231,6 +237,8 @@ var v = new Vue({
             }, 3000); // disappearing message success in 2 sec
         },
         clearAll() {
+            $('#editRegister').modal('hide');
+            $('#addRegister').modal('hide');
             v.newColegiatura = {
                 idnivel: '',
                 descuento: '',

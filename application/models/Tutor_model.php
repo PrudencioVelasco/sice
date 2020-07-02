@@ -17,7 +17,7 @@ class Tutor_model extends CI_Model {
     public function showAll($idplantel = '') {
         $this->db->select('t.*');
         $this->db->from('tbltutor t'); 
-         if (isset($idplantel) && !empty($idplantel)) {
+       if (isset($idplantel) && !empty($idplantel)) {
         $this->db->where('t.idplantel',$idplantel); 
         }  
          $query = $this->db->get();
@@ -54,20 +54,27 @@ class Tutor_model extends CI_Model {
     } 
 
     public function showAllMeses($idalumno,$idperiodo) {
-        $query = $this->db->query("SELECT * FROM tblmes m WHERE m.idmes NOT IN (
-            SELECT a.idperiodopago FROM tblamotizacion a INNER JOIN tblestado_cuenta ec ON a.idamortizacion = ec.idamortizacion
-            WHERE ec.idalumno = $idalumno AND ec.idperiodo = $idperiodo ) ");
+       $query =$this->db->query("SELECT  m.*
+                                FROM
+                                    tblmes m
+                                WHERE
+                                    m.idmes NOT IN (SELECT 
+                                            dp.idmes
+                                        FROM 
+                                            tblestado_cuenta ec  INNER JOIN
+                                            tbldetalle_estadocuenta dp ON ec.idestadocuenta = dp.idestadocuenta
+                                            WHERE ec.idalumno = $idalumno AND ec.idperiodo = $idperiodo AND ec.eliminado = 0)"); 
         if ($query->num_rows() > 0) {
             return $query->result();
         } else {
-             return false;
-        }
+            return false;
+        }  
     } 
 
       public function showAllAlumnos($idplantel = '') {
         $this->db->select('a.*');
         $this->db->from('tblalumno a'); 
-         if (isset($idplantel) && !empty($idplantel)) {
+       if (isset($idplantel) && !empty($idplantel)) {
         $this->db->where('a.idplantel',$idplantel); 
         }  
         $this->db->order_by('a.nombre ASC');
@@ -99,7 +106,7 @@ class Tutor_model extends CI_Model {
           public function validarAddTutor($correo = '', $idplantel = '') {
         $this->db->select('t.*');
         $this->db->from('tbltutor t'); 
-         if (isset($idplantel) && !empty($idplantel)) {
+        if (isset($idplantel) && !empty($idplantel) && ($this->session->idplantel != 2)) {
         $this->db->where('t.idplantel',$idplantel); 
         }  
         $this->db->where('t.correo',$correo);
@@ -113,7 +120,7 @@ class Tutor_model extends CI_Model {
               public function validarUpdateTutor($idtutor = '', $correo = '', $idplantel = '') {
         $this->db->select('t.*');
         $this->db->from('tbltutor t'); 
-         if (isset($idplantel) && !empty($idplantel)) {
+        if (isset($idplantel) && !empty($idplantel) && ($this->session->idplantel != 2)) {
         $this->db->where('t.idplantel',$idplantel); 
         }  
         $this->db->where('t.correo',$correo);
@@ -133,7 +140,7 @@ class Tutor_model extends CI_Model {
         $this->db->from('tbltutoralumno t');
         $this->db->join('tblalumno a', 'a.idalumno = t.idalumno');
         $this->db->where('t.idtutor', $idtutor); 
-        if (isset($idplantel) && !empty($idplantel)) { 
+       if (isset($idplantel) && !empty($idplantel) && ($this->session->idplantel != 2)) {
              $this->db->where('t.idplantel', $idplantel); 
         }
         $query = $this->db->get();
@@ -195,7 +202,7 @@ class Tutor_model extends CI_Model {
         );
          $this->db->select('t.*');
         $this->db->from('tbltutor t'); 
-        if (isset($idplantel) && !empty($idplantel)) {
+        if (isset($idplantel) && !empty($idplantel) && ($this->session->idrol != 14)) {
             $this->db->where('t.idplantel',$idplantel); 
         }
         
@@ -282,6 +289,12 @@ class Tutor_model extends CI_Model {
   public function addDetallePagoInicio($data)
     {
         $this->db->insert('tbldetalle_pago_inicio', $data);
+        $insert_id = $this->db->insert_id(); 
+        return  $insert_id;
+    }
+      public function addDetalleEstadoCuenta($data)
+    {
+        $this->db->insert('tbldetalle_estadocuenta', $data);
         $insert_id = $this->db->insert_id(); 
         return  $insert_id;
     }

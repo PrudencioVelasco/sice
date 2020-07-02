@@ -16,7 +16,7 @@ class UnidadExamen_model extends CI_Model {
         $this->db->select('t.idunidad, t.nombreunidad,t.idplantel, p.nombreplantel');
         $this->db->from('tblunidad t'); 
         $this->db->join('tblplantel p','p.idplantel = t.idplantel');
-         if (isset($idplantel) && !empty($idplantel)) {
+          if (isset($idplantel) && !empty($idplantel)) {
         $this->db->where('t.idplantel',$idplantel); 
         }  
          $query = $this->db->get();

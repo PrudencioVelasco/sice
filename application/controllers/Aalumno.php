@@ -492,8 +492,8 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
      $unidades =  $this->grupo->unidades($this->session->idplantel);
      $alumnos = $this->alumno->showAllAlumnoId($idalumno); 
       $tabla ="";
-       $tabla .= '<table class="table table-bordered table-hover">
-      <thead>
+       $tabla .= '<table class="table  table-hover">
+      <thead class="bg-teal">
       <th>#</th>
       <th>Nombre</th>';
        foreach($unidades as $block):
@@ -529,8 +529,7 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
 
     }
         public function obetnerAsistencia($idhorario,$fechainicio,$fechafin,$idhorariodetalle)
-    { 
-      Permission::grant(uri_string());
+    {  
        $idalumno = $this->session->idalumno;
          $alumns = $this->alumno->showAllAlumnoId($idalumno);
          $tabla = ""; 
@@ -631,8 +630,8 @@ return $tabla;
         $range= ((strtotime($fechafin)-strtotime($fechainicio))+(24*60*60)) /(24*60*60);
         //$range= ((strtotime($_GET["finish_at"])-strtotime($_GET["start_at"]))+(24*60*60)) /(24*60*60);
         
-        $tabla .= '<table id="tablageneral2" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
-            <thead>
+        $tabla .= '<table id="tablageneral2" class="table table-striped  dt-responsive nowrap" cellspacing="0" width="100%">
+           <thead class="bg-teal">
             <th>#</th> ';
             for($i=0;$i<$range;$i++):
                setlocale(LC_ALL, 'es_ES');
@@ -829,8 +828,8 @@ public function tarea($idhorario,$idhorariodetalle,$idmateria)
      $materias = $this->alumno->showAllMaterias($idhorario);
      $total_unidades =0;
       $tabla ="";
-       $tabla .= '<table class="table table-bordered table-hover">
-      <thead>
+       $tabla .= '<table class="table  table-striped  table-hover">
+        <thead class="bg-teal">
       <th>#</th>
       <th>Nombre de Materia</th>';
        foreach($unidades as $block):

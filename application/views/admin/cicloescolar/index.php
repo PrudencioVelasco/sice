@@ -17,17 +17,12 @@
                      <div id="app"> 
 
                             <div class="container">
-                                <div class="row">
-                                    <transition
-                                        enter-active-class="animated fadeInLeft"
-                                        leave-active-class="animated fadeOutRight">
-                                        <div class="notification is-success text-center px-5 top-middle" v-if="successMSG" @click="successMSG = false">{{successMSG}}</div>
-                                    </transition>
+                                <div class="row"> 
                                     <div class="col-md-12">
 
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <button class="btn  btn-primary waves-effect waves-black" @click="addModal= true"><i class='fa fa-plus'></i> Agregar Ciclo Escolar</button> 
+                                                <button class="btn  btn-primary waves-effect waves-black" @click="abrirAddModal()"><i class='fa fa-plus'></i> Agregar Ciclo Escolar</button> 
 
 
                                             </div>
@@ -41,8 +36,8 @@
                                             </div>
                                         </div>
                                         <br>
-                                        <table class="table table-striped responsive-utilities jambo_table bulk_action">
-                                            <thead class="text-white bg-dark" >
+                                          <table class="table table-hover table-striped">
+                                            <thead class="bg-teal">
                                             <th class="text-white" v-column-sortable:mesinicio>Mes inicio </th>
                                             <th class="text-white" v-column-sortable:yearinicio>Año inicio </th>
                                             <th class="text-white" v-column-sortable:mesfin>Mes termino </th>
@@ -64,7 +59,7 @@
                                                     <td align="right">
 
 
-                                                        <button type="button" class="btn btn-icons btn-success btn-sm waves-effect waves-black" @click="editModal = true; selectCiclo(row)" title="Modificar Datos"> <i class="fa fa-edit" aria-hidden="true"></i>
+                                                        <button type="button" class="btn btn-icons btn-success btn-sm waves-effect waves-black" @click="abrirEditModal(); selectCiclo(row)" title="Modificar Datos"> <i class="fa fa-edit" aria-hidden="true"></i>
                                                           Editar
                                                         </button>  
                                                          <button type="button" class="btn btn-icons btn-danger btn-sm waves-effect waves-black" @click="deleteCicloEscolar(row.idperiodo)" title="Eliminar Datos"> <i class="fa fa-trash" aria-hidden="true"></i>

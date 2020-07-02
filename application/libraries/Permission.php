@@ -29,16 +29,7 @@ class Permission
  
 foreach ($permissions as  $value) {
             $porcion = explode("/",$uri_pass);
-              $porcion2 = explode("/",$value->uri);
-            //Nombre del controlador
-            //$valor = $porcion2[0];
-            //Nombre del metodo
-            //$valor = $porcion2[1]; 
-            //echo $porcion2[0];
-            
-            //if((isset($uri_pass) && !empty($uri_pass)) && (isset($porcion[0]) && isset($porcion2[0])) && (isset($porcion2[1]) && $porcion2[1] == "*") && ($porcion[0] == $porcion2[0]) ){
-            //     $match =  true;
-            //}
+              $porcion2 = explode("/",$value->uri); 
             
            if(isset($porcion[0]) && isset($porcion2[0])){
                 if(isset($porcion2[1])){
@@ -94,7 +85,7 @@ foreach ($permissions as  $value) {
                   
                   default:
                         self::$_CI->session->set_flashdata('err', 'You don\'t have permissionss.');
-                        redirect('admin/');
+                        redirect('Admin/');
                       break;
               }
            
@@ -102,8 +93,92 @@ foreach ($permissions as  $value) {
           }
             
         }
-    }
+    } 
+           public static function grantValidar($uri_pass)
+    {
+        $match = false;
+        $user_id = $_SESSION['user_id'];
+        $permissions = self::$_CI->db
+                      ->select('tblpermiso.uri, tblrol.id')
+                      ->from('permissions as tblpermiso')
+                      ->join('permission_rol as tblpermisorol', 'tblpermiso.id = tblpermisorol.permission_id')
+                      ->join('rol as tblrol', 'tblpermisorol.rol_id = tblrol.id')
+                      ->join('users_rol as tblrolusuario', 'tblrol.id= tblrolusuario.id_rol')
+                      ->join('users as tblusuario', 'tblrolusuario.id_user= tblusuario.id')
+                      ->where('tblusuario.id', $user_id) 
+                      ->get()
+                      ->result();
  
+ 
+    foreach($permissions as $permission) {
+           $porcion = explode("/",$uri_pass);
+              $porcion2 = explode("/",$permission->uri); 
+            
+           if(isset($porcion[0]) && isset($porcion2[0])){
+                if(isset($porcion2[1])){
+                    if(($porcion2[1] == "*")){
+                        if(strtolower($porcion[0]) === strtolower($porcion2[0])){
+                             $match = 1;
+                        }else{
+                             $match = 0;
+                        } 
+                    }else{
+                       $match = 0;
+                    }
+                }else{
+                      $match = 0;
+                }
+            }else{
+                $match = 0;
+            }
+
+            if(($permission->uri) != "*") {
+                $re_uri = preg_replace('/\\\\\*/','*', preg_quote(($permission->uri), '/'));
+                $match = preg_match("/{$re_uri}/", ($uri_pass));
+            }
+
+            if(($permission->uri) == "*" || ($uri_pass) == 'admin/index') {
+                return 1;
+            } else {
+                $match = (!$match) ? $match : true;
+            }
+
+            // if found true
+            if($match) {
+                return 1;
+            }
+        }
+      
+ 
+            if(!$match) {  
+          foreach($permissions  as $value){
+              switch ($value->id) {
+                  case 10:
+                      # MAESTROS
+                        return 0;
+                      break;
+                  case 11:
+                      # TUTOR
+                         
+                       return 0;
+                      break;
+                  case 12:
+                      # ALUMNOS
+                         
+                          return 0;
+                      break;
+                  
+                  default:
+                       
+                         return 0;
+                      break;
+              }
+           
+          
+          }
+            
+        }
+    } 
     public function __destruct()
     {
         self::$_CI->db->close();

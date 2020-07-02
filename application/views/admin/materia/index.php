@@ -26,7 +26,7 @@
 
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <button class="btn  btn-primary waves-effect waves-black" @click="addModal= true"><i class='fa fa-plus'></i> Agregar Materia</button> 
+                                                <button class="btn  btn-primary waves-effect waves-black" @click="abrirAddModal()"><i class='fa fa-plus'></i> Agregar Materia</button> 
 
 
                                             </div>
@@ -40,13 +40,12 @@
                                             </div>
                                         </div>
                                         <br>
-                                        <table class="table table-striped responsive-utilities jambo_table bulk_action">
-                                            <thead class="text-white bg-dark" >
+                                           <table class="table table-hover table-striped">
+                                            <thead class="bg-teal">
                                             <th class="text-white" v-column-sortable:clave>Clave </th>
                                             <th class="text-white" v-column-sortable:nombreclase>Materia </th> <th class="text-white" v-column-sortable:credito>Credito </th>
                                             <th class="text-white" v-column-sortable:nombrenivel>Nivel </th>
-                                            <th class="text-white" v-column-sortable:nombreespecialidad>Especialidad </th>
-                                            
+                                          
                                              <th class="text-center text-white"> </th>
                                             </thead>
                                             <tbody class="table-light">
@@ -54,20 +53,19 @@
                                                   <td>{{row.clave}}</td>
                                                   <td>{{row.nombreclase}}</td>
                                                   <td>{{row.credito}}</td> 
-                                                    <td>{{row.nombrenivel}}</td>
-                                                    <td>{{row.nombreespecialidad}}</td>
+                                                    <td>{{row.nombrenivel}}</td> 
                                                     
                                                      
                                                     <td align="right">
 
 
-                                                        <button type="button" class="btn btn-icons btn-success btn-sm waves-effect waves-black" @click="editModal = true; selectMateria(row)" title="Modificar Datos"> <i class="fa fa-edit" aria-hidden="true"></i>
+                                                        <button type="button" class="btn btn-icons btn-success btn-sm waves-effect waves-black" @click="abrirEditModal(); selectMateria(row)" title="Modificar Datos"> <i class="fa fa-edit" aria-hidden="true"></i>
                                                           Editar
                                                         </button>  
                                                          <button type="button" class="btn btn-icons btn-danger btn-sm waves-effect waves-black" @click="deleteMateria(row.idmateria)" title="Eliminar Datos"> <i class="fa fa-trash" aria-hidden="true"></i>
                                                           Eliminar
                                                         </button>  
-
+                                                          <a href="#" class="btn btn-icons btn-info btn-sm waves-effect waves-black" v-bind:href="'detalle/'+ row.idmateria"><i class="fa fa-list-alt" aria-hidden="true"></i> Detalles</a>
                                                             
 
                                                     </td>

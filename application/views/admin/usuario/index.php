@@ -32,7 +32,7 @@
 
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <button class="btn btn-round btn-primary waves-effect waves-black" @click="addModal= true"><i class='fa fa-plus'></i> Nuevo Usuario</button>
+                                                <button class="btn btn-round btn-primary waves-effect waves-black" @click="  abrirAddModal()"><i class='fa fa-plus'></i> Nuevo Usuario</button>
                                                 <?php if(isset($this->session->idrol) && !empty(isset($this->session->idrol)) && $this->session->idrol == 14){?>
                                                 <a  href="<?= base_url('/Rol/') ?>" class="btn btn-round btn-default waves-effect waves-black">Rol</a>
                                             <?php } ?>
@@ -49,9 +49,8 @@
                                             </div>
                                         </div>
                                         <br>
-                                        <table class="table table-striped responsive-utilities jambo_table bulk_action">
-                                            <thead class="text-white bg-dark" >
-
+                                        <table class="table table-hover table-striped">
+                                            <thead class="bg-teal">
                                             <th class="text-white" v-column-sortable:usuario>Usuario </th>
                                             <th class="text-white" v-column-sortable:name>Nombre </th>
                                             <th class="text-white" v-column-sortable:rolnombre>Rol </th>
@@ -71,10 +70,10 @@
                                                     <td align="right">
 
 
-                                                        <button type="button" class="btn btn-sm  btn-icons waves-effect waves-black btn-rounded btn-success btn-sm" @click="editModal = true; selectUser(user)" title="Modificar Datos">
+                                                        <button type="button" class="btn btn-sm  btn-icons waves-effect waves-black btn-rounded btn-success btn-sm" @click="abrirEditModal(); selectUser(user)" title="Modificar Datos">
                                                           <i class='fa fa-edit'></i> Editar
                                                         </button>
-                                                        <button type="button" class="btn btn-sm waves-effect waves-black btn-icons btn-rounded btn-primary btn-sm" @click="passwordModal = true; selectUser(user)">
+                                                        <button type="button" class="btn btn-sm waves-effect waves-black btn-icons btn-rounded btn-primary btn-sm" @click="abrirChangeModal(); selectUser(user)">
                                                             <i class='fa fa-key'></i> Cambiar Contraseña
                                                         </button>
 

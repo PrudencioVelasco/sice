@@ -11,6 +11,7 @@ class Tutor extends CI_Controller {
         }
         $this->load->helper('url');
         $this->load->model('tutor_model','tutor');
+        $this->load->model('alumno_model','alumno');
         $this->load->model('user_model','user');
         $this->load->model('data_model'); 
         $this->load->library('permission');
@@ -18,7 +19,7 @@ class Tutor extends CI_Controller {
 
     }
 
-	public function index()
+	public function inicio()
 	{
          Permission::grant(uri_string());
 		$this->load->view('admin/header');
@@ -26,7 +27,7 @@ class Tutor extends CI_Controller {
 		$this->load->view('admin/footer');
 	}
 	  public function showAll() {
-        Permission::grant(uri_string()); 
+        //Permission::grant(uri_string()); 
          $idplantel = $this->session->idplantel;
         $query = $this->tutor->showAll();
         if ($query) {
@@ -37,7 +38,7 @@ class Tutor extends CI_Controller {
         }
     }
      public function showAllAlumnos() {
-        Permission::grant(uri_string()); 
+        //Permission::grant(uri_string()); 
          $idplantel = $this->session->idplantel;
         $query = $this->tutor->showAllAlumnos();
         if ($query) {
@@ -48,7 +49,7 @@ class Tutor extends CI_Controller {
         }
     }
     public function showAllTutorAlumnos($idtutor) {
-        Permission::grant(uri_string()); 
+        //Permission::grant(uri_string()); 
         $query = $this->tutor->showAllTutorAlumnos($idtutor);
         if ($query) {
             $result['alumnos'] = $this->tutor->showAllTutorAlumnos($idtutor);
@@ -59,7 +60,7 @@ class Tutor extends CI_Controller {
     }
 
     public function addTutor() {
-        Permission::grant(uri_string());
+        if(Permission::grantValidar(uri_string()) ==  1){
         $config = array(
             array(
                 'field' => 'nombre',
@@ -80,7 +81,7 @@ class Tutor extends CI_Controller {
             array(
                 'field' => 'fnacimiento',
                 'label' => 'Fecha nacimiento',
-                'rules' => 'trim|required',
+                'rules' => 'trim|required|callback_validarFecha',
                 'errors' => array(
                     'required' => 'Campo obligatorio.'
                 )
@@ -199,6 +200,12 @@ class Tutor extends CI_Controller {
         }
 
         }
+         }else{
+              $result['error'] = true;
+              $result['msg'] = array(
+                           'msgerror' => "NO TIENE PERMISOS PARA REALIZAR ESTA ACCIÓN."
+                    );
+        }
          
       if(isset($result) && !empty($result)){
          echo json_encode($result);
@@ -207,7 +214,7 @@ class Tutor extends CI_Controller {
     }
 
         public function updateTutor() {
-        Permission::grant(uri_string());
+        if(Permission::grantValidar(uri_string()) ==  1){
       $config = array(
             array(
                 'field' => 'nombre',
@@ -228,7 +235,7 @@ class Tutor extends CI_Controller {
             array(
                 'field' => 'fnacimiento',
                 'label' => 'Fecha nacimiento',
-                'rules' => 'trim|required',
+                'rules' => 'trim|required|callback_validarFecha',
                 'errors' => array(
                     'required' => 'Campo obligatorio.'
                 )
@@ -314,14 +321,42 @@ class Tutor extends CI_Controller {
         }
 
         }
+          }else{
+              $result['error'] = true;
+              $result['msg'] = array(
+                           'msgerror' => "NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN."
+                    );
+        }
          
       if(isset($result) && !empty($result)){
          echo json_encode($result);
         }
          
     }
+     function validarFecha($fecha){
+        $parts = explode("/",$fecha);
+        if(count($parts) == 3){
+        if(checkdate($parts[1],$parts[0],$parts[2])){
+            return true;
+        }else{
+         $this->form_validation->set_message(
+            'validarFecha',
+            'Formato no valido.'
+        );
+             return false; 
+           }
+        }else{
+            $this->form_validation->set_message(
+            'validarFecha',
+            'Formato no valido.'
+        );
+            return false;
+        }
+        
+  
+}
     public function searchTutor() {
-        Permission::grant(uri_string());
+        //Permission::grant(uri_string());
         $value = $this->input->post('text');
          $idplantel = $this->session->idplantel;
         $query = $this->tutor->searchTutor($value,$idplantel);
@@ -346,7 +381,7 @@ class Tutor extends CI_Controller {
 		$this->load->view('admin/footer');
     }
         public function addTutorAlumno() {
-        Permission::grant(uri_string());
+              if(Permission::grantValidar(uri_string()) ==  1){ 
         $config = array(
             array(
                 'field' => 'idalumno',
@@ -365,6 +400,10 @@ class Tutor extends CI_Controller {
                 'idalumno' => form_error('idalumno')
             );
         } else {
+              $idtutor=  $this->input->post('idtutor');
+            $idalumno =  $this->input->post('idalumno');
+            $validar = $this->alumno->validarAsignarTutor($idalumno,$idtutor,$this->session->idplantel);
+              if(!$validar){
             $data = array(
                     'idtutor' => $this->input->post('idtutor'),
                     'idalumno' => $this->input->post('idalumno')
@@ -373,8 +412,19 @@ class Tutor extends CI_Controller {
             $this->tutor->addTutorAlumno($data);
               $result['error']   = false;
                 $result['success'] = 'User updated successfully'; 
+                  }else{
+              $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => 'Ya esta asignado el Alumno al Tutor.'
+            );
         }
-         
+        }
+               }else{
+              $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
+            );
+        }
       if(isset($result) && !empty($result)){
          echo json_encode($result);
         }
@@ -382,12 +432,15 @@ class Tutor extends CI_Controller {
     }
     public function deleteAlumno()
     { 
-        Permission::grant(uri_string());
+         if(Permission::grantValidar(uri_string()) ==  1){ 
         $id = $this->input->get('id');
         $query = $this->tutor->deleteAlumno($id);
         if ($query) {
             $result['alumnos'] = true;
         } 
+    }else{
+         $result['alumnos'] = false;
+    }
        if(isset($result) && !empty($result)){
          echo json_encode($result);
         }
@@ -395,19 +448,22 @@ class Tutor extends CI_Controller {
     }
       public function deleteTutor()
   {
-      Permission::grant(uri_string());
+          if(Permission::grantValidar(uri_string()) ==  1){ 
         $idtutor = $this->input->get('idtutor');
         $query = $this->tutor->deleteTutor($idtutor);
         if ($query) {
             $result['tutores'] = true;
         } 
+    }else{
+          $result['tutores'] = false;
+    }
        if(isset($result) && !empty($result)){
          echo json_encode($result);
         }
   }
   public function updatePassword()
   {
-      Permission::grant(uri_string());
+      if(Permission::grantValidar(uri_string()) ==  1){ 
                   $config = array(
              array(
                 'field' => 'password1',
@@ -452,6 +508,12 @@ class Tutor extends CI_Controller {
                            'msgerror' => "La Contraseña no coinciden."
                     );
         }
+        }
+         }else{
+             $result['error'] = true;
+                    $result['msg'] = array(
+                           'msgerror' => "NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN."
+                    );
         }
          if(isset($result) && !empty($result)){
         echo json_encode($result);

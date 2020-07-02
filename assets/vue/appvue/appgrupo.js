@@ -76,7 +76,12 @@ var v = new Vue({
          orderBy(sortFn) {
             // sort your array data like this.userArray
             this.grupos.sort(sortFn);
-        },
+      }, abrirAddModal() {
+        $('#addRegister').modal('show');
+      },
+      abrirEditModal() {
+        $('#editRegister').modal('show');
+      },
          showAll(){ axios.get(this.url+"Grupo/showAll").then(function(response){
                  if(response.data.grupos == null){
                      v.noResult()
@@ -224,6 +229,8 @@ var v = new Vue({
 			 },3000); // disappearing message success in 2 sec
         },
         clearAll(){
+          $('#editRegister').modal('hide');
+          $('#addRegister').modal('hide');
             v.newGrupo = {
              idnivelestudio:'',
             idturno:'',

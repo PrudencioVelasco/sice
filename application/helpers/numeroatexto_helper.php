@@ -28,6 +28,14 @@
         return false;
     }
 }
+
+function dias_pasados($fecha_inicio,$fecha_fin){
+    $dias=(strtotime($fecha_inicio)-strtotime($fecha_fin));
+    $dias =abs($dias);
+    $dias = floor($dias);
+    return $dias;
+}
+
 function num_to_letras($numero, $moneda = 'PESO', $subfijo = 'M.N.')
 {
     $xarray = array(

@@ -85,6 +85,7 @@ class Rol_model extends CI_Model {
         # code...
         $this->db->select('p.id,p.uri,p.description');    
         $this->db->from('permissions p');
+          $this->db->where('p.id NOT IN (71,72,86,73,74,75)');
         $query = $this->db->get(); 
         if ($query->num_rows() > 0) {
             return $query->result();

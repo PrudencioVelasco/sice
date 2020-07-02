@@ -21,16 +21,16 @@
                     <?php } ?>
                   <hr>
 
-                   <table id="tablageneral2" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
-                    <thead>
+                   <table id="tablageneral2" class="table table-striped   dt-responsive nowrap" cellspacing="0" width="100%">
+                       <thead class="bg-teal"> 
                       <tr>
                         <th>#</th> 
-                        <th>FORMA DE PAGO</th>
-                        <th>PAGÓ</th>
-                        <th>ESTATUS</th>
-                        <th>CONCEPTO</th>
-                        <th>DESCUENTO</th> 
-                        <th>FECHA</th> 
+                        <th>F. Pago</th>
+                        <th>Pagó</th>
+                        <th>Estatus</th>
+                        <th>Concepto</th>
+                        <th>Descuento</th> 
+                        <th>Fecha</th> 
                       </tr>
                     </thead>
                     <tbody>
@@ -102,9 +102,9 @@
                                     }
                                    ?>
                                  </td>
-                                 <td><?php echo $value->concepto.' DE '.$value->nombremes; ?></td>
+                                 <td><?php echo 'MENSUALIDAD DE '.$value->mes; ?></td>
                                  <td><strong>$<?php echo number_format($value->descuento,2) ?> </strong></td>
-                                 <td><?php echo $value->fecharegistro ?> </td>
+                                 <td><?php echo $value->fechapago ?> </td>
                             </tr>
                             <?php
                           }

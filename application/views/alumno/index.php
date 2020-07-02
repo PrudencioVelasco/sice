@@ -38,8 +38,8 @@
                 <div class="x_content"> 
                   <div class="row">  
                     <h2><strong>* TAREAS</strong></h2>
-               <table id="" class="table table-striped table-bordered datatabletarea">
-                    <thead>
+               <table id="" class="table table-striped   datatabletarea">
+                     <thead class="bg-teal"> 
                       <tr>
                         <th>#</th>
                         <th>Materia</th>
@@ -84,8 +84,8 @@
                     </tbody>
                   </table>
                     <h2><strong>* MENSAJES</strong></h2>
-                   <table id="" class="table table-striped table-bordered datatabletarea">
-                    <thead>
+                   <table id="" class="table table-striped  datatabletarea">
+                    <thead class="bg-teal"> 
                       <tr>
                         <th>#</th>
                         <th>Materia</th>

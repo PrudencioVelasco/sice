@@ -15,11 +15,25 @@ class Alumno_model extends CI_Model {
 
   
     public function showAll($idplantel = '') {
-        $this->db->select('t.*');
+        $this->db->select('t.*,n.nombreniveleducativo,ae.idestatusalumno, ae.nombreestatus');
         $this->db->from('tblalumno t'); 
-        if (isset($idplantel) && !empty($idplantel)) {
+        $this->db->join('tblplantel p','t.idplantel = p.idplantel');
+        $this->db->join('tblniveleducativo n','n.idniveleducativo = p.idniveleducativo');
+          $this->db->join('tblalumno_estatus ae','ae.idestatusalumno = t.idalumnoestatus');
+       if (isset($idplantel) && !empty($idplantel)) {
         $this->db->where('t.idplantel',$idplantel); 
         }  
+         $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+
+    }
+     public function showAllEstatusAlumno() {
+        $this->db->select('ae.*');
+        $this->db->from('tblalumno_estatus ae');  
          $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();
@@ -177,21 +191,33 @@ class Alumno_model extends CI_Model {
         }
     }
       public function showAllPagoColegiaturas($idalumno = '',$idperiodo = '') {
-        $this->db->select("'MENSUALIDAD' AS concepto,m.nombremes, ( SELECT
-         GROUP_CONCAT(CONCAT_WS(' ', tp.nombretipopago)
-                    SEPARATOR ', ') ) AS nombretipopago, tp.nombretipopago, DATE_FORMAT(es.fechapago,'%d/%m/%Y') as fecharegistro, dp.idformapago, es.online, es.pagado");
-        $this->db->from('tblestado_cuenta es'); 
-        
-         $this->db->join('tblamotizacion a', 'a.idamortizacion = es.idamortizacion');
-         $this->db->join('tblmes m', 'a.idperiodopago = m.idmes');  
-         $this->db->join('tbldetalle_pago dp','es.idestadocuenta = dp.idestadocuenta');
-         $this->db->join('tbltipo_pago tp', 'tp.idtipopago = dp.idformapago');  
-        $this->db->where('es.idalumno', $idalumno); 
-        $this->db->where('es.idperiodo', $idperiodo); 
-         $this->db->where('es.eliminado', 0); 
-          $this->db->group_by('es.idestadocuenta');
-         $this->db->select_sum('dp.descuento');
-         $query = $this->db->get();
+           $query =$this->db->query("SELECT 
+    ec.idestadocuenta,
+    SUM(dp.descuento) AS descuento,
+    ec.pagado,
+    ec.idperiodo,
+    (SELECT 
+            GROUP_CONCAT(CONCAT_WS(' ', tp.nombretipopago)
+                    SEPARATOR ', ')
+        ) AS nombretipopago,
+    DATE_FORMAT(ec.fechapago, '%d/%m/%Y') AS fechapago,
+    (SELECT     
+    (SELECT 
+            GROUP_CONCAT(CONCAT_WS(' ', m.nombremes)
+                    SEPARATOR ', ')
+        )  FROM  tbldetalle_estadocuenta det  
+        INNER JOIN
+    tblmes m ON m.idmes = det.idmes WHERE det.idestadocuenta = ec.idestadocuenta )AS mes,
+    ec.online
+FROM
+    tblestado_cuenta ec
+        INNER JOIN
+    tbldetalle_pago dp ON ec.idestadocuenta = dp.idestadocuenta
+        INNER JOIN
+    tbltipo_pago tp ON tp.idtipopago = dp.idformapago 
+    WHERE ec.idperiodo = $idperiodo AND ec.idalumno = $idalumno
+    AND ec.eliminado = 0
+    GROUP BY ec.idestadocuenta"); 
         if ($query->num_rows() > 0) {
             return $query->result();
         } else {
@@ -240,7 +266,7 @@ class Alumno_model extends CI_Model {
      public function showAllUnidades($idplantel = '') {
         $this->db->select('u.*');
         $this->db->from('tblunidad u'); 
-        if (isset($idplantel) && !empty($idplantel)) {
+       if (isset($idplantel) && !empty($idplantel)) {
         $this->db->where('u.idplantel',$idplantel); 
         }  
          $query = $this->db->get();
@@ -278,9 +304,10 @@ class Alumno_model extends CI_Model {
         $this->db->select('g.idgrupo,n.nombrenivel,g.nombregrupo');
         $this->db->from('tblgrupo g'); 
         $this->db->join('tblnivelestudio n', 'n.idnivelestudio = g.idnivelestudio');
-        if (isset($idplantel) && !empty($idplantel)) {
+    if (isset($idplantel) && !empty($idplantel)) {
         $this->db->where('g.idplantel', $idplantel);
         }
+        $this->db->order_by('n.nombrenivel ASC');
          $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();
@@ -319,7 +346,7 @@ class Alumno_model extends CI_Model {
         $this->db->where('ag.idperiodo',$idcicloescolar); 
         $this->db->where('ag.idalumno',$idalumno); 
         $this->db->where('ag.idgrupo',$idgrupo); 
-        if(!empty($idplantel)){
+       if (isset($idplantel) && !empty($idplantel)) {
         $this->db->where('a.idplantel',$idplantel);
         }
          $query = $this->db->get();
@@ -337,7 +364,24 @@ class Alumno_model extends CI_Model {
         if(!empty($idalumno)){
         $this->db->where('a.idalumno !=',$idalumno);
         }
-         if(!empty($idplantel)){
+       if (isset($idplantel) && !empty($idplantel)) {
+        $this->db->where('a.idplantel',$idplantel);
+        }
+         $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    } 
+    
+    public function validarAsignarTutor($idalumno = '',$idtutor = '', $idplantel = '') {
+        $this->db->select('a.*');
+        $this->db->from('tblalumno a'); 
+        $this->db->join('tbltutoralumno ta','a.idalumno = ta.idalumno');
+        $this->db->where('ta.idtutor',$idtutor); 
+        $this->db->where('ta.idalumno',$idalumno); 
+        if (isset($idplantel) && !empty($idplantel)) {
         $this->db->where('a.idplantel',$idplantel);
         }
          $query = $this->db->get();
@@ -740,15 +784,21 @@ class Alumno_model extends CI_Model {
 
 
 
-        public function searchAlumno($match) {
+        public function searchAlumno($match,$idplantel = '') {
         $field = array(
                  't.nombre',
                  't.apellidop',
                  't.apellidom',
-                 't.matricula'
+                 't.matricula',
+                 'n.nombreniveleducativo'
         );
-         $this->db->select('t.*');
+      $this->db->select('t.*,n.nombreniveleducativo');
         $this->db->from('tblalumno t'); 
+        $this->db->join('tblplantel p','t.idplantel = p.idplantel');
+        $this->db->join('tblniveleducativo n','n.idniveleducativo = p.idniveleducativo');
+        if (isset($idplantel) && !empty($idplantel)) {
+        $this->db->where('t.idplantel',$idplantel); 
+        } 
         $this->db->like('concat(' . implode(',', $field) . ')', $match);
         $query = $this->db->get();
         if ($query->num_rows() > 0) {

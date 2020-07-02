@@ -5,8 +5,7 @@
   <!-- bootstrap progress js -->
   <script src="<?php echo base_url(); ?>/assets/js/progressbar/bootstrap-progressbar.min.js"></script>
   <script src="<?php echo base_url(); ?>/assets/js/nicescroll/jquery.nicescroll.min.js"></script>
-  <!-- icheck -->
-  <script src="<?php echo base_url(); ?>/assets/js/icheck/icheck.min.js"></script>
+ 
 
   <script src="<?php echo base_url(); ?>/assets/js/custom.js"></script>
   <!-- pace -->
@@ -35,13 +34,18 @@
     <!-- select2 -->
   <script src="<?php echo base_url(); ?>/assets/js/select/select2.full.js"></script>
   <script src="<?php echo base_url(); ?>/assets/js/admin.js"></script>
+ 
 
-   <script>
+
+
+</script>
+ <script>
     $(document).ready(function() {
       $(".select2_single").select2({
         placeholder: "Select a state",
         allowClear: true
       }); 
+      
     });
   </script>
     <script>
@@ -49,11 +53,24 @@
       $(".select2_multiple").select2({
         maximumSelectionLength: 4,
         placeholder: "Seleccione multiples Materias",
-        allowClear: true
+        allowClear: true,  
       });
     });
   </script>
+  
+   <script> 
+            $('#date').datepicker({ 
+            format: "dd/mm/yyyy",
+             
+              language: 'es',
+              sideBySide: true,
+              daysOfWeekDisabled: [0],
+              multidate:false,
+              startDate:moment().startOf('week').toDate(),
+              endDate:moment().endOf('week').toDate()
 
+            }); 
+    </script>
 </body>
 
 </html>

@@ -17,7 +17,9 @@ class Calificacion_model extends CI_Model {
         { 
             $this->db->select('u.idunidad, u.nombreunidad');
             $this->db->from('tblunidad u');   
+             if (isset($idplantel) && !empty($idplantel)) {
             $this->db->where('u.idplantel',$idplantel);   
+             }
             $query = $this->db->get();
             if ($this->db->affected_rows() > 0) {
                 return $query->result();

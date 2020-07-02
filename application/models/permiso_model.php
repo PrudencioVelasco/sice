@@ -16,7 +16,10 @@ class Permiso_model extends CI_Model {
 	
         public function showAll()
     {
-        $query = $this->db->get('permissions');
+        $this->db->select('p.*');
+        $this->db->from('permissions p');   
+        $this->db->where('p.id NOT IN (71,72,86,73,74,75)');
+         $query = $this->db->get();  
         if ($query->num_rows() > 0) {
             return $query->result();
         } else {

@@ -17,7 +17,7 @@ class Profesor_model extends CI_Model {
     public function showAll($idplantel = '') {
         $this->db->select('t.*');
         $this->db->from('tblprofesor t'); 
-        if (isset($idplantel) && !empty($idplantel)) {
+      if (isset($idplantel) && !empty($idplantel)) {
         $this->db->where('t.idplantel',$idplantel); 
         }  
          $query = $this->db->get();
@@ -30,7 +30,7 @@ class Profesor_model extends CI_Model {
      public function showAllClases($idplantel = '') {
         $this->db->select('m.*');
         $this->db->from('tblmateria m'); 
-         if (isset($idplantel) && !empty($idplantel)) {
+      if (isset($idplantel) && !empty($idplantel)) {
         $this->db->where('m.idplantel',$idplantel); 
         }  
          $query = $this->db->get();
@@ -47,7 +47,7 @@ class Profesor_model extends CI_Model {
         if(isset($idprofesor) && !empty($idprofesor)){
         $this->db->where('p.idprofesor !=',$idprofesor);  
         }
-         if(isset($idplantel) && !empty($idplantel)){
+       if (isset($idplantel) && !empty($idplantel)) {
         $this->db->where('p.idplantel',$idplantel);  
         }
         $query = $this->db->get();
@@ -97,7 +97,7 @@ class Profesor_model extends CI_Model {
         );
          $this->db->select('t.*');
         $this->db->from('tblprofesor t'); 
-        if (isset($idplantel) && !empty($idplantel)) {
+       if (isset($idplantel) && !empty($idplantel)) {
             $this->db->where('t.idplantel',$idplantel);
         }
         $this->db->like('concat(' . implode(',', $field) . ')', $match);

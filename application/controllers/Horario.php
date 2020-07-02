@@ -17,15 +17,15 @@ class Horario extends CI_Controller {
         $this->load->library('session');
     }
 
-	public function index()
+	public function inicio()
 	{
-     Permission::grant(uri_string());
+     //Permission::grant(uri_string());
 		$this->load->view('admin/header');
 		$this->load->view('admin/horario/index');
 		$this->load->view('admin/footer');
 	}
     public function searchHorario() {
-        Permission::grant(uri_string());
+        //Permission::grant(uri_string());
       $idplantel = $this->session->idplantel;
         $value = $this->input->post('text');
         $query = $this->horario->searchHorario($value,$idplantel);
@@ -38,7 +38,7 @@ class Horario extends CI_Controller {
     }
 
     public function showAll() {
-         Permission::grant(uri_string()); 
+         //Permission::grant(uri_string()); 
          $query = $this->horario->showAll($this->session->idplantel);
          //var_dump($query);
          if ($query) {
@@ -277,7 +277,7 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
     }*/
         }
       public function showAllDiaHorario($idhorario,$iddia) {
-         Permission::grant(uri_string()); 
+         //Permission::grant(uri_string()); 
          $query = $this->horario->showAllDiaHorario($idhorario,$iddia);
          //var_dump($query);
          if ($query) {
@@ -288,7 +288,7 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
         }
      }
      public function showAllDias() {
-         Permission::grant(uri_string()); 
+         //Permission::grant(uri_string()); 
          $query = $this->horario->showAllDias();
          //var_dump($query);
          if ($query) {
@@ -299,7 +299,7 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
         }
      }
      public function showAllPeriodos() { 
-         Permission::grant(uri_string());
+         //Permission::grant(uri_string());
          $query = $this->horario->showAllPeriodos($this->session->idplantel); 
          if ($query) {
              $result['periodos'] = $this->horario->showAllPeriodos($this->session->idplantel);
@@ -309,7 +309,7 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
         }
      }
       public function showAllGrupos() { 
-          Permission::grant(uri_string());
+          //Permission::grant(uri_string());
          $query = $this->horario->showAllGrupos($this->session->idplantel); 
          if ($query) {
              $result['grupos'] = $this->horario->showAllGrupos($this->session->idplantel);
@@ -320,7 +320,7 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
      }
 
 public function showAllMaterias() {
-        Permission::grant(uri_string()); 
+        //Permission::grant(uri_string()); 
          $query = $this->horario->showAllMaterias($this->session->idplantel);
          //var_dump($query);
          if ($query) {
@@ -331,7 +331,7 @@ public function showAllMaterias() {
         }
      }
   public function addMateriaHorario() {
-        Permission::grant(uri_string());
+        if(Permission::grantValidar(uri_string()) ==  1){
         $config = array(
              array(
                 'field' => 'idmateria',
@@ -388,14 +388,20 @@ public function showAllMaterias() {
                 );
             $this->horario->addMateriaHorario($data); 
         }
-         
+          }else{
+             $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
+            );
+        	 
+          } 
        if(isset($result) && !empty($result)){
          echo json_encode($result);
         }
          
     }
       public function addReceso() {
-        Permission::grant(uri_string());
+         if(Permission::grantValidar(uri_string()) ==  1){
         $config = array(
              array(
                 'field' => 'titulo',
@@ -443,14 +449,20 @@ public function showAllMaterias() {
               $result['error']   = false;
                 $result['success'] = 'User updated successfully'; 
         }
-         
+         }else{
+             $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
+            );
+        	 
+          } 
      if(isset($result) && !empty($result)){
          echo json_encode($result);
         }
          
     }
         public function addHoraSinClases() {
-        Permission::grant(uri_string());
+          if(Permission::grantValidar(uri_string()) ==  1){
         $config = array(
              array(
                 'field' => 'iddia',
@@ -498,14 +510,20 @@ public function showAllMaterias() {
               $result['error']   = false;
                 $result['success'] = 'User updated successfully'; 
         }
-         
+           }else{
+             $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
+            );
+        	 
+          }
      if(isset($result) && !empty($result)){
          echo json_encode($result);
         }
          
     }
      public function updateHoraSinClases() {
-        Permission::grant(uri_string());
+        if(Permission::grantValidar(uri_string()) ==  1){
         $config = array(
              array(
                 'field' => 'iddia',
@@ -551,14 +569,20 @@ public function showAllMaterias() {
                 );
             $this->horario->updateHoraSinClase($id,$data); 
         }
-         
+          }else{
+             $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
+            );
+        	 
+          }
      if(isset($result) && !empty($result)){
          echo json_encode($result);
         }
          
     }
   public function addHorario() {
-        Permission::grant(uri_string());
+        if(Permission::grantValidar(uri_string()) ==  1){
         $config = array(
              array(
                 'field' => 'idperiodo',
@@ -607,14 +631,20 @@ public function showAllMaterias() {
         }
 
         }
-         
+          }else{
+             $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
+            );
+        	 
+          }
        if(isset($result) && !empty($result)){
          echo json_encode($result);
         }
          
     }
      public function updateHorario() {
-        Permission::grant(uri_string());
+        if(Permission::grantValidar(uri_string()) ==  1){
         $config = array(
              array(
                 'field' => 'idperiodo',
@@ -663,14 +693,20 @@ public function showAllMaterias() {
           }
 
         }
-         
+           }else{
+             $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
+            );
+        	 
+          }
     if(isset($result) && !empty($result)){
          echo json_encode($result);
         }
          
     }
       public function updateMateriaHorario() {
-        Permission::grant(uri_string());
+         if(Permission::grantValidar(uri_string()) ==  1){
         $config = array(
              array(
                 'field' => 'idmateria',
@@ -729,14 +765,20 @@ public function showAllMaterias() {
               $result['error']   = false;
                 $result['success'] = 'User updated successfully'; 
         }
-         
+          }else{
+             $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
+            );
+        	 
+          }
       if(isset($result) && !empty($result)){
          echo json_encode($result);
         }
          
     }
      public function updateReceso() {
-        Permission::grant(uri_string());
+        if(Permission::grantValidar(uri_string()) ==  1){
         $config = array(
              array(
                 'field' => 'nombreclase',
@@ -784,7 +826,13 @@ public function showAllMaterias() {
               $result['error']   = false;
                 $result['success'] = 'User updated successfully'; 
         }
-         
+          }else{
+             $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
+            );
+        	 
+          }
        if(isset($result) && !empty($result)){
          echo json_encode($result);
         }
@@ -793,12 +841,15 @@ public function showAllMaterias() {
 
  public function deleteHorarioMateria()
  { 
-     Permission::grant(uri_string());
+     if(Permission::grantValidar(uri_string()) ==  1){
       $id = $this->input->get('id');
         $query = $this->horario->deleteHorarioMateria($id);
         if ($query) {
             $result['horarios'] = true;
         } 
+    }else{
+          $result['horarios'] = false;
+    }
        if(isset($result) && !empty($result)){
          echo json_encode($result);
         }
@@ -807,12 +858,15 @@ public function showAllMaterias() {
 
   public function deleteReceso()
  { 
-     Permission::grant(uri_string());
+    if(Permission::grantValidar(uri_string()) ==  1){
         $id = $this->input->get('id');
         $query = $this->horario->deleteReceso($id);
         if ($query) {
             $result['horarios'] = true;
         } 
+    }else{
+        $result['horarios'] = false;
+    }
        if(isset($result) && !empty($result)){
          echo json_encode($result);
         }
@@ -821,8 +875,7 @@ public function showAllMaterias() {
 
  public function imprimirHorario($idhorario='')
  {
-     Permission::grant(uri_string());
-   # code...
+    
    $lunes = $this->horario->showAllDiaHorario($idhorario,1);
         $martes = $this->horario->showAllDiaHorario($idhorario,2);
         $miercoles = $this->horario->showAllDiaHorario($idhorario,3);
@@ -1023,24 +1076,30 @@ $this->dompdf->stream("welcome.pdf", array("Attachment"=>0));
 
  public function deleteHorario()
   {
-      Permission::grant(uri_string());
+     if(Permission::grantValidar(uri_string()) ==  1){
         $idhorario = $this->input->get('idhorario');
         $query = $this->horario->deleteHorario($idhorario);
         if ($query) {
             $result['horarios'] = true;
         } 
+    }else{
+         $result['horarios'] = false;
+    }
        if(isset($result) && !empty($result)){
          echo json_encode($result);
         }
   }
   public function deleteSinClases()
   {
-      Permission::grant(uri_string());
+      if(Permission::grantValidar(uri_string()) ==  1){
         $id = $this->input->get('id');
         $query = $this->horario->deleteSinClases($id);
         if ($query) {
             $result['horarios'] = true;
         } 
+    }else{
+         $result['horarios'] = false;
+    }
        if(isset($result) && !empty($result)){
          echo json_encode($result);
         }

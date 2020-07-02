@@ -21,7 +21,7 @@ class CicloEscolar_model extends CI_Model {
         $this->db->join('tblmes m2 ', ' p.idmesfin = m2.idmes'); 
         $this->db->join('tblyear y ', ' p.idyearinicio = y.idyear');
         $this->db->join('tblyear y2 ', ' p.idyearfin = y2.idyear'); 
-        if (isset($idplantel) && !empty($idplantel)) {
+      if (isset($idplantel) && !empty($idplantel)) {
         $this->db->where('p.idplantel',$idplantel); 
         }   
         $this->db->order_by('p.idperiodo DESC');
@@ -96,7 +96,7 @@ class CicloEscolar_model extends CI_Model {
         $this->db->where('p.idmesfin',$mesfin);
         $this->db->where('p.idyearfin',$yearfin);
         $this->db->where('p.idperiodo !=',$idperiodo);
-         if (isset($idplantel) && !empty($idplantel)) {
+       if (isset($idplantel) && !empty($idplantel)) {
         $this->db->where('p.idplantel',$idplantel);
         }
          $query = $this->db->get();

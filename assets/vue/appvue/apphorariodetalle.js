@@ -87,7 +87,24 @@ var v = new Vue({
       this.showAllMaterias();   
     },
     methods:{
-         
+        modelAgregarMateria() {
+            $('#addMateria').modal('show');
+        },
+        modelEditMateria() {
+            $('#editMateria').modal('show');
+        },
+        modelAgregarHoraSinClase() {
+            $('#addModalHoraSinClase').modal('show');
+        },
+        modelEditHoraSinClase() {
+            $('#editModalSinClases').modal('show');
+        },
+        modelAgregarRecreo() {
+            $('#addModalRecreo').modal('show');
+        },
+        modelEditRecreo() {
+            $('#editModalRecreo').modal('show');
+        },
          showAll(){ axios.get(this.url+"Horario/showAll/").then(function(response){
                  if(response.data.horarios == null){
                      v.noResult()
@@ -431,6 +448,12 @@ var v = new Vue({
 			 },3000); // disappearing message success in 2 sec
         },
         clearAll(){
+            $('#addMateria').modal('hide');
+            $('#addModalHoraSinClase').modal('hide');
+            $('#addModalRecreo').modal('hide');
+            $('#editMateria').modal('hide');
+            $('#editModalRecreo').modal('hide');
+            $('#editModalSinClases').modal('hide');
             v.newHorario = {
                 idhorario:my_var_2,
                 iddia:'',

@@ -12,7 +12,7 @@
                 </div>
                 <div class="x_content">  
 
-                     <div id="app">
+                     <div id="app"> 
                             <div class="container">
                                  
                                     <transition
@@ -25,7 +25,7 @@
                                         <div class="row">
                                             <div class="col-md-6 col-sm-12 col-xs-12 ">
                                              
-                                       <button class="btn  btn-primary waves-effect waves-black" @click="addModal= true"><i class='fa fa-plus'></i> Agregar Alumno</button> 
+                                       <button class="btn  btn-primary waves-effect waves-black" @click="abrirAddModal()"><i class='fa fa-plus'></i> Agregar Alumno</button> 
 
 
                                             </div>
@@ -39,16 +39,18 @@
                                             </div>
                                         </div>
                                         <br>
-                                        <table class="table table-striped responsive-utilities jambo_table bulk_action">
-                                            <thead class="text-white bg-dark" >
+                                        
+                                        <table class="table table-hover table-striped">
+                                            <thead class="bg-teal"> 
                                             <th class="text-white" v-column-sortable:matricula>Matricula </th>
                                             <th class="text-white" v-column-sortable:nombre>Nombre </th>
                                             <th class="text-white" v-column-sortable:apellidop>A. Paterno </th>
                                             <th class="text-white" v-column-sortable:apellidom>A. Materno </th>
                                              <th class="text-center text-white">Opción </th>
                                             </thead>
-                                            <tbody class="table-light">
-                                                <tr v-for="alumno in alumnos" class="table-default">
+                                            <tbody  >
+                                                <tr v-for="alumno in alumnos"  >
+                                                 
                                                   <td>{{alumno.matricula}}</td>
                                                     <td>{{alumno.nombre}}</td>
                                                     <td>{{alumno.apellidop}}</td>
@@ -57,14 +59,14 @@
 
                               <div class="btn-group" role="group">
                                     <div class="btn-group" role="group">
-                                        <button type="button" class="btn btn-primary waves-effect dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <button type="button" class="btn btn-info waves-effect dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             <i class='fa fa-plus'></i>  Opciones
                                             <span class="caret"></span>
                                         </button>
                                         <ul class="dropdown-menu"> 
                                             <li ><a href="#" @click="deleteAlumno(alumno.idalumno)" title="Eliminar Datos"><i class="fa fa-trash"></i> Eliminar</a></li> 
-                                            <li><a href="#" @click="editModal = true; selectAlumno(alumno)" title="Modificar Datos"><i class="fa fa-edit"></i> Editar</a></li>
-                                            <li><a href="#"  @click="editPasswordModal = true; selectAlumno(alumno)" title="Modificar Datos"><i class="fa fa-key"></i>Contraseña</a></li> 
+                                            <li><a href="#" @click="abrirEditModal(); selectAlumno(alumno)" title="Modificar Datos"><i class="fa fa-edit"></i> Editar</a></li>
+                                            <li><a href="#"  @click="abrirChangeModal();selectAlumno(alumno)" title="Modificar Datos"><i class="fa fa-key"></i>Contraseña</a></li> 
                                             <li><a href="#" v-bind:href="'detalle/'+ alumno.idalumno"><i class="fa fa-list-alt" aria-hidden="true"></i> Detalles</a></li>
                                         </ul>
                                     </div>
@@ -93,7 +95,7 @@
                                             </tr>
                                             </tfoot>
                                         </table>
-                                    
+                                         
                                
                             
                             <?php include 'modal.php'; ?>

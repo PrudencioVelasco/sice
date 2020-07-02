@@ -11,22 +11,15 @@
           <div class="clearfix"></div>
         </div>
         <div class="x_content">
-
-          <div class="row"> 
-
+ 
              <div id="app">
                     <div class="container">
-                        <div class="row">
-                            <transition
-                                enter-active-class="animated fadeInLeft"
-                                leave-active-class="animated fadeOutRight">
-                                <div class="notification is-success text-center px-5 top-middle" v-if="successMSG" @click="successMSG = false">{{successMSG}}</div>
-                            </transition>
+                        <div class="row"> 
                             <div class="col-md-12">
 
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <button class="btn btn-round btn-primary waves-effect waves-black"  @click="addModal= true"><i class='fa fa-plus'></i> Agregar Horario</button> 
+                                        <button class="btn btn-round btn-primary waves-effect waves-black"  @click=" abrirAddModal() "><i class='fa fa-plus'></i> Agregar Horario</button> 
 
 
                                     </div>
@@ -40,8 +33,8 @@
                                     </div>
                                 </div>
                                 <br>
-                                <table class="table table-striped responsive-utilities jambo_table bulk_action">
-                                    <thead class="text-white bg-dark" >
+                       <table class="table table-hover table-striped">
+                                            <thead class="bg-teal">
 
                                     <th class="text-white" v-column-sortable:mesinicio>Ciclo Escolar </th>
                                     <th class="text-white" v-column-sortable:nombrenivel>Nivel </th>
@@ -63,7 +56,7 @@
                                             <td align="right">
                                                 <a href="#" class="btn btn-danger  btn-sm waves-effect waves-black" @click="deleteHorario(horario.idhorario)" title="Eliminar Datos"><i class="fa fa-trash"></i> Eliminar</a>
 
-                                                <button v-if="horario.periodoactivo==1"  type="button" class="btn btn-success btn-sm waves-effect waves-black" @click="editModal = true; selectHorario(horario)" title="Modificar Datos"> <i class="fa fa-edit" aria-hidden="true"></i>
+                                                <button v-if="horario.periodoactivo==1"  type="button" class="btn btn-success btn-sm waves-effect waves-black" @click=" abrirEditModal(); selectHorario(horario)" title="Modificar Datos"> <i class="fa fa-edit" aria-hidden="true"></i>
                                                   Editar
                                                 </button>
 
@@ -98,7 +91,7 @@
                 </div>
             
 
-          </div>
+          
 
         </div>
       </div>

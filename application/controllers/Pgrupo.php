@@ -15,6 +15,7 @@ class pGrupo extends CI_Controller {
         $this->load->model('grupo_model','grupo'); 
         $this->load->model('mensaje_model','mensaje'); 
         $this->load->library('encryption');
+        $this->load->helper('numeroatexto_helper');
         date_default_timezone_set("America/Mexico_City");
 
     }
@@ -343,8 +344,8 @@ return $tabla;
      $alumnos = $this->grupo->alumnosGrupo($idhorario);
      
       $tabla ="";
-       $tabla .= ' <table id="tablageneral2" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
-      <thead>
+       $tabla .= ' <table id="tablageneral2" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+      <thead class="bg-teal"> 
       <th>#</th>
       <th>Nombre</th>';
        foreach($unidades as $block):
@@ -365,12 +366,17 @@ return $tabla;
       
         $tabla .= '<td>';
         if($val != false ){  
-          $tabla .='<label>'.$val->calificacion.'  </label>'; 
+          $tabla .='<label>'.$val->calificacion.'  </label>';
+          $fecha_inicio = date('Y-m-d');
+          $fecha_fin = date('Y-m-d',strtotime($val->fecharegistro)); 
+          $total_dias =  dias_pasados($fecha_inicio,$fecha_fin);
+         if($total_dias <= 3){
           $tabla .='  <a  href="javascript:void(0)"><i class="fa fa-pencil edit_button"  data-toggle="modal" data-target="#myModal"
           data-idcalificacion="'.$val->idcalificacion.'"
           data-calificacion="'.$val->calificacion.'"
           data-alumno="'.$row->apellidop." ".$row->apellidom." ".$row->nombre.'"
          style = "color:blue;" title="Editar Calificación"></i> </a>';
+         }
           /*$tabla .=' <a  href="javascript:void(0)"><i class="fa fa-trash delete_button"  data-toggle="modal" data-target="#myModalDelete"
           data-idcalificacion="'.$val->idcalificacion.'"
           data-calificacion="'.$val->calificacion.'"
@@ -450,7 +456,8 @@ return $tabla;
         'idhorariodetalle'=>$idhorariodetalle,
         'unidades'=>$unidades,
         'nombreclase'=>$nombreclase,
-        'tabla' => $this->obtenerCalificacion($idhorario,$idhorariodetalle)
+        'tabla' => $this->obtenerCalificacion($idhorario,$idhorariodetalle),
+        'oportunidades'=>$this->grupo->showAllOportunidades($this->session->idplantel)
       );
 
        $this->load->view('docente/header');
@@ -491,14 +498,14 @@ return $tabla;
     }
     public function addCalificacion()
     { 
- Permission::grant(uri_string());
+        Permission::grant(uri_string());
         $config = array(
             array(
                 'field' => 'unidad',
                 'label' => 'Unidad',
                 'rules' => 'trim|required',
                 'errors' => array(
-                    'required' => 'Debe de seleccionar la Unidad.'
+                    'required' => 'Seleccionar la Unidad.'
                 )
             ),
               array(
@@ -506,7 +513,7 @@ return $tabla;
                 'label' => 'Calificacion',
                 'rules' => 'trim|required|decimal|callback_maxNumber',
                 'errors' => array(
-                    'required' => 'De de escribir las Calificaciones.',
+                    'required' => 'Escribir las Calificaciones.',
                     'decimal' => 'Debe de ser Números decimales.'
                 )
             )
@@ -521,15 +528,17 @@ return $tabla;
             $idalumno = $this->input->post('idalumno');
             $unidad = $this->input->post('unidad');
             $calificacion = $this->input->post('calificacion'); 
-            
+            $detalle_oportunidad = $this->grupo->primeraOportunidad($this->session->idplantel);
+            if($detalle_oportunidad){
+            $idopotunidad = $detalle_oportunidad[0]->idoportunidadexamen;
             $validar = $this->grupo->validarAgregarCalificacion($unidad,$idhorariodetalle);
             if($validar == false){
             foreach ($idalumno as $key => $value) { 
                 $idalumno2 = $value;
-                $calificacion2 = $calificacion[$key];
-
+                $calificacion2 = $calificacion[$key]; 
                 $data = array(
                     'idunidad'=>$unidad,
+                    'idoportunidadexamen'=>$idopotunidad,
                     'idalumno'=>$idalumno2,
                     'idhorario'=>$idhorario,
                     'idhorariodetalle'=>$idhorariodetalle,
@@ -543,6 +552,9 @@ return $tabla;
             echo json_encode(['success'=>'Ok']);
           }else{
              echo json_encode(['error'=>'Ya fueron registradas las calificaciones para esta unidad.']);
+          }
+           }else{
+             echo json_encode(['error'=>'No esta registrado la Oportunidad.']);
           }
         }
        // echo json_encode($result);
@@ -582,12 +594,17 @@ return $tabla;
             $errors = validation_errors();
             echo json_encode(['error'=>$errors]);
         } else {
+           
+
             $idhorario = $this->input->post('idhorario');
             $idunidad = $this->input->post('unidad');
             $idhorariodetalle = $this->input->post('idhorariodetalle');
             $idalumno = $this->input->post('idalumno'); 
             $motivo = $this->input->post('motivo');
             $fecha = $this->input->post('fecha'); 
+            $numero_semana_enviado = date('W',strtotime($fecha));
+            $semana_actual = date('W');
+            if($semana_actual == $numero_semana_enviado){
             $validar = $this->grupo->validarAgregarAsistencia($fecha,$idhorariodetalle,$idunidad);
             if($validar == false){
             foreach ($idalumno as $key => $value) {
@@ -612,6 +629,9 @@ return $tabla;
           }else{
              echo json_encode(['error'=>'Las Asistencias ya estan registradas para esta Fecha.']);
           }
+        }else{
+             echo json_encode(['error'=>'Solo puedes trabajar en la semana actual.']);
+        }
             
         }
        // echo json_encode($result);
@@ -656,7 +676,7 @@ return $tabla;
 
      public function addTarea()
     { 
- Permission::grant(uri_string());
+         Permission::grant(uri_string());
         $config = array(
             array(
                 'field' => 'fechaentrega',
@@ -702,7 +722,7 @@ return $tabla;
     }
      public function addMensaje()
     { 
- Permission::grant(uri_string());
+    Permission::grant(uri_string());
         $config = array(
               array(
                 'field' => 'mensaje',
@@ -739,8 +759,7 @@ return $tabla;
        // echo json_encode($result);
     }
 
-     public function updateTarea()
-    { 
+     public function updateTarea()  { 
  Permission::grant(uri_string());
         $config = array(
             array(
@@ -785,7 +804,7 @@ return $tabla;
 
      public function updateMensaje()
     { 
- Permission::grant(uri_string());
+     Permission::grant(uri_string());
         $config = array(
               array(
                 'field' => 'mensaje',
@@ -920,14 +939,22 @@ public function updateCalificacion()
     } else {
         $idcalificacion = $this->input->post('idcalificacion'); 
         $calificacion = $this->input->post('calificacion'); 
-            $data = array(
+        $detalle_calificacion = $this->grupo->detalleCalificacion($idcalificacion);
+          $fecha_inicio = date('Y-m-d');
+          $fecha_fin = date('Y-m-d',strtotime($detalle_calificacion->fecharegistro)); 
+          $total_dias =  dias_pasados($fecha_inicio,$fecha_fin);
+         if($total_dias <= 3){
+        $data = array(
                 'calificacion'=>$calificacion,
                 'idusuario' => $this->session->user_id,
-                'fecharegistro' => date('Y-m-d H:i:s')
+                //'fecharegistro' => date('Y-m-d H:i:s')
             );
             $this->grupo->updateCalificacion($idcalificacion,$data);
          
         echo json_encode(['success'=>'Ok']);
+         }else{
+             echo json_encode(['error'=>'Ya pasaron los 3 dias habiles.']);
+         }
       
     }
 
@@ -950,14 +977,32 @@ public function eliminarCalificacionUnidad()
         $errors = validation_errors();
         echo json_encode(['error'=>$errors]);
     } else {
+        $detalle_oportunidad = $this->grupo->primeraOportunidad($this->session->idplantel);
+            if($detalle_oportunidad){
+            $idopotunidad = $detalle_oportunidad[0]->idoportunidadexamen;
         $unidad = $this->input->post('unidad'); 
         $horariodetalle = $this->input->post('horariodetalle');  
-        $this->grupo->eliminarCalificacionUnidad($unidad,$horariodetalle);
+        $detalle_calificacion = $this->grupo->detalleCalificacionUnidad($unidad,$horariodetalle);
+       $fecha_inicio = date('Y-m-d');
+          $fecha_fin = date('Y-m-d',strtotime($detalle_calificacion->fecharegistro)); 
+          $total_dias =  dias_pasados($fecha_inicio,$fecha_fin);
+         if($total_dias <= 3){
+        $this->grupo->eliminarCalificacionUnidad($unidad,$horariodetalle,$idopotunidad);
          
         echo json_encode(['success'=>'Ok']);
-      
+         }else{
+             echo json_encode(['error'=>'Ya pasaron los 3 dias habiles.']);
+         }
+       }else{
+             echo json_encode(['error'=>'No esta registrado la Oportunidad.']);
+          }
     }
 
+}
+public function recuperacion($idhorariodetalle = '',$idopotunidad)
+{
+    $detalle = $this->grupo->obtenerAlumnoRecuperar($idhorariodetalle,$idopotunidad);
+    var_dump($detalle);
 }
  
 }

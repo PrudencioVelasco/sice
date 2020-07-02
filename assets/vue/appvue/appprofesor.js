@@ -74,6 +74,15 @@ var v = new Vue({
          orderBy(sortFn) {
             // sort your array data like this.userArray
             this.profesores.sort(sortFn);
+        }, 
+        abrirAddModal() {
+            $('#addRegister').modal('show');
+        },
+        abrirEditModal() {
+            $('#editRegister').modal('show');
+        },
+        abrirChangeModal() {
+            $('#changePassword').modal('show');
         },
          showAll(){ axios.get(this.url+"Profesor/showAll").then(function(response){
                  if(response.data.profesores == null){
@@ -240,6 +249,9 @@ var v = new Vue({
 			 },3000); // disappearing message success in 2 sec
         },
         clearAll(){
+            $('#editRegister').modal('hide');
+            $('#addRegister').modal('hide');
+            $('#changePassword').modal('hide');
             v.newProfesor = {
             cedula:'',
             nombre:'',

@@ -14,9 +14,10 @@
                 <div class="x_content">
 
                   <div class="row"> 
-                  
-             <table class="table">
-                    <thead>
+                   <div class="container">
+                       <div class="col-md-12 col-sm-12 col-xs-12 ">
+            <table class="table table-hover table-striped">
+                                            <thead class="bg-teal"> 
                       <tr> 
                         <th>Periodo</th>
                         <th>Año</th>
@@ -55,7 +56,7 @@
                                 <td align="right">
                                      <div class="btn-group" role="group">
                                     <div class="btn-group" role="group">
-                                        <button type="button" class="btn btn-primary waves-effect dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <button type="button" class="btn btn-info waves-effect dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                              Opciones
                                             <span class="caret"></span>
                                         </button>
@@ -75,8 +76,8 @@
                        <?php } } else{ echo "<tr><td colspan='4' align='center'>No existe Kardex del alumno.</td></tr>"; }?>
                     </tbody>
                   </table>
-                    
-
+                  </div>
+                  </div>
                   </div>
 
                 </div>

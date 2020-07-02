@@ -23,7 +23,7 @@
                                     <div class="col-md-12">
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <button class="btn btn-round btn-primary waves-effect waves-black" @click="addModal= true"><i class='fa fa-plus'></i> Nuevo Rol</button>
+                                                <button class="btn btn-round btn-primary waves-effect waves-black" @click=" abrirAddModal()"><i class='fa fa-plus'></i> Nuevo Rol</button>
                                                 <a  href="<?= base_url('/User/') ?>" class="btn btn-round btn-default waves-effect waves-black">Usuarios</a>
                                                 <a  href="<?= base_url('/Permiso/') ?>" class="btn btn-round btn-default waves-effect waves-black">Permisos</a>
 
@@ -38,8 +38,8 @@
                                             </div>
                                         </div>
                                         <br>
-                                        <table class="table table-striped responsive-utilities jambo_table bulk_action">
-                                            <thead class="text-white bg-dark" >
+                                        <table class="table table-hover table-striped">
+                                            <thead class="bg-teal">
                                             <th class="text-white" v-column-sortable:rol>Rol </th>
 
                                             <th class="text-right text-white" >Opción </th>
@@ -48,7 +48,7 @@
                                                 <tr v-for="rol in roles" class="table-default">
                                                     <td><strong>{{rol.rol}}</strong></td> 
                                                     <td align="right">
-                                                        <button type="button" class="btn btn-icons btn-sm btn-rounded btn-success waves-effect waves-black" @click="editModal = true; selectRol(rol)" title="Modificar Datos"><i class='fa fa-edit'></i> 
+                                                        <button type="button" class="btn btn-icons btn-sm btn-rounded btn-success waves-effect waves-black" @click="abrirEditModal(); selectRol(rol)" title="Modificar Datos"><i class='fa fa-edit'></i> 
                                                            Editar
                                                         </button>
 

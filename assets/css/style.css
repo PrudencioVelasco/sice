@@ -2801,6 +2801,7 @@ section.content {
 /* Checkbox & Radio ============================ */
 [type="checkbox"] + label {
   padding-left: 26px;
+  padding-right: 26px;
   height: 25px;
   line-height: 21px;
   font-size: 13px;
@@ -6874,3 +6875,15 @@ html.ie11 .dropdown-menu ul.menu li a {
 
 html.ie11 .bs-searchbox .form-control {
   width: 90%; }
+
+     .form-group .form-line .form-label {
+      font-weight: normal;
+      color: #aaa;
+      position: absolute;
+      top: 10px;
+      left: 0;
+      cursor: text;
+      -moz-transition: 0.2s;
+      -o-transition: 0.2s;
+      -webkit-transition: 0.2s;
+      transition: 0.2s; }

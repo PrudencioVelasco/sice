@@ -77,6 +77,12 @@ var v = new Vue({
             // sort your array data like this.userArray
             this.materias.sort(sortFn);
         },
+      abrirAddModal() {
+        $('#addRegister').modal('show');
+      },
+      abrirEditModal() {
+        $('#editRegister').modal('show');
+      },
          showAllClases() {
 
             axios.get(this.url+"Profesor/showAllClases/")
@@ -230,6 +236,8 @@ var v = new Vue({
 			 },3000); // disappearing message success in 2 sec
         },
         clearAll(){
+          $('#editRegister').modal('hide');
+          $('#addRegister').modal('hide');
             v.newMateria = {
                idprofesor:my_var_2,
                idmateria:'',

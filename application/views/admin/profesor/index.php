@@ -10,10 +10,7 @@
                   <h2><strong>ADMINISTRAR PROFESORES</strong></h2> 
                   <div class="clearfix"></div>
                 </div>
-                <div class="x_content">
-
-                  <div class="row"> 
-
+                <div class="x_content"> 
                      <div id="app">
                             <div class="container">
                                 <div class="row">
@@ -26,7 +23,7 @@
 
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <button class="btn btn-round btn-primary waves-effect waves-black" @click="addModal= true"><i class='fa fa-plus'></i> Agregar Profesor</button> 
+                                                <button class="btn btn-round btn-primary waves-effect waves-black" @click="  abrirAddModal()"><i class='fa fa-plus'></i> Agregar Profesor</button> 
 
 
                                             </div>
@@ -40,8 +37,8 @@
                                             </div>
                                         </div>
                                         <br>
-                                        <table class="table table-striped responsive-utilities jambo_table bulk_action">
-                                            <thead class="text-white bg-dark" >
+                                        <table class="table table-hover table-striped">
+                                            <thead class="bg-teal">
                                               <th class="text-white" v-column-sortable:cedula>Cédula </th>
                                             <th class="text-white" v-column-sortable:nombre>Nombre </th>
                                             <th class="text-white" v-column-sortable:apellidop>A. Paterno </th>
@@ -57,14 +54,14 @@
                                                     <td align="right">
                                                        <div class="btn-group" role="group">
                                       <div class="btn-group" role="group">
-                                          <button type="button" class="btn btn-primary waves-effect dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                          <button type="button" class="btn btn-info waves-effect dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                               <i class='fa fa-plus'></i>  Opciones
                                               <span class="caret"></span>
                                           </button>
                                           <ul class="dropdown-menu"> 
                                               <li ><a href="#" @click="deleteProfesor(profesor.idprofesor)" title="Eliminar Datos"><i class="fa fa-trash"></i> Eliminar</a></li> 
-                                              <li><a href="#" @click="editModal = true; selectProfesor(profesor)" title="Modificar Datos"><i class="fa fa-edit"></i> Editar</a></li>
-                                              <li><a href="#"  @click="addModalPassword = true; selectProfesor(profesor)" title="Cambiar Contraseña"><i class="fa fa-key"></i>Contraseña</a></li> 
+                                              <li><a href="#" @click="abrirEditModal(); selectProfesor(profesor)" title="Modificar Datos"><i class="fa fa-edit"></i> Editar</a></li>
+                                              <li><a href="#"  @click=" abrirChangeModal(); selectProfesor(profesor)" title="Cambiar Contraseña"><i class="fa fa-key"></i>Contraseña</a></li> 
                                               <li><a href="#" v-bind:href="'detalle/'+ profesor.idprofesor"><i class="fa fa-list-alt" aria-hidden="true"></i> Detalles</a></li>
                                           </ul>
                                       </div>
@@ -98,7 +95,7 @@
                         </div>
                     
 
-                  </div>
+                
 
                 </div>
               </div>

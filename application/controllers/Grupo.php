@@ -18,17 +18,33 @@ class Grupo extends CI_Controller {
         $this->load->library('pdfgenerator'); 
     }
 
-	public function index()
+	public function inicio()
 	{  
-        Permission::grant(uri_string());
+        Permission::grant(uri_string());  
 		$this->load->view('admin/header');
 		$this->load->view('admin/grupo/index');
 		$this->load->view('admin/footer');
-	}
-    public function showAllEspecialidades() {
-        Permission::grant(uri_string()); 
+    }
+    public function alumnos()
+    {
         $idplantel = $this->session->idplantel;
+        $periodos = $this->grupo->showAllPeriodos($idplantel);
+         $grupos = $this->grupo->showAllGrupos($idplantel);
+         $oportunidades = $this->grupo->showAllOportunidadesExamen($idplantel);
+        $data  = array(
+            'periodos'=>$periodos,
+            'grupos'=>$grupos,
+            'oportunidades'=>$oportunidades
+        );
+        $this->load->view('admin/header');
+		$this->load->view('admin/grupo/alumnos',$data);
+		$this->load->view('admin/footer');
+    }
+    public function showAllEspecialidades() {
+        //Permission::grant(uri_string()); 
+         $idplantel = $this->session->idplantel;
         $query = $this->alumno->showAllEspecialidades($idplantel);
+      
         if ($query) {
             $result['especialidades'] = $this->alumno->showAllEspecialidades($idplantel);
         }
@@ -37,7 +53,7 @@ class Grupo extends CI_Controller {
         }
     }
       public function searchGrupo() { 
-          Permission::grant(uri_string());
+          //ermission::grant(uri_string());
          $idplantel = $this->session->idplantel;
         $value = $this->input->post('text');
         $query = $this->grupo->searchGrupo($value,$idplantel);
@@ -50,7 +66,7 @@ class Grupo extends CI_Controller {
     }
 
     public function showAll() { 
-        Permission::grant(uri_string());
+        //Permission::grant(uri_string());
        $idplantel = $this->session->idplantel;
          $query = $this->grupo->showAllGrupos($idplantel);
          //var_dump($query);
@@ -62,7 +78,7 @@ if(isset($result) && !empty($result)){
         }
      }
      public function showAllNiveles() { 
-         Permission::grant(uri_string());
+         //Permission::grant(uri_string());
          $query = $this->grupo->showAllNiveles();
          //var_dump($query);
          if ($query) {
@@ -73,7 +89,7 @@ if(isset($result) && !empty($result)){
         }
      }
       public function showAllTurnos() { 
-          Permission::grant(uri_string());
+          //Permission::grant(uri_string());
          $query = $this->grupo->showAllTurnos();
          //var_dump($query);
          if ($query) {
@@ -85,7 +101,7 @@ if(isset($result) && !empty($result)){
      }
      
        public function addGrupo() {
-        Permission::grant(uri_string());
+        if(Permission::grantValidar(uri_string()) ==  1){
         $config = array(
              array(
                 'field' => 'idespecialidad',
@@ -159,6 +175,13 @@ if(isset($result) && !empty($result)){
           } 
         }
          
+         }else{
+             $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
+            );
+             
+          } 
        if(isset($result) && !empty($result)){
          echo json_encode($result);
         }
@@ -166,7 +189,7 @@ if(isset($result) && !empty($result)){
     }
 
            public function updateGrupo() {
-        Permission::grant(uri_string());
+         if(Permission::grantValidar(uri_string()) ==  1){
         $config = array(
              array(
                 'field' => 'idespecialidad',
@@ -240,7 +263,13 @@ if(isset($result) && !empty($result)){
              
           } 
         }
-         
+           }else{
+             $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
+            );
+             
+          } 
         if(isset($result) && !empty($result)){
          echo json_encode($result);
         }
@@ -251,13 +280,15 @@ if(isset($result) && !empty($result)){
     
    public function deleteGrupo()
     {
-        # code...
-        Permission::grant(uri_string());
+       if(Permission::grantValidar(uri_string()) ==  1){
         $idgrupo = $this->input->get('idgrupo');
         $query = $this->grupo->deleteGrupo($idgrupo);
         if ($query) {
             $result['grupos'] = true;
         } 
+    }else{
+        $result['grupos'] = false;
+    }
        if(isset($result) && !empty($result)){
          echo json_encode($result);
         }

@@ -12,21 +12,19 @@
 
   <!-- Bootstrap core CSS -->
 
-   <link href="<?php echo base_url(); ?>/assets/principal/css/bootstrap.min.css" rel="stylesheet">
+   <link href="<?php echo base_url(); ?>/assets/plugins/bootstrap/css/bootstrap.css" rel="stylesheet">
 
   <link href="<?php echo base_url(); ?>/assets/fonts/css/font-awesome.min.css" rel="stylesheet">
   <link href="<?php echo base_url(); ?>/assets/css/animate.min.css" rel="stylesheet">
 
-  <link href="<?php echo base_url(); ?>/assets/css/style.css" rel="stylesheet">
+  <link href="<?php echo base_url(); ?>/assets/css/style2.css" rel="stylesheet">
     <link href="<?php echo base_url(); ?>/assets/plugins/node-waves/waves.css" rel="stylesheet">
   <!-- Custom styling plus plugins -->
   <link href="<?php echo base_url(); ?>/assets/css/custom.css" rel="stylesheet">
   <link href="<?php echo base_url(); ?>/assets/css/icheck/flat/green.css" rel="stylesheet">
 
 
-  <script src="<?php echo base_url(); ?>/assets/js/jquery.min.js"></script>
-
-  <script src="<?php echo base_url(); ?>/assets/js/jquery.min.js"></script>
+  <script src="<?php echo base_url(); ?>/assets/plugins/jquery/jquery.min.js"></script> 
   <script src="<?php echo base_url() ?>/assets/vue/vue/vue.min.js"></script>
   <script src="<?php echo base_url() ?>/assets/vue/axios/axios.min.js"></script>
   <script src="<?php echo base_url(); ?>/assets/vue/pagination/pagination.js"></script>
@@ -35,10 +33,12 @@
  
 
   <!-- select2 -->
-  <link href="<?php echo base_url(); ?>/assets/css/select/select2.min.css" rel="stylesheet">
+  <link href="<?php echo base_url(); ?>/assets/css/select/select2.min.css" rel="stylesheet"> 
+     <!-- Bootstrap Select Css -->
+    <link href="<?php echo base_url(); ?>/assets/plugins/bootstrap-select/css/bootstrap-select.css" rel="stylesheet" />
 
-
-      <!-- SweetAlert -->
+ 
+    <!-- SweetAlert -->
     <script src="<?php echo base_url(); ?>/assets/js/sweetalert2/dist/sweetalert2.min.js"></script>
     <link rel="stylesheet" href="<?php echo base_url(); ?>/assets/js/sweetalert2/dist/sweetalert2.min.css">
     
@@ -48,6 +48,8 @@
     <link href="<?php echo base_url(); ?>/assets/js/datatables/fixedHeader.bootstrap.min.css" rel="stylesheet" type="text/css" />
     <link href="<?php echo base_url(); ?>/assets/js/datatables/responsive.bootstrap.min.css" rel="stylesheet" type="text/css" />
     <link href="<?php echo base_url(); ?>/assets/js/datatables/scroller.bootstrap.min.css" rel="stylesheet" type="text/css" />
+ 
+ 
 
   <!--[if lt IE 9]>
         <script src="../assets/js/ie8-responsive-file-warning.js"></script>
@@ -65,6 +67,7 @@
    .is-invalid{
      border-color: red;
    }
+ 
  </style>
  <style type="text/css">
                 .modal-mask {
@@ -120,14 +123,13 @@
 
 
           <!-- menu prile quick info -->
-          <div class="profile">
+          <div class="profile" style="margin-top: 50px;">
             <div class="profile_pic">
               <img src="<?php echo base_url(); ?>/assets/images/user2.png" alt="..." class="img-circle profile_img">
             </div>
             <div class="profile_info">
               <span>Bienvenido,</span>
-              <h2><?php echo $this->session->nombre
-                                ?></h2>
+              <h2><?php echo $this->session->nombre   ?></h2>
             </div>
           </div>
           <!-- /menu prile quick info -->
@@ -138,15 +140,24 @@
           <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
 
             <div class="menu_section">
-              <h3>General</h3>
+              <h3>
+                <?php 
+                  if((isset($this->session->nivel_educativo) && !empty($this->session->nivel_educativo)) &&
+                      (isset($this->session->idplantel) && !empty($this->session->idplantel) && $this->session->idplantel != 2)){
+                      echo $this->session->nivel_educativo;
+                  } else{
+                    echo 'General';
+                  }
+                ?>
+              </h3>
               <ul class="nav side-menu">
               <li><a href="<?= base_url('/Admin') ?>"><i class="fa fa-home"></i>  Inicio</a></li>
-              <li><a href="<?= base_url('/Alumno/') ?>"><i class="fa fa-slideshare"></i>  Alumnos</a></li>
-               <li><a href="<?= base_url('/Tutor/') ?>"><i class="fa fa-users"></i>  Tutores</a></li>
-               <li><a href="<?= base_url('/Profesor/') ?>"><i class="fa fa-user"></i>  Profesor</a></li>
-               <li><a href="<?= base_url('/CicloEscolar/') ?>"><i class="fa fa-bookmark-o"></i>  Ciclo Escolar</a></li>
-               <li><a href="<?= base_url('/Grupo/') ?>"><i class="fa fa-graduation-cap"></i>  Grupo</a></li>
-               <li><a href="<?= base_url('/Horario/') ?>"><i class="fa fa-clock-o"></i>  Horario</a></li>
+              <li><a href="<?= base_url('/Alumno/inicio') ?>"><i class="fa fa-slideshare"></i>  Alumnos</a></li>
+               <li><a href="<?= base_url('/Tutor/inicio') ?>"><i class="fa fa-users"></i>  Tutores</a></li>
+               <li><a href="<?= base_url('/Profesor/inicio') ?>"><i class="fa fa-user"></i>  Profesor</a></li>
+               <li><a href="<?= base_url('/CicloEscolar/inicio') ?>"><i class="fa fa-bookmark-o"></i>  Ciclo Escolar</a></li>
+               <li><a href="<?= base_url('/Grupo/inicio') ?>"><i class="fa fa-graduation-cap"></i>  Grupo</a></li>
+               <li><a href="<?= base_url('/Horario/inicio') ?>"><i class="fa fa-clock-o"></i>  Horario</a></li>
                <li><a href="<?= base_url('/Promover/') ?>"><i class="fa fa-arrow-up"></i>  Promoción Alumno</a></li>
 
                <li><a href="<?= base_url('/Catalogo/') ?>"><i class="fa fa-folder-open"></i>  Catalogo</a></li>
@@ -170,17 +181,26 @@
             <div class="nav toggle">
               <a id="menu_toggle"><label></label></a> 
             </div> 
-            <ul class="nav navbar-nav navbar-right">
+            <ul class="nav navbar-nav navbar-right" >
 
-              <li class="">
-                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+              <li class="" >
+                <a  href="#" style=" padding:0 10px 0 0;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                   <img src="<?php echo base_url(); ?>/assets/images/user2.png" alt=""><?php echo $this->session->nombre
                                 ?>
                   <span class=" fa fa-angle-down"></span>
                 </a>
-                <ul class="dropdown-menu dropdown-usermenu animated fadeInDown pull-right">
+                <ul  class="dropdown-menu dropdown-usermenu animated fadeInDown pull-right"> 
+                  <?php 
                   
-                  <li><a href="<?= base_url('/welcome/logouta') ?>"><i class="fa fa-sign-out pull-right"></i> Salir</a>
+                    if(isset($this->session->planteles) && !empty($this->session->planteles)){
+                      foreach($this->session->planteles as $row){
+                  ?>
+                  <li><a href="<?= base_url('/welcome/plantel/'.$row->idplantel) ?>"><?php echo $row->nombreniveleducativo ?></a></li>
+                    <?php
+                     }
+                    }
+                    ?>
+                      <li><a href="<?= base_url('/welcome/logouta') ?>"><i class="fa fa-sign-out pull-right"></i> SALIR</a>
                   </li>
                 </ul>
               </li> 

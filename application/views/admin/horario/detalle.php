@@ -19,11 +19,11 @@
                   <div class="row">
                            <div class="col-md-12">
                               <?php if($activo_horario == 1 && $activo_ciclo_escolar == 1){ ?>
-                                <button class="btn btn-round btn-primary waves-effect waves-black" @click="addModal= true"><i class='fa fa-plus'></i> Agregar Materia</button> 
+                                <button class="btn btn-round btn-primary waves-effect waves-black" @click="modelAgregarMateria()"><i class='fa fa-plus'></i> Agregar Materia</button> 
 
-                                <button class="btn btn-round btn-primary waves-effect waves-black" @click="addModalRecreo= true"><i class='fa fa-plus'></i> Agregar Receso</button> 
+                                <button class="btn btn-round btn-primary waves-effect waves-black" @click="modelAgregarRecreo()"><i class='fa fa-plus'></i> Agregar Receso</button> 
 
-                                 <button class="btn btn-round btn-primary waves-effect waves-black" @click="addModalHoraSinClase= true"><i class='fa fa-plus'></i> Agregar Hora sin Clases</button> 
+                                 <button class="btn btn-round btn-primary waves-effect waves-black" @click="modelAgregarHoraSinClase()"><i class='fa fa-plus'></i> Agregar Hora sin Clases</button> 
                               <?php } ?>
                                 <a  target="_blank" class="btn btn-round btn-info waves-effect waves-black" href="<?php echo base_url(); ?>Horario/descargar/<?php echo $id ?>" class="btn btn-primary"><i class="fa fa-print"></i> IMPRIMIR HORARIO</a>
                             </div> 
@@ -57,12 +57,12 @@
                                 <li class="dropdown">
                                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
                                   <ul class="dropdown-menu" role="menu">
-                                    <li v-if="row.opcion == 'NORMAL'"><a @click="editModal = true; selectHorario(row)" href="#">Editar</a>
+                                    <li v-if="row.opcion == 'NORMAL'"><a @click="modelEditMateria(); selectHorario(row)" href="#">Editar</a>
                                     </li>
                                     
-                                  <li v-if="row.opcion == 'DESCANSO'"><a @click="editModalRecreo = true; selectHorario(row)" href="#">Editar</a>
+                                  <li v-if="row.opcion == 'DESCANSO'"><a @click=" modelEditRecreo();  selectHorario(row)" href="#">Editar</a>
                                     </li>
-                                  <li v-if="row.opcion == 'SIN CLASES'"><a @click="editModalSinClases = true; selectHorario(row)" href="#">Editar</a>
+                                  <li v-if="row.opcion == 'SIN CLASES'"><a @click="modelEditHoraSinClase(); selectHorario(row)" href="#">Editar</a>
                                     </li>
                                     
                                    <li v-if="row.opcion == 'NORMAL'"><a href="#" @click="deleteHorario(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
@@ -95,12 +95,12 @@
                                 <li class="dropdown">
                                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
                                   <ul class="dropdown-menu" role="menu">
-                                    <li v-if="row.opcion == 'NORMAL'"><a @click="editModal = true; selectHorario(row)" href="#">Editar</a>
+                                    <li v-if="row.opcion == 'NORMAL'"><a @click="modelEditMateria(); selectHorario(row)" href="#">Editar</a>
                                     </li>
                                     
-                                  <li v-if="row.opcion == 'DESCANSO'"><a @click="editModalRecreo = true; selectHorario(row)" href="#">Editar</a>
+                                  <li v-if="row.opcion == 'DESCANSO'"><a @click=" modelEditRecreo(); selectHorario(row)" href="#">Editar</a>
                                     </li>
-                                  <li v-if="row.opcion == 'SIN CLASES'"><a @click="editModalSinClases = true; selectHorario(row)" href="#">Editar</a>
+                                  <li v-if="row.opcion == 'SIN CLASES'"><a @click="modelEditHoraSinClase(); selectHorario(row)" href="#">Editar</a>
                                     </li>
                                     
                                    <li v-if="row.opcion == 'NORMAL'"><a href="#" @click="deleteHorario(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
@@ -133,12 +133,12 @@
                                 <li class="dropdown">
                                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
                                   <ul class="dropdown-menu" role="menu">
-                                    <li v-if="row.opcion == 'NORMAL'"><a @click="editModal = true; selectHorario(row)" href="#">Editar</a>
+                                    <li v-if="row.opcion == 'NORMAL'"><a @click="modelEditMateria();  selectHorario(row)" href="#">Editar</a>
                                     </li>
                                     
-                                  <li v-if="row.opcion == 'DESCANSO'"><a @click="editModalRecreo = true; selectHorario(row)" href="#">Editar</a>
+                                  <li v-if="row.opcion == 'DESCANSO'"><a @click="modelEditRecreo();  selectHorario(row)" href="#">Editar</a>
                                     </li>
-                                  <li v-if="row.opcion == 'SIN CLASES'"><a @click="editModalSinClases = true; selectHorario(row)" href="#">Editar</a>
+                                  <li v-if="row.opcion == 'SIN CLASES'"><a @click="modelEditHoraSinClase(); selectHorario(row)" href="#">Editar</a>
                                     </li>
                                     
                                    <li v-if="row.opcion == 'NORMAL'"><a href="#" @click="deleteHorario(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
@@ -170,12 +170,12 @@
                                 <li class="dropdown">
                                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
                                   <ul class="dropdown-menu" role="menu">
-                                    <li v-if="row.opcion == 'NORMAL'"><a @click="editModal = true; selectHorario(row)" href="#">Editar</a>
+                                    <li v-if="row.opcion == 'NORMAL'"><a @click="modelEditMateria();  selectHorario(row)" href="#">Editar</a>
                                     </li>
                                     
-                                  <li v-if="row.opcion == 'DESCANSO'"><a @click="editModalRecreo = true; selectHorario(row)" href="#">Editar</a>
+                                  <li v-if="row.opcion == 'DESCANSO'"><a @click="modelEditRecreo();  selectHorario(row)" href="#">Editar</a>
                                     </li>
-                                  <li v-if="row.opcion == 'SIN CLASES'"><a @click="editModalSinClases = true; selectHorario(row)" href="#">Editar</a>
+                                  <li v-if="row.opcion == 'SIN CLASES'"><a @click="modelEditHoraSinClase(); selectHorario(row)" href="#">Editar</a>
                                     </li>
                                     
                                    <li v-if="row.opcion == 'NORMAL'"><a href="#" @click="deleteHorario(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
@@ -208,12 +208,12 @@
                                 <li class="dropdown">
                                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
                                   <ul class="dropdown-menu" role="menu">
-                                    <li v-if="row.opcion == 'NORMAL'"><a @click="editModal = true; selectHorario(row)" href="#">Editar</a>
+                                    <li v-if="row.opcion == 'NORMAL'"><a @click="modelEditMateria();  selectHorario(row)" href="#">Editar</a>
                                     </li>
                                     
-                                  <li v-if="row.opcion == 'DESCANSO'"><a @click="editModalRecreo = true; selectHorario(row)" href="#">Editar</a>
+                                  <li v-if="row.opcion == 'DESCANSO'"><a @click=" modelEditRecreo(); selectHorario(row)" href="#">Editar</a>
                                     </li>
-                                  <li v-if="row.opcion == 'SIN CLASES'"><a @click="editModalSinClases = true; selectHorario(row)" href="#">Editar</a>
+                                  <li v-if="row.opcion == 'SIN CLASES'"><a @click="modelEditHoraSinClase(); selectHorario(row)" href="#">Editar</a>
                                     </li>
                                     
                                    <li v-if="row.opcion == 'NORMAL'"><a href="#" @click="deleteHorario(row.idhorariodetalle); selectHorario(row);">Eliminar</a>

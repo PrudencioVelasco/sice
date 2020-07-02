@@ -8,12 +8,16 @@ var my_var_2 = this_js_script.attr('data-my_var_2');
 if (typeof my_var_2 === "undefined") {
     var my_var_2 = 'some_default_value';
 } 
+var my_var_3 = this_js_script.attr('data-my_var_3');
+if (typeof my_var_3 === "undefined") {
+    var my_var_3 = 'some_default_value';
+} 
 
 
 Vue.config.devtools = true
 Vue.component('modal',{ //modal
     template:`
-   <transition name="modal">
+   <transition id="myModalEstadoCuenta" name="modal hide fade" role="dialog" aria-hidden="true">
       <div class="modal-mask">
         <div class="modal-wrapper">
           <div class="modal-dialog modal-lg">
@@ -43,9 +47,14 @@ var ve = new Vue({
     data:{
         url: my_var_1,
         idalumno: my_var_2, 
+        idrol: my_var_3, 
         addModal: false,
         addPagoModal: false,
         editModal:false,
+
+        mostrar_condonar:false,
+        checkbox_condonar:'',
+
         eliminarModalP: false,
         eliminarModalC: false,
         mostrar:false,
@@ -98,11 +107,12 @@ var ve = new Vue({
             idmes:'',
             autorizacion: '',
             idformapago: '',
+            coleccionMeses: []
         },
         eliminarPrimerCobro: {
             usuario: '',
             password: '',
-        },
+        }, 
         eliminarColegiatura: {
             usuario: '',
             password: '',
@@ -127,9 +137,27 @@ var ve = new Vue({
       this.showAllFormasPago(); 
       this.showAllTiposPago();
       //this.showAllMeses();
-
+        this.verficarCondonar();
+        console.log(this.idrol);
     },
     methods:{
+        abrirAddModalPrincipal() {
+            $('#addCobroPrincipal').modal('show');
+        },
+        abrirAddModalColegiatura() {
+            $('#addCobroColegiatura').modal('show');
+        },
+        abrirEliminarPrincipal() {
+            $('#eliminarPrincipal').modal('show');
+        },
+        abrirEliminarColegiatura() {
+            $('#eliminarColegiatura').modal('show');
+        },
+        verficarCondonar(){
+            if ((this.idrol == 13) || (this.idrol == 14)){
+                this.mostrar_condonar = true;
+            }
+        },
         agregar_forma_pago_colegiatura() {
             ve.mostar_error_formapago = false;
             ve.error_pago = false;
@@ -443,6 +471,8 @@ var ve = new Vue({
             formData.append('idperiodo', ve.idperiodobuscado);
             formData.append('idalumno', ve.idalumno);
             formData.append('formapago', JSON.stringify(ve.array_pago_colegiatura));
+            formData.append('meseapagar', JSON.stringify(ve.newCobroColegiatura.coleccionMeses));
+            formData.append('condonar', ve.checkbox_condonar);
             
             for (var value of formData.values()) {
                               console.log(value); 
@@ -475,6 +505,8 @@ var ve = new Vue({
             ve.cargando = true;
             var formData = v.formData(ve.eliminarPrimerCobro);
             formData.append('idpago', ve.choosePrimerPago.idpago);
+            formData.append('formapago', JSON.stringify(ve.array_pago_colegiatura));
+            formData.append('condonar', ve.checkbox_condonar);
             axios.post(this.url + "EstadoCuenta/eliminarPrimerCobro", formData).then(function (response) {
                 if (response.data.error) {
                     ve.formValidate = response.data.msg;
@@ -530,8 +562,9 @@ var ve = new Vue({
                  var formData = v.formData(ve.newCobroInicio); 
                 formData.append('idperiodobuscado', ve.idperiodobuscado);
                 formData.append('idalumno', ve.idalumno);
-                    formData.append('formapago', JSON.stringify(ve.array_pago_colegiatura));
-            // for (var value of formData.values()) {
+                formData.append('formapago', JSON.stringify(ve.array_pago_colegiatura));
+                    formData.append('condonar', ve.checkbox_condonar);
+                // for (var value of formData.values()) {
             //                  console.log(value); 
             //               }
               axios.post(this.url+"EstadoCuenta/addCobroInicio", formData).then(function(response){
@@ -559,6 +592,10 @@ var ve = new Vue({
                 }
         },
         clearAll(){ 
+            $('#addCobroPrincipal').modal('hide');
+            $('#addCobroColegiatura').modal('hide');
+            $('#eliminarPrincipal').modal('hide');
+            $('#eliminarColegiatura').modal('hide');
             ve.formValidate = false;
             ve.addModal= false; 
             ve.addPagoModal = false;
@@ -570,7 +607,7 @@ var ve = new Vue({
             ve.array_pago_colegiatura = [];
             ve.mostar_error_formapago = true; 
             ve.error_pago = false; 
-             
+            ve.checkbox_condonar ='';
                 ve.eliminarPrimerCobro = { 
                     usuario: '',
                     password: '',
@@ -594,6 +631,8 @@ var ve = new Vue({
                 descuento: '',
                 autorizacion: '',
                 idformapago: '',
+                coleccionMeses: []
+
         },
                 ve.newCobro = {
                 idformapago: '',

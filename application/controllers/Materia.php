@@ -10,7 +10,8 @@ class Materia extends CI_Controller {
             return redirect('welcome');
         }
         $this->load->helper('url');
-        $this->load->model('Materia_model','materia');  
+        $this->load->model('Materia_model','materia'); 
+         $this->load->model('Profesor_model','profesor');  
         $this->load->model('data_model'); 
         $this->load->library('permission');
         $this->load->library('session');
@@ -40,6 +41,16 @@ class Materia extends CI_Controller {
          //var_dump($query);
          if ($query) {
              $result['materias'] = $this->materia->showAll($this->session->idplantel);
+         }
+       if(isset($result) && !empty($result)){
+         echo json_encode($result);
+        }
+     }
+      public function showAllClasificaciones() { 
+         $query = $this->materia->showAllClasificaciones();
+         //var_dump($query);
+         if ($query) {
+             $result['clasificaciones'] = $this->materia->showAllClasificaciones();
          }
        if(isset($result) && !empty($result)){
          echo json_encode($result);
@@ -108,6 +119,14 @@ class Materia extends CI_Controller {
                 'errors' => array(
                     'required' => 'Campo obligatorio.'
                 )
+                ),
+                   array(
+                'field' => 'idclasificacionmateria',
+                'label' => 'Claficacion Materia',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
             )
         );
 
@@ -119,12 +138,14 @@ class Materia extends CI_Controller {
                 'idespecialidad' => form_error('idespecialidad'), 
                 'nombreclase' => form_error('nombreclase'),
                 'clave' => form_error('clave'),
-                'credito' => form_error('credito') 
+                'credito' => form_error('credito') ,
+                'idclasificacionmateria' => form_error('idclasificacionmateria') 
             );
         } else {
 
             $idnivelestudio =  trim($this->input->post('idnivelestudio'));
             $idespecialidad =  trim($this->input->post('idespecialidad'));
+            $idclasificacionmateria =  trim($this->input->post('idclasificacionmateria'));
             $nombreclase =  trim($this->input->post('nombreclase')); 
             $credito =  trim($this->input->post('credito')); 
             $clave =  trim($this->input->post('clave')); 
@@ -135,6 +156,7 @@ class Materia extends CI_Controller {
                     'idplantel'=> $this->session->idplantel,
                     'idnivelestudio' => $idnivelestudio,
                     'idespecialidad' =>  $idespecialidad,
+                    'idclasificacionmateria'=>$idclasificacionmateria,
                     'nombreclase' =>  strtoupper($nombreclase), 
                     'clave' =>  strtoupper($clave), 
                     'credito' =>  $credito, 
@@ -149,6 +171,57 @@ class Materia extends CI_Controller {
              $result['error'] = true;
             $result['msg'] = array(
                 'msgerror' => 'Algunos datos ya se encentran registrados.'
+            );
+             
+          } 
+        }
+         
+       if(isset($result) && !empty($result)){
+         echo json_encode($result);
+        }
+         
+    }
+        public function addMateriaSeriada() {
+        //Permission::grant(uri_string());
+        $config = array(
+             array(
+                'field' => 'idmateriaseriada',
+                'label' => 'Materia',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
+            ) 
+        );
+
+        $this->form_validation->set_rules($config);
+        if ($this->form_validation->run() == FALSE) {
+            $result['error'] = true;
+            $result['msg'] = array(
+                'idmateriaseriada' => form_error('idmateriaseriada')
+            );
+        } else {
+
+            $idmateria =  trim($this->input->post('idmateria'));
+            $idmateriaseriada =  trim($this->input->post('idmateriaseriada')); 
+            $validar = $this->materia->validarAddMateriaSeriada($idmateria);
+            if($validar == FALSE){
+
+            $data = array(
+                    'idmateriaprincipal'=> $idmateria,
+                    'idmateriasecundaria' => $idmateriaseriada, 
+                    'eliminado'=>0,
+                    'idusuario' => $this->session->user_id,
+                    'fecharegistro' => date('Y-m-d H:i:s')
+                     
+                );
+            $this->materia->addMateriaSeriada($data);
+
+
+         }else{
+             $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => 'Solo permite agrega una materia seriada.'
             );
              
           } 
@@ -202,6 +275,14 @@ class Materia extends CI_Controller {
                 'errors' => array(
                     'required' => 'Campo obligatorio.'
                 )
+            ),
+            array(
+                'field' => 'idclasificacionmateria',
+                'label' => 'Claficacion Materia',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
             )
         );
 
@@ -213,7 +294,8 @@ class Materia extends CI_Controller {
                 'idespecialidad' => form_error('idespecialidad'), 
                 'nombreclase' => form_error('nombreclase'),
                 'clave' => form_error('clave'),
-                'credito' => form_error('credito') 
+                'credito' => form_error('credito') ,
+                'idclasificacionmateria' => form_error('idclasificacionmateria') 
             );
         } else {
 
@@ -223,12 +305,14 @@ class Materia extends CI_Controller {
             $idmateria =  trim($this->input->post('idmateria')); 
             $clave =  trim($this->input->post('clave'));
             $credito =  trim($this->input->post('credito')); 
+             $idclasificacionmateria =  trim($this->input->post('idclasificacionmateria'));
             $validar = $this->materia->validarUpdateMateria($idmateria,$idnivelestudio,$idespecialidad,$nombreclase,$this->session->idplantel,$clave);
             if($validar == FALSE){ 
 
             $data = array(
                     'idnivelestudio' => $idnivelestudio,
                     'idespecialidad' =>  $idespecialidad,
+                    'idclasificacionmateria'=>$idclasificacionmateria,
                     'nombreclase' =>  strtoupper($nombreclase), 
                     'clave' =>  strtoupper($clave), 
                     'credito' =>  $credito, 
@@ -253,6 +337,41 @@ class Materia extends CI_Controller {
          echo json_encode($result);
         }
     }
+     public function updateMateriaSeriada()
+    {
+   $config = array(
+             array(
+                'field' => 'idmateriasecundaria',
+                'label' => 'Materia',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.'
+                )
+            ) 
+        );
+
+        $this->form_validation->set_rules($config);
+        if ($this->form_validation->run() == FALSE) {
+            $result['error'] = true;
+            $result['msg'] = array(
+                'idmateriasecundaria' => form_error('idmateriasecundaria')
+            );
+        } else { 
+            $idmateriaseriada =  trim($this->input->post('idmateriaseriada'));
+            $idmateriasecundaria =  trim($this->input->post('idmateriasecundaria')); 
+             $data = array(
+                    'idmateriasecundaria' => $idmateriasecundaria, 
+                    'idusuario' => $this->session->user_id,
+                    'fecharegistro' => date('Y-m-d H:i:s')
+                     
+                );
+            $this->materia->updateMateriaSeriada($idmateriaseriada,$data); 
+        }
+         
+       if(isset($result) && !empty($result)){
+         echo json_encode($result);
+        }
+    }
    public function deleteMateria()
     {
         # code...
@@ -265,5 +384,56 @@ class Materia extends CI_Controller {
          echo json_encode($result);
         }
     }
+  public function showAllClases() {
+       
+         $idplantel = $this->session->idplantel;
+         $idmateria =  $this->input->get('idmateria'); 
+         $query = $this->materia->showAllClases($idplantel,$idmateria);
+        if ($query) {
+            $result['clases'] = $this->materia->showAllClases($idplantel,$idmateria);
+        }
+       if(isset($result) && !empty($result)){
+         echo json_encode($result);
+        }
+    }
+    public function showDetalleMateria()
+    {
+        $idmateria =  $this->input->get('idmateria');
+        $query = $this->materia->showAllMateriaSeriada($idmateria);
+        if ($query) {
+            $result['materias'] = $this->materia->showAllMateriaSeriada($idmateria);
+        }
+       if(isset($result) && !empty($result)){
+         echo json_encode($result);
+        }
+    }
 
+ public function deleteMateriaSeriada()
+ {  
+  
+        $id = $this->input->get('id');
+       
+        $data = array(
+            'eliminado'=>1
+        );
+         $query = $this->materia->updateMateriaSeriada($id,$data);
+        if ($query) {
+            $result['materias'] = true;
+        } 
+       if(isset($result) && !empty($result)){
+         echo json_encode($result);
+        }
+
+ }
+    public function detalle($idmateria = '')
+    {
+        $detalle_materia = $this->materia->detalleMateria($idmateria);
+        $data = array(
+            'detalle_materia'=>$detalle_materia,
+            'id'=>$idmateria
+        );
+        $this->load->view('admin/header');
+		$this->load->view('admin/materia/detalle',$data);
+		$this->load->view('admin/footer');
+    }
 }

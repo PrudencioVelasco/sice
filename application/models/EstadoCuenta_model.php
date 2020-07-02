@@ -21,7 +21,7 @@ class EstadoCuenta_model extends CI_Model {
         $this->db->join('tblmes m2 ', ' p.idmesfin = m2.idmes'); 
         $this->db->join('tblyear y ', ' p.idyearinicio = y.idyear');
         $this->db->join('tblyear y2 ', ' p.idyearfin = y2.idyear'); 
-         if (isset($idplantel) && !empty($idplantel)) {
+        if (isset($idplantel) && !empty($idplantel)) {
         $this->db->where('p.idplantel',$idplantel); 
         }   
         $this->db->order_by('p.idperiodo DESC');
@@ -49,14 +49,29 @@ class EstadoCuenta_model extends CI_Model {
                                     tblmes m
                                 WHERE
                                     m.idmes NOT IN (SELECT 
-                                            a.idperiodopago
-                                        FROM
-                                            tblamotizacion a
-                                                INNER JOIN
-                                            tblestado_cuenta ec ON a.idamortizacion = ec.idamortizacion
-                                                INNER JOIN
-                                            tbldetalle_pago dp ON ec.idestadocuenta = dp.idestadocuenta
-                                            WHERE a.idalumno = $idalumno AND a.idperiodo = $idperiodo AND ec.eliminado = 0)"); 
+                                            dp.idmes
+                                        FROM 
+                                            tblestado_cuenta ec  INNER JOIN
+                                            tbldetalle_estadocuenta dp ON ec.idestadocuenta = dp.idestadocuenta
+                                            WHERE ec.idalumno = $idalumno AND ec.idperiodo = $idperiodo AND ec.eliminado = 0)"); 
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }  
+        
+    } 
+           public function showAllMesesSiguiente($idperiodo = '',$idalumno = '') {
+            $query =$this->db->query("SELECT  m.*
+                                FROM
+                                    tblmes m
+                                WHERE
+                                    m.idmes NOT IN (SELECT 
+                                            dp.idmes
+                                        FROM 
+                                            tblestado_cuenta ec  INNER JOIN
+                                            tbldetalle_estadocuenta dp ON ec.idestadocuenta = dp.idestadocuenta
+                                            WHERE ec.idalumno = $idalumno AND ec.idperiodo = $idperiodo AND ec.eliminado = 0 ) ORDER BY m.numero ASC LIMIT 1"); 
         if ($query->num_rows() > 0) {
             return $query->result();
         } else {
@@ -130,15 +145,20 @@ public function showAllFormasPago() {
      public function detalleAlumnoRecibo($idpago)
     {
         $this->db->select("e.nombreespecialidad, p.clave, p.logoplantel,  p.nombreplantel,  p.direccion,  p.telefono, p.idniveleducativo,
-        ec.folio, m.nombremes,( SELECT
+        ec.folio,    (SELECT     
+    (SELECT 
+            GROUP_CONCAT(CONCAT_WS(' ', m.nombremes)
+                    SEPARATOR ', ')
+        )  FROM  tbldetalle_estadocuenta det  
+        INNER JOIN
+    tblmes m ON m.idmes = det.idmes WHERE det.idestadocuenta = ec.idestadocuenta )AS 
+    nombremes,( SELECT
          GROUP_CONCAT(CONCAT_WS(' ', tp.nombretipopago)
                     SEPARATOR ', ') ) AS nombretipopago, t.nombre, t.apellidop, t.apellidom, DATE_FORMAT(dp.fechapago,'%d/%m/%Y') as fechapago");
         $this->db->from('tblalumno t'); 
         $this->db->join('tblespecialidad e', 'e.idespecialidad = t.idespecialidad');
         $this->db->join('tblplantel p', 'p.idplantel = t.idplantel');
-        $this->db->join('tblestado_cuenta ec','ec.idalumno = t.idalumno');
-        $this->db->join('tblamotizacion am','am.idamortizacion = ec.idamortizacion');
-        $this->db->join('tblmes m','m.idmes = am.idperiodopago');
+        $this->db->join('tblestado_cuenta ec','ec.idalumno = t.idalumno'); 
         $this->db->join('tbldetalle_pago dp','dp.idestadocuenta = ec.idestadocuenta');
         $this->db->join('tbltipo_pago tp','tp.idtipopago = dp.idformapago');
         $this->db->where('ec.idestadocuenta', $idpago);
@@ -183,11 +203,13 @@ public function showAllFormasPago() {
     }
 
     public function descuentoPagosInicio($idalumno = '',$idperiodo = '', $idtipo = '') {
-        $this->db->select("co.descuento, b.descuento as descuentobeca,(co.descuento - (b.descuento / 100 * co.descuento)) as beca");
+        $this->db->select("co.descuento,p.idniveleducativo, b.descuento as descuentobeca,(co.descuento - (b.descuento / 100 * co.descuento)) as beca");
         $this->db->from('tblcolegiatura co');  
         $this->db->join('tblgrupo g ', ' g.idnivelestudio = co.idnivelestudio');
         $this->db->join('tblalumno_grupo ag ', ' ag.idgrupo = g.idgrupo');
         $this->db->join('tblbeca b ', 'b.idbeca = ag.idbeca');
+        $this->db->join('tblalumno a ', 'a.idalumno = ag.idalumno');
+        $this->db->join('tblplantel p ', 'a.idplantel = p.idplantel');
         $this->db->where('ag.idalumno',$idalumno);
         $this->db->where('ag.idperiodo',$idperiodo);  
         $this->db->where('co.activo',1);  
@@ -276,6 +298,28 @@ public function showAllMesPeriodo($idperiodo='',$idalumno='',$mesinicio = '',$me
             return false;
         }
 }
+public function showAllSiguienteMesPeriodo($idperiodo='',$idalumno='',$mesinicio = '',$mesfin = '')
+{
+          $query =$this->db->query("SELECT  m.*
+                                FROM
+                                    tblmes m
+                                WHERE
+                                    m.idmes NOT IN (SELECT 
+                                            a.idperiodopago
+                                        FROM
+                                            tblamotizacion a
+                                                INNER JOIN
+                                            tblestado_cuenta ec ON a.idamortizacion = ec.idamortizacion
+                                                INNER JOIN
+                                            tbldetalle_pago dp ON ec.idestadocuenta = dp.idestadocuenta
+                                            WHERE a.idalumno = $idalumno AND a.idperiodo = $idperiodo AND ec.eliminado = 0)
+                                AND (m.numero between $mesinicio AND $mesfin) ORDER BY m.numero ASC LIMIT 1"); 
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+}
 public function showAllEstadoCuenta($idperiodo='',$idalumno='',$idamortizacion = '')
 {
           $query =$this->db->query("SELECT 
@@ -321,40 +365,29 @@ FROM
  public function showAllEstadoCuentaTodos($idperiodo='',$idalumno='')
 {
           $query =$this->db->query("SELECT 
-          ec.idestadocuenta,
-    a.idamortizacion, 
+    ec.idestadocuenta,
     SUM(dp.descuento) AS descuento,
     ec.pagado,
-    pp.numero as numeromes, 
-    a.idperiodo,
-    ( SELECT
-         GROUP_CONCAT(CONCAT_WS(' ', tp.nombretipopago)
-                    SEPARATOR ', ') ) AS nombretipopago,
-    DATE_FORMAT(ec.fechapago,'%d/%m/%Y') as fechapago,
-    CASE
-        WHEN pp.numero = 1 THEN 'ENERO'
-        WHEN pp.numero = 2 THEN 'FEBRERO'
-        WHEN pp.numero = 3 THEN 'MARZO'
-        WHEN pp.numero = 4 THEN 'ABRIL'
-        WHEN pp.numero = 5 THEN 'MAYO'
-        WHEN pp.numero = 6 THEN 'JUNIO'
-        WHEN pp.numero = 7 THEN 'JULIO'
-        WHEN pp.numero = 8 THEN 'AGOSTO'
-        WHEN pp.numero = 9 THEN 'SEPTIEMBRE'
-        WHEN pp.numero = 10 THEN 'OCTUBRE'
-        WHEN pp.numero = 11 THEN 'NOVIEMBRE'
-        WHEN pp.numero = 12 THEN 'DICIEMBRE'
-        ELSE 'NO DEFINIDO'
-    END AS mes
+    ec.idperiodo,
+    (SELECT 
+            GROUP_CONCAT(CONCAT_WS(' ', tp.nombretipopago)
+                    SEPARATOR ', ')
+        ) AS nombretipopago,
+    DATE_FORMAT(ec.fechapago, '%d/%m/%Y') AS fechapago,
+    (SELECT     
+    (SELECT 
+            GROUP_CONCAT(CONCAT_WS(' ', m.nombremes)
+                    SEPARATOR ', ')
+        )  FROM  tbldetalle_estadocuenta det  
+        INNER JOIN
+    tblmes m ON m.idmes = det.idmes WHERE det.idestadocuenta = ec.idestadocuenta )AS mes
 FROM
-    tblamotizacion a
-        JOIN
-    tblmes pp ON a.idperiodopago = pp.idmes
-     JOIN
-    tblestado_cuenta ec ON a.idamortizacion = ec.idamortizacion 
-    INNER JOIN tbldetalle_pago dp ON dp.idestadocuenta = ec.idestadocuenta 
-     INNER JOIN tbltipo_pago tp ON tp.idtipopago = dp.idformapago
-    WHERE a.idperiodo = $idperiodo AND a.idalumno = $idalumno
+    tblestado_cuenta ec
+        INNER JOIN
+    tbldetalle_pago dp ON ec.idestadocuenta = dp.idestadocuenta
+        INNER JOIN
+    tbltipo_pago tp ON tp.idtipopago = dp.idformapago 
+    WHERE ec.idperiodo = $idperiodo AND ec.idalumno = $idalumno
     AND ec.eliminado = 0
     GROUP BY ec.idestadocuenta"); 
         if ($query->num_rows() > 0) {
@@ -441,6 +474,12 @@ public function datosTablaAmortizacion($idamortizacion='')
      public function addAmortizacion($data)
     {
         $this->db->insert('tblamotizacion', $data);
+        $insert_id = $this->db->insert_id(); 
+        return  $insert_id;
+    }
+     public function addEstadoCuentaDetalle($data)
+    {
+        $this->db->insert('tbldetalle_estadocuenta', $data);
         $insert_id = $this->db->insert_id(); 
         return  $insert_id;
     }

@@ -76,6 +76,9 @@ var v = new Vue({
             // sort your array data like this.userArray
             this.alumnos.sort(sortFn);
         },
+      abrirAddModal() {
+        $('#addRegister').modal('show');
+      },
           showAll() {
 
             axios.get(this.url+"Tutor/showAllTutorAlumnos/"+this.idtutor)
@@ -180,6 +183,7 @@ var v = new Vue({
 			 },3000); // disappearing message success in 2 sec
         },
         clearAll(){
+          $('#addRegister').modal('hide');
             v.newAlumno = {
             idtutor:my_var_2,
             idalumno:'',

@@ -20,7 +20,7 @@ class Colegiatura_model extends CI_Model {
         $this->db->join('tblplantel p', 'p.idplantel = c.idplantel');
         $this->db->join('tblnivelestudio n', 'n.idnivelestudio = c.idnivelestudio');
         $this->db->join('tbltipopagocol tp', 'tp.idtipopagocol = c.idtipopagocol');
-        if (isset($idplantel) && !empty($idplantel)) {
+      if (isset($idplantel) && !empty($idplantel)) {
         $this->db->where('c.idplantel',$idplantel); 
         }   
         $this->db->where('c.eliminado',0);

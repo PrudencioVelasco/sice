@@ -94,7 +94,7 @@ class Subir extends CI_Controller {
                  $sexo = $allDataInSheet[$i]["AJ"]; 
                 $direccion = $domicilio." C.P. ".$cp." ".$ciudad;
                 	$data = array(
-                    'idplantel'=> $this->session->idplantel,
+                    'idplantel'=> 3,
                     'idespecialidad'=>  trim($especialidad),
                     'matricula' => trim($matricula),
                     'curp' => strtoupper(trim($curp)),
@@ -119,6 +119,7 @@ class Subir extends CI_Controller {
                     'sexo' => $sexo, 
                     'correo' => '',
                     'password' => password_hash('admin', PASSWORD_DEFAULT),
+                    'idalumnoestatus'=>1,
                     'idusuario' => $this->session->user_id,
                     'fecharegistro' => date('Y-m-d H:i:s'),
                 );
@@ -140,12 +141,12 @@ class Subir extends CI_Controller {
              $validar = $this->alumno->buscarAlumno(trim($matricula));
              //var_dump($validar);
              //$idalumno = $validar[0]->idalumno;
-             $validar_add_padre = $this->tutor->validadAddTutor(1,trim($padre_nombre),trim($padre_apellidop),trim($padre_apellidom));
-              $validar_add_madre = $this->tutor->validadAddTutor(1,trim($madre_nombre),trim($madre_apellidop),trim($madre_apellidom));
+             $validar_add_padre = $this->tutor->validadAddTutor(3,trim($padre_nombre),trim($padre_apellidop),trim($padre_apellidom));
+              $validar_add_madre = $this->tutor->validadAddTutor(3,trim($madre_nombre),trim($madre_apellidop),trim($madre_apellidom));
              if(!$validar_add_padre){
          $password_encrypted = password_hash(trim('admin'), PASSWORD_BCRYPT);
         	$data_tutor = array(
-                    'idplantel'=> $this->session->idplantel,
+                    'idplantel'=> 3,
                     'nombre' => strtoupper($padre_nombre),
                     'apellidop' => strtoupper($padre_apellidop),
                     'apellidom' => strtoupper($padre_apellidom),
@@ -193,7 +194,7 @@ class Subir extends CI_Controller {
          if(!$validar_add_madre){
          $password_encrypted = password_hash(trim('admin'), PASSWORD_BCRYPT);
         	$data_tutor_madre = array(
-                    'idplantel'=> $this->session->idplantel,
+                    'idplantel'=> 3,
                     'nombre' => strtoupper($madre_nombre),
                     'apellidop' => strtoupper($madre_apellidop),
                     'apellidom' => strtoupper($madre_apellidom),

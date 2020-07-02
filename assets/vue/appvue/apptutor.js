@@ -81,6 +81,15 @@ var v = new Vue({
             // sort your array data like this.userArray
             this.tutores.sort(sortFn);
         },
+      abrirAddModal() {
+        $('#addRegister').modal('show');
+      },
+       abrirEditModal() {
+        $('#editRegister').modal('show');
+      },
+      abrirPasswordModal() {
+        $('#changePassword').modal('show');
+      },
          showAll(){ axios.get(this.url+"Tutor/showAll").then(function(response){
                  if(response.data.tutores == null){
                      v.noResult()
@@ -234,6 +243,9 @@ var v = new Vue({
 			 },3000); // disappearing message success in 2 sec
         },
         clearAll(){
+          $('#addRegister').modal('hide');
+          $('#editRegister').modal('hide');
+          $('#changePassword').modal('hide');
             v.newTutor = {
             nombre:'',
             apellidop:'',

@@ -146,8 +146,8 @@
 
 </br></br>
 
-  <table class="table">
-                    <thead>
+  <table class="table table-striped  ">
+                       <thead class="bg-teal"> 
                       <tr>
                         <th>#</th>
                         <th>Planeación</th>

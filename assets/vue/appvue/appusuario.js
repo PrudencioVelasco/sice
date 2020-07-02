@@ -79,6 +79,15 @@ var v = new Vue({
             // sort your array data like this.userArray
             this.users.sort(sortFn);
         },
+      abrirAddModal() {
+        $('#addRegister').modal('show');
+      },
+      abrirEditModal() {
+        $('#editRegister').modal('show');
+      },
+      abrirChangeModal() {
+        $('#changePassword').modal('show');
+      },
          showAll(){ axios.get(this.url+"User/showAll").then(function(response){
                  if(response.data.users == null){
                      v.noResult()
@@ -219,6 +228,9 @@ var v = new Vue({
 			 },3000); // disappearing message success in 2 sec
         },
         clearAll(){
+          $('#editRegister').modal('hide');
+          $('#addRegister').modal('hide');
+          $('#changePassword').modal('hide');
             v.newUser = {
             usuario:'',
             name:''};

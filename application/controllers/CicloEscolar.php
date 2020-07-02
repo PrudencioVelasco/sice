@@ -17,7 +17,7 @@ class CicloEscolar extends CI_Controller {
         $this->load->library('pdfgenerator'); 
     }
 
-	public function index()
+	public function inicio()
 	{ 
         Permission::grant(uri_string());
 		$this->load->view('admin/header');
@@ -25,7 +25,7 @@ class CicloEscolar extends CI_Controller {
 		$this->load->view('admin/footer');
 	}
       public function searchCiclo() { 
-          Permission::grant(uri_string());
+          //Permission::grant(uri_string());
         $value = $this->input->post('text');
         $query = $this->ciclo->searchCiclo($value,$this->session->idplantel);
         if ($query) {
@@ -37,7 +37,7 @@ class CicloEscolar extends CI_Controller {
     }
 
     public function showAll() { 
-        Permission::grant(uri_string());
+        //Permission::grant(uri_string());
          $query = $this->ciclo->showAll($this->session->idplantel);
          //var_dump($query);
          if ($query) {
@@ -48,7 +48,7 @@ class CicloEscolar extends CI_Controller {
         }
      }
     public function showAllMeses() { 
-        Permission::grant(uri_string());
+        //Permission::grant(uri_string());
          $query = $this->ciclo->showAllMeses();
          //var_dump($query);
          if ($query) {
@@ -59,7 +59,7 @@ class CicloEscolar extends CI_Controller {
      }
      }
      public function showAllYears() { 
-         Permission::grant(uri_string());
+         //Permission::grant(uri_string());
          $query = $this->ciclo->showAllYears();
          //var_dump($query);
          if ($query) {
@@ -71,7 +71,7 @@ class CicloEscolar extends CI_Controller {
      }
      
        public function addCiclo() {
-        Permission::grant(uri_string());
+        if(Permission::grantValidar(uri_string()) ==  1){
         $config = array(
              array(
                 'field' => 'idmesinicio',
@@ -132,7 +132,7 @@ class CicloEscolar extends CI_Controller {
             $data_update_horario = array(
                 'activo'=>0
             );
-            $this->ciclo->desactivarHorario($data_update);
+            $this->ciclo->desactivarHorario($data_update_horario);
 
 
             $data = array(
@@ -157,7 +157,13 @@ class CicloEscolar extends CI_Controller {
              
           } 
         }
-         
+           }else{
+             $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
+            );
+             
+          } 
       if(isset($result) && !empty($result)){
          echo json_encode($result);
         }
@@ -166,8 +172,7 @@ class CicloEscolar extends CI_Controller {
 
     public function updateCiclo()
     {
-        # code...
-        Permission::grant(uri_string());
+       if(Permission::grantValidar(uri_string()) ==  1){
           $config = array(
              array(
                 'field' => 'idmesinicio',
@@ -295,20 +300,28 @@ class CicloEscolar extends CI_Controller {
              
           } 
         }
-         
+          }else{
+             $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
+            );
+             
+          } 
         if(isset($result) && !empty($result)){
          echo json_encode($result);
         }
     }
    public function deleteCicloEscolar()
     {
-        # code...
-        Permission::grant(uri_string());
+     if(Permission::grantValidar(uri_string()) ==  1){
         $idperiodo = $this->input->get('idperiodo');
         $query = $this->ciclo->deleteCicloEscolar($idperiodo);
         if ($query) {
             $result['ciclos'] = true;
         } 
+    }else{
+           $result['ciclos'] = false;
+    }
        if(isset($result) && !empty($result)){
          echo json_encode($result);
         }

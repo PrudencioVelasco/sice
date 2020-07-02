@@ -46,6 +46,7 @@ var v = new Vue({
         alumnos:[], 
         especialidades:[], 
         tipossanguineos: [], 
+        estatusalumno:[],
         search: {text: ''},
         emptyResult:false,
         newAlumno:{
@@ -73,9 +74,11 @@ var v = new Vue({
             sexo:'',
             correo:'',
             password:'',
+            idestatusalumno:'',
             smserror:''},
         chooseAlumno:{},
         formValidate:[],
+        
         successMSG:'',
 
         //pagination
@@ -88,9 +91,19 @@ var v = new Vue({
      created(){
       this.showAll(); 
       this.showAllEspecialidades(); 
-       this.showAllTiposSanguineos();
+      this.showAllTiposSanguineos();
+       this.showAllEstatusAlumno();
     },
     methods:{
+      abrirAddModal(){
+        $('#addRegister').modal('show');
+      },
+      abrirEditModal(){
+        $('#editRegister').modal('show');
+      },
+      abrirChangeModal() {
+        $('#changePassword').modal('show');
+      },
          orderBy(sortFn) {
             // sort your array data like this.userArray
             this.alumnos.sort(sortFn);
@@ -108,6 +121,11 @@ var v = new Vue({
                     .then(response => (this.especialidades = response.data.especialidades));
 
         }, 
+      showAllEstatusAlumno() {
+        axios.get(this.url + "Alumno/showAllEstatusAlumno/")
+          .then(response => (this.estatusalumno = response.data.estatusalumno));
+
+      }, 
       showAllTiposSanguineos() {
         axios.get(this.url + "Alumno/showAllTiposSanguineos/")
           .then(response => (this.tipossanguineos = response.data.tipossanguineos));
@@ -268,6 +286,9 @@ var v = new Vue({
 			 },3000); // disappearing message success in 2 sec
         },
         clearAll(){
+          $('#editRegister').modal('hide');
+          $('#addRegister').modal('hide');
+          $('#changePassword').modal('hide');
             v.newAlumno = {
               matricula: '',
               curp: '',
@@ -289,6 +310,7 @@ var v = new Vue({
               sexo: '',
             correo:'',
             password:'',
+            idestatusalumno: '',
             smserror:''};
             v.formValidate = false;
             v.addModal= false;
@@ -296,6 +318,7 @@ var v = new Vue({
             v.editModal=false;
             v.error=false;
             v.cargando=false;
+         
             //v.passwordModal=false;
             //v.deleteModal=false;
             v.refresh()
