@@ -137,6 +137,7 @@
 <li><a href="<?= base_url('/Alumnos/') ?>"><i class="fa fa-home"></i>  Inicio</a></li>
                <li><a href="<?= base_url('/Aalumno/horario') ?>"><i class="fa fa-calendar"></i>  Horario</a></li>
                <li><a href="<?= base_url('/Aalumno/clases') ?>"><i class="fa fa-tasks"></i>  Clases</a></li> 
+                  <li><a href="<?= base_url('/Aalumno/actual') ?>"><i class="fa fa-tasks"></i>  Calificación</a></li> 
                <li><a href="<?= base_url('/Aalumno/kardex') ?>"><i class="fa fa-list"></i>  Kardex</a></li>
                
 

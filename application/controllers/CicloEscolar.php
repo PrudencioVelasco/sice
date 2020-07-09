@@ -127,12 +127,12 @@ class CicloEscolar extends CI_Controller {
                 $data_update = array(
                 'activo'=>0
             );
-            $this->ciclo->desactivaCiclo($data_update);
+            $this->ciclo->desactivaCiclo($data_update,$this->session->idplantel);
 
             $data_update_horario = array(
                 'activo'=>0
             );
-            $this->ciclo->desactivarHorario($data_update_horario);
+            $this->ciclo->desactivarHorario($data_update_horario,$this->session->idplantel);
 
 
             $data = array(
@@ -248,11 +248,11 @@ class CicloEscolar extends CI_Controller {
                  $data_update = array(
                 'activo'=>0
             );
-            $this->ciclo->desactivaCiclo($data_update);
+            $this->ciclo->desactivaCiclo($data_update,$this->session->idplantel);
             $data_update_horario = array(
                 'activo'=>0
             );
-            $this->ciclo->desactivarHorario($data_update_horario);
+            $this->ciclo->desactivarHorario($data_update_horario,$this->session->idplantel);
             $data = array(
                     'idplantel'=> $this->session->idplantel,
                     'idmesinicio' =>  $mesinicio,

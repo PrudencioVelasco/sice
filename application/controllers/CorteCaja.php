@@ -16,13 +16,14 @@ class CorteCaja extends CI_Controller {
         $this->load->model('horario_model','horario');  
         $this->load->model('grupo_model','grupo');
         $this->load->model('cortecaja_model','cortecaja'); 
+        $this->load->model('configuracion_model','configuracion'); 
         date_default_timezone_set("America/Mexico_City");
 
     }
  
     public function index()
     { 
-          $idrol = $this->session->idrol;
+           $idrol = $this->session->idrol;
            $idplantel = $this->session->idplantel;
            $fechainicio = $this->input->post('fechainicio');
            $fechafin = $this->input->post('fechafin');

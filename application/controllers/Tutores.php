@@ -20,16 +20,15 @@ class Tutores extends CI_Controller {
         $this->load->model('user_model','user');
         $this->load->model('mensaje_model','mensaje');
         $this->load->model('cicloescolar_model','cicloescolar');
-         $this->load->model('tutor_model','tutor');  
-         $this->load->model('mensaje_model','mensaje'); 
+         $this->load->model('tutor_model','tutor');   
+         $this->load->model('configuracion_model','configuracion'); 
         $this->load->model('data_model'); 
         $this->load->library('permission');
         $this->load->library('session');
         $this->load->library('pdfgenerator'); 
         $this->load->library('openpayservicio');
        $this->load->library('encryption');
-       $this->load->helper('numeroatexto_helper');
-       $this->promedio_minimo = 7.00;
+       $this->load->helper('numeroatexto_helper'); 
 	}
  
 	public function index()
@@ -62,6 +61,7 @@ class Tutores extends CI_Controller {
       $idunidad = $this->decode($idunidad);
       if((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno)) && (isset($idunidad) && !empty($idunidad))){
        $detalle_logo = $this->alumno->logo($this->session->idplantel);
+       $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel);
         $logo = base_url() . '/assets/images/escuelas/'.$detalle_logo[0]->logoplantel;
         $logo2 = base_url() . '/assets/images/escuelas/'.$detalle_logo[0]->logosegundo;
         
@@ -193,7 +193,7 @@ class Tutores extends CI_Controller {
             <td width="130"style="border:solid 1px black;" align="center" valign="bottom" class="txtgeneral">';
             if($calificacion != FALSE){
                 $total_calificacion = $total_calificacion + $calificacion->calificacion;
-                if($calificacion->calificacion < $this->promedio_minimo){
+                if($calificacion->calificacion < $detalle_configuracion[0]->calificacionminima ){
                     $total_reprobadas = $total_reprobadas + 1;
                      $tbl .= '<label style="color:red;">'.$calificacion->calificacion.'</label>';
                 }else{
@@ -297,6 +297,7 @@ $tbl .='</table>
      public function obtenerCalificacion($idhorario='',$idalumno = '')
     {
       # code...
+      $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel);
      $unidades =  $this->grupo->unidades($this->session->idplantel);
      $materias = $this->alumno->showAllMaterias($idhorario);
      $total_unidades =0;
@@ -326,7 +327,7 @@ $tbl .='</table>
         $tabla .= '<td>';
         if($val != false ){ 
              $suma_calificacion = $suma_calificacion + $val->calificacion;
-            if($val->calificacion >= $this->promedio_minimo){
+            if($val->calificacion >= $detalle_configuracion[0]->calificacionminima){
                  $tabla .='<label style="color:green;">'.$val->calificacion.'</label>'; 
             }else{
                 $tabla .='<label style="color:red;">'.$val->calificacion.'</label>';
@@ -338,7 +339,7 @@ $tbl .='</table>
       endforeach;
  $tabla .= '<td>';
       $calificacion_final = number_format($suma_calificacion / $total_unidades,2);
-      if(validar_calificacion($calificacion_final)){
+      if(validar_calificacion($calificacion_final,$detalle_configuracion[0]->calificacionminima )){
       $tabla .='<label style="color:red;">'.number_format($suma_calificacion / $total_unidades,2).'</label>'; 
       }else{
           $tabla .='<label style="color:green;">'.number_format($suma_calificacion / $total_unidades,2).'</label>'; 
@@ -838,6 +839,7 @@ function decode($string)
     }
      public function pagoc($idalumno = '',$idperiodo = '',$idnivel = '',$tipo = '')
     {
+        date_default_timezone_set("America/Mexico_City");
         Permission::grant(uri_string());
          $idalumno = $this->decode($idalumno);
           $idperiodo = $this->decode($idperiodo);
@@ -857,6 +859,50 @@ function decode($string)
          }
 
         if($detalle != false){
+           $detalle_descuento = $this->estadocuenta->descuentoPagosInicio($idalumno,$idperiodo,3);  
+           $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel);
+           $recargo = 0; 
+            if($detalle_descuento[0]->idniveleducativo == 1){
+                  //PRIMARIA  
+                   $dia_actual = date('Y-m-d');
+                   $year_actual = date('Y');
+                   $mes_actual = date('m');
+                     $detalle_configuracion[0]->diaultimorecargo;
+                     $dia_pago =date('Y-m-d',strtotime($detalle_configuracion[0]->diaultimorecargo."-".$mes_actual."-".$year_actual));
+                    if($dia_actual > $dia_pago){
+                        $recargo +=   $detalle_configuracion[0]->totalrecargo;
+                    }else{
+                          $recargo +=   0;
+                    }
+                  
+                }elseif($detalle_descuento[0]->idniveleducativo == 2){
+                     //SECUNDARIA 
+                    $dia_actual = date('Y-m-d');
+                   $year_actual = date('Y');
+                   $mes_actual = date('m');
+                   $dia_pago =date('Y-m-d',strtotime($detalle_configuracion[0]->diaultimorecargo."-".$mes_actual."-".$year_actual));
+                        if($dia_actual > $dia_pago){
+                            $recargo +=   $detalle_configuracion[0]->totalrecargo;
+                        }else{
+                              $recargo +=  0;
+                        }
+                 
+                }elseif($detalle_descuento[0]->idniveleducativo == 3){
+                  //PREPA 
+                   $dia_actual = date('Y-m-d');
+                   $year_actual = date('Y');
+                   $mes_actual = date('m');
+                   $dia_pago =date('Y-m-d',strtotime($detalle_configuracion[0]->diaultimorecargo."-".$mes_actual."-".$year_actual));
+                      if($dia_actual > $dia_pago){
+                          $recargo +=   $detalle_configuracion[0]->totalrecargo;
+                      }else{
+                            $recargo +=   0;
+                      }
+                 
+                }else{
+                   $recargo = 0;
+                }
+
          $descuento = $detalle[0]->descuento;
          $meses = $this->tutor->showAllMeses($idalumno,$idperiodo);
          $detalle_alumno = $this->alumno->detalleAlumno($idalumno);
@@ -864,9 +910,12 @@ function decode($string)
          $data = array( 
             'idalumno'=>$this->encode($idalumno),
             'idperiodo'=>$this->encode($idperiodo),
-            'descuento'=>$descuento,
+            'colegiatura'=>$descuento,
+            'descuento'=>$descuento + $recargo,
             'mensaje'=>$mensaje,
             'meses'=>$meses,
+            'msgrecargo'=>'RECARGO',
+            'recargo'=>$recargo,
             'idnivel'=>$this->encode($idnivel),
             'formapago'=>1,
             'nombre_alumno'=>$nombre_alumno
@@ -1136,10 +1185,7 @@ function decode($string)
          $this->load->view('errors/html/error_general',$data);
         }
     }
-    public function test_pago()
-    {
-         echo json_encode(['tipo_error'=>1,'error'=>"ewew"]); 
-    }
+    
      public function pagotarjetac()
     {
         //PAGO DE COLEGIATURA CON TARJETAS
@@ -1166,6 +1212,50 @@ function decode($string)
                 $validar_mes = $this->estadocuenta->validarAddColegiatura($idalumno,$idperiodo,$idmes);
               
                 if($validar_mes == false){
+                     $detalle_descuento = $this->estadocuenta->descuentoPagosInicio($idalumno,$idperiodo,3);  
+           $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel);
+           $recargo = 0; 
+            if($detalle_descuento[0]->idniveleducativo == 1){
+                  //PRIMARIA  
+                   $dia_actual = date('Y-m-d');
+                   $year_actual = date('Y');
+                   $mes_actual = date('m');
+                     $detalle_configuracion[0]->diaultimorecargo;
+                     $dia_pago =date('Y-m-d',strtotime($detalle_configuracion[0]->diaultimorecargo."-".$mes_actual."-".$year_actual));
+                    if($dia_actual > $dia_pago){
+                        $recargo +=   $detalle_configuracion[0]->totalrecargo;
+                    }else{
+                          $recargo +=   0;
+                    }
+                  
+                }elseif($detalle_descuento[0]->idniveleducativo == 2){
+                     //SECUNDARIA 
+                    $dia_actual = date('Y-m-d');
+                   $year_actual = date('Y');
+                   $mes_actual = date('m');
+                   $dia_pago =date('Y-m-d',strtotime($detalle_configuracion[0]->diaultimorecargo."-".$mes_actual."-".$year_actual));
+                        if($dia_actual > $dia_pago){
+                            $recargo +=   $detalle_configuracion[0]->totalrecargo;
+                        }else{
+                              $recargo +=  0;
+                        }
+                 
+                }elseif($detalle_descuento[0]->idniveleducativo == 3){
+                  //PREPA 
+                   $dia_actual = date('Y-m-d');
+                   $year_actual = date('Y');
+                   $mes_actual = date('m');
+                   $dia_pago =date('Y-m-d',strtotime($detalle_configuracion[0]->diaultimorecargo."-".$mes_actual."-".$year_actual));
+                      if($dia_actual > $dia_pago){
+                          $recargo +=   $detalle_configuracion[0]->totalrecargo;
+                      }else{
+                            $recargo +=   0;
+                      }
+                 
+                }else{
+                   $recargo = 0;
+                }
+
                 $folio = generateRandomString();
                         $response = [];
                         Openpay::setProductionMode(false);
@@ -1204,8 +1294,8 @@ function decode($string)
                             'idperiodo'=>$idperiodo,
                             'idalumno'=>$idalumno, 
                             'descuento'=>$descuento,
-                            'totalrecargo'=>0.00,
-                            'recargo'=>0,
+                            'totalrecargo'=>$recargo,
+                            'recargo'=>($recargo > 0) ? 1 : 0 ,
                             'condonar'=>0,
                             'idopenpay'=>$idopenpay,
                             'idorden'=>$idorden, 
@@ -1549,8 +1639,53 @@ function decode($string)
                 $detalle_mes = $this->tutor->detalleMes($idmes);
                 $folio = generateRandomString();
                    $validar_mes = $this->estadocuenta->validarAddColegiatura($idalumno,$idperiodo,$idmes);
+                  $detalle_descuento = $this->estadocuenta->descuentoPagosInicio($idalumno,$idperiodo,3);  
+           $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel);
+           $recargo = 0; 
+            if($detalle_descuento[0]->idniveleducativo == 1){
+                  //PRIMARIA  
+                   $dia_actual = date('Y-m-d');
+                   $year_actual = date('Y');
+                   $mes_actual = date('m');
+                     $detalle_configuracion[0]->diaultimorecargo;
+                     $dia_pago =date('Y-m-d',strtotime($detalle_configuracion[0]->diaultimorecargo."-".$mes_actual."-".$year_actual));
+                    if($dia_actual > $dia_pago){
+                        $recargo +=   $detalle_configuracion[0]->totalrecargo;
+                    }else{
+                          $recargo +=   0;
+                    }
+                  
+                }elseif($detalle_descuento[0]->idniveleducativo == 2){
+                     //SECUNDARIA 
+                    $dia_actual = date('Y-m-d');
+                   $year_actual = date('Y');
+                   $mes_actual = date('m');
+                   $dia_pago =date('Y-m-d',strtotime($detalle_configuracion[0]->diaultimorecargo."-".$mes_actual."-".$year_actual));
+                        if($dia_actual > $dia_pago){
+                            $recargo +=   $detalle_configuracion[0]->totalrecargo;
+                        }else{
+                              $recargo +=  0;
+                        }
+                 
+                }elseif($detalle_descuento[0]->idniveleducativo == 3){
+                  //PREPA 
+                   $dia_actual = date('Y-m-d');
+                   $year_actual = date('Y');
+                   $mes_actual = date('m');
+                   $dia_pago =date('Y-m-d',strtotime($detalle_configuracion[0]->diaultimorecargo."-".$mes_actual."-".$year_actual));
+                      if($dia_actual > $dia_pago){
+                          $recargo +=   $detalle_configuracion[0]->totalrecargo;
+                      }else{
+                            $recargo +=   0;
+                      }
+                 
+                }else{
+                   $recargo = 0;
+                }
+
                    if($validar_mes == false){
-                        $response = [];
+                     
+                    $response = [];
                         Openpay::setProductionMode(false);
                         $openpay = Openpay::getInstance('mds4bdhgvbese0knzu2x', 'sk_f95d7349163642fba9f5a71021b3f6d5');
                          $customer = array(
@@ -1578,8 +1713,8 @@ function decode($string)
                             'idperiodo'=>$idperiodo,
                             'idalumno'=>$idalumno, 
                             'descuento'=>$descuento,
-                            'totalrecargo'=>0.00,
-                            'recargo'=>0,
+                            'totalrecargo'=>$recargo,
+                            'recargo'=>($recargo > 0) ? 1 : 0 ,
                             'condonar'=>0,
                             'idopenpay'=>$idopenpay,
                             'idorden'=>$idorden, 

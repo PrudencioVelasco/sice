@@ -257,6 +257,18 @@
                                 <td><label for=""><?php echo $mensaje; ?></label></td>
                               </tr>
                               <tr>
+                                  <td>COLEGIATURA:</td>
+                                  <td>$<?php echo number_format($colegiatura,2); ?></td>
+                              </tr>
+                              <?php 
+                                if(isset($recargo) && !empty($recargo) && $recargo > 0) {
+                                  echo '<tr>
+                                            <td>'.$msgrecargo.':</td>
+                                            <td>$'.number_format($recargo,2).'</td>
+                                        </tr>';
+                                }
+                                ?>
+                              <tr>
                                 <th style="width:50%">Subtotal:</th>
                                 <td>$<?php echo number_format($descuento,2); ?></td>
                               </tr>

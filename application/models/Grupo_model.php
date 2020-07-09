@@ -140,6 +140,18 @@ class Grupo_model extends CI_Model {
             return false;
         }
     }
+      public function detalleAlumnoGrupo($idalumno,$idperiodo) {
+        $this->db->select('ag.*');
+        $this->db->from('tblalumno_grupo ag');
+        $this->db->where('ag.idalumno',$idalumno);
+        $this->db->where('ag.idperiodo',$idperiodo);  
+         $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
     public function detalleClase($idhorariodetalle = '') {
         $this->db->select('m.nombreclase');
         $this->db->from('tblhorario_detalle hd');

@@ -6557,7 +6557,7 @@ fieldset[disabled] .form-control {
   margin-top: -64px; }
   .profile-card .profile-body .image-area img {
     border: 2px solid #ad1455;
-    padding: 2px;
+    
     margin: 2px;
     -webkit-border-radius: 50%;
     -moz-border-radius: 50%;
@@ -6567,7 +6567,8 @@ fieldset[disabled] .form-control {
 .profile-card .profile-body .content-area {
   text-align: center;
   border-bottom: 1px solid #ddd;
-  padding-bottom: 15px; }
+  padding-bottom: 15px;
+padding-left: 2px; }
   .profile-card .profile-body .content-area p {
     margin-bottom: 0; }
     .profile-card .profile-body .content-area p:last-child {
@@ -6887,3 +6888,5 @@ html.ie11 .bs-searchbox .form-control {
       -o-transition: 0.2s;
       -webkit-transition: 0.2s;
       transition: 0.2s; }
+
+     

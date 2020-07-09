@@ -179,6 +179,7 @@ class Tutor_model extends CI_Model {
             return false;
         }
     }
+  
 
     
 
@@ -258,8 +259,12 @@ class Tutor_model extends CI_Model {
         $this->db->from('tbltutor t'); 
         $this->db->where('t.idtutor', $idtutor);
         $query = $this->db->get();
-
-        return $query->first_row();
+ if ($query->num_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+       
     }
     
     public function updateTutor($id, $field)

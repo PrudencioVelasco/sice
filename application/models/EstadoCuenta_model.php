@@ -93,10 +93,10 @@ public function showAllFormasPago() {
     public function validarAddColegiatura($idalumno,$idperiodo,$idmes) {
         $this->db->select('ec.*');
         $this->db->from('tblestado_cuenta ec'); 
-        $this->db->join('tblamotizacion a','ec.idamortizacion = a.idamortizacion'); 
+        $this->db->join('tbldetalle_estadocuenta de','ec.idestadocuenta = de.idestadocuenta'); 
         $this->db->where('ec.idalumno', $idalumno); 
         $this->db->where('ec.idperiodo', $idperiodo); 
-        $this->db->where('a.idperiodopago', $idmes); 
+        $this->db->where('de.idmes', $idmes); 
          $this->db->where('ec.eliminado', 0);  
          $query = $this->db->get();
         if ($query->num_rows() > 0) {
@@ -283,14 +283,12 @@ public function showAllMesPeriodo($idperiodo='',$idalumno='',$mesinicio = '',$me
                                     tblmes m
                                 WHERE
                                     m.idmes NOT IN (SELECT 
-                                            a.idperiodopago
+                                            ed.idmes
                                         FROM
-                                            tblamotizacion a
+                                            tbldetalle_estadocuenta ed
                                                 INNER JOIN
-                                            tblestado_cuenta ec ON a.idamortizacion = ec.idamortizacion
-                                                INNER JOIN
-                                            tbldetalle_pago dp ON ec.idestadocuenta = dp.idestadocuenta
-                                            WHERE a.idalumno = $idalumno AND a.idperiodo = $idperiodo AND ec.eliminado = 0)
+                                            tblestado_cuenta ec ON ec.idestadocuenta = ed.idestadocuenta 
+                                            WHERE ec.idalumno = $idalumno AND ec.idperiodo = $idperiodo AND ec.eliminado = 0)
                                 AND (m.numero between $mesinicio AND $mesfin)"); 
         if ($query->num_rows() > 0) {
             return $query->result();
@@ -305,14 +303,12 @@ public function showAllSiguienteMesPeriodo($idperiodo='',$idalumno='',$mesinicio
                                     tblmes m
                                 WHERE
                                     m.idmes NOT IN (SELECT 
-                                            a.idperiodopago
+                                             ed.idmes
                                         FROM
-                                            tblamotizacion a
+                                            tbldetalle_estadocuenta ed
                                                 INNER JOIN
-                                            tblestado_cuenta ec ON a.idamortizacion = ec.idamortizacion
-                                                INNER JOIN
-                                            tbldetalle_pago dp ON ec.idestadocuenta = dp.idestadocuenta
-                                            WHERE a.idalumno = $idalumno AND a.idperiodo = $idperiodo AND ec.eliminado = 0)
+                                            tblestado_cuenta ec ON ec.idestadocuenta = ed.idestadocuenta 
+                                            WHERE ec.idalumno = $idalumno AND ec.idperiodo = $idperiodo AND ec.eliminado = 0)
                                 AND (m.numero between $mesinicio AND $mesfin) ORDER BY m.numero ASC LIMIT 1"); 
         if ($query->num_rows() > 0) {
             return $query->result();

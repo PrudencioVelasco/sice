@@ -167,6 +167,8 @@
                   <span class=" fa fa-angle-down"></span>
                 </a>
                 <ul class="dropdown-menu dropdown-usermenu animated fadeInDown pull-right">
+                  <li><a href="<?= base_url('/Perfil/tutor') ?>"><i class="fa fa-cog pull-right"></i> Perfil</a>
+                  </li>
                   <li><a href="<?= base_url('/welcome/logout') ?>"><i class="fa fa-sign-out pull-right"></i> Salir</a>
                   </li>
                 </ul>

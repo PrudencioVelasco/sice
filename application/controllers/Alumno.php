@@ -15,7 +15,8 @@ class Alumno extends CI_Controller {
         $this->load->model('grupo_model','grupo'); 
         $this->load->model('horario_model','horario');
         $this->load->model('user_model','user');
-        $this->load->model('cicloescolar_model','cicloescolar');  
+        $this->load->model('cicloescolar_model','cicloescolar');
+         $this->load->model('configuracion_model','configuracion');  
         $this->load->model('data_model'); 
         
         $this->load->library('pdfgenerator');  
@@ -58,10 +59,76 @@ function decode($string)
         echo json_encode($result);
         }
     }
-    public function showAllEstatusAlumno() { 
+    //  $datag = $this->alumno->detalleGrupoActual($id);
+    public function grupoActual(){
+        $id =  $this->input->get('idalumno');
+        $query =$this->alumno->detalleGrupoActual($id);
+        if ($query) {
+            $result['grupoactual'] = $this->alumno->detalleGrupoActual($id);
+        }
+        if(isset($result) && !empty($result)){
+        echo json_encode($result);
+        }
+    }
+    // $becas  = $this->alumno->showAllBecas();
+    public function showAllBecas(){
+       
+        $query =$this->alumno->showAllBecas();
+        if ($query) {
+            $result['becas'] = $this->alumno->showAllBecas();
+        }
+        if(isset($result) && !empty($result)){
+        echo json_encode($result);
+        }
+    }
+
+      public function becaActual(){
+        $id =  $this->input->get('idalumno');
+        $query =$this->alumno->becaAlumno($id);
+        if ($query) {
+            $result['becaactual'] = $this->alumno->becaAlumno($id);
+        }
+        if(isset($result) && !empty($result)){
+        echo json_encode($result);
+        }
+    }
+     public function detalleAlumno() {
+        $id =  $this->input->get('idalumno');
+        $query =$this->alumno->detalleAlumno($id);
+        if ($query) {
+            $result['alumno'] = $this->alumno->detalleAlumno($id);
+        }
+        if(isset($result) && !empty($result)){
+        echo json_encode($result);
+        }
+    }
+    // $cicloescolar_activo = $this->cicloescolar->showAllCicloEscolarActivo($this->session->idplantel);
+    public function showAllCiclosEscolar() { 
+        $query =$this->cicloescolar->showAllCicloEscolarActivo($this->session->idplantel);
+        if ($query) {
+            $result['cicloescolar'] =$this->cicloescolar->showAllCicloEscolarActivo($this->session->idplantel);
+        }
+        if(isset($result) && !empty($result)){
+        echo json_encode($result);
+        }
+    }
+     public function showAllEstatusAlumno() { 
         $query = $this->alumno->showAllEstatusAlumno();
         if ($query) {
             $result['estatusalumno'] = $this->alumno->showAllEstatusAlumno();
+        }
+        if(isset($result) && !empty($result)){
+        echo json_encode($result);
+        }
+    }
+    //$this->alumno->showAllGrupos($this->session->idplantel)
+
+     public function showAllGrupos() {
+       
+        $idplantel = $this->session->idplantel;
+        $query = $this->alumno->showAllGrupos($idplantel);
+        if ($query) {
+            $result['grupos'] = $this->alumno->showAllGrupos($idplantel);
         }
         if(isset($result) && !empty($result)){
         echo json_encode($result);
@@ -551,7 +618,7 @@ function decode($string)
               array(
                 'field' => 'fechanacimiento',
                 'label' => 'Fecha nacimiento',
-                'rules' => 'trim|required',
+                'rules' => 'trim|required|callback_validarFecha',
                 'errors' => array(
                     'required' => 'Campo obligatorio.'
                 )
@@ -578,6 +645,7 @@ function decode($string)
                 'label' => 'Telefono',
                 'rules' => 'trim|regex_match[/^[0-9]{10}$/]',
                 'errors' => array( 
+                     'regex_match'=>'Formato invalido.',
                 )
             )
              , 
@@ -586,6 +654,7 @@ function decode($string)
                 'label' => 'Telefono',
                 'rules' => 'trim|regex_match[/^[0-9]{10}$/]',
                 'errors' => array( 
+                     'regex_match'=>'Formato invalido.',
                 )
             )
         );
@@ -668,10 +737,11 @@ function decode($string)
             );
         }
          if(isset($result) && !empty($result)){
-        echo json_encode($result);
-    }
+                echo json_encode($result);
+         }
          
     }
+     
     public function searchAlumno() {
         //Permission::grant(uri_string());
         $value = $this->input->post('text');
@@ -911,12 +981,7 @@ tblcalificacion  {border-collapse:collapse}
         if($valida_grupo){
             $datag = $this->alumno->detalleGrupoActual($id);
             $grupo_actual =$datag->nombrenivel." ".$datag->nombregrupo." - ".$datag->nombreturno;
-        }
-        $beca_alumno = "";
-        $detalle_beca = $this->alumno->becaAlumno($id);
-        if($detalle_beca){
-            $beca_alumno .= $detalle_beca[0]->descuento;
-        }
+        } 
        $becas  = $this->alumno->showAllBecas();
         //Codigo para obtener la caficacion Final
          $calificacion_final = 0;
@@ -962,7 +1027,7 @@ tblcalificacion  {border-collapse:collapse}
             'promediogeneral' =>$calificacion_final,
             'kardex'=>$kardex,
             'cicloescolar'=>$cicloescolar_activo,
-            'becaalumno'=>$beca_alumno,
+            
             'becas'=>$becas,
             'tutores'=>$tutores
     	);
@@ -1395,6 +1460,7 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
     {
         //Permission::grant(uri_string());
       # code...
+      $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel);
      $unidades =  $this->grupo->unidades($this->session->idplantel);
      $materias = $this->alumno->showAllMaterias($idhorario);
      $total_unidades =0;
@@ -1424,7 +1490,7 @@ $suma_calificacion = 0;
         $tabla .= '<td>';
         if($val != false ){ 
             $suma_calificacion = $suma_calificacion + $val->calificacion;
-            if(validar_calificacion($val->calificacion)){
+            if(validar_calificacion($val->calificacion,$detalle_configuracion[0]->calificacionminima)){
                 $tabla .='<label style="color:red;">'.$val->calificacion.'</label>'; 
             }else{
                  $tabla .='<label style="color:green;">'.$val->calificacion.'</label>'; 
@@ -1436,7 +1502,7 @@ $suma_calificacion = 0;
       endforeach;
    $tabla .= '<td>';
       $calificacion_final = number_format($suma_calificacion / $total_unidades,2);
-      if(validar_calificacion($calificacion_final)){
+      if(validar_calificacion($calificacion_final,$detalle_configuracion[0]->calificacionminima)){
       $tabla .='<label style="color:red;">'.number_format($suma_calificacion / $total_unidades,2).'</label>'; 
       }else{
           $tabla .='<label style="color:green;">'.number_format($suma_calificacion / $total_unidades,2).'</label>'; 
@@ -1499,8 +1565,8 @@ $suma_calificacion = 0;
         $datosalumno = $this->alumno->showAllAlumnoId($idalumno);
         $datoshorario = $this->horario->showNivelGrupo($idhorario); 
         $unidades =  $this->grupo->unidades($this->session->idplantel); 
-       
-       
+      
+        $porcentaje = obtenerPorcentaje(5,10);
         $data = array(
             'idhorario'=>$idhorario,
             'idalumno'=>$idalumno,
@@ -1565,8 +1631,11 @@ $suma_calificacion = 0;
         );
         $this->form_validation->set_rules($config);
         if ($this->form_validation->run() == FALSE) {
-            $errors = validation_errors();
-        echo json_encode(['error'=>$errors]);
+              $result['error'] = true;
+            $result['msg'] = array(
+                'idcicloescolar' => form_error('idcicloescolar'),
+                'idgrupo' => form_error('idgrupo'),
+                );
         } else { 
             $idalumno =  $this->input->post('idalumno');
             $idperiodo =  $this->input->post('idcicloescolar');
@@ -1587,19 +1656,71 @@ $suma_calificacion = 0;
                      
                 );
             $value = $this->alumno->asignarGrupo($data); 
-            if($value){
-                echo json_encode(['success'=>'Ok']);
-             }else{
-                echo json_encode(['error'=>'Error... Intente mas tarde.']);
-             }
+             
             }else{
-                   echo json_encode(['error'=>'Ya esta asignado al Grupo.']);
+                    $result['error'] = true;
+                    $result['msg'] = array(
+                        'msgerror' => 'Ya esta asignado al Grupo.'
+                    );
             }
 
     }
        }else{
-                   echo json_encode(['error'=>'NO TIENE PERMISO PARA REALIZAR ESYA ACCIÓN.']);
+                   $result['error'] = true;
+                    $result['msg'] = array(
+                        'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESYA ACCIÓN.'
+                    );
             }
+
+            if(isset($result) && !empty($result)){
+                echo json_encode($result);
+         }
+    }
+
+        public function cambiarGrupo()
+    {
+          if(Permission::grantValidar(uri_string()) ==  1){
+              $config = array( 
+            array(
+                'field' => 'idgrupo',
+                'label' => 'Seleccionar el Grupo.',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Seleccionar el Grupo.'
+                )
+            ) 
+        );
+        $this->form_validation->set_rules($config);
+        if ($this->form_validation->run() == FALSE) {
+              $result['error'] = true;
+            $result['msg'] = array( 
+                'idgrupo' => form_error('idgrupo'),
+                );
+        } else { 
+            $idalumnogrupo = $this->input->post('idalumnogrupo');
+            $idgrupo = $this->input->post('idgrupo');
+            
+            $data = array(  
+                    'idgrupo' => $idgrupo,  
+                    'idusuario' => $this->session->user_id,
+                    'fecharegistro' => date('Y-m-d H:i:s')
+                     
+                );
+            $value = $this->alumno->updateAlumnoGrupo($idalumnogrupo,$data); 
+             
+            
+
+    }
+       }else{
+                   $result['error'] = true;
+                    $result['msg'] = array(
+                        'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESYA ACCIÓN.'
+                    );
+            }
+
+            if(isset($result) && !empty($result)){
+                echo json_encode($result);
+         }
     }
 
         public function asignarBeca()
@@ -1617,11 +1738,14 @@ $suma_calificacion = 0;
         );
         $this->form_validation->set_rules($config);
         if ($this->form_validation->run() == FALSE) {
-            $errors = validation_errors();
-        echo json_encode(['error'=>$errors]);
+            
+        $result['error'] = true;
+            $result['msg'] = array( 
+                'idbeca' => form_error('idbeca'),
+                );
         } else {
             $idbeca =  $this->input->post('idbeca');
-            $idalumno =  $this->input->post('idalumnobeca');
+            $idalumno =  $this->input->post('idalumnogrupo');
             $data = array( 
                     'idbeca' => $idbeca,
                     'idusuario' => $this->session->user_id,
@@ -1629,22 +1753,24 @@ $suma_calificacion = 0;
                      
                 );
             $value = $this->alumno->updateBecaAlumno($idalumno,$data); 
-            if($value){
-                echo json_encode(['success'=>'Ok']);
-             }else{
-                echo json_encode(['error'=>'Error... Intente mas tarde.']);
-             }
+            
 
     }
    }else{
-                echo json_encode(['error'=>'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.']);
+                 $result['error'] = true;
+                    $result['msg'] = array(
+                        'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESYA ACCIÓN.'
+                    );
              }
+
+            if(isset($result) && !empty($result)){
+                echo json_encode($result);
+         }
     }
 
-    public function actualizarFoto()
+    public function subirFoto()
     {
-        Permission::grant(uri_string());
-            $mi_archivo = 'avatar_file';
+           $mi_archivo = 'file';
             $config['upload_path'] = "assets/alumnos/";
             //$config['file_name'] = 'Avatar' . date("Y-m-d his");
             //$config['allowed_types'] = "*";
@@ -1652,7 +1778,7 @@ $suma_calificacion = 0;
             $config['max_size'] = "50000";
             $config['max_width'] = "2000";
             $config['max_height'] = "2000";
-            $file_name = $_FILES['avatar_file']['name'];
+            $file_name = $_FILES['file']['name'];
             $tmp = explode('.', $file_name);
             $extension_img = end($tmp);
             $user_img_profile = date("Y-m-dhis") . '.' . $extension_img;
@@ -1662,24 +1788,28 @@ $suma_calificacion = 0;
 
             if (!$this->upload->do_upload($mi_archivo)) {
                 //*** ocurrio un error
-                $data['state'] = 500;
-                $data['message'] = $this->upload->display_errors();
-                //echo $this->upload->display_errors();
-                echo json_encode($data);
+                //$data['state'] = 500;
+                //$data['message'] = $this->upload->display_errors();
+                echo $this->upload->display_errors();
+                //echo json_encode($data);
+                  $result['state'] = 500;
+                    $result['msg'] = array(
+                           'msgerror' => $this->upload->display_errors() 
+                    );
                 return;
+            }else{
+              $id =$this->input->post('idalumno');  
+              $data = array(
+                      'foto' => $user_img_profile, 
+                      'idusuario' => $this->session->user_id,
+                      'fecharegistro' => date('Y-m-d H:i:s')
+                      
+                  );
+              $this->alumno->updateAlumno($id,$data);
             }
-            $idalumno =  $this->input->post('idalumno');
-            $data = array(
-                'foto'=>$user_img_profile
-            );
-            $this->alumno->updateAlumno($idalumno,$data);
-            $return =  array(
-                'state'=>200);
-
-          echo json_encode($return);
-
-            
-
+             if(isset($result) && !empty($result)){
+              echo json_encode($result);
+              }
     }
 
     public function generarHorarioPDF($idhorario = '',$idalumno='')
@@ -2117,7 +2247,7 @@ return $tabla;
         $detalle_logo = $this->alumno->logo($this->session->idplantel);
         $logo = base_url() . '/assets/images/escuelas/'.$detalle_logo[0]->logoplantel;
         $logo2 = base_url() . '/assets/images/escuelas/'.$detalle_logo[0]->logosegundo;
-        
+        $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel);
        $datelle_alumno = $this->alumno->showAllMateriasAlumno($idalumno,1);
        $materias = $this->alumno->showAllMaterias($idhorario);
        $detalle_unidad = $this->alumno->detalleUnidad($idunidad);
@@ -2249,7 +2379,7 @@ return $tabla;
             <td width="130"style="border:solid 1px black;" align="center" valign="bottom" class="txtgeneral">';
             if($calificacion_alumno != FALSE){
                 $total_calificacion = $total_calificacion + $calificacion_alumno->calificacion;
-                if(validar_calificacion($calificacion_alumno->calificacion)){
+                if(validar_calificacion($calificacion_alumno->calificacion,$detalle_configuracion[0]->calificacionminima)){
                     $total_reprobadas = $total_reprobadas + 1;
                      $tbl .= '<label>'.$calificacion_alumno->calificacion.'</label>';
                 }else{

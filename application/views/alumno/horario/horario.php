@@ -20,15 +20,30 @@
            </div>
             <div class="col-md-6 col-sm-12 col-xs-12 " align="right">
               <?php  if(isset($tabla) && !empty($tabla)){?>
-              <a target="_blank" href="<?php echo site_url('Aalumno/descargar/'.$controller->encode($idhorario).'/'.$controller->encode($idalumno)) ?>" class="btn btn-primary">IMPRIMIR HORARIO</a>
+              <a target="_blank" href="<?php echo site_url('Aalumno/generarHorarioPDF/'.$controller->encode($idhorario).'/'.$controller->encode($idalumno)) ?>" class="btn btn-primary">IMPRIMIR HORARIO</a>
               <?php } ?>
             </div>
           <div class="clearfix"></div>
         </div>
         <div class="x_content">
 
-          <div class="row" align="center"> 
- 
+         
+                <?php  if(isset($materias_repetir) && !empty($materias_repetir)){
+                    echo '  <div class="row" > 
+                    <div class="col-md-6 col-sm-12 col-xs-12 ">
+                        <h5>Materias para recuperar.</h5>
+                        ';
+                        foreach($materias_repetir as $row){
+                            echo '<label>*'.$row->nombreclase.'</label> - <small>'.$row->nombre.' '.$row->apellidop.' '.$row->apellidom.'</small>';
+                        }
+                  echo '   <div class="clearfix"></div>    
+                    </div>
+                    </div>
+                    ';
+                  }
+                ?> 
+                <div class="row" > 
+                    <div class="col-md-12 col-sm-12 col-xs-12 ">
               <?php
              if(isset($tabla) && !empty($tabla)){
               echo $tabla;
@@ -37,7 +52,7 @@
             }
               ?>
            </div>
-
+          </div>
         </div>
       </div>
     </div>

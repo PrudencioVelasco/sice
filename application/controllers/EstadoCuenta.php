@@ -16,12 +16,7 @@ class EstadoCuenta extends CI_Controller {
         $this->load->library('permission');
         $this->load->library('session');
         $this->load->helper('numeroatexto_helper');
-        $this->recargo_primaria = 250.00;
-        $this->dia_primaria = 10;
-        $this->recargo_secundaria = 250.00;
-        $this->dia_secundaria = 10;
-        $this->recargo_preparatoria = 250.00;
-        $this->dia_preparatoria = 10;
+        $this->load->model('configuracion_model','configuracion');  
         
   }
   
@@ -278,7 +273,7 @@ public function pagosInicio()
     $query = $this->estadocuenta->showAllPagosInicio($idalumno,$idperiodo); 
          if ($query) {
              $result['pagos'] = $this->estadocuenta->showAllPagosInicio($idalumno,$idperiodo);
-         }
+         } 
          //if(isset($result)){
        if(isset($result) && !empty($result)){
          echo json_encode($result);
@@ -520,11 +515,7 @@ else{
 
  
   }
-  public function test(){
-    $dia_actual = date('Y-m-d');
-                   $year_actual = date('Y');
-                echo   $dia_pago =date('Y-m-d',strtotime($this->dia_primaria."-2-".$year_actual));
-  }
+ 
 public function addCobroColegiatura()
 {
     if(Permission::grantValidar(uri_string()) ==  1){
@@ -559,6 +550,7 @@ public function addCobroColegiatura()
                 'msgerror' => form_error('idperiodo')
             );
         } else {
+          $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel);
            $array_formapago =  json_decode($this->input->post('formapago')); 
            $array_meses_a_pagar =  json_decode($this->input->post('meseapagar'));  
             $idperiodo =  trim($this->input->post('idperiodo'));
@@ -715,9 +707,9 @@ public function addCobroColegiatura()
                  foreach($array_meses_a_pagar as $row){
                    $dia_actual = date('Y-m-d');
                    $year_actual = date('Y');
-                   $dia_pago =date('Y-m-d',strtotime($this->dia_primaria."-".$row."-".$year_actual));
+                   $dia_pago =date('Y-m-d',strtotime($detalle_configuracion[0]->diaultimorecargo."-".$row."-".$year_actual));
                     if($dia_actual > $dia_pago){
-                        $recargo +=   $this->recargo_primaria;
+                        $recargo +=   $detalle_configuracion[0]->totalrecargo;
                     }else{
                           $recargo +=   0;
                     }
@@ -727,9 +719,9 @@ public function addCobroColegiatura()
                     foreach($array_meses_a_pagar as $row){
                       $dia_actual = date('Y-m-d');
                       $year_actual = date('Y');
-                      $dia_pago =date('Y-m-d',strtotime($this->dia_secundaria."-".$row."-".$year_actual));
+                      $dia_pago =date('Y-m-d',strtotime($detalle_configuracion[0]->diaultimorecargo."-".$row."-".$year_actual));
                         if($dia_actual > $dia_pago){
-                            $recargo +=   $this->recargo_secundaria;
+                            $recargo +=   $detalle_configuracion[0]->totalrecargo;
                         }else{
                               $recargo +=  0;
                         }
@@ -739,9 +731,9 @@ public function addCobroColegiatura()
                    foreach($array_meses_a_pagar as $row){
                     $dia_actual = date('Y-m-d');
                     $year_actual = date('Y');
-                    $dia_pago =date('Y-m-d',strtotime($this->dia_preparatoria."-".$row."-".$year_actual));
+                    $dia_pago =date('Y-m-d',strtotime($detalle_configuracion[0]->diaultimorecargo."-".$row."-".$year_actual));
                       if($dia_actual > $dia_pago){
-                          $recargo +=   $this->recargo_preparatoria;
+                          $recargo +=   $detalle_configuracion[0]->totalrecargo;
                       }else{
                             $recargo +=   0;
                       }

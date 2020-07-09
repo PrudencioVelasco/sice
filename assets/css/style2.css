@@ -5978,8 +5978,7 @@ fieldset[disabled] .form-control {
     left: -10px; }
 
 /* Media Object ================================ */
-.media {
-  margin-bottom: 25px; }
+ 
   .media .media-body {
     color: #777;
     font-size: 13px; }
@@ -7984,6 +7983,12 @@ fieldset[disabled] .form-control {
     border-radius: 0; }
     .panel-post .panel-heading .media {
       margin-bottom: 0; }
+       .media a img {
+        width: 42px;
+        -webkit-border-radius: 50%;
+        -moz-border-radius: 50%;
+        -ms-border-radius: 50%;
+        border-radius: 50%; }
       .panel-post .panel-heading .media a img {
         width: 42px;
         -webkit-border-radius: 50%;
@@ -8230,3 +8235,4 @@ html.ie11 .dropdown-menu ul.menu li a {
 
 html.ie11 .bs-searchbox .form-control {
   width: 90%; }
+ 

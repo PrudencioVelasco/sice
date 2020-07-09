@@ -13,14 +13,7 @@
                 <div class="x_content">  
 
                      <div id="app"> 
-                            <div class="container">
-                                 
-                                    <transition
-                                        enter-active-class="animated fadeInLeft"
-                                        leave-active-class="animated fadeOutRight">
-                                        <div class="notification is-success text-center px-5 top-middle" v-if="successMSG" @click="successMSG = false">{{successMSG}}</div>
-                                    </transition>
-                                   
+                            <div class="container"> 
 
                                         <div class="row">
                                             <div class="col-md-6 col-sm-12 col-xs-12 ">
@@ -39,9 +32,12 @@
                                             </div>
                                         </div>
                                         <br>
+                                         
                                         
+                                            
                                         <table class="table table-hover table-striped">
                                             <thead class="bg-teal"> 
+                                              <th>Foto</th>
                                             <th class="text-white" v-column-sortable:matricula>Matricula </th>
                                             <th class="text-white" v-column-sortable:nombre>Nombre </th>
                                             <th class="text-white" v-column-sortable:apellidop>A. Paterno </th>
@@ -50,11 +46,21 @@
                                             </thead>
                                             <tbody  >
                                                 <tr v-for="alumno in alumnos"  >
-                                                 
-                                                  <td>{{alumno.matricula}}</td>
-                                                    <td>{{alumno.nombre}}</td>
-                                                    <td>{{alumno.apellidop}}</td>
-                                                    <td>{{alumno.apellidom}}</td> 
+                                                 <td>
+                                                    <div class="media">
+                                                    <div class="media-left">
+                                                        <a href="#">
+                                                           <img v-if="alumno.foto != ''"  v-bind:src="url_image+alumno.foto" alt="Imagen del Alumno" />
+                                                          <img v-else src="<?php echo base_url(); ?>/assets/images/user2.png"  />
+                                                      </a>
+                                                    </div>
+                                                    </div>
+
+                                                 </td>
+                                                  <td valign="bottom">{{alumno.matricula}}</td>
+                                                    <td valign="middle">{{alumno.nombre}}</td>
+                                                    <td valign="middle"> {{alumno.apellidop}}</td>
+                                                    <td valign="middle">{{alumno.apellidom}}</td> 
                                                     <td align="right">
 
                               <div class="btn-group" role="group">

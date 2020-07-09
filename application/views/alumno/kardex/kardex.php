@@ -9,7 +9,7 @@
         <div class="x_title">
           <h2><strong>KARDEX DEL ALUMNO(A)</strong></h2>
           <ul class="nav navbar-right panel_toolbox">
-             <h3><small>Calificación del Nivel: </small><strong style="color: green">
+             <h3><small>Promedio: </small><strong style="color: green">
              <?php 
                 //$calificacion 
              if(isset($calificacion) && !empty($calificacion)){
@@ -32,7 +32,7 @@
                 <label>CICLO ESCOLAR: </label><br><label style="color: #000"> <?php echo $datoshorario->mesinicio.' '.$datoshorario->yearinicio.' - '.$datoshorario->mesfin.' '.$datoshorario->yearfin ?></label>
              </div>
              <div class="col-md-4 col-sm-12 col-xs-12 " align="center">
-               <label>GRUPO</label><br>
+               <label>GRUPO:</label><br>
                   <label style="color: #000">
                   <?php 
                     echo $datoshorario->nombrenivel.' '.$datoshorario->nombregrupo.' - '.$datoshorario->nombreturno;

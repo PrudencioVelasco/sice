@@ -233,23 +233,35 @@ class User_model extends CI_Model
             return false;
         }
     }
-    public function test()
+    public function datosTutor($idtutor)
     {
         # code...
-        $this->db->select('tblpermiso.uri');
-                      $this->db->from('permissions as tblpermiso');
-                      $this->db->join('permission_rol as tblpermisorol', 'tblpermiso.id = tblpermisorol.permission_id');
-                      $this->db->join('rol as tblrol', 'tblpermisorol.rol_id = tblrol.id');
-                      $this->db->join('users_rol as tblrolusuario', 'tblrol.id= tblrolusuario.id_rol');
-                      $this->db->join('users as tblusuario', 'tblrolusuario.id_user= tblusuario.id');
-                      $this->db->where('tblusuario.id', 45);
-                       $query = $this->db->get();
+        $this->db->select("t.idtutor, t.foto, t.nombre, t.apellidop, t.apellidom, t.escolaridad,t.ocupacion, t.dondetrabaja,
+                           DATE_FORMAT(t.fnacimiento,'%d/%m/%Y') as fnacimiento ,t.direccion, t.telefono, t.correo, t.rfc, t.factura");
+        $this->db->from('tbltutor t'); 
+        $this->db->where('t.idtutor', $idtutor);
+           $query = $this->db->get();
         if ($query->num_rows() > 0) {
              return $query->first_row();
         } else {
             return false;
         }
 
+    }
+
+   public function showAllAlumnosTutor($idtutor = '')
+    {
+        $this->db->select('a.*');
+        $this->db->from('tbltutoralumno ta');   
+        $this->db->join('tblalumno a', 'a.idalumno = ta.idalumno'); 
+        $this->db->where('ta.idtutor', $idtutor); 
+        $this->db->order_by('a.apellidop ASC');
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
     }
   
 
@@ -294,6 +306,25 @@ class User_model extends CI_Model
              $this->db->where('r.id NOT IN (14)'); 
         }
         $this->db->like('concat(' . implode(',', $field) . ')', $match);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+      public function searchAlumnosTutor($match,$idtutor = '') {
+        $field = array(
+                 'a.nombre',
+                 'a.apellidop',
+                 'a.apellidom', 
+        );
+        $this->db->select('a.*');
+        $this->db->from('tbltutoralumno ta');   
+        $this->db->join('tblalumno a', 'a.idalumno = ta.idalumno'); 
+        $this->db->where('ta.idtutor', $idtutor); 
+        $this->db->like('concat(' . implode(',', $field) . ')', $match);
+         $this->db->order_by('a.apellidop ASC');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();

@@ -40,8 +40,7 @@
                       <tr> 
                         <th>Ciclo Escolar</th>
                         <th>Nivel</th>
-                        <th>Grupo</th> 
-                         <th></th> 
+                        <th>Grupo</th>  
                         <th></th>
                       </tr>
                     </thead>
@@ -58,25 +57,9 @@
                                  </strong>
                                 </td> 
                                 <td><?php echo $row->nombrenivel; ?></td>
-                                <td><?php echo $row->nombregrupo;  ?> </td>
-                                <td>
-                                  <?php
-                                  if($row->idestatusnivel == 1){
-                                       echo '<label class="text-info">'.$row->nombreestatusnivel.'</label>';
-                                  }elseif($row->idestatusnivel == 2){
-                                         echo '<label class="text-success">'.$row->nombreestatusnivel.'</label>';
-                                  }elseif($row->idestatusnivel == 3){
-                                         echo '<label class="text-danger">'.$row->nombreestatusnivel.'</label>';
-                                  }elseif($row->idestatusnivel == 4){
-                                         echo '<label class="text-warning">'.$row->nombreestatusnivel.'</label>';
-                                  }else{
-                                    echo '<label>NO DEFINIDO</label>';
-                                  }
-                                   
-                                  ?>
-                                 </td>
+                                <td><?php echo $row->nombregrupo;  ?> </td> 
                                 <td align="right">
-                                  <a class="btn btn-info" href="<?php echo site_url('Aalumno/historial/'.$controller->encode($row->idhorario)) ?>"><i class="fa fa-list-alt"></i> Calificaciones</a> 
+                                  <a class="btn btn-info" href="<?php echo site_url('Aalumno/historial/'.$controller->encode($row->idhorario)) ?>"><i class="fa fa-list-alt"></i> Calificación</a> 
 
                                 </td>
                              </tr>

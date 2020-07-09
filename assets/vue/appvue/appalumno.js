@@ -6,7 +6,7 @@ if (typeof my_var_1 === "undefined") {
 } 
 
 
-Vue.config.devtools = true
+Vue.config.devtools = true;
 Vue.component('modal',{ //modal
     template:`
    <transition name="modal">
@@ -47,6 +47,7 @@ var v = new Vue({
         especialidades:[], 
         tipossanguineos: [], 
         estatusalumno:[],
+         url_image: my_var_1 + '/assets/alumnos/',
         search: {text: ''},
         emptyResult:false,
         newAlumno:{

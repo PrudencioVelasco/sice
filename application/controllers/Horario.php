@@ -98,18 +98,18 @@ class Horario extends CI_Controller {
         $pdf->AddPage();
         $tabla = '
         <style type="text/css">
-    .txtn{
-        font-size:12px;
+     .txtn{
+        font-size:9px;
     }
     .direccion{
-        font-size:12px;
+        font-size:8px;
     }
     .nombreplantel{
-        font-size:16px;
+        font-size:10px;
         font-weight:bolder;
     }
     .telefono{
-          font-size:12px;
+          font-size:8px;
     }
     .boleta{
          font-size:9px;
@@ -137,57 +137,36 @@ class Horario extends CI_Controller {
     }
     .titulo{
      font-family:Verdana, Geneva, sans-serif;
-      font-size:10px; 
+      font-size:8px; 
     font-weight:bold;
-    border-bottom:solid 1px #000000; 
+    border-bottom:solid 1px #000000;
 }
-@page{
-  size:0;
-  margin-leff:20px;
-  margin-right:20px;
-  margin-top:5px;
-}
-@media print{
-  #btnimprimir2{
-    display:none;
-  }
-}
-ul{
-      list-style-type: none;
-      margin: 0;
-      padding: 0; 
-    }
 .result{
      font-family:Verdana, Geneva, sans-serif;
-      font-size:9px; 
+      font-size:8px; 
     font-weight:bold;
 }.nombreclase{
-   font-size:10px;
+   font-size:12px;
    font-weight: bold;
 }
 .txthorario{
-   font-size:9px;
+   font-size:8px;
 }
 .txttutor{
-   font-size:9px;
+   font-size:10px;
 }
 .txtdia{
-  font-size:15px;
+  font-size:8px;
    font-weight: bold;
    background-color:#ccc;
-   border:1px  solid #ccc;
 }
-   table {
-            border-collapse:collapse; 
-            }
-   .tblhorario tr td
+  .tblhorario tr td
                 {
-                    border:0px  solid black;
+                    border:0px solid black;
                 }
-
 </style>
 <div id="areaimprimir">  
-          <table width="950" border="0" >
+          <table width="600" border="0" >
   <tr>
     <td width="101" align="center"><img   class="imgtitle" src="' . $logo2 . '" /></td>
     <td colspan="2" align="center">
@@ -200,81 +179,39 @@ ul{
   </tr> 
  
   </table> <br/>';
+ 
 
-       $tabla .= '<table class="tblepr"  width="950" border="0">
-      <thead> 
-    ';
-       foreach($dias as $dia):
-        $tabla .= '<th align="center" class="txtdia text-center">'.$dia->nombredia.'</th>';
-       endforeach; 
+       $tabla .= '<table class="tblhorario" width="600" cellpadding="2" > '; 
+         $tabla .= '<tr>';
+                  $tabla .= '<td width="65" align="center" class="txtdia">Hora</td>';
+                  $tabla .= '<td width="93" align="center" class="txtdia">Lunes</td>';
+                  $tabla .= '<td width="93" align="center" class="txtdia">Martes</td>';
+                  $tabla .= '<td width="93" align="center" class="txtdia">Miercoles</td>';
+                  $tabla .= '<td width="93" align="center" class="txtdia">Jueves</td>';
+                  $tabla .= '<td width="93" align="center" class="txtdia">Viernes</td>';
+                  
+                  
+            $tabla .= '</tr>';
+         $lunesAll = $this->horario->showAllDiaHorarioSinDua($idhorario);
+    
+     foreach($lunesAll as $row){
+        $tabla .= '<tr>';
+                  $tabla .= '<td width="65" class="txthorario">'.$row->hora.'</td>';
+                  $tabla .= '<td width="93" class="txthorario">'.$row->lunes.'</td>';
+                  $tabla .= '<td  width="93"class="txthorario">'.$row->martes.'</td>';
+                  $tabla .= '<td  width="93"class="txthorario">'.$row->miercoles.'</td>';
+                  $tabla .= '<td width="93" class="txthorario">'.$row->jueves.'</td>';
+                  $tabla .= '<td width="93" class="txthorario">'.$row->viernes.'</td>';
+                  
+            $tabla .= '</tr>';
+          } 
+      $tabla .= '</table>';  
+         $pdf->writeHTML($tabla, true, false, false, false, '');
 
-      $tabla .= '</thead>';
-      $c = 1; 
-        //$alumn = $al->getAlumn();
-       
-        $tabla .= '<tr valign="top">';
-      foreach($dias as $block):
-       $lunes = $this->horario->showAllDiaHorario($idhorario,$block->iddia);
-        $tabla .= '<td>';
-        $tabla .= '<table   class="tblhorario"  border="0" >';
-        if($lunes != false ){ 
-          foreach($lunes as $row){
-              $tabla .= '<tr>
-              <td width="200" style="border:solid #ccc 1px; height:60px; padding-left:5px; padding-right:5px;">';
-             if(strtoupper($row->opcion) == "NORMAL"){ 
-                 $tabla .='<ul>';
-                 $tabla .='<li class="nombreclase">'.$row->nombreclase.'</li>';
-                  $tabla .='<li class="txthorario">'.date('h:i A', strtotime($row->horainicial)).' - '.date('h:i A', strtotime($row->horafinal)).'</li>';
-                   $tabla .='<li class="txttutor">'.$row->nombre.' '.$row->apellidop.' '.$row->apellidom.'</li>';
-                 $tabla .='</ul>';
-             }
-            if(strtoupper($row->opcion) == "DESCANSO"){
-              $tabla.='<label class="nombreclase"> '.$row->nombreclase.'</label>';
-            }
-             if(strtoupper($row->opcion) == "SIN CLASES"){
-              //$tabla.='<label class="nombreclase">SIN CLASES</label>';
-            }
-            $tabla .= '</td>
-            </tr>';
-         }
-        }else{
-           $tabla .='<label>No registrado</label>';
-        } 
-         $tabla .= '</table>';
-      $tabla .= '</td>';
-      endforeach;
+    ob_end_clean();
 
-        $tabla .= '</tr>';
-      
 
-      
-      $tabla .= '</table></div>';
-      echo $tabla;
-      echo '<button type="button" id="btnimprimir2" onclick="imprimirDiv()" >IMPRIMIR</button>';
-      echo '
-      <script>
- imprimirDiv();
-function imprimirDiv(){
-  //alert(divName);
-  var printContents =document.getElementById("areaimprimir").innerHTML;
-  var originalContents = document.body.innerHTML;
-  document.body.innerHTML = printContents; 
-  window.print();
-  document.body.innerHTML= originalContents;
-}
-$(document).ready(function(){
-  $("#btnimprimir2").trigger("click");
-});
-document.getElementById("btnimprimir2").onclick = imprimirDiv;
-</script>
-      ';
-      /* }else{
-        $data = array(
-            'heading'=>'Error',
-            'message'=>'Error intente mas tarde.'
-        );
-         $this->load->view('errors/html/error_general',$data);
-    }*/
+        $pdf->Output('Kardex de Calificaciones', 'I');
         }
       public function showAllDiaHorario($idhorario,$iddia) {
          //Permission::grant(uri_string()); 

@@ -14,6 +14,7 @@ class Alumnos extends CI_Controller {
         $this->load->library('permission');
         $this->load->library('session');
         $this->load->model('alumno_model','alumno'); 
+         $this->load->model('configuracion_model','configuracion'); 
         $this->load->model('mensaje_model','mensaje'); 
         $this->load->library('encryption');
 	}

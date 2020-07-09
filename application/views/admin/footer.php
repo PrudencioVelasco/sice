@@ -58,19 +58,7 @@
     });
   </script>
   
-   <script> 
-            $('#date').datepicker({ 
-            format: "dd/mm/yyyy",
-             
-              language: 'es',
-              sideBySide: true,
-              daysOfWeekDisabled: [0],
-              multidate:false,
-              startDate:moment().startOf('week').toDate(),
-              endDate:moment().endOf('week').toDate()
-
-            }); 
-    </script>
+ 
 </body>
 
 </html>

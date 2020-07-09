@@ -52,6 +52,26 @@ class Horario_model extends CI_Model {
             return false;
         }
     }
+    public function materiasARepetir($idalumno = '') {
+        $this->db->select(' mr.idmateria, dr.idhorario, dr.idprofesormateria, p.nombre, p.apellidop, p.apellidom,m.nombreclase');    
+        $this->db->from('tblmateria_reprobada mr');
+        $this->db->join('tbldetalle_reprobada dr','mr.idreprobada = dr.idreprobada');
+        $this->db->join('tblprofesor_materia pm','pm.idprofesormateria = dr.idprofesormateria');
+        $this->db->join('tblprofesor p ','p.idprofesor = pm.idprofesor');
+        $this->db->join('tblmateria m ','m.idmateria = pm.idmateria');
+        $this->db->join('tblhorario h ',' dr.idhorario = h.idhorario');
+        $this->db->join('tblperiodo pe ','pe.idperiodo = h.idperiodo');
+        $this->db->join('tblalumno_grupo ag ',' ag.idalumnogrupo = mr.idalumnogrupo'); 
+        $this->db->where(' mr.estatus',1); 
+        $this->db->where('ag.idalumno', $idalumno);  
+        $this->db->where('(h.activo = 1 OR pe.activo = 1)');  
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
     public function validarActivoHorario($idhorario = '',$idplantel = '') {
         $this->db->select('h.*');    
         $this->db->from('tblhorario h');
@@ -103,6 +123,46 @@ class Horario_model extends CI_Model {
     public function showAllDiaHorario($idhorario,$iddia)
     {
         $query =$this->db->query("SELECT * FROM vhorarioclases WHERE idhorario= $idhorario AND (iddia = $iddia OR iddia ='Todos') ORDER BY horainicial ASC");
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+      public function showAllDiaHorarioSinDua($idhorario,$reprobadas = '')
+    {
+       $sql = '
+        SELECT idmateria,
+   concat(DATE_FORMAT(horario.horainicial, "%H:%i")," - ",date_format(horario.horafinal,"%H:%i")) as hora,
+    MAX(CASE  WHEN horario.iddia = 1 THEN horario.nombreclase
+      WHEN horario.iddia = "Todos" THEN horario.nombreclase ELSE ""
+END) AS lunes,
+     MAX(  CASE  
+     WHEN horario.iddia = 2 THEN horario.nombreclase 
+     WHEN horario.iddia = "Todos" THEN horario.nombreclase 
+     ELSE ""
+END )AS martes,
+      MAX( CASE  WHEN horario.iddia = 3 THEN horario.nombreclase
+        WHEN horario.iddia = "Todos" THEN horario.nombreclase 
+        ELSE ""
+END) AS miercoles,
+      MAX( CASE  WHEN horario.iddia = 4 THEN horario.nombreclase 
+        WHEN horario.iddia = "Todos" THEN horario.nombreclase ELSE ""
+END )AS jueves,
+       MAX(CASE  WHEN horario.iddia = 5 THEN horario.nombreclase
+         WHEN horario.iddia = "Todos" THEN horario.nombreclase ELSE ""
+END )AS viernes
+
+FROM(select iddia, horainicial, horafinal, nombreclase,idhorariodetalle,idmateria, opcion
+   from vhorarioclases 
+    WHERE idhorario ='.$idhorario.'';
+    if(isset($reprobadas) && !empty($reprobadas)){
+    $sql .= " and idmateria NOT IN ($reprobadas)";
+    }
+    $sql .=') horario 
+      GROUP BY  concat(DATE_FORMAT(horario.horainicial, "%H:%i")," - ",date_format(horario.horafinal,"%H:%i")) 
+    ORDER by   concat(DATE_FORMAT(horario.horainicial, "%H:%i")," - ",date_format(horario.horafinal,"%H:%i")) ASC;';
+        $query =$this->db->query($sql);
         if ($query->num_rows() > 0) {
             return $query->result();
         } else {
@@ -302,16 +362,17 @@ class Horario_model extends CI_Model {
     }
      public function showNivelGrupo($idhorario)
     {
-        $this->db->select('m.nombremes as mesinicio,m2.nombremes as mesfin,y.nombreyear as yearinicio,y2.nombreyear as yearfin, g.nombregrupo, n.nombrenivel, t.nombreturno');
+        $this->db->select('pla.idniveleducativo, n.idnivelestudio, p.idperiodo, m.nombremes as mesinicio,m2.nombremes as mesfin,y.nombreyear as yearinicio,y2.nombreyear as yearfin, g.nombregrupo, n.nombrenivel, t.nombreturno');
         $this->db->from('tblperiodo p');
         $this->db->join('tblhorario h', 'h.idperiodo = p.idperiodo');
         $this->db->join('tblgrupo g', 'g.idgrupo = h.idgrupo');
         $this->db->join('tblnivelestudio n', 'n.idnivelestudio = g.idnivelestudio');
         $this->db->join('tblturno t', 'g.idturno = t.idturno');
-         $this->db->join('tblmes m ', ' p.idmesinicio = m.idmes'); 
+        $this->db->join('tblmes m ', ' p.idmesinicio = m.idmes'); 
         $this->db->join('tblmes m2 ', ' p.idmesfin = m2.idmes'); 
         $this->db->join('tblyear y ', ' p.idyearinicio = y.idyear');
-        $this->db->join('tblyear y2 ', ' p.idyearfin = y2.idyear');  
+        $this->db->join('tblyear y2 ', ' p.idyearfin = y2.idyear'); 
+         $this->db->join('tblplantel pla ', ' pla.idplantel = p.idplantel');  
         $this->db->where('h.idhorario', $idhorario); 
         $query = $this->db->get();
         if ($query->num_rows() > 0) {

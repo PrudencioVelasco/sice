@@ -186,8 +186,9 @@ public function updatePeriodo($id, $field)
         }
         
     } 
-    public function desactivarHorario($field)
+    public function desactivarHorario($field,$idplantel)
     { 
+         $this->db->where('idplantel', $idplantel);
         $this->db->update('tblhorario', $field);
         if ($this->db->affected_rows() > 0) {
             return true;
@@ -196,9 +197,9 @@ public function updatePeriodo($id, $field)
         }
         
     } 
-    public function desactivaCiclo($field)
+    public function desactivaCiclo($field,$idplantel)
     {
-       // $this->db->where('idplaneacion', $id);
+        $this->db->where('idplantel', $idplantel);
         $this->db->update('tblperiodo', $field);
         if ($this->db->affected_rows() > 0) {
             return true;

@@ -21,7 +21,7 @@
                         <th>#</th>
                         <th>Materia</th>
                         <th>Maestro</th> 
-                        <th>Opción</th> 
+                        <th align="right">Opción</th> 
                       </tr>
                     </thead>
                     <tbody>
@@ -34,7 +34,7 @@
                               <th scope="row"><?php echo $i++; ?></th>
                                <td><strong><?php echo $value->nombreclase; ?></strong></td>
                               <td scope="row"><small><?php echo $value->nombre." ".$value->apellidop." ".$value->apellidom ?></small></td> 
-                              <td>
+                              <td align="right">
                                 <div class="btn-group" role="group">
                                     <div class="btn-group" role="group">
                                         <button type="button" class="btn btn-info waves-effect dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

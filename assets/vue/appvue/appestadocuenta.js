@@ -137,8 +137,7 @@ var ve = new Vue({
       this.showAllFormasPago(); 
       this.showAllTiposPago();
       //this.showAllMeses();
-        this.verficarCondonar();
-        console.log(this.idrol);
+        this.verficarCondonar(); 
     },
     methods:{
         abrirAddModalPrincipal() {
@@ -475,7 +474,7 @@ var ve = new Vue({
             formData.append('condonar', ve.checkbox_condonar);
             
             for (var value of formData.values()) {
-                              console.log(value); 
+                             // console.log(value); 
                            }
             axios.post(this.url + "EstadoCuenta/addCobroColegiatura", formData).then(function (response) {
                 if (response.data.error) {

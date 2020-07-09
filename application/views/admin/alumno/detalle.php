@@ -14,138 +14,62 @@
                   
 
                             <div class="col-md-3 col-sm-3 col-xs-12 profile_left">
-
+                    <div id="appdetalle">
                     <div class="profile_img">
 
                       <!-- end of image cropping -->
                       <div id="crop-avatar">
                         <!-- Current avatar -->
-                        <div class="avatar-view" title="Dar clic para cambiar la Foto.">
-                          <?php if(isset($detalle->foto) && (!empty($detalle->foto) || $detalle->foto != null) ){ ?>
-                          <img src="<?php echo base_url(); ?>/assets/alumnos/<?php echo $detalle->foto ?>" alt="Avatar">
-                        <?php } else { ?>
-                           <img src="<?php echo base_url(); ?>/assets/images/images.png" alt="Avatar">
-                        <?php } ?>
+                        <div class="avatar-view"  > 
+                          <img  v-bind:src="url_image+alumno.foto" alt="Avatar"> 
                         </div>
-
-                        <!-- Cropping modal -->
-                        <div class="modal fade" id="avatar-modal" aria-hidden="true" aria-labelledby="avatar-modal-label" role="dialog" tabindex="-1">
-                          <div class="modal-dialog modal-lg">
-                            <div class="modal-content">
-                              <form class="avatar-form" action="<?php echo base_url('alumno/actualizarFoto')?>" enctype="multipart/form-data" method="post">
-                                <div class="modal-header">
-                                  <button class="close" data-dismiss="modal" type="button">&times;</button>
-                                  <h4 class="modal-title" id="avatar-modal-label">Cambiar foto</h4>
-                                </div>
-                                <div class="modal-body">
-                                  <div class="avatar-body">
-
-                                    <!-- Upload image and data -->
-                                    <div class="avatar-upload">
-                                      <input class="avatar-src" name="avatar_src" type="hidden">
-                                      <input class="avatar-data" name="avatar_data" type="hidden">
-                                      <label for="avatarInput">Cargar imagen</label>
-                                      <input class="avatar-input" id="avatarInput" name="avatar_file" type="file">
-                                      <input type="hidden" name="idalumno" value="<?php echo $id;?>">
-                                    </div>
-
-                                    <!-- Crop and preview -->
-                                    <div class="row">
-                                      <div class="col-md-9">
-                                        <div class="avatar-wrapper"></div>
-                                      </div>
-                                      <div class="col-md-3">
-                                        <div class="avatar-preview preview-lg"></div>
-                                        <div class="avatar-preview preview-md"></div>
-                                        <div class="avatar-preview preview-sm"></div>
-                                      </div>
-                                    </div>
-
-                                    <div class="row avatar-btns">
-                                      <div class="col-md-9">
-                                        <div class="btn-group">
-                                          <button class="btn btn-primary" data-method="rotate" data-option="-90" type="button" title="Rotate -90 degrees">R. izquierda</button>
-                                          <button class="btn btn-primary" data-method="rotate" data-option="-15" type="button">-15deg</button>
-                                          <button class="btn btn-primary" data-method="rotate" data-option="-30" type="button">-30deg</button>
-                                          <button class="btn btn-primary" data-method="rotate" data-option="-45" type="button">-45deg</button>
-                                        </div>
-                                        <div class="btn-group">
-                                          <button class="btn btn-primary" data-method="rotate" data-option="90" type="button" title="Rotate 90 degrees">R. derecha</button>
-                                          <button class="btn btn-primary" data-method="rotate" data-option="15" type="button">15deg</button>
-                                          <button class="btn btn-primary" data-method="rotate" data-option="30" type="button">30deg</button>
-                                          <button class="btn btn-primary" data-method="rotate" data-option="45" type="button">45deg</button>
-                                        </div>
-                                      </div>
-                                      <div class="col-md-3">
-                                        <button class="btn btn-primary btn-block avatar-save" type="submit">Subir</button>
-                                        <button onclick="javascript:window.location.reload()" class="btn btn-danger btn-block">Cerrar</button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                                <!-- <div class="modal-footer">
-                                                  <button class="btn btn-default" data-dismiss="modal" type="button">Close</button>
-                                                </div> -->
-                              </form>
-                            </div>
-                          </div>
-                        </div>
-                        <!-- /.modal -->
-
-                        <!-- Loading state -->
-                        <div class="loading" aria-label="Loading" role="img" tabindex="-1"></div>
-                      </div>
+          </div>
                       <!-- end of image cropping -->
 
                     </div>
-                    <h3><?php echo $detalle->nombre." ".$detalle->apellidop." ".$detalle->apellidom ?></h3>
+                    <h3>{{alumno.nombre}} {{alumno.apellidop}} {{alumno.apellidom}}</h3>
 
                     <ul class="list-unstyled user_data">
-                      <li><i class="fa fa-key user-profile-icon" ></i> <label>Matricula:  <?php echo $detalle->matricula ?></label></li>
+                      <li><i class="fa fa-key" style="color:#d4d209;" ></i> <label>Matricula: {{alumno.matricula}}</label></li>
 
                       <li>
-                        <i class="fa fa-home user-profile-icon" ></i> <label><?php if(isset($grupoactual) && empty($grupoactual)) { echo "Grupo no asignado";}else{ echo $grupoactual; } ?></label>
+                        <i class="fa fa-home" style="color:#098fd4;" ></i> <label> 
+                        <span v-if="grupo_actual" >{{grupo_actual.nombrenivel}} {{grupo_actual.nombregrupo}} - {{grupo_actual.nombreturno}}</span>
+                        <span v-if="!grupo_actual">Grupo no asignado.</span> 
+                      </label>
                       </li>
                       <li>
-                        <i class="fa fa-check-circle" ></i> <label>Promedio Gral. <?php if(isset($promediogeneral) && !empty($promediogeneral)) {  echo number_format($promediogeneral,2);}else{ echo " --- "; } ?></label>
+                        <i class="fa fa-check-circle" style="color:#0cb62c;" ></i> <label>Promedio Gral. --- </label>
                       </li>
                       <li>
-                        <i class="fa fa-check-circle "></i> <label><?php echo $detalle->nombreespecialidad ?></label>
+                        <i class="fa fa-check-circle " style="color:#0cb62c;"></i> <label>{{alumno.nombreespecialidad}}</label>
                       </li>
                       <li>
-                        <i class="fa fa-check-circle "></i> <label>Beca: <?php 
-                        if(isset($becaalumno) && !empty($becaalumno)) {echo $becaalumno."%"; }else{ echo "0%";} 
-                        ?></label>
-                        <?php
-                          if(isset($validargrupo) && !empty($validargrupo)) {
-                            echo ' <i class="fa fa-pencil" title="Dar clic para modificar la Beca." data-toggle="modal" data-target=".bs-beca-modal-sm" ></i>'; 
-                          }
-                        ?>
-                       
+                        <i class="fa fa-check-circle " style="color:#0cb62c;"></i> <label>Beca: 
+                         <span v-if="!beca_actual" >0%</span>
+                         <span v-if="beca_actual" >{{beca_actual.descuento}}%</span>
+                         
+                         </label>
+                         <i class="fa fa-pencil" v-if="beca_actual"  @click="abrirEditModalCambiarBeca()"  title="Modificar Beca."></i>  
+                          
+                      </li> 
+                      <li>
+                        <button  @click=" abrirAddModalFoto()" class="btn btn-info waves-effect btn-block btn-sm "> <i class="fa fa-cloud-upload" ></i> SUBIR FOTO</button>
                       </li>
-
-
-                     <!-- <li class="m-top-xs">
-                        <i class="fa fa-external-link user-profile-icon"></i>
-                        <a href="http://www.kimlabs.com/profile/" target="_blank">www.kimlabs.com</a>
-                      </li>-->
                     </ul>
 
                    <div class="row">
                          <div class="col-md-12 col-sm-12 col-xs-12 " align="left">
                             <div class="form-group">
-                                 <?php if(isset($validargrupo) && empty($validargrupo)){ ?>
-                                 <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target=".bs-example-modal-sm">Asignar grupo</button>
-                               <?php } ?>
-                                <!--  <?php// if(isset($validargrupo) && !empty($validargrupo)){ ?>
-                                 <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target=".bs-example-cambiar-modal-sm">Cambiar de grupo</button>
-                                   <?php// } ?>-->
+                               
+                                 <button type="button" v-if="!grupo_actual"  @click="abrirAddModalAsignarGrupo()" class="btn btn-default btn-sm  btn-block"><i class="fa fa-plus"></i> ASIGNAR GRUPO</button>
+                                <button type="button" v-if="grupo_actual"  @click="abrirEditModalGrupo()" class="btn btn-default btn-sm  btn-block"><i class="fa fa-pencil"></i> CAMBIAR GRUPO</button>
+                                 
                             </div>
                         </div>   
                   </div> 
-                    <br />
-
-                    
+                     <?php include 'modal_detalle_alumno.php' ?>
+                                </div>
 
                   </div>
                   <div class="col-md-9 col-sm-9 col-xs-12">
@@ -164,7 +88,7 @@
                       </ul>
                       <div id="myTabContent" class="tab-content">
                         <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="home-tab">
-    <table class="table">
+                   <table class="table">
                     <thead>
                       <tr> 
                         <th>Periodo</th>
@@ -223,12 +147,7 @@
 
                              <div id="app">
                             <div class="container">
-                                <div class="row">
-                                    <transition
-                                        enter-active-class="animated fadeInLeft"
-                                        leave-active-class="animated fadeOutRight">
-                                        <div class="notification is-success text-center px-5 top-middle" v-if="successMSG" @click="successMSG = false">{{successMSG}}</div>
-                                    </transition>
+                                <div class="row"> 
                                     <div class="col-md-12">
  
                                         <div class="row">
@@ -236,7 +155,7 @@
                                                <button class="btn btn-round btn-primary waves-effect waves-black" @click="abrirAddModal()"><i class='fa fa-plus'></i> Asignar Tutor</button> 
                                             </div>
                                             <div class="col-md-6">
-                                                <input placeholder="Buscar" type="search" class="form-control" v-model="search.text" @keyup="searchTutor" name="search">
+                                                <input placeholder="Buscar" :autofocus="'autofocus'" type="search" class="form-control btn-round" v-model="search.text"  @keyup="searchTutor" name="search">
                                             </div>
                                         </div>
                                         <br>
@@ -324,8 +243,8 @@
                                   <div class="col-md-12 col-sm-12 col-xs-12 ">
                                   <div v-if="mostrar">
                                       <div class="row">
-                                    <div class="col-md-12 col-sm-12 col-xs-12" align="left"> 
-                                      <button v-if="btnpagar"   @click="abrirAddModalPrincipal();" class="btn btn-default waves-effect waves-black"> <i class="fa fa-plus-circle"></i> Agregar Pago</button>
+                                    <div class="col-md-12 col-sm-12 col-xs-12" v-if="btnpagar" align="left"> 
+                                      <button   @click="abrirAddModalPrincipal();" class="btn btn-default waves-effect waves-black"> <i class="fa fa-plus-circle"></i> Agregar Pago</button>
                                     </div>
                                   </div>  
                                   
@@ -418,10 +337,8 @@
                                                  Opciones
                                                 <span class="caret"></span>
                                             </button>
-                                            <ul class="dropdown-menu"> 
-                                                <!--<li v-if="solicitud.pagado==0"  @click="addModal = true; selectPeriodo(solicitud)"><a href="#" ><i class="fa fa-money" aria-hidden="true"></i> Pagar</a></li> -->
-                                               
-                                                <li  v-if="solicitud.pagado==1"><a  ref="#" @click="abrirEliminarColegiatura() ; selectPeriodo(solicitud)"> <i class="fa fa-trash" style="color: red;"></i> Eliminar</a></li>  
+                                            <ul class="dropdown-menu">  
+                                                 <li  v-if="solicitud.pagado==1"><a  ref="#" @click="abrirEliminarColegiatura() ; selectPeriodo(solicitud)"> <i class="fa fa-trash" style="color: red;"></i> Eliminar</a></li>  
                                                   <li v-if="solicitud.pagado==1"><a  target="_blank" ref="#"  v-bind:href="'../../EstadoCuenta/imprimir/'+ solicitud.idpago+'/'+idperiodobuscado+'/'+idalumno+'/1'" ><i class="fa fa-print" style="color:blue;"></i> Imprimir</a></li>  
                                               
                                             </ul>
@@ -686,6 +603,8 @@
   <script src="<?php echo base_url(); ?>/assets/vue/vue2-filters.min.js"></script>
   <script data-my_var_1="<?php echo base_url() ?>" data-my_var_2="<?php echo $id ?>" src="<?php echo base_url(); ?>/assets/vue/appvue/appalumnotutor.js"></script> 
   <script data-my_var_1="<?php echo base_url() ?>" data-my_var_2="<?php echo $id ?>" data-my_var_3="<?php echo $this->session->idrol; ?>" src="<?php echo base_url(); ?>/assets/vue/appvue/appestadocuenta.js"></script> 
+  <script data-my_var_1="<?php echo base_url() ?>" data-my_var_2="<?php echo $id ?>"   src="<?php echo base_url(); ?>/assets/vue/appvue/appdetalle_alumno.js"></script> 
+  
 
 <script type="text/javascript">
     $(document).ready(function() {
