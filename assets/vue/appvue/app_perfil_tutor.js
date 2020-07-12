@@ -264,8 +264,7 @@ var v = new Vue({
             $('#editRegister').modal('hide');
             $('#addRegister').modal('hide');
             $('#subirFoto').modal('hide'); 
-            v.cambiarPassword = {
-                
+            v.cambiarPassword = { 
                 passwordanterior: '',
                 passwordnueva: '',
                 passwordrepita: '',

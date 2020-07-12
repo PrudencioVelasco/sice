@@ -40,7 +40,7 @@ $(document).ready(function () {
                     swal({
                         position: 'center',
                         type: 'success',
-                        title: 'Las asistencias fueron registrado con Exito!',
+                        title: 'Agregado!',
                         text: 'Dar clic en el boton.',
                         showConfirmButton: true 
                     }).then(function () {
@@ -58,65 +58,7 @@ $(document).ready(function () {
 
             }
         })
-    });
-
-    /*$("#btnbuscar").click(function () {
-        $('#btnbuscar').prop("disabled", true);
-        $('#btnbuscar').html(
-            `<span class="fa fa-spinner spinner-border-sm" role="status" aria-hidden="true"></span> BUSCANDO...`
-        );
-        var fechainicio = $("#fechainicio").val();
-        var fechafin = $("#fechafin").val();
-        var motivo = $("#motivo").val();
-        var idhorario = $("#idhorario").val();
-        var idhorariodetalle = $("#idhorariodetalle").val();
-        if (fechainicio != "" && fechafin != "") {
-            $.ajax({
-                type: "POST",
-                url: my_var_1 +"Pgrupo/buscarAsistencia",
-                data: $('#frmbuscar').serialize(),
-                success: function (data) { 
-                    $('#btnbuscar').prop("disabled", false);
-                    $('#btnbuscar').html(
-                        `<i class='fa fa-search'></i> BUSCAR`
-                    );
-                    $("#tblalumnos").css('display', 'none');
-                    $('#tblasistencias').html(data);
-
-
-                }
-            })
-       
-
-            if (fechainicio != "" && fechafin != "" && motivo != "") {
-                window.location = "<?php echo site_url('Aalumno/buscarAsistencia/'); ?>/" + idhorario + '/' + idhorariodetalle + '/' + fechainicio + '/' + fechafin + '/' + motivo + '/';
-            } else {
-                swal({
-                    type: 'error',
-                    title: 'Oops...',
-                    html: 'Todos los campos son obligatorios.',
-                    customClass: 'swal-wide',
-                    footer: ''
-                });
-            }
-
-            
-        } else {
-            $('#btnbuscar').prop("disabled", false);
-            $('#btnbuscar').html(
-                `<i class='fa fa-search'></i> BUSCAR`
-            );
-             swal({
-                type: 'error',
-                title: 'Oops...',
-                html: 'Es necesario la Fecha',
-                customClass: 'swal-wide',
-                footer: ''
-            });
-
-        }
-
-    });*/
+    }); 
 
     $("#btneliminarasistencia").click(function () {
         $('#btneliminarasistencia').prop("disabled", true);
@@ -137,7 +79,7 @@ $(document).ready(function () {
                     swal({
                         position: 'center',
                         type: 'success',
-                        title: 'Fue eliminado las Asistencias con Exito!',
+                        title: 'Eliminado!',
                         text: 'Dar clic en el boton.',
                         showConfirmButton: true 
                     }).then(function () {
@@ -175,7 +117,7 @@ $(document).ready(function () {
                      swal({
                         position: 'center',
                         type: 'success',
-                        title: 'Fue eliminado la Asistencia con Exito!',
+                        title: 'Eliminado!',
                         text: 'Dar clic en el boton.',
                         showConfirmButton: true 
                     }).then(function () {
@@ -215,7 +157,7 @@ $(document).ready(function () {
                     swal({
                         position: 'center',
                         type: 'success',
-                        title: 'Fue modificado la Asistencia con Exito!',
+                        title: 'Modificado!',
                         text: 'Dar clic en el boton.',
                         showConfirmButton: true 
                     }).then(function () {

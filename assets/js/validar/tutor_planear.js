@@ -42,7 +42,7 @@ $(document).ready(function () {
                     swal({
                         position: 'center',
                         type: 'success',
-                        title: 'Fue agregado la Actividad con Exito!',
+                        title: 'Agregado!',
                         text: 'Dar clic en el boton.',
                         showConfirmButton: true 
                     }).then(function () {
@@ -84,7 +84,7 @@ $(document).ready(function () {
                     swal({
                         position: 'center',
                         type: 'success',
-                        title: 'Fue modificado la Actividad con Exito!',
+                        title: 'Modificado!',
                         text: 'Dar clic en el boton.',
                         showConfirmButton: true 
                     }).then(function () {

@@ -39,7 +39,8 @@
                                         <br>
                                         <table class="table table-hover table-striped">
                                             <thead class="bg-teal">
-                                              <th class="text-white" v-column-sortable:cedula>Cédula </th>
+                                            <th>Foto</th>  
+                                            <th class="text-white" v-column-sortable:cedula>Cédula </th>
                                             <th class="text-white" v-column-sortable:nombre>Nombre </th>
                                             <th class="text-white" v-column-sortable:apellidop>A. Paterno </th>
                                             <th class="text-white" v-column-sortable:apellidom>A. Materno </th>
@@ -47,7 +48,18 @@
                                             </thead>
                                             <tbody class="table-light">
                                                 <tr v-for="profesor in profesores" class="table-default">
-                                                  <td>{{profesor.cedula}}</td>
+                                                <td>
+                                                    <div class="media">
+                                                    <div class="media-left">
+                                                        <a href="#">
+                                                           <img v-if="profesor.foto"  v-bind:src="url_image+profesor.foto" alt="Imagen del Tutor" />
+                                                          <img v-else src="<?php echo base_url(); ?>/assets/images/user2.png"  />
+                                                      </a>
+                                                    </div>
+                                                    </div>
+
+                                                 </td> 
+                                                <td>{{profesor.cedula}}</td>
                                                     <td>{{profesor.nombre}}</td>
                                                     <td>{{profesor.apellidop}}</td>
                                                     <td>{{profesor.apellidom}}</td> 
@@ -59,10 +71,10 @@
                                               <span class="caret"></span>
                                           </button>
                                           <ul class="dropdown-menu"> 
-                                              <li ><a href="#" @click="deleteProfesor(profesor.idprofesor)" title="Eliminar Datos"><i class="fa fa-trash"></i> Eliminar</a></li> 
-                                              <li><a href="#" @click="abrirEditModal(); selectProfesor(profesor)" title="Modificar Datos"><i class="fa fa-edit"></i> Editar</a></li>
-                                              <li><a href="#"  @click=" abrirChangeModal(); selectProfesor(profesor)" title="Cambiar Contraseña"><i class="fa fa-key"></i>Contraseña</a></li> 
-                                              <li><a href="#" v-bind:href="'detalle/'+ profesor.idprofesor"><i class="fa fa-list-alt" aria-hidden="true"></i> Detalles</a></li>
+                                              <li><a href="#" @click="deleteProfesor(profesor.idprofesor)" title="Eliminar Datos"><i style="color:#fc2222;" class="fa fa-trash"></i> Eliminar</a></li> 
+                                              <li><a href="#" @click="abrirEditModal(); selectProfesor(profesor)" title="Modificar Datos"><i style="color:#789dfc;" class="fa fa-edit"></i> Editar</a></li>
+                                              <li><a href="#"  @click=" abrirChangeModal(); selectProfesor(profesor)" title="Cambiar Contraseña"><i style="color:#ecd558;" class="fa fa-key"></i> Contraseña</a></li> 
+                                              <li><a href="#" v-bind:href="'detalle/'+ profesor.idprofesor"><i style="color:#000000;" class="fa fa-list-alt" aria-hidden="true"></i> Detalles</a></li>
                                           </ul>
                                       </div>
                                   </div>  
@@ -70,12 +82,12 @@
                                                     </td>
                                                 </tr>
                                                 <tr v-if="emptyResult">
-                                                    <td colspan="5" class="text-center h4">No encontrado</td>
+                                                    <td colspan="6" class="text-center h4">No encontrado</td>
                                                 </tr>
                                             </tbody>
                                             <tfoot>
                                                 <tr>
-                                                    <td colspan="5" align="right">
+                                                    <td colspan="6" align="right">
                                             <pagination
                                                 :current_page="currentPage"
                                                 :row_count_page="rowCountPage"

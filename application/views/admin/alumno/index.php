@@ -50,7 +50,7 @@
                                                     <div class="media">
                                                     <div class="media-left">
                                                         <a href="#">
-                                                           <img v-if="alumno.foto != ''"  v-bind:src="url_image+alumno.foto" alt="Imagen del Alumno" />
+                                                           <img v-if="alumno.foto"  v-bind:src="url_image+alumno.foto" alt="Imagen del Alumno" />
                                                           <img v-else src="<?php echo base_url(); ?>/assets/images/user2.png"  />
                                                       </a>
                                                     </div>
@@ -70,10 +70,10 @@
                                             <span class="caret"></span>
                                         </button>
                                         <ul class="dropdown-menu"> 
-                                            <li ><a href="#" @click="deleteAlumno(alumno.idalumno)" title="Eliminar Datos"><i class="fa fa-trash"></i> Eliminar</a></li> 
-                                            <li><a href="#" @click="abrirEditModal(); selectAlumno(alumno)" title="Modificar Datos"><i class="fa fa-edit"></i> Editar</a></li>
-                                            <li><a href="#"  @click="abrirChangeModal();selectAlumno(alumno)" title="Modificar Datos"><i class="fa fa-key"></i>Contraseña</a></li> 
-                                            <li><a href="#" v-bind:href="'detalle/'+ alumno.idalumno"><i class="fa fa-list-alt" aria-hidden="true"></i> Detalles</a></li>
+                                            <li ><a href="#" @click="deleteAlumno(alumno.idalumno)" title="Eliminar Datos"><i style="color:#fc2222;" class="fa fa-trash"></i> Eliminar</a></li> 
+                                            <li><a href="#" @click="abrirEditModal(); selectAlumno(alumno)" title="Modificar Datos"><i style="color:#789dfc;" class="fa fa-edit"></i> Editar</a></li>
+                                            <li><a href="#"  @click="abrirChangeModal();selectAlumno(alumno)" title="Modificar Datos"><i style="color:#ecd558;" class="fa fa-key"></i> Contraseña</a></li> 
+                                            <li><a href="#" v-bind:href="'detalle/'+ alumno.idalumno"><i style="color:#000000;" class="fa fa-list-alt" aria-hidden="true"></i> Detalles</a></li>
                                         </ul>
                                     </div>
                                 </div>    

@@ -6,7 +6,7 @@
                             <h4 class="modal-title" id="smallModalLabel">AGREGAR MATERIA</h4>
                         </div>
                         <div class="modal-body">
-                         <div style=" height: 100px;  padding-right:15px; overflow-x: hidden; overflow-y: scroll;">
+                       
         <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12 ">
                 <label  class="col-red" v-html="formValidate.msgerror"></label>
@@ -28,8 +28,7 @@
             </div>   
         </div>   
  
-  
-    </div>
+   
                         </div>
                         <div class="modal-footer">
                               <div class="row">
@@ -59,7 +58,7 @@
                             <h4 class="modal-title" id="smallModalLabel">EDITAR MATERIA ASIGNADA</h4>
                         </div>
                         <div class="modal-body">
-                                <div style="padding-right:15px; height: 100px;overflow-x: hidden; overflow-y: scroll;">
+                              
          <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12 ">
                 <label  class="col-red" v-html="formValidate.msgerror"></label>
@@ -80,7 +79,7 @@
             </div>   
         </div> 
  
-</div>
+ 
                         </div>
                         <div class="modal-footer">
                              <div class="row">
@@ -103,3 +102,48 @@
             </div>
 
  
+             <div class="modal fade" id="subirFoto" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="defaultModalLabel">SUBIR FOTO</h4>
+                        </div>
+                        <div class="modal-body">
+           <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12 ">
+                <div class="col-red" v-html="formValidate.msgerror"></div>
+            </div>
+        </div> 
+          <div class="row">
+             
+            <div class="col-md-12 col-sm-12 col-xs-12 ">
+                   <div class="form-group ">
+                  
+                    <label  class="form-label"><font color="red">*</font> SELECCIONAR</label>
+                    <input type="file" id="file" ref="file"  v-on:change="onChangeFileUpload()" class="form-control"  > 
+                       
+                    <div class="col-red" v-html="formValidate.file"></div>
+                </div>
+            </div>   
+        </div> 
+         
+                        </div>
+                        <div class="modal-footer">
+                             <div class="row">
+             <div  class="col-md-6 col-sm-12 col-xs-12 " align="center" >
+           <div v-if="cargando">
+               <img  style="width: 50px;" src="<?php echo base_url() . '/assets/loader/pagos.gif' ?>" alt=""> <strong>Procesando...</strong>
+           </div>
+           <div v-if="error"  align="left">
+               <label class="col-red">*Corrija los errores en el formulario.</label>
+           </div>
+        </div>
+         <div  class="col-md-6 col-sm-12 col-xs-12 " >
+             <button class="btn btn-danger waves-effect waves-black" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
+             <button class="btn btn-primary waves-effect waves-black" v-on:click="subirFoto"><i class='fa fa-upload'></i> Subir</button>
+        </div>
+         </div>
+                        </div>
+                    </div>
+                </div>
+            </div

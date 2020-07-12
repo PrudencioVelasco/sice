@@ -203,7 +203,7 @@ class Tutor_model extends CI_Model {
         );
          $this->db->select('t.*');
         $this->db->from('tbltutor t'); 
-        if (isset($idplantel) && !empty($idplantel) && ($this->session->idrol != 14)) {
+        if (isset($idplantel) && !empty($idplantel)) {
             $this->db->where('t.idplantel',$idplantel); 
         }
         
@@ -259,7 +259,7 @@ class Tutor_model extends CI_Model {
         $this->db->from('tbltutor t'); 
         $this->db->where('t.idtutor', $idtutor);
         $query = $this->db->get();
- if ($query->num_rows() > 0) {
+        if ($query->num_rows() > 0) {
             return $query->first_row();
         } else {
             return false;

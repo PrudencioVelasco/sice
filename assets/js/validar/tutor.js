@@ -40,7 +40,7 @@ $(document).ready(function () {
                     swal({
                         position: 'center',
                         type: 'success',
-                        title: 'Fue registrado las Calificaciones con Exito!',
+                        title: 'Registrado!',
                         text: 'Dar clic en el boton.',
                         showConfirmButton: true, 
                     }).then(function () {
@@ -79,7 +79,7 @@ $(document).ready(function () {
                     swal({
                         position: 'center',
                         type: 'success',
-                        title: 'Fue eliminado la Calificación con Exito!',
+                        title: 'Eliminado!',
                         text: 'Dar clic en el boton.',
                         showConfirmButton: true 
                     }).then(function () {
@@ -109,7 +109,7 @@ $(document).ready(function () {
                      swal({
                         position: 'center',
                         type: 'success',
-                        title: 'Fue eliminado la Calificación con Exito!',
+                        title: 'Eliminado!',
                         text: 'Dar clic en el boton.',
                         showConfirmButton: true 
                     }).then(function () {
@@ -149,7 +149,7 @@ $(document).ready(function () {
                      swal({
                         position: 'center',
                         type: 'success',
-                        title: 'Fue modificado la Calificación con Exito!',
+                        title: 'Modificado!',
                         text: 'Dar clic en el boton.',
                         showConfirmButton: true 
                     }).then(function () {

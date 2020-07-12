@@ -36,8 +36,57 @@ class Profesor extends CI_Controller {
          echo json_encode($result);
         }
     }
+    public function showDetalleProfesor()
+    {
+        $idprofesor = $this->input->get('idprofesor');
+          $query = $this->profesor->detalleProfesor($idprofesor);
+        if ($query) {
+            $result['detalle_profesor'] = $this->profesor->detalleProfesor($idprofesor);
+        }
+       if(isset($result) && !empty($result)){
+         echo json_encode($result);
+        }
+    }
+     public function subirFoto()
+    {
+           $mi_archivo = 'file';
+            $config['upload_path'] = "assets/profesores/";
+            //$config['file_name'] = 'Avatar' . date("Y-m-d his");
+            //$config['allowed_types'] = "*";
+            $config['allowed_types'] = 'jpg|jpeg|png';
+            $config['max_size'] = "50000";
+            $config['max_width'] = "2000";
+            $config['max_height'] = "2000";
+            $file_name = $_FILES['file']['name'];
+            $tmp = explode('.', $file_name);
+            $extension_img = end($tmp);
+            $user_img_profile = date("Y-m-dhis") . '.' . $extension_img;
+            $config['file_name'] = $user_img_profile;
 
+            $this->load->library('upload', $config);
 
+            if (!$this->upload->do_upload($mi_archivo)) { 
+                  $result['state'] = 500;
+                   $result['error'] = true;
+                    $result['msg'] = array(
+                           'msgerror' => $this->upload->display_errors() 
+                    );
+                
+            }else{
+              $id = $this->input->post('idprofesor');
+              $data = array(
+                      'foto' => $user_img_profile, 
+                      'idusuario' => $this->session->user_id,
+                      'fecharegistro' => date('Y-m-d H:i:s')
+                      
+                  );
+                   
+              $this->profesor->updateProfesor($id,$data);
+            }
+             if(isset($result) && !empty($result)){
+              echo json_encode($result);
+              }
+    }
     public function addProfesor() {
        if(Permission::grantValidar(uri_string()) ==  1){
         $config = array(
@@ -117,6 +166,7 @@ class Profesor extends CI_Controller {
                     'profesion' =>  strtoupper($this->input->post('profesion')), 
                     'correo' => $this->input->post('correo'),
                     'password' => $password_encrypted,
+                    'foto'=>'',
                     'idusuario' => $this->session->user_id,
                     'fecharegistro' => date('Y-m-d H:i:s')
                      

@@ -40,7 +40,7 @@ $(document).ready(function () {
                     swal({
                         position: 'center',
                         type: 'success',
-                        title: 'Fue registrado la Tarea con Exito!',
+                        title: 'Registrado!',
                         text: 'Dar clic en el boton.',
                         showConfirmButton: true
                     }).then(function () {
@@ -83,7 +83,7 @@ $(document).ready(function () {
                     swal({
                         position: 'center',
                         type: 'success',
-                        title: 'Fue modificado la Tarea con Exito!',
+                        title: 'Modificado!',
                         text: 'Dar clic en el boton.',
                         showConfirmButton: true
                     }).then(function () {

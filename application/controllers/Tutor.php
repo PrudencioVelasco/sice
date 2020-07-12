@@ -37,6 +37,61 @@ class Tutor extends CI_Controller {
          echo json_encode($result);
         }
     }
+      public function showDetalleTutor() {
+        
+         $idtutor = $this->input->get('idtutor');
+        $query = $this->tutor->detalleTutor($idtutor);
+        if ($query) {
+            $result['detalle_tutor'] = $this->tutor->detalleTutor($idtutor);
+        }
+       if(isset($result) && !empty($result)){
+         echo json_encode($result);
+        }
+    }
+     public function subirFoto()
+    {
+           $mi_archivo = 'file';
+            $config['upload_path'] = "assets/tutores/";
+            //$config['file_name'] = 'Avatar' . date("Y-m-d his");
+            //$config['allowed_types'] = "*";
+            $config['allowed_types'] = 'jpg|jpeg|png';
+            $config['max_size'] = "50000";
+            $config['max_width'] = "2000";
+            $config['max_height'] = "2000";
+            $file_name = $_FILES['file']['name'];
+            $tmp = explode('.', $file_name);
+            $extension_img = end($tmp);
+            $user_img_profile = date("Y-m-dhis") . '.' . $extension_img;
+            $config['file_name'] = $user_img_profile;
+
+            $this->load->library('upload', $config);
+
+            if (!$this->upload->do_upload($mi_archivo)) {
+                //*** ocurrio un error
+                //$data['state'] = 500;
+                //$data['message'] = $this->upload->display_errors();
+                //echo $this->upload->display_errors();
+               // echo json_encode($data);
+                  $result['state'] = 500;
+                     $result['error'] = true;
+                    $result['msg'] = array(
+                           'msgerror' => $this->upload->display_errors() 
+                    );
+                return;
+            }else{
+              $id = $this->input->post('idtutor');
+              $data = array(
+                      'foto' => $user_img_profile, 
+                      'idusuario' => $this->session->user_id,
+                      'fecharegistro' => date('Y-m-d H:i:s')
+                      
+                  );
+              $this->tutor->updateTutor($id,$data);
+            }
+             if(isset($result) && !empty($result)){
+              echo json_encode($result);
+              }
+    }
      public function showAllAlumnos() {
         //Permission::grant(uri_string()); 
          $idplantel = $this->session->idplantel;
@@ -174,6 +229,7 @@ class Tutor extends CI_Controller {
                     'correo' => $this->input->post('correo'),
                     'password' => $password_encrypted,
                     'rfc'=> strtoupper($rfc),
+                    'foto'=>'',
                     'factura'=> $factura,
                     'idusuario' => $this->session->user_id,
                     'fecharegistro' => date('Y-m-d H:i:s')

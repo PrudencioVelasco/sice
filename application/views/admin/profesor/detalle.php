@@ -7,32 +7,71 @@
             <div class="col-md-12">
               <div class="x_panel">
                 <div class="x_title">
-                  <h2><strong>PROFESOR(A): <?php echo $detalle->nombre." ".$detalle->apellidop." ".$detalle->apellidom ?></strong></h2> 
+                  <h2><strong>PERFIL PROFESOR</strong></h2> 
                   <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
+           <div id="app">
+                  <div class="container-fluid">
+            <div class="row clearfix">
+                <div class="col-xs-12 col-sm-3">
+                    <div class="card profile-card">
+                        <div class="profile-header">&nbsp;</div>
+                        <div class="profile-body">
+                            <div class="image-area">
+                                 <img  v-if="detalle_profesor.foto"   style="width: 128px;"  v-bind:src="url_image+detalle_profesor.foto" alt="" />
+                                <img v-else  style="width: 128px;"  src="<?php echo base_url(); ?>/assets/images/user2.png"  />
+                            </div>
+                            <div class="content-area">
+                                <h3>{{detalle_profesor.nombre}}</h3>
+                                <p>{{detalle_profesor.profesion}}</p> 
+                                 <p>{{detalle_profesor.cedula}} </p>
+                            </div>
+                        </div>
+                        <div class="profile-footer"> 
+                            <button @click="abrirSubirFotoModal()" class="btn btn-primary btn-lg waves-effect btn-block"> <i class="fa fa-cloud-upload"></i> SUBIR FOTO</button>
+                        </div>
+                    </div>
 
-                  <div class="row">
-                     <div id="app">
-                    <div class="container">
-                        <div class="row">
-                            <transition
-                                enter-active-class="animated fadeInLeft"
-                                leave-active-class="animated fadeOutRight">
-                                <div class="notification is-success text-center px-5 top-middle" v-if="successMSG" @click="successMSG = false">{{successMSG}}</div>
-                            </transition>
-                            <div class="col-md-12">
-
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <button class="btn btn-round btn-primary waves-effect waves-black" @click="   abrirAddModal()"><i class='fa fa-plus'></i> Agregar Materia</button> 
-
-
+                    <div class="card card-about-me">
+                        <div class="header">
+                            <h2>ACERCA DE MI</h2>
+                        </div>
+                        <div class="body">
+                            <ul>
+                                <li>
+                                    <div class="">
+                                        <i class="fa fa-check-circle"></i> CORREO
                                     </div>
-                                    <div class="col-md-6"></div>
+                                    <div class="content">
+                                        {{detalle_profesor.correo}}
+                                    </div>
+                                </li>  
+                              
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-9">
+                    <div class="card">
+                        <div class="body">
+                            <div>
+                                <ul class="nav nav-tabs" role="tablist">
+                                    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">MATERIAS</a></li>
+                                    
+                                </ul>
+
+                                <div class="tab-content">
+                                    <div role="tabpanel" class="tab-pane fade in active" id="home">
+                                       <div class="row">
+                                    <div class="col-md-6">
+                                        <button class="btn btn-round btn-primary waves-effect waves-black" @click="abrirAddModal()"><i class='fa fa-plus'></i> Agregar Materia</button> 
+
+
+                                    </div> 
                                 </div> 
-                                <br>
-                                  <table class="table table-hover table-striped">
+
+                                         <table class="table table-hover table-striped">
                                             <thead class="bg-teal">
                                     <th class="text-white" v-column-sortable:nombrenivel>Materia / Clase</th> 
                                      <th class="text-center text-white"> </th>
@@ -69,15 +108,17 @@
                                     </tr>
                                     </tfoot>
                                 </table>
+                                  <?php include 'modalmateria.php'; ?>
+                                    </div> 
+                                </div>
                             </div>
-                        </div> 
+                        </div>
                     </div>
-                    <?php include 'modalmateria.php'; ?>
                 </div>
-
-                  </div>
-                   
-
+            </div>
+        </div>
+                </div>
+                
                 </div>
               </div>
             </div>

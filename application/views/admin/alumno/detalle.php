@@ -7,7 +7,7 @@
             <div class="col-md-12">
               <div class="x_panel">
                 <div class="x_title">
-                  <h2><strong>DETALLES DEL ALUMNO</strong></h2> 
+                  <h2><strong>PERFIL DEL ALUMNO</strong></h2> 
                   <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
@@ -21,7 +21,8 @@
                       <div id="crop-avatar">
                         <!-- Current avatar -->
                         <div class="avatar-view"  > 
-                          <img  v-bind:src="url_image+alumno.foto" alt="Avatar"> 
+                          <img  v-if="alumno.foto"   v-bind:src="url_image+alumno.foto" alt="Avatar"> 
+                           <img v-else   src="<?php echo base_url(); ?>/assets/images/user2.png"  />
                         </div>
           </div>
                       <!-- end of image cropping -->
@@ -219,7 +220,7 @@
                                              <select style="border-bottom: solid #ebebeb 2px;"  v-model="newBuscarCiclo.idperiodo"  ref="idperiodo" :class="{'is-invalid': formValidate.idperiodo}"class="form-control">
                                               <option value="">-- CICLO ESCOLAR --</option>
                                                 <option   v-for="option in ciclos" v-bind:value="option.idperiodo">
-                                                {{ option.mesinicio }}  {{ option.yearinicio }} - {{option.mesfin}}  {{ option.yearfin }}
+                                                {{ option.mesinicio }} - {{option.mesfin}}  {{ option.yearfin }}
                                               </option>
                                             </select>
                                             <span v-if="mostrar_error" style="color:red;">Ciclo Escolar requerido</span>

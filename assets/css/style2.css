@@ -7911,7 +7911,7 @@ fieldset[disabled] .form-control {
   margin-top: -64px; }
   .profile-card .profile-body .image-area img {
     border: 2px solid #ad1455;
-    padding: 2px;
+  
     margin: 2px;
     -webkit-border-radius: 50%;
     -moz-border-radius: 50%;
@@ -7920,6 +7920,8 @@ fieldset[disabled] .form-control {
 
 .profile-card .profile-body .content-area {
   text-align: center;
+   padding-left: 5px;
+    padding-right: 5px;
   border-bottom: 1px solid #ddd;
   padding-bottom: 15px; }
   .profile-card .profile-body .content-area p {

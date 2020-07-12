@@ -23,14 +23,14 @@
 
 
   <script src="<?php echo base_url(); ?>/assets/js/jquery.min.js"></script>
-   <script src="<?php echo base_url(); ?>/assets/js/sweetalert2/dist/sweetalert2.min.js"></script>
-   <link rel="stylesheet" href="<?php echo base_url(); ?>/assets/js/sweetalert2/dist/sweetalert2.min.css">
+  <script src="<?php echo base_url(); ?>/assets/js/sweetalert2/dist/sweetalert2.min.js"></script>
+  <link rel="stylesheet" href="<?php echo base_url(); ?>/assets/js/sweetalert2/dist/sweetalert2.min.css">
 
- <style>
-   .swal2-popup{
-     font-size: 1.4rem;
-   }
- </style>
+  <style>
+    .swal2-popup {
+      font-size: 1.4rem;
+    }
+  </style>
   <!--[if lt IE 9]>
         <script src="../assets/js/ie8-responsive-file-warning.js"></script>
         <![endif]-->
@@ -45,28 +45,26 @@
 
 <body style="background:#F7F7F7;">
 
-  <div class=""> 
+  <div class="">
 
     <div id="wrapper">
       <div id="login" class="animate form">
         <section class="login_content">
 
-                                    <div class="nav-get-started">
+          <div class="nav-get-started">
 
-                                    <?php if (isset($_SESSION['err'])): ?>
-                                        <script>
-                                            swal({
-                                                type: 'error',
-                                                title: 'Oops...',
-                                                text: '<?= $this->session->userdata('err'); ?>',
-                                                footer: ''
-                                            });
-                                            
-
-                                        </script>
-                                          <?php endif ?>
-                                      </div>
-           <form  method="POST" action="<?= base_url('welcome/admin') ?>" > 
+            <?php if (isset($_SESSION['err'])) : ?>
+              <script>
+                swal({
+                  type: 'error',
+                  title: 'Oops...',
+                  text: '<?= $this->session->userdata('err'); ?>',
+                  footer: ''
+                });
+              </script>
+            <?php endif ?>
+          </div>
+          <form method="POST" action="<?= base_url('welcome/admin') ?>">
             <h1><strong>S I C E</strong></h1>
             <div>
               <input type="text" class="form-control" name="usuario" placeholder="Usuario" required="" />
@@ -74,25 +72,27 @@
             <div>
               <input type="password" class="form-control" name="password" placeholder="Contraseña" required="" />
             </div>
-            <div> 
+            <div>
               <button type="submit" class="btn btn-primary">ENTRAR</button>
             </div>
-             </form>
-            <div class="clearfix"></div>
-            <div class="separator">
-  
-              <br />
-              <div>
-                <h2><p>Sistema Integral para el Control Escolar</p></h2>
+          </form>
+          <div class="clearfix"></div>
+          <div class="separator">
 
-                <p><?php echo date("Y") ?> Todos los Derechos Reservados</p>
-              </div>
+            <br />
+            <div>
+              <h2>
+                <p>Sistema Integral para el Control Escolar</p>
+              </h2>
+
+              <p><?php echo date("Y") ?> Todos los Derechos Reservados</p>
             </div>
-         
+          </div>
+
           <!-- form -->
         </section>
         <!-- content -->
-      </div> 
+      </div>
     </div>
   </div>
 

@@ -192,26 +192,43 @@ class Grupo_model extends CI_Model {
     }
 
       public function showAllGruposProfesor($idprofesor = '') {
-        $this->db->select('hd.idhorariodetalle,ma.nombreclase,p.nombre, p.apellidop, p.apellidom, g.nombregrupo,ne.nombrenivel, g.idgrupo, h.idhorario,m.nombremes as mesinicio,m2.nombremes as mesfin,y.nombreyear as yearinicio,y2.nombreyear as yearfin');
-        $this->db->from('tblhorario_detalle hd'); 
-        $this->db->join('tblprofesor_materia pm', 'pm.idprofesormateria = hd.idmateria');
-        $this->db->join('tblprofesor p', 'p.idprofesor = pm.idprofesor');
-        $this->db->join('tblmateria ma', 'ma.idmateria = pm.idmateria'); 
-        $this->db->join('tblhorario h', 'hd.idhorario = h.idhorario');
-        $this->db->join('tblgrupo g', 'g.idgrupo = h.idgrupo');
-        $this->db->join('tblnivelestudio ne', 'ne.idnivelestudio = g.idnivelestudio');
-        $this->db->join('tblperiodo pe', 'pe.idperiodo = h.idperiodo');
-        $this->db->join('tblmes m ', ' pe.idmesinicio = m.idmes'); 
-        $this->db->join('tblmes m2 ', ' pe.idmesfin = m2.idmes'); 
-        $this->db->join('tblyear y ', ' pe.idyearinicio = y.idyear');
-        $this->db->join('tblyear y2 ', ' pe.idyearfin = y2.idyear');  
-        $this->db->join('tblhorario ho', 'ho.idhorario = hd.idhorario');
-        $this->db->where('p.idprofesor', $idprofesor);
-        $this->db->where('(pe.activo = 1 or ho.activo = 1)');
-        $this->db->group_by('ma.idmateria');
-        $this->db->group_by('h.idgrupo');
-        $this->db->order_by('ne.nombrenivel asc');
-         $query = $this->db->get();
+       $query =$this->db->query("  SELECT 
+    idhorariodetalle,
+    idhorario,
+    idmateria,
+    nombreclase,
+    profesor,
+    nombregrupo,
+    nombrenivel,
+    idgrupo,
+    opcion
+FROM
+    (SELECT 
+        de.idhorariodetalle,
+            de.idhorario,
+            m.idmateria AS idmateria,
+            m.nombreclase AS nombreclase,
+            g.idgrupo,
+            CONCAT(p.nombre, ' ', p.apellidop, ' ', p.apellidom) profesor,
+            g.nombregrupo,
+            ne.nombrenivel,
+               1 as opcion
+    FROM
+        tblhorario_detalle de
+    JOIN tbldia d ON de.iddia = d.iddia
+    JOIN tblprofesor_materia pm ON pm.idprofesormateria = de.idmateria
+    JOIN tblmateria m ON m.idmateria = pm.idmateria
+    JOIN tblprofesor p ON p.idprofesor = pm.idprofesor
+    JOIN tblhorario h ON h.idhorario = de.idhorario
+    JOIN tblperiodo pe ON h.idperiodo = pe.idperiodo
+    JOIN tblgrupo g ON g.idgrupo = h.idgrupo
+    JOIN tblnivelestudio ne ON ne.idnivelestudio = g.idnivelestudio
+    WHERE
+        (pe.activo = 1 OR h.activo = 1)
+            AND p.idprofesor = $idprofesor 
+             ) grupos
+GROUP BY idmateria , idgrupo
+ORDER BY nombrenivel ASC");
         if ($query->num_rows() > 0) {
             return $query->result();
         } else {
@@ -460,29 +477,56 @@ public function deleteAsistencia($idasistencia='')
 
     public function alumnosGrupo($idhorario)
     {
-         $query =$this->db->query(" SELECT 
-                                    a.idalumno,
-                                    a.nombre,
-                                    a.apellidop,
-                                    a.apellidom,
-                                    ne.nombrenivel,
-                                    g.nombregrupo
-                                FROM
-                                    tblalumno a
-                                        INNER JOIN
-                                    tblalumno_grupo ag ON a.idalumno = ag.idalumno
-                                        INNER JOIN
-                                    tblgrupo g ON g.idgrupo = ag.idgrupo
-                                        INNER JOIN
-                                    tblnivelestudio ne ON ne.idnivelestudio = g.idnivelestudio
-                                        INNER JOIN
-                                    tblhorario h ON ag.idgrupo = h.idgrupo
-                                        INNER JOIN
-                                    tblperiodo p ON p.idperiodo = h.idperiodo
-                                WHERE
-                                     p.idperiodo = ag.idperiodo
-                                    AND (h.activo = 1 OR  p.activo = 1) AND ag.activo = 1 
-                                    AND h.idhorario  = $idhorario ORDER BY a.apellidop ASC");
+         $query =$this->db->query("SELECT 
+    idalumno,
+    nombre,
+    apellidop,
+    apellidom,
+    nombrenivel,
+    nombregrupo,
+    opcion
+FROM
+    (SELECT 
+        a.idalumno,
+            a.nombre,
+            a.apellidop,
+            a.apellidom,
+            ne.nombrenivel,
+            g.nombregrupo,
+            1 AS opcion
+    FROM
+        tblalumno a
+    INNER JOIN tblalumno_grupo ag ON a.idalumno = ag.idalumno
+    INNER JOIN tblgrupo g ON g.idgrupo = ag.idgrupo
+    INNER JOIN tblnivelestudio ne ON ne.idnivelestudio = g.idnivelestudio
+    INNER JOIN tblhorario h ON ag.idgrupo = h.idgrupo
+    INNER JOIN tblperiodo p ON p.idperiodo = h.idperiodo
+    WHERE
+        p.idperiodo = ag.idperiodo
+            AND (h.activo = 1 OR p.activo = 1)
+            AND ag.activo = 1
+            AND h.idhorario = $idhorario UNION ALL SELECT 
+        a.idalumno,
+            a.nombre,
+            a.apellidop,
+            a.apellidom,
+            ne.nombrenivel,
+            g.nombregrupo,
+            0 AS opcion
+    FROM
+        tblalumno a
+    INNER JOIN tblalumno_grupo ag ON a.idalumno = ag.idalumno
+    INNER JOIN tblmateria_reprobada mr ON mr.idalumnogrupo = ag.idalumnogrupo
+    INNER JOIN tbldetalle_reprobada dr ON dr.idreprobada = mr.idreprobada
+    INNER JOIN tblhorario h ON dr.idhorario = h.idhorario
+    INNER JOIN tblgrupo g ON g.idgrupo = h.idgrupo
+    INNER JOIN tblnivelestudio ne ON ne.idnivelestudio = g.idnivelestudio
+    INNER JOIN tblperiodo p ON p.idperiodo = h.idperiodo
+    WHERE
+        (h.activo = 1 OR p.activo = 1)
+            AND mr.estatus = 1
+            AND h.idhorario = $idhorario) alumnos
+            ORDER BY apellidop ASC");
        //  return $query->result();
 
         if ($query->num_rows() > 0) {

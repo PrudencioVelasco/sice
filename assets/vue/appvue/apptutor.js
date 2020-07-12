@@ -7,33 +7,6 @@ if (typeof my_var_1 === "undefined") {
 
 
 Vue.config.devtools = true
-Vue.component('modal',{ //modal
-    template:`
-   <transition name="modal">
-      <div class="modal-mask">
-        <div class="modal-wrapper">
-          <div class="modal-dialog">
-			    <div class="modal-content">
-
-
-			      <div class="modal-header">
-				        <h5 class="modal-title"> <slot name="head"></slot></h5>
-				      </div>
-
-			      <div class="modal-body" style="background-color:#fff;">
-			         <slot name="body"></slot>
-			      </div>
-			      <div class="modal-footer">
-
-			         <slot name="foot"></slot>
-			      </div>
-			    </div>
-          </div>
-        </div>
-      </div>
-    </transition>
-    `
-})
 var v = new Vue({
    el:'#app',
     data:{
@@ -43,7 +16,7 @@ var v = new Vue({
         editPasswordModal:false,
         cargando:false,
         error:false,
-        //deleteModal:false,
+        url_image: my_var_1 + '/assets/tutores/',
         tutores:[], 
         search: {text: ''},
         emptyResult:false,

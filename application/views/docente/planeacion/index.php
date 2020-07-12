@@ -18,10 +18,10 @@
                    <table class="table table-striped  ">
                        <thead class="bg-teal"> 
                       <tr>
-                        <th>#</th>
-                        <th>Periodo</th>
+                        <th>#</th> 
                         <th>Grupo</th>
                         <th>Materia</th>
+                        <th></th>
                         <th></th> 
                       </tr>
                     </thead>
@@ -33,9 +33,14 @@
                             ?>
                              <tr>
                               <th scope="row"><?php echo $i++; ?></th>
-                              <th scope="row"><?php echo $value->mesinicio." ".$value->yearinicio." - ".$value->mesfin." ".$value->yearfin; ?></th>
-                              <td scope="row"><?php echo $value->nombrenivel." ".$value->nombregrupo ?></td>
-                              <td><?php echo $value->nombreclase; ?></td>
+                              
+                              <td scope="row"><?php echo $value->nombrenivel." - ".$value->nombregrupo ?></td>
+                              <td><strong><?php echo $value->nombreclase; ?></strong></td>
+                               <td><?php
+                                if(isset($value->opcion) && !empty($value->opcion) && $value->opcion == 0){
+                                  echo ' <span class="label label-danger">RECURSANDO</span>';
+                                }
+                              ?></td>
                               <td align="right">
                                 <div class="btn-group" role="group">
                                     <div class="btn-group" role="group">
@@ -48,7 +53,7 @@
                                           if(isset($unidades) && !empty($unidades)){
                                           foreach($unidades as $row){
                                            ?>
-                                            <li><a href="<?php echo site_url('Pprofesor/planear/'.$controller->encode($row->idunidad).'/'.$controller->encode($value->idhorariodetalle)) ?>"><?php echo $row->nombreunidad; ?></a></li> 
+                                            <li>  <a href="<?php echo site_url('Pprofesor/planear/'.$controller->encode($row->idunidad).'/'.$controller->encode($value->idhorariodetalle)) ?>"> <i style="color: #0991e7;" class="fa fa-arrow-right" ></i> <?php echo $row->nombreunidad; ?></a></li> 
                                           <?php } }?>
                                         </ul>
                                     </div>

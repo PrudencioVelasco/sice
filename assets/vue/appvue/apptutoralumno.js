@@ -10,34 +10,7 @@ if (typeof my_var_2 === "undefined") {
 } 
 
 
-Vue.config.devtools = true
-Vue.component('modal',{ //modal
-    template:`
-   <transition name="modal">
-      <div class="modal-mask">
-        <div class="modal-wrapper">
-          <div class="modal-dialog">
-			    <div class="modal-content">
-
-
-			      <div class="modal-header">
-				        <h5 class="modal-title"> <slot name="head"></slot></h5>
-				     </div>
-
-			      <div class="modal-body" style="background-color:#fff;">
-			         <slot name="body"></slot>
-			      </div>
-			      <div class="modal-footer">
-
-			         <slot name="foot"></slot>
-			      </div>
-			    </div>
-          </div>
-        </div>
-      </div>
-    </transition>
-    `
-})
+Vue.config.devtools = true 
 var v = new Vue({
    el:'#app',
     data:{
@@ -47,9 +20,11 @@ var v = new Vue({
         editModal:false,
         cargando:false,
         error:false,
-        //deleteModal:false,
+        url_image: my_var_1 + '/assets/tutores/',
+        file: '',
         alumnos:[], 
         alumnosposibles:[], 
+        datos_tutor:[],
         search: {text: ''},
         emptyResult:false,
         newAlumno:{
@@ -70,6 +45,7 @@ var v = new Vue({
      created(){
       this.showAll(); 
        this.showAllAlumnos(); 
+       this.showDetalleTutor();
     },
     methods:{
          orderBy(sortFn) {
@@ -85,6 +61,18 @@ var v = new Vue({
                     .then(response => (this.alumnos = response.data.alumnos));
 
         },
+      abrirSubirFotoModal() {
+        $('#subirFoto').modal('show');
+      },
+      showDetalleTutor() {
+
+        axios.get(this.url + "Tutor/showDetalleTutor/", {
+          params: {
+            idtutor: this.idtutor
+          }
+        }).then(response => (this.datos_tutor = response.data.detalle_tutor));
+
+      },
         showAllAlumnos() {
 
             axios.get(this.url+"Tutor/showAllAlumnos/"+this.idtutor)
@@ -161,7 +149,43 @@ var v = new Vue({
 		          formData.append(key, obj[key]);
 		      }
 		      return formData;
-		},
+    },
+      subirFoto() {
+        v.error = false;
+        v.cargando = true;
+        var formData = v.formData();
+        formData.append('file', this.file);
+        formData.append('idtutor', this.idtutor);
+        axios.post(this.url + "Tutor/subirFoto", formData, {
+          headers: {
+            'Content-Type': 'multipart/form-dara'
+          }
+        }).then(function (response) {
+          if (response.data.error) {
+            v.formValidate = response.data.msg;
+            v.error = true;
+            v.cargando = false;
+          } else {
+            //v.successMSG = response.data.success;
+            v.clearAll();
+            v.clearMSG();
+            swal({
+              position: 'center',
+              type: 'success',
+              title: 'Subido!',
+              showConfirmButton: false,
+              timer: 1500
+            });
+
+
+          }
+        }).catch(function () {
+          console.log('ERROR AL SUBIR LA IMAGEN.');
+        })
+      },
+      onChangeFileUpload() {
+        this.file = this.$refs.file.files[0];
+      },
         getData(alumnos){
             v.emptyResult = false; // become false if has a record
             v.totalAlumnos = alumnos.length //get total of user
@@ -183,7 +207,9 @@ var v = new Vue({
 			 },3000); // disappearing message success in 2 sec
         },
         clearAll(){
+          $('#subirFoto').modal('hide'); 
           $('#addRegister').modal('hide');
+          v.showDetalleTutor();
             v.newAlumno = {
             idtutor:my_var_2,
             idalumno:'',

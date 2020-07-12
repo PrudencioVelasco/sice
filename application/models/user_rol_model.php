@@ -16,7 +16,8 @@ class User_rol_model extends CI_Model {
 	
   public function addUserRol($data)
     {
-        return $this->db->insert('users_rol', $data);
+		return $this->db->insert('users_rol', $data);
+		
     }  
    
 }

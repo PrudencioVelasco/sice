@@ -8,7 +8,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>SICE  - Sistema Integral de Control Escolar </title>
+  <title>SICE - Sistema Integral de Control Escolar </title>
 
   <!-- Bootstrap core CSS -->
 
@@ -22,14 +22,14 @@
   <link href="<?php echo base_url(); ?>/assets/css/custom.css" rel="stylesheet">
   <link href="<?php echo base_url(); ?>/assets/css/icheck/flat/green.css" rel="stylesheet">
 
-      <link href="<?php echo base_url(); ?>/assets/media/css/dataTables.bootstrap.css" rel="stylesheet" type="text/css" />
-    <link href="<?php echo base_url(); ?>/assets/js/datatables/buttons.bootstrap.min.css" rel="stylesheet" type="text/css" />
-    <link href="<?php echo base_url(); ?>/assets/js/datatables/fixedHeader.bootstrap.min.css" rel="stylesheet" type="text/css" />
-    <link href="<?php echo base_url(); ?>/assets/js/datatables/responsive.bootstrap.min.css" rel="stylesheet" type="text/css" />
-    <link href="<?php echo base_url(); ?>/assets/js/datatables/scroller.bootstrap.min.css" rel="stylesheet" type="text/css" />
+  <link href="<?php echo base_url(); ?>/assets/media/css/dataTables.bootstrap.css" rel="stylesheet" type="text/css" />
+  <link href="<?php echo base_url(); ?>/assets/js/datatables/buttons.bootstrap.min.css" rel="stylesheet" type="text/css" />
+  <link href="<?php echo base_url(); ?>/assets/js/datatables/fixedHeader.bootstrap.min.css" rel="stylesheet" type="text/css" />
+  <link href="<?php echo base_url(); ?>/assets/js/datatables/responsive.bootstrap.min.css" rel="stylesheet" type="text/css" />
+  <link href="<?php echo base_url(); ?>/assets/js/datatables/scroller.bootstrap.min.css" rel="stylesheet" type="text/css" />
 
 
- <link href="<?php echo base_url(); ?>/assets/css/calendar/fullcalendar.css" rel="stylesheet">
+  <link href="<?php echo base_url(); ?>/assets/css/calendar/fullcalendar.css" rel="stylesheet">
   <link href="<?php echo base_url(); ?>/assets/css/calendar/fullcalendar.print.css" rel="stylesheet" media="print">
   <script src="<?php echo base_url(); ?>/assets/js/jquery.min.js"></script>
 
@@ -37,15 +37,16 @@
   <script src="<?php echo base_url() ?>/assets/vue/vue/vue.min.js"></script>
   <script src="<?php echo base_url() ?>/assets/vue/axios/axios.min.js"></script>
   <script src="<?php echo base_url(); ?>/assets/vue/pagination/pagination.js"></script>
-   <script src="<?php echo base_url(); ?>/assets/vue/vue-column-sortable.js"></script>
+  <script src="<?php echo base_url(); ?>/assets/vue/vue-column-sortable.js"></script>
 
 
-      <!-- SweetAlert -->
-    <script src="<?php echo base_url(); ?>/assets/js/sweetalert2/dist/sweetalert2.min.js"></script>
-    <link rel="stylesheet" href="<?php echo base_url(); ?>/assets/js/sweetalert2/dist/sweetalert2.min.css">
+  <!-- SweetAlert -->
+  <script src="<?php echo base_url(); ?>/assets/js/sweetalert2/dist/sweetalert2.min.js"></script>
+  <link rel="stylesheet" href="<?php echo base_url(); ?>/assets/js/sweetalert2/dist/sweetalert2.min.css">
+  <link href="<?php echo base_url(); ?>/assets/css/estilomodal.css" rel="stylesheet" type="text/css" />
 
-     
-    
+
+
   <!--[if lt IE 9]>
         <script src="../assets/js/ie8-responsive-file-warning.js"></script>
         <![endif]-->
@@ -56,50 +57,12 @@
           <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
         <![endif]-->
 
- <style>
-   .swal2-popup{
-     font-size: 1.4rem;
-   }
- </style>
- <style type="text/css">
-                .modal-mask {
-                    position: fixed;
-                    z-index: 9998;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background-color: rgba(0, 0, 0, .5);
-                    display: table;
-                    transition: opacity .3s ease;
-                }
-                .modal-wrapper {
-                    display: table-cell;
-                    vertical-align: middle;
-                }
-                .preloader2 {
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    z-index: 9999;
-                    background-color: #fff;
-                }
-                .preloader2 .loading2 {
-                    position: absolute;
-                    left: 50%;
-                    top: 50%;
-                    transform: translate(-50%,-50%)
-                };
-
-
-            </style>
+  
 </head>
 
 
 <body class="nav-md">
-<div id="loadingnew"></div>
+  <div id="loadingnew"></div>
   <div class="container body">
 
 
@@ -134,20 +97,20 @@
             <div class="menu_section">
               <h3>General</h3>
               <ul class="nav side-menu">
-<li><a href="<?= base_url('/Alumnos/') ?>"><i class="fa fa-home"></i>  Inicio</a></li>
-               <li><a href="<?= base_url('/Aalumno/horario') ?>"><i class="fa fa-calendar"></i>  Horario</a></li>
-               <li><a href="<?= base_url('/Aalumno/clases') ?>"><i class="fa fa-tasks"></i>  Clases</a></li> 
-                  <li><a href="<?= base_url('/Aalumno/actual') ?>"><i class="fa fa-tasks"></i>  Calificación</a></li> 
-               <li><a href="<?= base_url('/Aalumno/kardex') ?>"><i class="fa fa-list"></i>  Kardex</a></li>
-               
+                <li><a href="<?= base_url('/Alumnos/') ?>"><i class="fa fa-home"></i> Inicio</a></li>
+                <li><a href="<?= base_url('/Aalumno/horario') ?>"><i class="fa fa-calendar"></i> Horario</a></li>
+                <li><a href="<?= base_url('/Aalumno/clases') ?>"><i class="fa fa-book"></i> Clases</a></li>
+                <li><a href="<?= base_url('/Aalumno/actual') ?>"><i class="fa fa-tasks"></i> Calificación</a></li>
+                <li><a href="<?= base_url('/Aalumno/kardex') ?>"><i class="fa fa-list"></i> Kardex</a></li>
+
 
               </ul>
             </div>
-          
+
 
           </div>
           <!-- /sidebar menu -->
- 
+
         </div>
       </div>
 
@@ -172,7 +135,7 @@
                 </ul>
               </li>
 
-        
+
 
             </ul>
           </nav>

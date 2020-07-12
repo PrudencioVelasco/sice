@@ -44,7 +44,7 @@ class Phorario extends CI_Controller {
         //var_dump($result);
         if($result != false){
              $idhorario = $result[0]->idhorario;
-            $tabla =  $this->generarHorarioPDF($idhorario);
+            $tabla =  $this->horarioMostrar();
         }
        
        
@@ -58,6 +58,64 @@ class Phorario extends CI_Controller {
         $this->load->view('docente/footer');
 
   } 
+  public function horarioMostrar()
+  { 
+   
+
+      $tabla = '
+        <style type="text/css"> 
+.txthorario{
+   font-size:12px;
+}
+.txttutor{
+   font-size:10px;
+}
+.txtdia{
+  font-size:14px;
+   font-weight: bold;
+   background-color:#ccc;
+}
+  .tblhorario tr td
+                {
+                    border:0px solid black;
+                }
+ 
+</style>';
+
+
+      $tabla .= '<table class="table table-hover table-striped"  > ';
+      $tabla .= ' <thead class="bg-teal"> ';
+      $tabla .= '<td   >Hora</td>';
+      $tabla .= '<td   >Lunes</td>';
+      $tabla .= '<td  >Martes</td>';
+      $tabla .= '<td >Miercoles</td>';
+      $tabla .= '<td  >Jueves</td>';
+      $tabla .= '<td  >Viernes</td>';
+
+
+      $tabla .= ' </thead>';
+       
+
+      $lunesAll = $this->horario->showHorarioProfesor($this->session->idprofesor);
+
+
+      foreach ($lunesAll as $row) {
+        $tabla .= '<tr>';
+        $tabla .= '<td  ><strong>' . $row->hora . '</strong></td>';
+        $tabla .= '<td >' . $row->lunes . '</td>';
+        $tabla .= '<td  >' . $row->martes . '</td>';
+        $tabla .= '<td >' . $row->miercoles . '</td>';
+        $tabla .= '<td  >' . $row->jueves . '</td>';
+        $tabla .= '<td >' . $row->viernes . '</td>';
+
+        $tabla .= '</tr>';
+      }
+      $tabla .= '</table>';
+
+      return $tabla;
+    
+ 
+}
       public function generarHorarioPDF($idhorario = '')
     {
      /* $idhorario = $this->decode($idhorario);

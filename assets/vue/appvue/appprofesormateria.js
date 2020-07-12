@@ -11,34 +11,7 @@ if (typeof my_var_2 === "undefined") {
 
 
 
-Vue.config.devtools = true
-Vue.component('modal',{ //modal
-    template:`
-   <transition name="modal">
-      <div class="modal-mask">
-        <div class="modal-wrapper">
-          <div class="modal-dialog">
-			    <div class="modal-content">
-
-
-			      <div class="modal-header">
-				        <h5 class="modal-title"> <slot name="head"></slot></h5>
-				      </div>
-
-			      <div class="modal-body" style="background-color:#fff;">
-			         <slot name="body"></slot>
-			      </div>
-			      <div class="modal-footer">
-
-			         <slot name="foot"></slot>
-			      </div>
-			    </div>
-          </div>
-        </div>
-      </div>
-    </transition>
-    `
-})
+Vue.config.devtools = true 
 var v = new Vue({
    el:'#app',
     data:{
@@ -48,9 +21,11 @@ var v = new Vue({
         editModal:false,
         cargando:false,
         error:false,
-        //deleteModal:false,
+        url_image: my_var_1 + '/assets/profesores/',
+        file: '',
         materias:[],
         clases:[], 
+        detalle_profesor:[],
         search: {text: ''},
         emptyResult:false,
         newMateria:{
@@ -71,6 +46,7 @@ var v = new Vue({
      created(){
       this.showAll(); 
       this.showAllClases();
+       this.showDetalleProfesor();
     },
     methods:{
          orderBy(sortFn) {
@@ -79,6 +55,9 @@ var v = new Vue({
         },
       abrirAddModal() {
         $('#addRegister').modal('show');
+      },
+      abrirSubirFotoModal() {
+        $('#subirFoto').modal('show');
       },
       abrirEditModal() {
         $('#editRegister').modal('show');
@@ -89,6 +68,16 @@ var v = new Vue({
                     .then(response => (this.clases = response.data.clases));
 
         },
+      showDetalleProfesor() {
+
+        axios.get(this.url + "Profesor/showDetalleProfesor/",{
+          params:{
+            idprofesor:this.idprofesor
+          }
+        })
+          .then(response => (this.detalle_profesor = response.data.detalle_profesor));
+
+      },
          showAll(){ axios.get(this.url+"Profesor/showAllMaterias/"+this.idprofesor).then(function(response){
                  if(response.data.materias == null){
                      v.noResult()
@@ -108,6 +97,42 @@ var v = new Vue({
                     }
             })
         },
+      subirFoto() {
+        v.error = false;
+        v.cargando = true;
+        var formData = v.formData();
+        formData.append('file', this.file);
+        formData.append('idprofesor', this.idprofesor);
+        axios.post(this.url + "Profesor/subirFoto", formData, {
+          headers: {
+            'Content-Type': 'multipart/form-dara'
+          }
+        }).then(function (response) {
+          if (response.data.error) {
+            v.formValidate = response.data.msg;
+            v.error = true;
+            v.cargando = false;
+          } else {
+            //v.successMSG = response.data.success;
+            v.clearAll();
+            v.clearMSG();
+            swal({
+              position: 'center',
+              type: 'success',
+              title: 'Subido!',
+              showConfirmButton: false,
+              timer: 1500
+            });
+
+
+          }
+        }).catch(function () {
+          console.log('ERROR AL SUBIR LA IMAGEN.');
+        })
+      },
+      onChangeFileUpload() {
+        this.file = this.$refs.file.files[0];
+      },
           addMateria(){
             v.cargando = true;
             v.error = false;
@@ -236,6 +261,8 @@ var v = new Vue({
 			 },3000); // disappearing message success in 2 sec
         },
         clearAll(){
+          v.showDetalleProfesor();
+          $('#subirFoto').modal('hide'); 
           $('#editRegister').modal('hide');
           $('#addRegister').modal('hide');
             v.newMateria = {

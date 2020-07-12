@@ -166,9 +166,10 @@ function decode($string)
     }
     public function showAllTutoresDisponibles() {
         //Permission::grant(uri_string()); 
-        $query = $this->alumno->showAllTutoresDisponibles();
+        $idplantel = $this->session->idplantel;
+        $query = $this->alumno->showAllTutoresDisponibles($idplantel);
         if ($query) {
-            $result['tutores'] = $this->alumno->showAllTutoresDisponibles();
+            $result['tutores'] = $this->alumno->showAllTutoresDisponibles($idplantel);
         }
         if(isset($result) && !empty($result)){
         echo json_encode($result);
@@ -983,6 +984,7 @@ tblcalificacion  {border-collapse:collapse}
             $grupo_actual =$datag->nombrenivel." ".$datag->nombregrupo." - ".$datag->nombreturno;
         } 
        $becas  = $this->alumno->showAllBecas();
+
         //Codigo para obtener la caficacion Final
          $calificacion_final = 0;
          $total_periodo = 0;
@@ -1790,9 +1792,10 @@ $suma_calificacion = 0;
                 //*** ocurrio un error
                 //$data['state'] = 500;
                 //$data['message'] = $this->upload->display_errors();
-                echo $this->upload->display_errors();
+               // echo $this->upload->display_errors();
                 //echo json_encode($data);
                   $result['state'] = 500;
+                     $result['error'] = true;
                     $result['msg'] = array(
                            'msgerror' => $this->upload->display_errors() 
                     );

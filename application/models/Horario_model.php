@@ -129,38 +129,100 @@ class Horario_model extends CI_Model {
             return false;
         }
     }
-      public function showAllDiaHorarioSinDua($idhorario,$reprobadas = '')
+      public function showAllDiaHorarioSinDua($idhorario, $reprobadas = '')
     {
        $sql = '
         SELECT idmateria,
    concat(DATE_FORMAT(horario.horainicial, "%H:%i")," - ",date_format(horario.horafinal,"%H:%i")) as hora,
-    MAX(CASE  WHEN horario.iddia = 1 THEN horario.nombreclase
+    MAX(CASE  WHEN horario.iddia = 1 THEN   CONCAT( "<strong>",horario.nombreclase,"</strong> <br> <small>",profesor,"</small>")
       WHEN horario.iddia = "Todos" THEN horario.nombreclase ELSE ""
 END) AS lunes,
      MAX(  CASE  
-     WHEN horario.iddia = 2 THEN horario.nombreclase 
+     WHEN horario.iddia = 2 THEN   CONCAT( "<strong>",horario.nombreclase,"</strong> <br> <small>",profesor,"</small>")
      WHEN horario.iddia = "Todos" THEN horario.nombreclase 
      ELSE ""
 END )AS martes,
-      MAX( CASE  WHEN horario.iddia = 3 THEN horario.nombreclase
+      MAX( CASE  WHEN horario.iddia = 3 THEN   CONCAT( "<strong>",horario.nombreclase,"</strong> <br> <small>",profesor,"</small>")
         WHEN horario.iddia = "Todos" THEN horario.nombreclase 
         ELSE ""
 END) AS miercoles,
-      MAX( CASE  WHEN horario.iddia = 4 THEN horario.nombreclase 
+      MAX( CASE  WHEN horario.iddia = 4 THEN    CONCAT( "<strong>",horario.nombreclase,"</strong> <br> <small>",profesor,"</small>")
         WHEN horario.iddia = "Todos" THEN horario.nombreclase ELSE ""
 END )AS jueves,
-       MAX(CASE  WHEN horario.iddia = 5 THEN horario.nombreclase
+       MAX(CASE  WHEN horario.iddia = 5 THEN  CONCAT( "<strong>",horario.nombreclase,"</strong> <br> <small>",profesor,"</small>")
          WHEN horario.iddia = "Todos" THEN horario.nombreclase ELSE ""
 END )AS viernes
 
-FROM(select iddia, horainicial, horafinal, nombreclase,idhorariodetalle,idmateria, opcion
+FROM(select iddia, horainicial, horafinal, nombreclase,idhorariodetalle,idmateria, opcion,  CONCAT(nombre," ",apellidop," ",apellidom) profesor
    from vhorarioclases 
     WHERE idhorario ='.$idhorario.'';
     if(isset($reprobadas) && !empty($reprobadas)){
     $sql .= " and idmateria NOT IN ($reprobadas)";
     }
+      
     $sql .=') horario 
       GROUP BY  concat(DATE_FORMAT(horario.horainicial, "%H:%i")," - ",date_format(horario.horafinal,"%H:%i")) 
+    ORDER by   concat(DATE_FORMAT(horario.horainicial, "%H:%i")," - ",date_format(horario.horafinal,"%H:%i")) ASC;';
+        $query =$this->db->query($sql);
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+       public function showHorarioProfesor($idprofesor = '')
+    {
+       $sql = 'SELECT idmateria,
+   concat(DATE_FORMAT(horario.horainicial, "%H:%i")," - ",date_format(horario.horafinal,"%H:%i")) as hora,
+    MAX(CASE  WHEN horario.iddia = 1 THEN   CONCAT("<strong>",horario.nombreclase,"</strong> <br> <small>",profesor,"</small>"," <br> <small>",grupo,"</small>")
+      WHEN horario.iddia = "Todos" THEN horario.nombreclase ELSE ""
+END) AS lunes,
+     MAX(  CASE  
+     WHEN horario.iddia = 2 THEN    CONCAT("<strong>",horario.nombreclase,"</strong> <br> <small>",profesor,"</small>"," <br> <small>",grupo,"</small>")
+     WHEN horario.iddia = "Todos" THEN horario.nombreclase 
+     ELSE ""
+END )AS martes,
+      MAX( CASE  WHEN horario.iddia = 3 THEN    CONCAT("<strong>",horario.nombreclase,"</strong> <br> <small>",profesor,"</small>"," <br> <small>",grupo,"</small>")
+        WHEN horario.iddia = "Todos" THEN horario.nombreclase 
+        ELSE ""
+END) AS miercoles,
+      MAX( CASE  WHEN horario.iddia = 4 THEN   CONCAT("<strong>",horario.nombreclase,"</strong> <br> <small>",profesor,"</small>"," <br> <small>",grupo,"</small>")
+        WHEN horario.iddia = "Todos" THEN horario.nombreclase ELSE ""
+END )AS jueves,
+       MAX(CASE  WHEN horario.iddia = 5 THEN    CONCAT("<strong>",horario.nombreclase,"</strong> <br> <small>",profesor,"</small>"," <br> <small>",grupo,"</small>")
+         WHEN horario.iddia = "Todos" THEN horario.nombreclase ELSE ""
+END )AS viernes
+
+FROM(
+    SELECT 
+        de.idhorariodetalle AS idhorariodetalle,
+        de.idhorario AS idhorario,
+        d.iddia AS iddia,
+        de.horainicial AS horainicial,
+        de.horafinal AS horafinal,
+        d.nombredia AS nombredia,
+        p.nombre AS nombre,
+        p.apellidop AS apellidop,
+        p.apellidom AS apellidom,
+        m.nombreclase AS nombreclase,
+        m.idmateria AS idmateria,
+        pm.idprofesormateria AS idprofesormateria,
+        "NORMAL" AS opcion,
+         CONCAT(p.nombre," ",p.apellidop," ",p.apellidom) profesor,
+          CONCAT(ne.nombrenivel," - ",g.nombregrupo) grupo
+    FROM
+        tblhorario_detalle de
+        JOIN tbldia d ON de.iddia = d.iddia
+        JOIN tblprofesor_materia pm ON pm.idprofesormateria = de.idmateria
+        JOIN tblmateria m ON m.idmateria = pm.idmateria
+        JOIN tblprofesor p ON p.idprofesor = pm.idprofesor 
+        JOIN tblhorario h ON h.idhorario = de.idhorario
+        JOIN tblperiodo pe ON h.idperiodo = pe.idperiodo
+        JOIN tblgrupo g  ON g.idgrupo = h.idgrupo
+        JOIN tblnivelestudio ne ON ne.idnivelestudio = g.idnivelestudio
+        WHERE (pe.activo = 1 OR h.activo = 1)
+        AND p.idprofesor = '.$idprofesor.' ) horario
+         GROUP BY  concat(DATE_FORMAT(horario.horainicial, "%H:%i")," - ",date_format(horario.horafinal,"%H:%i")) 
     ORDER by   concat(DATE_FORMAT(horario.horainicial, "%H:%i")," - ",date_format(horario.horafinal,"%H:%i")) ASC;';
         $query =$this->db->query($sql);
         if ($query->num_rows() > 0) {

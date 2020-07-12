@@ -71,6 +71,8 @@ foreach ($permissions as  $value) {
               switch ($value->id) {
                   case 10:
                       # MAESTROS
+                        self::$_CI->session->set_flashdata('err', 'You don\'t have permissionss.');
+                        redirect('Profesores/');
                       break;
                   case 11:
                       # TUTOR
