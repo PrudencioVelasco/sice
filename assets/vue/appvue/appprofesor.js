@@ -118,7 +118,7 @@ var v = new Vue({
                     idprofesor: id
                 }
             }).then(function (response) {
-                if (response.data.profesores == true) {
+                   if (response.data.error == false) {
                     //v.noResult()
                      swal({
                         position: 'center',
@@ -130,7 +130,7 @@ var v = new Vue({
                     v.clearAll();
                     v.clearMSG();
                 } else {
-                    swal("Información", "No se puede eliminar el Profesor", "info")
+                    swal("Información", response.data.msg.msgerror, "info")
                 } 
             }).catch((error) => {
                 swal("Información", "No se puede eliminar el Profesor", "info")

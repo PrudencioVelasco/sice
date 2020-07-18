@@ -1,8 +1,11 @@
 <?php
+
 defined('BASEPATH') OR exit('No direct script access allowed');
 date_default_timezone_set("America/Mexico_City");
+
 class Phorario extends CI_Controller {
- function __construct() {
+
+    function __construct() {
         parent::__construct();
 
         if (!isset($_SESSION['user_id'])) {
@@ -11,58 +14,54 @@ class Phorario extends CI_Controller {
         }
         $this->load->helper('url');
         $this->load->model('data_model');
-         $this->load->model('grupo_model','grupo'); 
-          $this->load->model('horario_model','horario');  
-          $this->load->model('alumno_model','alumno');  
+        $this->load->model('grupo_model', 'grupo');
+        $this->load->model('horario_model', 'horario');
+        $this->load->model('alumno_model', 'alumno');
         date_default_timezone_set("America/Mexico_City");
         $this->load->library('permission');
         $this->load->library('session');
         $this->load->library('encryption');
-	}
-  function encode($string)
-        {
-            $encrypted = $this->encryption->encrypt($string);
-            if ( !empty($string) )
-            {
-                $encrypted = strtr($encrypted, array('/' => '~'));
-            }
-            return $encrypted;
+    }
+
+    function encode($string) {
+        $encrypted = $this->encryption->encrypt($string);
+        if (!empty($string)) {
+            $encrypted = strtr($encrypted, array('/' => '~'));
         }
+        return $encrypted;
+    }
 
-        function decode($string)
-        {
-            $string = strtr($string, array('~' => '/'));
-            return $this->encryption->decrypt($string);
-        } 
+    function decode($string) {
+        $string = strtr($string, array('~' => '/'));
+        return $this->encryption->decrypt($string);
+    }
 
-	public function index()
-	{
-        Permission::grant(uri_string()); 
+    public function index() {
+        Permission::grant(uri_string());
         $idhorario = "";
         $tabla = "";
         $result = $this->grupo->showAllGruposProfesor($this->session->idprofesor);
         //var_dump($result);
-        if($result != false){
-             $idhorario = $result[0]->idhorario;
-            $tabla =  $this->horarioMostrar();
+        if ($result != false) {
+            $idhorario = $result[0]->idhorario;
+            $tabla = $this->horarioMostrar();
         }
-       
-       
-        $data = array( 
-            'id'=>$idhorario,
-            'controller'=>$this,
-            'tabla'=>$tabla
+
+
+        $data = array(
+            'id' => $idhorario,
+            'controller' => $this,
+            'tabla' => $tabla
         );
-	    $this->load->view('docente/header');
-        $this->load->view('docente/horario/index',$data);
+        $this->load->view('docente/header');
+        $this->load->view('docente/horario/index', $data);
         $this->load->view('docente/footer');
+    }
 
-  } 
-  public function horarioMostrar()
-  { 
-   
+    public function horarioMostrar() {
 
-      $tabla = '
+
+        $tabla = '
         <style type="text/css"> 
 .txthorario{
    font-size:12px;
@@ -83,51 +82,49 @@ class Phorario extends CI_Controller {
 </style>';
 
 
-      $tabla .= '<table class="table table-hover table-striped"  > ';
-      $tabla .= ' <thead class="bg-teal"> ';
-      $tabla .= '<td   >Hora</td>';
-      $tabla .= '<td   >Lunes</td>';
-      $tabla .= '<td  >Martes</td>';
-      $tabla .= '<td >Miercoles</td>';
-      $tabla .= '<td  >Jueves</td>';
-      $tabla .= '<td  >Viernes</td>';
+        $tabla .= '<table class="table table-hover table-striped"  > ';
+        $tabla .= ' <thead class="bg-teal"> ';
+        $tabla .= '<td   >Hora</td>';
+        $tabla .= '<td   >Lunes</td>';
+        $tabla .= '<td  >Martes</td>';
+        $tabla .= '<td >Miercoles</td>';
+        $tabla .= '<td  >Jueves</td>';
+        $tabla .= '<td  >Viernes</td>';
 
 
-      $tabla .= ' </thead>';
-       
-
-      $lunesAll = $this->horario->showHorarioProfesor($this->session->idprofesor);
+        $tabla .= ' </thead>';
 
 
-      foreach ($lunesAll as $row) {
-        $tabla .= '<tr>';
-        $tabla .= '<td  ><strong>' . $row->hora . '</strong></td>';
-        $tabla .= '<td >' . $row->lunes . '</td>';
-        $tabla .= '<td  >' . $row->martes . '</td>';
-        $tabla .= '<td >' . $row->miercoles . '</td>';
-        $tabla .= '<td  >' . $row->jueves . '</td>';
-        $tabla .= '<td >' . $row->viernes . '</td>';
+        $lunesAll = $this->horario->showHorarioProfesor($this->session->idprofesor);
 
-        $tabla .= '</tr>';
-      }
-      $tabla .= '</table>';
 
-      return $tabla;
-    
- 
-}
-      public function generarHorarioPDF($idhorario = '')
-    {
-     /* $idhorario = $this->decode($idhorario);
-      $idalumno = $this->decode($idalumno);
-        if((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno)) ){
-        */
+        foreach ($lunesAll as $row) {
+            $tabla .= '<tr>';
+            $tabla .= '<td  ><strong>' . $row->hora . '</strong></td>';
+            $tabla .= '<td >' . $row->lunes . '</td>';
+            $tabla .= '<td  >' . $row->martes . '</td>';
+            $tabla .= '<td >' . $row->miercoles . '</td>';
+            $tabla .= '<td  >' . $row->jueves . '</td>';
+            $tabla .= '<td >' . $row->viernes . '</td>';
+
+            $tabla .= '</tr>';
+        }
+        $tabla .= '</table>';
+
+        return $tabla;
+    }
+
+    public function generarHorarioPDF($idhorario = '') {
+        /* $idhorario = $this->decode($idhorario);
+          $idalumno = $this->decode($idalumno);
+          if((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno)) ){
+         */
         $detalle_logo = $this->alumno->logo($this->session->idplantel);
-        $logo = base_url() . '/assets/images/escuelas/'.$detalle_logo[0]->logoplantel;
-        $logo2 = base_url() . '/assets/images/escuelas/'.$detalle_logo[0]->logosegundo;
-        
-        $dias = $this->alumno->showAllDias(); 
-        $this->load->library('tcpdf');  
+        $logo = base_url() . '/assets/images/escuelas/' . $detalle_logo[0]->logoplantel;
+        $logo2 = base_url() . '/assets/images/escuelas/' . $detalle_logo[0]->logosegundo;
+
+        $dias = $this->alumno->showAllDias();
+        $this->load->library('tcpdf');
         $hora = date("h:i:s a");
         //$linkimge = base_url() . '/assets/images/woorilogo.png';
         $fechaactual = date('d/m/Y');
@@ -213,108 +210,105 @@ class Phorario extends CI_Controller {
   <tr>
     <td width="101" align="center"><img   class="imgtitle" src="' . $logo2 . '" /></td>
     <td colspan="2" align="center">
-            <label class="nombreplantel">'.$detalle_logo[0]->nombreplantel.'</label><br>
-            <label class="txtn">'.$detalle_logo[0]->asociado.'</label><br>
-            <label class="direccion">'.$detalle_logo[0]->direccion.'</label><br>
-            <label class="telefono">TELÉFONO: '.$detalle_logo[0]->telefono.'</label>
+            <label class="nombreplantel">' . $detalle_logo[0]->nombreplantel . '</label><br>
+            <label class="txtn">' . $detalle_logo[0]->asociado . '</label><br>
+            <label class="direccion">' . $detalle_logo[0]->direccion . '</label><br>
+            <label class="telefono">TELÉFONO: ' . $detalle_logo[0]->telefono . '</label>
     </td>
     <td width="137" align="center"><img   class="imgtitle" src="' . $logo . '" /></td>
   </tr>  
   </table> <br/>';
 
-       $tabla .= '<table  width="950" border="1">
+        $tabla .= '<table  width="950" border="1">
       <thead> 
     ';
-       foreach($dias as $dia):
-        $tabla .= '<th align="center" class="txtdia text-center">'.$dia->nombredia.'</th>';
-       endforeach; 
+        foreach ($dias as $dia):
+            $tabla .= '<th align="center" class="txtdia text-center">' . $dia->nombredia . '</th>';
+        endforeach;
 
-      $tabla .= '</thead>';
-      $c = 1; 
+        $tabla .= '</thead>';
+        $c = 1;
         //$alumn = $al->getAlumn();
-       
+
         $tabla .= '<tr valign="top">';
-      foreach($dias as $block):
-       $lunes = $this->horario->showAllDiaHorario($idhorario,$block->iddia);
-        $tabla .= '<td>';
-        $tabla .= '<table   border="0" >';
-        if($lunes != false ){ 
-          foreach($lunes as $row){
-              $tabla .= '<tr>
+        foreach ($dias as $block):
+            $lunes = $this->horario->showAllDiaHorario($idhorario, $block->iddia);
+            $tabla .= '<td>';
+            $tabla .= '<table   border="0" >';
+            if ($lunes != false) {
+                foreach ($lunes as $row) {
+                    $tabla .= '<tr>
               <td width="200" style="border-bottom:solid #ccc 1px; height:70px; padding-left:5px; padding-right:5px;">';
-             if(strtoupper($row->opcion) == "NORMAL"){ 
-                 $tabla .='<ul>';
-                 $tabla .='<li class="nombreclase">'.$row->nombreclase.'</li>';
-                  $tabla .='<li class="txthorario">'.date('h:i A', strtotime($row->horainicial)).' - '.date('h:i A', strtotime($row->horafinal)).'</li>';
-                   $tabla .='<li class="txttutor">'.$row->nombre.' '.$row->apellidop.' '.$row->apellidom.'</li>';
-                 $tabla .='</ul>';
-             }
-            if(strtoupper($row->opcion) == "DESCANSO"){
-              $tabla.='<label class="nombreclase"> '.$row->nombreclase.'</label>';
-            }
-             if(strtoupper($row->opcion) == "SIN CLASES"){
-              //$tabla.='<label class="nombreclase">SIN CLASES</label>';
-            }
-            $tabla .= '</td>
+                    if (strtoupper($row->opcion) == "NORMAL") {
+                        $tabla .= '<ul>';
+                        $tabla .= '<li class="nombreclase">' . $row->nombreclase . '</li>';
+                        $tabla .= '<li class="txthorario">' . date('h:i A', strtotime($row->horainicial)) . ' - ' . date('h:i A', strtotime($row->horafinal)) . '</li>';
+                        $tabla .= '<li class="txttutor">' . $row->nombre . ' ' . $row->apellidop . ' ' . $row->apellidom . '</li>';
+                        $tabla .= '</ul>';
+                    }
+                    if (strtoupper($row->opcion) == "DESCANSO") {
+                        $tabla .= '<label class="nombreclase"> ' . $row->nombreclase . '</label>';
+                    }
+                    if (strtoupper($row->opcion) == "SIN CLASES") {
+                        //$tabla.='<label class="nombreclase">SIN CLASES</label>';
+                    }
+                    $tabla .= '</td>
             </tr>';
-         }
-        }else{
-           $tabla .='<label>No registrado</label>';
-        } 
-         $tabla .= '</table>';
-      $tabla .= '</td>';
-      endforeach;
+                }
+            } else {
+                $tabla .= '<label>No registrado</label>';
+            }
+            $tabla .= '</table>';
+            $tabla .= '</td>';
+        endforeach;
 
         $tabla .= '</tr>';
-      
 
-      
-      $tabla .= '</table></div>';  
-      
-      return $tabla;  
-      
-      
-        }
 
-            public function descargar($idhorario = '')
-        { 
-          $idhorario = $this->decode($idhorario);
-          if((isset($idhorario) && !empty($idhorario))){
-        $detalle_logo = $this->alumno->logo($this->session->idplantel);
-        $logo = base_url() . '/assets/images/escuelas/'.$detalle_logo[0]->logoplantel;
-        $logo2 = base_url() . '/assets/images/escuelas/'.$detalle_logo[0]->logosegundo;
-       
-        $dias = $this->alumno->showAllDias(); 
-        $this->load->library('tcpdf');  
-        $hora = date("h:i:s a");
-        //$linkimge = base_url() . '/assets/images/woorilogo.png';
-        $fechaactual = date('d/m/Y');
-        $pdf = new Pdf('P', 'mm', 'A4', true, 'UTF-8', false);
-        $pdf->SetTitle('Horario de clases.');
-        $pdf->SetHeaderMargin(30);
-        $pdf->SetTopMargin(10);
-        $pdf->setFooterMargin(20);
-        $pdf->SetAutoPageBreak(true);
-        $pdf->SetAuthor('Author');
-        $pdf->SetDisplayMode('real', 'default');
-        $pdf->setPrintHeader(false);
-        $pdf->setPrintFooter(false);
 
-        $pdf->AddPage();
-        $tabla = '
+        $tabla .= '</table></div>';
+
+        return $tabla;
+    }
+
+    public function descargar($idhorario = '') {
+        $idhorario = $this->decode($idhorario);
+        if ((isset($idhorario) && !empty($idhorario))) {
+            $detalle_logo = $this->alumno->logo($this->session->idplantel);
+            $logo = base_url() . '/assets/images/escuelas/' . $detalle_logo[0]->logoplantel;
+            $logo2 = base_url() . '/assets/images/escuelas/' . $detalle_logo[0]->logosegundo;
+
+            $dias = $this->alumno->showAllDias();
+            $this->load->library('tcpdf');
+            $hora = date("h:i:s a");
+            //$linkimge = base_url() . '/assets/images/woorilogo.png';
+            $fechaactual = date('d/m/Y');
+            $pdf = new Pdf('P', 'mm', 'A4', true, 'UTF-8', false);
+            $pdf->SetTitle('Horario de clases.');
+            $pdf->SetHeaderMargin(30);
+            $pdf->SetTopMargin(10);
+            $pdf->setFooterMargin(20);
+            $pdf->SetAutoPageBreak(true);
+            $pdf->SetAuthor('Author');
+            $pdf->SetDisplayMode('real', 'default');
+            $pdf->setPrintHeader(false);
+            $pdf->setPrintFooter(false);
+
+            $pdf->AddPage();
+            $tabla = '
         <style type="text/css">
-    .txtn{
-        font-size:12px;
+     .txtn{
+        font-size:9px;
     }
     .direccion{
-        font-size:12px;
+        font-size:8px;
     }
     .nombreplantel{
-        font-size:16px;
+        font-size:10px;
         font-weight:bolder;
     }
     .telefono{
-          font-size:12px;
+          font-size:8px;
     }
     .boleta{
          font-size:9px;
@@ -342,162 +336,107 @@ class Phorario extends CI_Controller {
     }
     .titulo{
      font-family:Verdana, Geneva, sans-serif;
-      font-size:10px; 
+      font-size:8px; 
     font-weight:bold;
-    border-bottom:solid 1px #000000; 
+    border-bottom:solid 1px #000000;
 }
-@page{
-  size:0;
-  margin-leff:20px;
-  margin-right:20px;
-  margin-top:5px;
-}
-@media print{
-  #btnimprimir2{
-    display:none;
-  }
-}
-ul{
-      list-style-type: none;
-      margin: 0;
-      padding: 0; 
-    }
 .result{
      font-family:Verdana, Geneva, sans-serif;
-      font-size:9px; 
+      font-size:8px; 
     font-weight:bold;
 }.nombreclase{
-   font-size:10px;
+   font-size:12px;
    font-weight: bold;
 }
 .txthorario{
-   font-size:9px;
+   font-size:8px;
 }
 .txttutor{
-   font-size:9px;
+   font-size:10px;
 }
 .txtdia{
-  font-size:15px;
+  font-size:8px;
    font-weight: bold;
    background-color:#ccc;
-   border:1px  solid #ccc;
 }
-   table {
-            border-collapse:collapse; 
-            }
-   .tblhorario tr td
+  .tblhorario tr td
                 {
-                    border:0px  solid black;
+                    border:0px solid black;
                 }
 
 </style>
-<div id="areaimprimir">  
-          <table width="950" border="0" >
+ 
+ <table width="600" border="0" cellpadding="2" cellspacing="0">
   <tr>
     <td width="101" align="center"><img   class="imgtitle" src="' . $logo2 . '" /></td>
     <td colspan="2" align="center">
-            <label class="nombreplantel">'.$detalle_logo[0]->nombreplantel.'</label><br>
-            <label class="txtn">'.$detalle_logo[0]->asociado.'</label><br>
-            <label class="direccion">'.$detalle_logo[0]->direccion.'</label><br>
-            <label class="telefono">TELÉFONO: '.$detalle_logo[0]->telefono.'</label>
+            <label class="nombreplantel">' . $detalle_logo[0]->nombreplantel . '</label><br>
+            <label class="txtn">' . $detalle_logo[0]->asociado . '</label><br>
+            <label class="direccion">' . $detalle_logo[0]->direccion . '</label><br>
+            <label class="telefono">TELÉFONO: ' . $detalle_logo[0]->telefono . '</label>
     </td>
     <td width="137" align="center"><img   class="imgtitle" src="' . $logo . '" /></td>
   </tr> 
  
-  </table> <br/>';
+  </table><br/><br/>';
 
-       $tabla .= '<table class="tblepr"  width="950" border="0">
-      <thead> 
-    ';
-       foreach($dias as $dia):
-        $tabla .= '<th align="center" class="txtdia text-center">'.$dia->nombredia.'</th>';
-       endforeach; 
+           $tabla .= '<table class="tblhorario" width="600" cellpadding="2" > ';
+        $tabla .= '<tr>';
+        $tabla .= '<td width="65" align="center" class="txtdia">Hora</td>';
+        $tabla .= '<td width="93" align="center" class="txtdia">Lunes</td>';
+        $tabla .= '<td width="93" align="center" class="txtdia">Martes</td>';
+        $tabla .= '<td width="93" align="center" class="txtdia">Miercoles</td>';
+        $tabla .= '<td width="93" align="center" class="txtdia">Jueves</td>';
+        $tabla .= '<td width="93" align="center" class="txtdia">Viernes</td>';
 
-      $tabla .= '</thead>';
-      $c = 1; 
-        //$alumn = $al->getAlumn();
-       
-        $tabla .= '<tr valign="top">';
-      foreach($dias as $block):
-       $lunes = $this->horario->showAllDiaHorario($idhorario,$block->iddia);
-        $tabla .= '<td>';
-        $tabla .= '<table   class="tblhorario"  border="0" >';
-        if($lunes != false ){ 
-          foreach($lunes as $row){
-              $tabla .= '<tr>
-              <td width="200" style="border:solid #ccc 1px; height:60px; padding-left:5px; padding-right:5px;">';
-             if(strtoupper($row->opcion) == "NORMAL"){ 
-                 $tabla .='<ul>';
-                 $tabla .='<li class="nombreclase">'.$row->nombreclase.'</li>';
-                  $tabla .='<li class="txthorario">'.date('h:i A', strtotime($row->horainicial)).' - '.date('h:i A', strtotime($row->horafinal)).'</li>';
-                   $tabla .='<li class="txttutor">'.$row->nombre.' '.$row->apellidop.' '.$row->apellidom.'</li>';
-                 $tabla .='</ul>';
-             }
-            if(strtoupper($row->opcion) == "DESCANSO"){
-              $tabla.='<label class="nombreclase"> '.$row->nombreclase.'</label>';
-            }
-             if(strtoupper($row->opcion) == "SIN CLASES"){
-              //$tabla.='<label class="nombreclase">SIN CLASES</label>';
-            }
-            $tabla .= '</td>
-            </tr>';
-         }
-        }else{
-           $tabla .='<label>No registrado</label>';
-        } 
-         $tabla .= '</table>';
-      $tabla .= '</td>';
-      endforeach;
 
         $tabla .= '</tr>';
-      
+           $lunesAll = $this->horario->showHorarioProfesor($this->session->idprofesor);
 
-      
-      $tabla .= '</table></div>';
-      echo $tabla;
-      echo '<button type="button" id="btnimprimir2" onclick="imprimirDiv()" >IMPRIMIR</button>';
-      echo '
-      <script>
- imprimirDiv();
-function imprimirDiv(){
-  //alert(divName);
-  var printContents =document.getElementById("areaimprimir").innerHTML;
-  var originalContents = document.body.innerHTML;
-  document.body.innerHTML = printContents; 
-  window.print();
-  document.body.innerHTML= originalContents;
-}
-$(document).ready(function(){
-  $("#btnimprimir2").trigger("click");
-});
-document.getElementById("btnimprimir2").onclick = imprimirDiv;
-</script>
-      ';
-       }else{
-        $data = array(
-            'heading'=>'Error',
-            'message'=>'Error intente mas tarde.'
-        );
-         $this->load->view('errors/html/error_general',$data);
-    }
+        foreach ($lunesAll as $row) {
+          $tabla .= '<tr>';
+          $tabla .= '<td width="65" class="txthorario">' . $row->hora . '</td>';
+          $tabla .= '<td width="93" class="txthorario">' . $row->lunes . '</td>';
+          $tabla .= '<td  width="93"class="txthorario">' . $row->martes . '</td>';
+          $tabla .= '<td  width="93"class="txthorario">' . $row->miercoles . '</td>';
+          $tabla .= '<td width="93" class="txthorario">' . $row->jueves . '</td>';
+          $tabla .= '<td width="93" class="txthorario">' . $row->viernes . '</td>';
+
+          $tabla .= '</tr>';
         }
-     public function imprimirHorario($idhorario='')
- { 
-    Permission::grant(uri_string());
-    $idhorario = $this->decode($idhorario);
-    if(isset($idhorario) && !empty($idhorario)){
-   $lunes = $this->horario->showAllDiaHorario($idhorario,1);
-        $martes = $this->horario->showAllDiaHorario($idhorario,2);
-        $miercoles = $this->horario->showAllDiaHorario($idhorario,3);
-        $jueves = $this->horario->showAllDiaHorario($idhorario,4);
-        $viernes = $this->horario->showAllDiaHorario($idhorario,5);  
-        $this->load->library('tcpdf');  
-        $hora = date("h:i:s a");
-        //$linkimge = base_url() . '/assets/images/woorilogo.png';
-        $fechaactual = date('d/m/Y');
-         
+        $tabla .= '</table>';
 
-        $tbl = '
+        $pdf->writeHTML($tabla, true, false, false, false, '');
+
+        ob_end_clean();
+
+
+        $pdf->Output('Kardex de Calificaciones', 'I');
+        } else {
+            $data = array(
+                'heading' => 'Error',
+                'message' => 'Error intente mas tarde.'
+            );
+            $this->load->view('errors/html/error_general', $data);
+        }
+    }
+
+    public function imprimirHorario($idhorario = '') {
+        Permission::grant(uri_string());
+        $idhorario = $this->decode($idhorario);
+        if (isset($idhorario) && !empty($idhorario)) {
+            $lunes = $this->horario->showAllDiaHorario($idhorario, 1);
+            $martes = $this->horario->showAllDiaHorario($idhorario, 2);
+            $miercoles = $this->horario->showAllDiaHorario($idhorario, 3);
+            $jueves = $this->horario->showAllDiaHorario($idhorario, 4);
+            $viernes = $this->horario->showAllDiaHorario($idhorario, 5);
+            $this->load->library('tcpdf');
+            $hora = date("h:i:s a");
+            //$linkimge = base_url() . '/assets/images/woorilogo.png';
+            $fechaactual = date('d/m/Y');
+
+
+            $tbl = '
         <!DOCTYPE html>
 <html>
 <head>
@@ -567,87 +506,88 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
 <div class = "dl">
 <div class="diasemana"><label>LUNES</label></div>
     ';
-    if(isset($lunes) && !empty($lunes)){
-    foreach($lunes as $row){
-            if($row->opcion != "Descanso"){
-              $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
-            }else{
-              $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
+            if (isset($lunes) && !empty($lunes)) {
+                foreach ($lunes as $row) {
+                    if ($row->opcion != "Descanso") {
+                        $tbl .= '<div class="dia"><label> ' . $row->nombreclase . '</label><br> <small class = "hora">(' . $row->horainicial . ' - ' . $row->horafinal . ')</small></div>';
+                    } else {
+                        $tbl .= '<div class="dia"><label> ' . $row->nombreclase . '</label><br> <small class = "hora">(' . $row->horainicial . ' - ' . $row->horafinal . ')</small></div>';
+                    }
+                }
             }
-        } 
-      }
-    $tbl .='
+            $tbl .= '
 </div>
 <div class = "dl">
 <div class="diasemana"><label>MARTES</label></div>
      ';
-     if(isset($martes) && !empty($martes)){
-    foreach($martes as $row){
-            if($row->opcion != "Descanso"){
-              $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
-            }else{
-              $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
+            if (isset($martes) && !empty($martes)) {
+                foreach ($martes as $row) {
+                    if ($row->opcion != "Descanso") {
+                        $tbl .= '<div class="dia"><label> ' . $row->nombreclase . '</label><br> <small class = "hora">(' . $row->horainicial . ' - ' . $row->horafinal . ')</small></div>';
+                    } else {
+                        $tbl .= '<div class="dia"><label> ' . $row->nombreclase . '</label><br> <small class = "hora">(' . $row->horainicial . ' - ' . $row->horafinal . ')</small></div>';
+                    }
+                }
             }
-        } 
-      }
-    $tbl .='
+            $tbl .= '
 </div> 
 <div class = "dl">
 <div class="diasemana"><label>MIERCOLES</label></div>
    ';
-   if(isset($miercoles) && !empty($miercoles)){
-    foreach($miercoles as $row){
-            if($row->opcion != "Descanso"){
-              $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
-            }else{
-              $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
+            if (isset($miercoles) && !empty($miercoles)) {
+                foreach ($miercoles as $row) {
+                    if ($row->opcion != "Descanso") {
+                        $tbl .= '<div class="dia"><label> ' . $row->nombreclase . '</label><br> <small class = "hora">(' . $row->horainicial . ' - ' . $row->horafinal . ')</small></div>';
+                    } else {
+                        $tbl .= '<div class="dia"><label> ' . $row->nombreclase . '</label><br> <small class = "hora">(' . $row->horainicial . ' - ' . $row->horafinal . ')</small></div>';
+                    }
+                }
             }
-        } 
-      }
-    $tbl .='
+            $tbl .= '
 </div> 
 <div class = "dl">
 <div class="diasemana"><label>JUEVES</label></div>
      ';
-     if(isset($jueves) && !empty($jueves)){
-    foreach($jueves as $row){
-            if($row->opcion != "Descanso"){
-              $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
-            }else{
-              $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
+            if (isset($jueves) && !empty($jueves)) {
+                foreach ($jueves as $row) {
+                    if ($row->opcion != "Descanso") {
+                        $tbl .= '<div class="dia"><label> ' . $row->nombreclase . '</label><br> <small class = "hora">(' . $row->horainicial . ' - ' . $row->horafinal . ')</small></div>';
+                    } else {
+                        $tbl .= '<div class="dia"><label> ' . $row->nombreclase . '</label><br> <small class = "hora">(' . $row->horainicial . ' - ' . $row->horafinal . ')</small></div>';
+                    }
+                }
             }
-        } 
-      }
-    $tbl .='
+            $tbl .= '
 </div> 
 <div class = "dl">
 <div class="diasemana"><label>VIERNES</label></div>
     ';
-    if(isset($viernes) && !empty($viernes)){
-    foreach($viernes as $row){
-            if($row->opcion != "Descanso"){
-              $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
-            }else{
-              $tbl.='<div class="dia"><label> '.$row->nombreclase.'</label><br> <small class = "hora">('.$row->horainicial.' - '.$row->horafinal.')</small></div>';
+            if (isset($viernes) && !empty($viernes)) {
+                foreach ($viernes as $row) {
+                    if ($row->opcion != "Descanso") {
+                        $tbl .= '<div class="dia"><label> ' . $row->nombreclase . '</label><br> <small class = "hora">(' . $row->horainicial . ' - ' . $row->horafinal . ')</small></div>';
+                    } else {
+                        $tbl .= '<div class="dia"><label> ' . $row->nombreclase . '</label><br> <small class = "hora">(' . $row->horainicial . ' - ' . $row->horafinal . ')</small></div>';
+                    }
+                }
             }
-        } 
-      }
-    $tbl .='
+            $tbl .= '
 </div> 
 </body>
 </html>
 ';
- $this->load->library('pdfgenerator');
-$this->dompdf->loadHtml($tbl);
-$this->dompdf->setPaper('A4');
-$this->dompdf->render();
-$this->dompdf->stream("welcome.pdf", array("Attachment"=>0));
- }else{
-         $data = array(
-            'heading'=>'Error',
-            'message'=>'Error intente mas tarde.'
-        );
-         $this->load->view('errors/html/error_general',$data);
+            $this->load->library('pdfgenerator');
+            $this->dompdf->loadHtml($tbl);
+            $this->dompdf->setPaper('A4');
+            $this->dompdf->render();
+            $this->dompdf->stream("welcome.pdf", array("Attachment" => 0));
+        } else {
+            $data = array(
+                'heading' => 'Error',
+                'message' => 'Error intente mas tarde.'
+            );
+            $this->load->view('errors/html/error_general', $data);
+        }
     }
- }
+
 }

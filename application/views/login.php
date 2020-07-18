@@ -17,9 +17,16 @@
         <link rel="stylesheet" href="<?php echo base_url('assets/login/css/materialdesignicons.min.css'); ?>">
         <script src="<?php echo base_url(); ?>/assets/js/jquery.min.js"></script>
 
-  <script src="<?php echo base_url(); ?>/assets/js/bootstrap.min.js"></script>
-   <script src="<?php echo base_url(); ?>/assets/js/sweetalert2/dist/sweetalert2.min.js"></script>
+        <script src="<?php echo base_url(); ?>/assets/js/bootstrap.min.js"></script>
+        <script src="<?php echo base_url(); ?>/assets/js/sweetalert2/dist/sweetalert2.min.js"></script>
         <link rel="stylesheet" href="<?php echo base_url(); ?>/assets/js/sweetalert2/dist/sweetalert2.min.css">
+        <style>
+            .cuadro{
+                border:solid red 2px;
+                padding-left: 20px;
+                border-radius: 10px;
+            }
+        </style>
     </head>
 
     <body>
@@ -31,10 +38,11 @@
                             <div class="slide-content bg-1"> </div>
                         </div>
                         <div class="col-12 col-md-8 h-100 bg-white">
-                            <div class="auto-form-wrapper d-flex align-items-center justify-content-center flex-column"> 
-                                 <center><h3  align="center" class="mr-auto"><strong>S</strong>istema <strong>I</strong>ntegral para el <strong>C</strong>ontrol <strong>E</strong>scolar</h3></center>
 
-                                    <div class="nav-get-started">
+                            <div class="auto-form-wrapper d-flex align-items-center justify-content-center flex-column"> 
+                             
+
+                                <div class="nav-get-started">
 
                                     <?php if (isset($_SESSION['err'])): ?>
                                         <script>
@@ -44,172 +52,137 @@
                                                 text: '<?= $this->session->userdata('err'); ?>',
                                                 footer: ''
                                             });
-                                            
+
 
                                         </script>
 
                                     <?php endif ?>
-                                      <?php if (isset($_SESSION['err2'])): ?>
+                                    <?php if (isset($_SESSION['err2'])): ?>
                                         <script>
                                             swal({
                                                 type: 'error',
                                                 title: 'Oops...',
                                                 text: '<?= $this->session->userdata('err2'); ?>',
                                                 footer: ''
-                                            }); 
+                                            });
 
                                         </script>
 
                                     <?php endif ?>
-                                      <?php if (isset($_SESSION['err3'])): ?>
+                                    <?php if (isset($_SESSION['err3'])): ?>
                                         <script>
                                             swal({
                                                 type: 'error',
                                                 title: 'Oops...',
                                                 text: '<?= $this->session->userdata('err3'); ?>',
                                                 footer: ''
-                                            }); 
+                                            });
 
                                         </script>
 
                                     <?php endif ?>
                                 </div>
 
-                                 <hr>
-                                 <div style="display: block;">
-                                 <button  class="btn btn-primary btnalumno" style="border: solid #ccc 1px" >ALUMNO</a>
-                                  <button  class="btn btn-default btndocente" style="border: solid #ccc 1px">DOCENTE</a>
-                                   <button   class="btn btn-default btntutor" style="border: solid #ccc 1px" >TUTOR</button> 
-                                </div>
-
-                                <div id="divalumno">
-                                    <br>
-                                    <h4 align="center">Alumnos</h4>
-                                <form  method="POST" action="<?= base_url('welcome/alumno') ?>" > 
-                                     <div class="form-group">
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="mdi mdi-account-outline"></i>
-                                                </span>
-                                            </div>
-                                            <input type="text" name="matricula" class="form-control" placeholder="Matricula" required="required"> </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="mdi mdi-lock-outline"></i>
-                                                </span>
-                                            </div>
-                                            <input type="password" name="password" class="form-control" placeholder="Contraseña" required="required"> </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <button class="btn btn-primary submit-btn" type="submit" >ENTRAR</button>
-                                    </div> 
-                                </form>
-                            </div>
-
-
-                                 <div id="divdocente" style="display: none;">
-                                <form  method="POST" action="<?= base_url('welcome/docente') ?>" > 
-                                    <br>
-                                    <h4 align="center">Docentes</h4>
-                                     <div class="form-group">
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="mdi mdi-account-outline"></i>
-                                                </span>
-                                            </div>
-                                            <input type="email" name="correo" class="form-control" placeholder="Correo Electronico" required="required"> </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="mdi mdi-lock-outline"></i>
-                                                </span>
-                                            </div>
-                                            <input type="password" name="password" class="form-control" placeholder="Contraseña" required="required"> </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <button class="btn btn-primary submit-btn" type="submit">ENTRAR</button>
-                                    </div> 
-                                </form>
-                            </div>
-
-
-                                 <div id="divtutor" style="display: none;">
-                                <form  method="POST" action="<?= base_url('welcome/tutor') ?>" > 
-                                    <br>
-                                    <h4 align="center">Tutores</h4>
-                                     <div class="form-group">
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="mdi mdi-account-outline"></i>
-                                                </span>
-                                            </div>
-                                            <input type="email" name="correo" class="form-control" placeholder="Correo Electronico" required="required"> </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="mdi mdi-lock-outline"></i>
-                                                </span>
-                                            </div>
-                                            <input type="password" name="password" class="form-control" placeholder="Contraseña" required="required"> </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <button class="btn btn-primary submit-btn" type="submit">ENTRAR</button>
-                                    </div> 
-                                </form>
-                            </div>
+                                <div class="card">
+                                    <article class="card-body"> 
+                                        <h3 align="center"><strong>SICE</strong></h3>
+                                        <div style="display: block;">
+                                            <button  class="btn btn-primary btnalumno" style="border: solid #ccc 1px;" >ALUMNO</a>
+                                                <button  class="btn btn-default btndocente" style="border: solid #ccc 1px">DOCENTE</a>
+                                                    <button   class="btn btn-default btntutor" style="border: solid #ccc 1px" >TUTOR</button> 
+                                                    </div>
+                                                    <hr>
+                                                    <div id="divalumno"> 
+                                                        <form  method="POST" action="<?= base_url('welcome/alumno') ?>">
+                                                            <div class="form-group">
+                                                                <label>Matricula</label>
+                                                                <input name="matricula" class="form-control" placeholder="Matricula" type="text">
+                                                            </div> <!-- form-group// -->
+                                                            <div class="form-group">
+                                                                <label>Contraseña</label>
+                                                                <input class="form-control" name="password" placeholder="******" type="password">
+                                                            </div> <!-- form-group// -->   
+                                                            <div class="form-group">
+                                                                <button type="submit" class="btn btn-primary btn-block"> Entrar  </button>
+                                                            </div> <!-- form-group// -->                                                           
+                                                        </form>
+                                                    </div>
+                                                    <div id="divdocente" style="display: none;">
+                                                        <form  method="POST" action="<?= base_url('welcome/docente') ?>" > 
+                                                            <div class="form-group">
+                                                                <label>Correo Electronico</label>
+                                                                <input  type="email" name="correo" class="form-control" placeholder="Correo Electronico">
+                                                            </div> <!-- form-group// -->
+                                                            <div class="form-group">
+                                                                <a class="float-right" href="#">Recuperar?</a>
+                                                                <label>Contraseña</label>
+                                                                <input class="form-control" placeholder="******" name="password" type="password">
+                                                            </div> <!-- form-group// -->   
+                                                            <div class="form-group">
+                                                                <button type="submit" class="btn btn-primary btn-block"> Entrar  </button>
+                                                            </div> <!-- form-group// -->                                                           
+                                                        </form>
+                                                    </div>
+                                                    <div id="divtutor" style="display: none;">
+                                                        <form  method="POST" action="<?= base_url('welcome/tutor') ?>" > 
+                                                            <div class="form-group">
+                                                                <label>Correo Electronico</label>
+                                                                <input  type="email" name="correo" class="form-control" placeholder="Correo Electronico">
+                                                            </div> <!-- form-group// -->
+                                                            <div class="form-group">
+                                                                <a class="float-right" href="#">Recuperar?</a>
+                                                                <label>Contraseña</label>
+                                                                <input class="form-control"  name="password" placeholder="******" type="password">
+                                                            </div> <!-- form-group// -->   
+                                                            <div class="form-group">
+                                                                <button type="submit" class="btn btn-primary btn-block"> Entrar  </button>
+                                                            </div> <!-- form-group// -->                                                           
+                                                        </form>
+                                                    </div>
+                                                    </article>
+                                                    </div> <!-- card.// -->
 
 
 
+                                                    </div>
+                                                    </div>
+                                                    </div>
+                                                    </div> 
+                                                    </div> 
+                                                    </div>
+                                                    <script type="text/javascript">
 
-                            </div>
-                        </div>
-                    </div>
-                </div> 
-            </div> 
-        </div>
-        <script type="text/javascript">
-             
-                $(document).on( "click", '.btnalumno',function(e) { 
-                $("#divdocente").css('display','none'); 
-                $("#divtutor").css('display','none'); 
-                 $("#divalumno").css('display','block');
-                 $('.btndocente').removeClass('btn btn-primary').addClass('btn btn-default').show(); 
-                 $('.btntutor').removeClass('btn btn-primary').addClass('btn btn-default').show(); 
-                
-                 $('.btnalumno').removeClass('btn btn-default').addClass('btn btn-primary').show(); 
-            }); 
-                $(document).on( "click", '.btndocente',function(e) { 
-                $("#divdocente").css('display','block'); 
-                $("#divtutor").css('display','none'); 
-                $("#divalumno").css('display','none'); 
-                  $('.btnalumno').removeClass('btn btn-primary').addClass('btn btn-default').show(); 
-                 $('.btntutor').removeClass('btn btn-primary').addClass('btn btn-default').show(); 
+                                                        $(document).on("click", '.btnalumno', function (e) {
+                                                            $("#divdocente").css('display', 'none');
+                                                            $("#divtutor").css('display', 'none');
+                                                            $("#divalumno").css('display', 'block');
+                                                            $('.btndocente').removeClass('btn btn-primary').addClass('btn btn-default').show();
+                                                            $('.btntutor').removeClass('btn btn-primary').addClass('btn btn-default').show();
 
-                $('.btndocente').removeClass('btn btn-default').addClass('btn btn-primary').show(); 
-            }); 
-                $(document).on( "click", '.btntutor',function(e) { 
-                $("#divdocente").css('display','none'); 
-                $("#divtutor").css('display','block'); 
-                 $("#divalumno").css('display','none'); 
-                   $('.btnalumno').removeClass('btn btn-primary').addClass('btn btn-default').show(); 
-                 $('.btndocente').removeClass('btn btn-primary').addClass('btn btn-default').show(); 
+                                                            $('.btnalumno').removeClass('btn btn-default').addClass('btn btn-primary').show();
+                                                        });
+                                                        $(document).on("click", '.btndocente', function (e) {
+                                                            $("#divdocente").css('display', 'block');
+                                                            $("#divtutor").css('display', 'none');
+                                                            $("#divalumno").css('display', 'none');
+                                                            $('.btnalumno').removeClass('btn btn-primary').addClass('btn btn-default').show();
+                                                            $('.btntutor').removeClass('btn btn-primary').addClass('btn btn-default').show();
 
-                 $('.btntutor').removeClass('btn btn-default').addClass('btn btn-primary').show(); 
-            });
+                                                            $('.btndocente').removeClass('btn btn-default').addClass('btn btn-primary').show();
+                                                        });
+                                                        $(document).on("click", '.btntutor', function (e) {
+                                                            $("#divdocente").css('display', 'none');
+                                                            $("#divtutor").css('display', 'block');
+                                                            $("#divalumno").css('display', 'none');
+                                                            $('.btnalumno').removeClass('btn btn-primary').addClass('btn btn-default').show();
+                                                            $('.btndocente').removeClass('btn btn-primary').addClass('btn btn-default').show();
+
+                                                            $('.btntutor').removeClass('btn btn-default').addClass('btn btn-primary').show();
+                                                        });
 
 
-        </script> 
+                                                    </script> 
 
-    
-    </body> 
-</html>
+
+                                                    </body> 
+                                                    </html>

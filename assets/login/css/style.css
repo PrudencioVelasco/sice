@@ -16658,7 +16658,7 @@ div.tagsinput {
   .auth.theme-two .banner-section .slide-content {
     width: 100%; }
     .auth.theme-two .banner-section .slide-content.bg-1 {
-      background: url("../../images/alumnos.jpg") no-repeat center center;
+      background: url("../../images/background-login.png") no-repeat center center;
       background-size: cover; }
     .auth.theme-two .banner-section .slide-content.bg-2 {
       background: url("../../images/auth/register_2.jpg") no-repeat center center;

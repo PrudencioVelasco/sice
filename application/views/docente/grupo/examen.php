@@ -22,7 +22,7 @@
                   if ((isset($oportunidades) && !empty($oportunidades)) ) {
                     foreach ($oportunidades as $row) {
                   ?>
-                     <a href="<?php echo site_url('Pgrupo/recuperacion/' . $idhorariodetalle . '/' . $row->idoportunidadexamen) ?>" class="btn btn-default waves-effect m-r-20"><?php echo $row->nombreoportunidad;  ?></a>
+                     <a href="<?php echo site_url('Pgrupo/recuperacion/'.$controller->encode($idhorario).'/'.$controller->encode($idhorariodetalle) . '/' . $controller->encode($row->idoportunidadexamen).'/'.$controller->encode($row->numero)) ?>" class="btn btn-default waves-effect m-r-20"><?php echo $row->nombreoportunidad;  ?></a>
                  <?php
 
                     }

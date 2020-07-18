@@ -25,6 +25,7 @@ class User_model extends CI_Model
         $this->db->join('rol r', 'ur.id_rol = r.id'); 
         $this->db->join('tblpersonal p', 'p.idpersonal = u.idusuario');
         $this->db->where('u.idtipousuario', 2); 
+        
         if(!empty($idrol) && $idrol != 14 ){
             $this->db->where('p.idplantel', $idplantel); 
             $this->db->where('r.id NOT IN (14)'); 

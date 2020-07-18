@@ -7,17 +7,17 @@
             <div class="col-md-12">
               <div class="x_panel">
                 <div class="x_title">
-                  <h2><strong>ADMINISTRAR ALUMNOS</strong></h2> 
+                  <h2><strong>CONSULTAS</strong></h2> 
                   <div class="clearfix"></div>
                 </div>
                 <div class="x_content">  
-
+                    <form id="frmbuscar">
                              <div class="row clearfix">
                                     <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
                                         <div class="form-group">
                                             <div class="form-line">
-                                                <select class="form-control">
-                                                    <option>-- GRUPO --</option>
+                                                <select class="form-control" name="grupo" id="grupo">
+                                                    <option value="">-- GRUPO --</option>
                                                     <?php
                                                         if(isset($grupos) && !empty($grupos)){
                                                             foreach($grupos as $row){
@@ -32,8 +32,8 @@
                                     <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
                                         <div class="form-group">
                                             <div class="form-line">
-                                                <select class="form-control">
-                                                    <option>-- PERIODO --</option>
+                                                <select class="form-control" name="periodo" id="periodo">
+                                                    <option value="">-- PERIODO --</option>
                                                     <?php
                                                         if(isset($periodos) && !empty($periodos)){
                                                             foreach($periodos as $row){
@@ -48,9 +48,10 @@
                                     <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
                                         <div class="form-group">
                                             <div class="form-line">
-                                                 <select class="form-control">
-                                                    <option>-- OPCIÓN --</option>
+                                                <select class="form-control" name="opcion" id="opcion">
+                                                    <option value="">-- OPCIÓN --</option>
                                                     <option value="28">LISTA</option>
+                                                    <option value="29">CALIFICACIÓN FINAL</option>
                                                      <?php
                                                         if(isset($oportunidades) && !empty($oportunidades)){
                                                             foreach($oportunidades as $row){
@@ -63,15 +64,14 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-3 col-md-6 col-sm-3 col-xs-12"> 
-                                        <button type="button" class="btn btn-primary btn-lg m-l-15 waves-effect">ACEPTAR</button>
+                                        <button type="button" id="btnbuscar" class="btn btn-primary  m-l-15 waves-effect"> <i class="fa fa-search" ></i> BUSCAR</button>
                                     </div>
                                 </div>
                             </form>
               </div>
             </div>
           </div>
-        </div>
-
+        </div> 
         <!-- footer content -->
         <footer>
           <div class="copyright-info">
@@ -96,4 +96,29 @@
   </div>
   <script data-my_var_1="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/vue/appvue/appalumno.js"></script> 
 
+<script type="text/javascript"> 
 
+        $("#btnbuscar").click(function(){  
+
+            var grupo = $("#grupo").val();
+            var periodo = $("#periodo").val();
+            var opcion = $("#opcion").val();  
+         
+          if(grupo != "" && periodo != "" && opcion != "" ){
+            window.location = "<?php echo site_url('Grupo/busqueda'); ?>/"+grupo+'/'+periodo+'/'+opcion;
+          }else{
+              swal({
+                        type: 'error',
+                        title: 'Oops...',
+                        html: 'Todos los campos son obligatorios.',
+                        customClass: 'swal-wide',
+                        footer: ''
+                    });
+          }
+
+
+  });
+
+         
+
+</script>

@@ -9,16 +9,16 @@
         <div class="x_title">
           <h2><strong>CALIFICACIÓN DEL ALUMNO(A)</strong></h2>
           <ul class="nav navbar-right panel_toolbox">
-             <h3><small>C. del Nivel: </small><strong style="color: green">
+<!--             <h3><small>C. del Nivel: </small><strong style="color: green">
              <?php 
                 //$calificacion 
-             if(isset($calificacion) && !empty($calificacion)){
-              echo  number_format($calificacion,2);
-            }else{
-              echo "0.00";
-            }
+         //    if(isset($calificacion) && !empty($calificacion)){
+         //     echo  number_format($calificacion,2);
+         //   }else{
+         //     echo "0.00";
+          //  }
                ?>
-             </strong></h3>
+             </strong></h3>-->
           </ul>
           <div class="clearfix"></div>
         </div>
@@ -44,11 +44,11 @@
           <div class="row">
               <div class="col-md-6 col-sm-12 col-xs-12 " align="left">
                 <?php
-              if(isset($estatus_nivel) && !empty($estatus_nivel)){
+             // if(isset($estatus_nivel) && !empty($estatus_nivel)){
                    ?>
-               <label>ESTATUS: </label> <?php echo $estatus_nivel; ?> 
+<!--               <label>ESTATUS: </label> <?php //echo $estatus_nivel; ?> -->
                 <?php 
-              }
+             // }
              ?>
              </div>
              <?php

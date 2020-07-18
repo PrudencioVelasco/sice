@@ -22,6 +22,7 @@ class Aalumno extends CI_Controller
     date_default_timezone_set("America/Mexico_City");
     $this->load->helper('numeroatexto_helper');
     $this->load->library('encryption');
+    
   }
 
   function encode($string)
@@ -51,8 +52,9 @@ class Aalumno extends CI_Controller
     $idhorario = $this->decode($idhorario);
     if ((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno))) {
       $detalle_logo = $this->alumno->logo($this->session->idplantel);
-      $logo = base_url() . '/assets/images/escuelas/' . $detalle_logo[0]->logoplantel;
-      $logo2 = base_url() . '/assets/images/escuelas/' . $detalle_logo[0]->logosegundo;
+      $ubicacion_imagen = '/assets/images/escuelas/';
+      $logo = base_url() . $ubicacion_imagen . $detalle_logo[0]->logoplantel;
+      $logo2 = base_url() . $ubicacion_imagen . $detalle_logo[0]->logosegundo;
 
       $alumno = $this->alumno->detalleAlumno($idalumno);
       $grupo = $this->horario->showNivelGrupo($idhorario);
@@ -60,8 +62,7 @@ class Aalumno extends CI_Controller
       $datelle_alumno = $this->alumno->showAllMateriasAlumno($idalumno);
       if (isset($datelle_alumno) && !empty($datelle_alumno)) {
         $this->load->library('tcpdf');
-        $hora = date("h:i:s a");
-        //$linkimge = base_url() . '/assets/images/woorilogo.png';
+        $hora = date("h:i:s a"); 
         $fechaactual = date('d/m/Y');
         $pdf = new Pdf('P', 'mm', 'A4', true, 'UTF-8', false);
         $pdf->SetTitle('Horario de clases.');
@@ -204,7 +205,6 @@ class Aalumno extends CI_Controller
 
         $pdf->Output('Kardex de Calificaciones', 'I');
 
-        //return $tabla;  
       } else {
         return "";
       }
@@ -279,16 +279,16 @@ class Aalumno extends CI_Controller
   public function kardex()
   {
     Permission::grant(uri_string());
-    # code...
-    $idalumno = $this->session->idalumno;
-    $kardex = $this->alumno->allKardex($this->session->idalumno);
+        # code...
+        $idalumno = $this->session->idalumno;
+        $kardex = $this->alumno->allKardex($this->session->idalumno);
 
-    $detalle = $this->alumno->detalleAlumno($idalumno);
-    $data = array('kardex' => $kardex, 'detalle' => $detalle, 'id' => $idalumno, 'controller' => $this);
-    $this->load->view('alumno/header');
-    $this->load->view('alumno/kardex/index', $data);
-    $this->load->view('alumno/footer');
-  }
+        $detalle = $this->alumno->detalleAlumno($idalumno);
+        $data = array('kardex' => $kardex, 'detalle' => $detalle, 'id' => $idalumno, 'controller' => $this);
+        $this->load->view('alumno/header');
+        $this->load->view('alumno/kardex/index', $data);
+        $this->load->view('alumno/footer');
+    }
   public function horario()
   {
     # code... 
@@ -658,6 +658,8 @@ class Aalumno extends CI_Controller
   {
     # code...
     Permission::grant(uri_string());
+    
+  
     $unidades =  $this->grupo->unidades($this->session->idplantel);
     $materias = $this->alumno->showAllMateriasPasadas($idhorario);
     $datoshorario = $this->horario->showNivelGrupo($idhorario);
@@ -984,7 +986,7 @@ tblcalificacion  {border-collapse:collapse}
 </table>
 <br><br>
  ';
-      $tbl .= '<table class="tblcalificacion" cellpadding="2"  >
+      $tbl .= '<table width="100" class="tblcalificacion" cellpadding="2"  >
       <tr>
       <td width="30" class="titulocal">#</td>
       <td width="180" class="titulocal">MATERIA</td>';
@@ -1060,9 +1062,7 @@ tblcalificacion  {border-collapse:collapse}
 
       $idalumno = $this->session->idalumno;
       $calificacion = "";
-      $tabla = $this->obtenerCalificacion2($idhorario, $idalumno);
-
-      //$tabla = $this->obtenerCalificacionSecundaria($idhorario,$idalumno);
+      $tabla = $this->obtenerCalificacion2($idhorario, $idalumno); 
       $datosalumno = $this->alumno->showAllAlumnoId($idalumno);
       $datoshorario = $this->horario->showNivelGrupo($idhorario);
       $array_materias_reprobadas = array();
@@ -1113,11 +1113,12 @@ tblcalificacion  {border-collapse:collapse}
           }
         }
       }
+    
       $calificacion_minima = $detalle_configuracion[0]->calificacion_minima;
       $reprovatorio_permitido = $detalle_configuracion[0]->reprovandas_minima;
       $estatus_alumno = calcularReprovado($idnivelestudio, $idniveleducativo, $total_materia, $total_aprovadas, $total_reprovadas, $reprovatorio_permitido, $calificacion, $calificacion_minima);
       $mostrar_estatus = mostrarReprovado($idnivelestudio, $idniveleducativo, $total_materia, $total_aprovadas, $total_reprovadas, $reprovatorio_permitido, $calificacion, $calificacion_minima);
-
+                
       $data = array(
         'idhorario' => $idhorario,
         'idalumno' => $idalumno,
