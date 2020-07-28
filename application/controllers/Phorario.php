@@ -84,12 +84,12 @@ class Phorario extends CI_Controller {
 
         $tabla .= '<table class="table table-hover table-striped"  > ';
         $tabla .= ' <thead class="bg-teal"> ';
-        $tabla .= '<td   >Hora</td>';
-        $tabla .= '<td   >Lunes</td>';
-        $tabla .= '<td  >Martes</td>';
-        $tabla .= '<td >Miercoles</td>';
-        $tabla .= '<td  >Jueves</td>';
-        $tabla .= '<td  >Viernes</td>';
+        $tabla .= '<td   >HORA</td>';
+        $tabla .= '<td   >LUNES</td>';
+        $tabla .= '<td  >MARTES</td>';
+        $tabla .= '<td >MIERCOLES</td>';
+        $tabla .= '<td  >JUEVES</td>';
+        $tabla .= '<td  >VIERNES</td>';
 
 
         $tabla .= ' </thead>';

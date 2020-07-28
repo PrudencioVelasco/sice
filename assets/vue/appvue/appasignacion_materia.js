@@ -69,11 +69,11 @@ var v = new Vue({
             })
         },
         onChange(event) {
-            var idmateria = event.target.value;
+            var idreprobada = event.target.value;
             this.materiasdisponibles="";
              axios.get(this.url + "Alumno/showAllMateriaParaAsignar/", {
                 params: {
-                    idmateria: idmateria
+                    idreprobada: idreprobada
                 }
             }).then(response => (this.materiasdisponibles = response.data.materiasdisponibles));
         },

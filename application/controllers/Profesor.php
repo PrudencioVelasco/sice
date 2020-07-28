@@ -545,7 +545,7 @@ class Profesor extends CI_Controller {
                     'msgerror' => 'No se puede Quitar la Materia.'
                 );
             }
-         } else {
+        } else {
             $result['error'] = true;
             $result['msg'] = array(
                 'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'

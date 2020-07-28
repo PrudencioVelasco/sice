@@ -35,21 +35,21 @@ $(document).ready(function () {
         );
         $.ajax({
             type: "POST",
-            url: my_var_1 +"Pgrupo/addCalificacionRecuperacion",
+            url: my_var_1 + "Pgrupo/addCalificacionRecuperacion",
             data: $('#frmasistencia').serialize(),
             success: function (data) {
                 $('#btnguardar').prop("disabled", false);
                 $('#btnguardar').html(
                     `<i class='fa fa-floppy-o'></i> GUARDAR`
                 );
-                var val = $.parseJSON(data);  
-                if ((val.success === "Ok")) { 
+                var val = $.parseJSON(data);
+                if ((val.success === "Ok")) {
                     swal({
                         position: 'center',
                         type: 'success',
-                        title: 'Registrado!',
-                        text: 'Dar clic en el boton.',
-                        showConfirmButton: true, 
+                        title: 'Notificación!',
+                        html: val.mensaje,
+                        showConfirmButton: true,
                     }).then(function () {
                         location.reload();
                     });
@@ -61,12 +61,49 @@ $(document).ready(function () {
                         customClass: 'swal-wide',
                         footer: ''
                     });
-                  }
+                }
 
             }
         })
     });
+    $("#btneliminarcalificacionrecuperacion").click(function () {
+        $('#btneliminarcalificacionrecuperacion').prop("disabled", true);
+        $('#btneliminarcalificacionrecuperacion').html(
+            `<span class="fa fa-spinner spinner-border-sm" role="status" aria-hidden="true"></span> PROCESANDO...`
+        );
+        $.ajax({
+            type: "POST",
+            url: my_var_1 + "Pgrupo/eliminarCalificacionUnidadRecuperacion",
+            data: $('#frmeliminarcalificacion').serialize(),
+            success: function (data) {
+                $('#btneliminarcalificacionrecuperacion').prop("disabled", false);
+                $('#btneliminarcalificacionrecuperacion').html(
+                    `<i class="fa fa-trash"></i> ELIMINAR`
+                );
+                var val = $.parseJSON(data);
+                if ((val.success === "Ok")) {
+                    swal({
+                        position: 'center',
+                        type: 'success',
+                        title: 'Eliminado!',
+                        text: 'Dar clic en el boton.',
+                        showConfirmButton: true
+                    }).then(function () {
+                        location.reload();
+                    });
+                } else {
+                    swal({
+                        type: 'error',
+                        title: 'Oops...',
+                        html: val.error,
+                        customClass: 'swal-wide',
+                        footer: ''
+                    });
+                }
 
+            }
+        })
+    });
     $("#btneliminarcalificacion").click(function () {
         $('#btneliminarcalificacion').prop("disabled", true);
         $('#btneliminarcalificacion').html(
@@ -74,7 +111,7 @@ $(document).ready(function () {
         );
         $.ajax({
             type: "POST",
-            url: my_var_1 +"Pgrupo/eliminarCalificacionUnidad",
+            url: my_var_1 + "Pgrupo/eliminarCalificacionUnidad",
             data: $('#frmeliminarcalificacion').serialize(),
             success: function (data) {
                 $('#btneliminarcalificacion').prop("disabled", false);
@@ -82,18 +119,26 @@ $(document).ready(function () {
                     `<i class="fa fa-trash"></i> ELIMINAR`
                 );
                 var val = $.parseJSON(data);
-                if ((val.success === "Ok")) { 
+                if ((val.success === "Ok")) {
                     swal({
                         position: 'center',
                         type: 'success',
                         title: 'Eliminado!',
                         text: 'Dar clic en el boton.',
-                        showConfirmButton: true 
+                        showConfirmButton: true
                     }).then(function () {
                         location.reload();
-                    }); 
+                    });
+                } else if (val.success === "vacio") {
+                    swal({
+                        type: 'info',
+                        title: 'Información',
+                        html: val.mensaje,
+                        customClass: 'swal-wide',
+                        footer: ''
+                    });
                 } else {
-                     swal({
+                    swal({
                         type: 'error',
                         title: 'Oops...',
                         html: val.error,
@@ -106,24 +151,32 @@ $(document).ready(function () {
         })
     });
     $("#btneliminar").click(function () {
+        $('#btneliminar').prop("disabled", true);
+        $('#btneliminar').html(
+            `<span class="fa fa-spinner spinner-border-sm" role="status" aria-hidden="true"></span> PROCESANDO...`
+        );
         $.ajax({
             type: "POST",
-            url: my_var_1 +"Pgrupo/eliminarCalificacion",
+            url: my_var_1 + "Pgrupo/eliminarCalificacion",
             data: $('#frmeliminar').serialize(),
             success: function (data) {
                 var val = $.parseJSON(data);
+                $('#btneliminar').prop("disabled", false);
+                $('#btneliminar').html(
+                    `<i class="fa fa-trash"></i> ELIMINAR`
+                );
                 if ((val.success === "Ok")) {
-                     swal({
+                    swal({
                         position: 'center',
                         type: 'success',
                         title: 'Eliminado!',
                         text: 'Dar clic en el boton.',
-                        showConfirmButton: true 
+                        showConfirmButton: true
                     }).then(function () {
                         location.reload();
-                    }); 
+                    });
                 } else {
-                     swal({
+                    swal({
                         type: 'error',
                         title: 'Oops...',
                         html: val.error,
@@ -144,7 +197,7 @@ $(document).ready(function () {
         );
         $.ajax({
             type: "POST",
-            url: my_var_1 +"Pgrupo/updateCalificacion",
+            url: my_var_1 + "Pgrupo/updateCalificacion",
             data: $('#frmmodificar').serialize(),
             success: function (data) {
                 $('#btnmodificar').prop("disabled", false);
@@ -153,17 +206,17 @@ $(document).ready(function () {
                 );
                 var val = $.parseJSON(data);
                 if ((val.success === "Ok")) {
-                     swal({
+                    swal({
                         position: 'center',
                         type: 'success',
                         title: 'Modificado!',
                         text: 'Dar clic en el boton.',
-                        showConfirmButton: true 
+                        showConfirmButton: true
                     }).then(function () {
                         location.reload();
-                    }); 
+                    });
                 } else {
-                     swal({
+                    swal({
                         type: 'error',
                         title: 'Oops...',
                         html: val.error,
@@ -174,5 +227,5 @@ $(document).ready(function () {
 
             }
         })
-    }); 
+    });
 });

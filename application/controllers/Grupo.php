@@ -28,6 +28,7 @@ class Grupo extends CI_Controller {
     }
 
     public function alumnos() {
+        Permission::grant(uri_string()); 
         $idplantel = $this->session->idplantel;
         $periodos = $this->grupo->showAllPeriodos($idplantel);
         $grupos = $this->grupo->showAllGrupos($idplantel);
@@ -273,10 +274,18 @@ class Grupo extends CI_Controller {
             $idgrupo = $this->input->get('idgrupo');
             $query = $this->grupo->deleteGrupo($idgrupo);
             if ($query) {
-                $result['grupos'] = true;
+                $result['error'] = false;
+            } else {
+                $result['error'] = true;
+                $result['msg'] = array(
+                    'msgerror' => 'No se puede Elimnar registro.'
+                );
             }
         } else {
-            $result['grupos'] = false;
+            $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
+            );
         }
         if (isset($result) && !empty($result)) {
             echo json_encode($result);
@@ -322,7 +331,8 @@ class Grupo extends CI_Controller {
     public function tablaCalificacionesFinales($idgrupo, $idperiodo) {
         $total_materias = 0;
         $materias = $this->grupo->listaMateriasGrupo($idperiodo, $idgrupo);
-       
+          //$materias_reprobadas = $this->grupo->listaMateriasReprobadasGrupo($idperiodo, $idgrupo);
+          
         $alumnos = $this->grupo->listaAlumnosGrupo($idperiodo, $idgrupo, $this->session->idplantel);
           $alumnos_reprobados = $this->grupo->listaAlumnosGrupoReprobados($idperiodo, $idgrupo, $this->session->idplantel);
         $tabla = "";
@@ -350,6 +360,7 @@ class Grupo extends CI_Controller {
                 $tabla .= '<td>' . $row->apellidop . " " . $row->apellidom . " " . $row->nombre . '</td>';
                 $suma_calificacion = 0;
                 foreach ($materias as $block) {
+                    if($this->grupo->validarMateriaSeriada($block->idmateria,$row->idalumno) == false){
                     $val = $this->grupo->calificacionFinalNormal($idgrupo, $idperiodo, $block->idprofesormateria, $row->idalumno);
                     $tabla .= '<td>';
                     if ($val != false) {
@@ -359,6 +370,9 @@ class Grupo extends CI_Controller {
                         $tabla .= '<label>No registrado</label>';
                     }
                     $tabla .= '</td>';
+                    }else{
+                          $tabla .= '<td><label>No puede cursar esta materia.</label></td>';
+                    }
                 }
                 $calificacion_alumno = $suma_calificacion / $total_materias;
                 $tabla .= '<td>';
@@ -368,6 +382,7 @@ class Grupo extends CI_Controller {
                 $tabla .= '</tr>';
             }
         }
+        $calificacion_alumno_r = 0;
         if (isset($alumnos_reprobados) && !empty($alumnos_reprobados)) {
               $suma_calificacion_r = 0;
               if(!isset($c) && empty($c)){
@@ -381,8 +396,9 @@ class Grupo extends CI_Controller {
                 $tabla .= '<td>' . $value->apellidop . " " . $value->apellidom . " " . $value->nombre . '</td>';
                 $suma_calificacion_r = 0;
                  $total_materias_r = 0;
+                 if(isset($materias) && !empty($materias)){
                 foreach ($materias as $block) { 
-                        $val = $this->grupo->calificacionFinalReprobadas($idgrupo, $idperiodo, $block->idprofesormateria, $row->idalumno);
+                        $val = $this->grupo->calificacionFinalReprobadas($idgrupo, $idperiodo, $block->idprofesormateria, $value->idalumno);
                         $tabla .= '<td>';
                         if ($val != false) {
                              $total_materias_r = $total_materias_r + 1;
@@ -394,7 +410,12 @@ class Grupo extends CI_Controller {
                         $tabla .= '</td>';
                     
                 }
-                $calificacion_alumno_r = $suma_calificacion_r / $total_materias_r;
+                 }
+            
+            if($suma_calificacion_r > 0 && $total_materias_r>0){
+                 $calificacion_alumno_r = $suma_calificacion_r / $total_materias_r; 
+            }
+              
                 $tabla .= '<td>';
                 $tabla .= '<label>' . number_format($calificacion_alumno_r, 2) . '</label>';
                 $tabla .= '</td>';

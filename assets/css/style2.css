@@ -14,6 +14,9 @@
   background-color: rgba(255,255,255,0.8);
 
 }
+ .is-invalid{
+                border: solid red 2px;
+            }
  .ptitle{
    font-weight: bold;
    font-size: 18px;

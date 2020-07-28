@@ -16,7 +16,7 @@
                 <div class="x_panel">
                     <div class="x_title">
                         <div class="col-md-6 col-sm-12 col-xs-12 ">
-                            <h2><strong> <i class="fa fa-clock-o"></i> HORARIO ESCOLAR</strong></h2>
+                            <h2><strong> <i class="fa fa-calendar"></i> HORARIO ESCOLAR</strong></h2>
                         </div>
                         <div class="col-md-6 col-sm-12 col-xs-12 " align="right">
                             <?php if (isset($tabla) && !empty($tabla)) { ?>
@@ -31,11 +31,11 @@
                         <?php
                         if (isset($materias_repetir) && !empty($materias_repetir)) {
                             echo '  <div class="row" > 
-                    <div class="col-md-6 col-sm-12 col-xs-12 ">
+                    <div class="col-md-12 col-sm-12 col-xs-12 ">
                         <h5>Materias para recuperar.</h5>
                         ';
                             foreach ($materias_repetir as $row) {
-                                echo '<label>*' . $row->nombreclase . '</label> - <small>' . $row->nombre . ' ' . $row->apellidop . ' ' . $row->apellidom . '</small>';
+                                echo '<label>*' . $row->nombreclase . '</label> - <small>' . $row->nombre . ' ' . $row->apellidop . ' ' . $row->apellidom . '</small> || ';
                             }
                             echo '   <div class="clearfix"></div>    
                     </div>
@@ -44,7 +44,7 @@
                         }
                         ?> 
                         <div class="row" > 
-                            <div class="col-md-12 col-sm-12 col-xs-12 ">
+                            <div class="col-md-12 col-sm-12 col-xs-12 " align="center">
                                 <?php
                                 if (isset($tabla) && !empty($tabla)) {
                                     echo $tabla;

@@ -1,8 +1,10 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 date_default_timezone_set("America/Mexico_City");
-class Tutores extends CI_Controller {
- function __construct() {
+class Tutores extends CI_Controller
+{
+    public function __construct()
+    {
         parent::__construct();
 
         if (!isset($_SESSION['user_id'])) {
@@ -10,82 +12,116 @@ class Tutores extends CI_Controller {
             return redirect('welcome');
         }
         $this->load->helper('url');
-        $this->load->model('data_model'); 
-        $this->load->library('permission');
-        $this->load->library('session'); 
-        $this->load->model('alumno_model','alumno'); 
-         $this->load->model('estadocuenta_model','estadocuenta'); 
-        $this->load->model('grupo_model','grupo'); 
-        $this->load->model('horario_model','horario');
-        $this->load->model('user_model','user');
-        $this->load->model('mensaje_model','mensaje');
-        $this->load->model('cicloescolar_model','cicloescolar');
-         $this->load->model('tutor_model','tutor');   
-         $this->load->model('configuracion_model','configuracion'); 
-        $this->load->model('data_model'); 
+        $this->load->model('data_model');
         $this->load->library('permission');
         $this->load->library('session');
-        $this->load->library('pdfgenerator'); 
+        $this->load->model('alumno_model', 'alumno');
+        $this->load->model('estadocuenta_model', 'estadocuenta');
+        $this->load->model('grupo_model', 'grupo');
+        $this->load->model('horario_model', 'horario');
+        $this->load->model('user_model', 'user');
+        $this->load->model('mensaje_model', 'mensaje');
+        $this->load->model('cicloescolar_model', 'cicloescolar');
+        $this->load->model('tutor_model', 'tutor');
+        $this->load->model('configuracion_model', 'configuracion');
+        $this->load->model('data_model');
+        $this->load->library('permission');
+        $this->load->library('session');
+        $this->load->library('pdfgenerator');
         $this->load->library('openpayservicio');
-       $this->load->library('encryption');
-       $this->load->helper('numeroatexto_helper'); 
-	}
- 
-	public function index()
-	{ 
-       // $_SESSION['user_id'];
-        Permission::grant(uri_string());
-	    $this->load->view('tutor/header');
-        $this->load->view('tutor/index');
+        $this->load->library('encryption');
+        $this->load->helper('numeroatexto_helper');
+    }
+
+    public function index()
+    {
+        // $_SESSION['user_id'];
+        Permission::grant(uri_string()); 
+         $alumnos = $this->alumno->showAllAlumnosTutorActivos($this->session->idtutor);
+         $mensajes ="";
+         $tareas = "";
+         if(isset($alumnos) && !empty($alumnos)){
+            foreach($alumnos as $row){
+                $idhorario = $row->idhorario;
+                $idperiodo = $row->idperiodo;
+                $idalumno = $row->idalumno;
+                $array_materias_reprobadas = array();
+                $materias_reprobadas = $this->alumno->obtenerTodasMateriaReprobadasActivas($idalumno);
+                if (isset($materias_reprobadas) && !empty($materias_reprobadas)) {
+                    foreach ($materias_reprobadas as $row) {
+                        array_push($array_materias_reprobadas, $row->idmateriaprincipal);
+                    }
+                }
+                $reprobadas = implode(",", $array_materias_reprobadas);
+
+                $materias = $this->alumno->showAllMaterias($idhorario, $reprobadas);
+                  if(isset($materias) && !empty($materias)){
+                  $array_profesor = array();
+                     foreach ($materias as $row) {
+                        array_push($array_profesor, $row->idprofesormateri);
+                    }
+                     $profesores = implode(",", $array_profesor);
+                     $mensajes = $this->mensaje->showAllMensajeATutor($profesores);
+                       $tareas = $this->mensaje->showAllTareaATutor($profesores);
+                  }
+            }
+         }
+                        
+         $data = array(
+             'mensajes'=>$mensajes,
+             'tareas'=>$tareas
+         );
+        $this->load->view('tutor/header');
+        $this->load->view('tutor/index',$data);
         $this->load->view('tutor/footer');
 
-	} 
+    }
     public function alumnos()
     {
         Permission::grant(uri_string());
         $alumnos = $this->alumno->showAllAlumnosTutorActivos($this->session->idtutor);
-        
+
         $data = array(
-            'alumnos'=>$alumnos,
-            'controller'=>$this
+            'alumnos' => $alumnos,
+            'controller' => $this,
         );
         $this->load->view('tutor/header');
-        $this->load->view('tutor/alumnos/index',$data);
+        $this->load->view('tutor/alumnos/index', $data);
         $this->load->view('tutor/footer');
     }
-     public function boleta($idhorario='',$idalumno = '',$idunidad = '')
-  {
-      Permission::grant(uri_string());
-      $idhorario = $this->decode($idhorario);
-      $idalumno = $this->decode($idalumno);
-      $idunidad = $this->decode($idunidad);
-      if((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno)) && (isset($idunidad) && !empty($idunidad))){
-       $detalle_logo = $this->alumno->logo($this->session->idplantel);
-       $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel);
-        $logo = base_url() . '/assets/images/escuelas/'.$detalle_logo[0]->logoplantel;
-        $logo2 = base_url() . '/assets/images/escuelas/'.$detalle_logo[0]->logosegundo;
-        
-       $datelle_alumno = $this->alumno->showAllMateriasAlumno($idalumno);
-       $materias = $this->alumno->showAllMaterias($idhorario);
-       $detalle_unidad = $this->alumno->detalleUnidad($idunidad);
-       $this->load->library('tcpdf');  
-        $hora = date("h:i:s a");
-        //$linkimge = base_url() . '/assets/images/woorilogo.png';
-        $fechaactual = date('d/m/Y');
-        $pdf = new Pdf('P', 'mm', 'A4', true, 'UTF-8', false);
-        $pdf->SetTitle('Horario de clases.');
-        $pdf->SetHeaderMargin(30);
-        $pdf->SetTopMargin(10);
-        $pdf->setFooterMargin(20);
-        $pdf->SetAutoPageBreak(true);
-        $pdf->SetAuthor('Author');
-        $pdf->SetDisplayMode('real', 'default');
-        $pdf->setPrintHeader(false);
-        $pdf->setPrintFooter(false);
+    public function boleta($idhorario = '', $idalumno = '', $idunidad = '')
+    {
+        Permission::grant(uri_string());
+        $idhorario = $this->decode($idhorario);
+        $idalumno = $this->decode($idalumno);
+        $idunidad = $this->decode($idunidad);
+        if ((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno)) && (isset($idunidad) && !empty($idunidad))) {
+            $detalle_logo = $this->alumno->logo($this->session->idplantel);
+            $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel);
+            $logo = base_url() . '/assets/images/escuelas/' . $detalle_logo[0]->logoplantel;
+            $logo2 = base_url() . '/assets/images/escuelas/' . $detalle_logo[0]->logosegundo;
 
-        $pdf->AddPage();
+            $datelle_alumno = $this->alumno->showAllMateriasAlumno($idalumno);
+            $materias = $this->alumno->showAllMaterias($idhorario);
+            $detalle_unidad = $this->alumno->detalleUnidad($idunidad);
+            $this->load->library('tcpdf');
+            $hora = date("h:i:s a");
+            //$linkimge = base_url() . '/assets/images/woorilogo.png';
+            $fechaactual = date('d/m/Y');
+            $pdf = new Pdf('P', 'mm', 'A4', true, 'UTF-8', false);
+            $pdf->SetTitle('Horario de clases.');
+            $pdf->SetHeaderMargin(30);
+            $pdf->SetTopMargin(10);
+            $pdf->setFooterMargin(20);
+            $pdf->SetAutoPageBreak(true);
+            $pdf->SetAuthor('Author');
+            $pdf->SetDisplayMode('real', 'default');
+            $pdf->setPrintHeader(false);
+            $pdf->setPrintFooter(false);
 
-        $tbl = '
+            $pdf->AddPage();
+
+            $tbl = '
 <style type="text/css">
     .txtn{
         font-size:7px;
@@ -110,16 +146,16 @@ class Tutores extends CI_Controller {
     }
     .txtgeneral{
          font-size:8px;
-         font-weight:bolder; 
+         font-weight:bolder;
     }
     .txtnota{
          font-size:6px;
-         font-weight:bolder; 
-    } 
+         font-weight:bolder;
+    }
     .txtcalificacion{
         font-size:10px;
-         font-weight:bolder; 
-    } 
+         font-weight:bolder;
+    }
     .imgtitle{
         width:55px;
 
@@ -129,33 +165,33 @@ class Tutores extends CI_Controller {
   <tr>
     <td width="101" align="center"><img   class="imgtitle" src="' . $logo2 . '" /></td>
     <td colspan="2" align="center">
-            <label class="nombreplantel">'.$datelle_alumno[0]->nombreplantel.'</label><br>
-            <label class="txtn">'.$datelle_alumno[0]->asociado.'</label><br>
-            <label class="direccion">'.$datelle_alumno[0]->direccion.'</label><br>
-            <label class="telefono">TELÉFONO: '.$datelle_alumno[0]->telefono.'</label>
+            <label class="nombreplantel">' . $datelle_alumno[0]->nombreplantel . '</label><br>
+            <label class="txtn">' . $datelle_alumno[0]->asociado . '</label><br>
+            <label class="direccion">' . $datelle_alumno[0]->direccion . '</label><br>
+            <label class="telefono">TELÉFONO: ' . $datelle_alumno[0]->telefono . '</label>
     </td>
     <td width="137" align="center"><img   class="imgtitle" src="' . $logo . '" /></td>
   </tr>
    <tr>
-    <td width="543" colspan="3" align="center"><label class="boleta">BOLETA DE CALIFICACIONES DEL '.$detalle_unidad[0]->nombreunidad.'</label></td>  
+    <td width="543" colspan="3" align="center"><label class="boleta">BOLETA DE CALIFICACIONES DEL ' . $detalle_unidad[0]->nombreunidad . '</label></td>
   </tr>
-   <tr> 
-    <td width="543" colspan="3" align="center"><label class="periodo">PERIODO: '.$datelle_alumno[0]->mesinicio.' - '.$datelle_alumno[0]->mesfin.' DE '.$datelle_alumno[0]->yearfin.'</label></td> 
+   <tr>
+    <td width="543" colspan="3" align="center"><label class="periodo">PERIODO: ' . $datelle_alumno[0]->mesinicio . ' - ' . $datelle_alumno[0]->mesfin . ' DE ' . $datelle_alumno[0]->yearfin . '</label></td>
   </tr>
  <tr>
     <td width="50" valign="bottom"  class="txtgeneral" >NOMBRE:</td>
-    <td width="300" valign="bottom" class="txtgeneral" style="border-bottom:solid 1px black;"> '.$datelle_alumno[0]->apellidop.' '.$datelle_alumno[0]->apellidom.' '.$datelle_alumno[0]->nombre.'</td>
+    <td width="300" valign="bottom" class="txtgeneral" style="border-bottom:solid 1px black;"> ' . $datelle_alumno[0]->apellidop . ' ' . $datelle_alumno[0]->apellidom . ' ' . $datelle_alumno[0]->nombre . '</td>
     <td width="60" valign="bottom" class="txtgeneral"> GRUPO:</td>
-    <td width="130" valign="bottom" class="txtgeneral" style="border-bottom:solid 1px black;">'.$datelle_alumno[0]->nombrenivel.' '.$datelle_alumno[0]->nombregrupo.'</td>
+    <td width="130" valign="bottom" class="txtgeneral" style="border-bottom:solid 1px black;">' . $datelle_alumno[0]->nombrenivel . ' ' . $datelle_alumno[0]->nombregrupo . '</td>
   </tr>
   <tr>
    <td width="60" valign="bottom"  class="txtgeneral" >INSCRIPCIÓN:</td>
     <td width="290" valign="bottom" class="txtgeneral" style="border-bottom:solid 1px black;"> PRIMERA</td>
     <td width="60" valign="bottom" class="txtgeneral"> NUA:</td>
-    <td width="130" valign="bottom" class="txtgeneral" style="border-bottom:solid 1px black;">'.$datelle_alumno[0]->matricula.'</td>
+    <td width="130" valign="bottom" class="txtgeneral" style="border-bottom:solid 1px black;">' . $datelle_alumno[0]->matricula . '</td>
   </tr>
 <tr>
-   <td width="60" colspan="4" ></td> 
+   <td width="60" colspan="4" ></td>
   </tr>
     <tr >
    <td width="60" style="border:solid 1px black; background-color:#ccc;" valign="bottom" align="center"  class="txtgeneral" >NUM</td>
@@ -164,55 +200,55 @@ class Tutores extends CI_Controller {
     <td width="130"style="border:solid 1px black; background-color:#ccc;" valign="bottom"  align="center" class="txtgeneral">CALIFICACIÓN</td>
   </tr>
   ';
-  if(isset($materias) && !empty($materias)){
-    $numero = 1;
-    $total_materia = 0;
-    $total_calificacion = 0;
-    $promedio_final = 0;
-    $total_reprobadas = 0;
-    $total_aprovadas = 0;
-  foreach ($materias as $row) { 
-    $total_materia = $total_materia + 1;
-    $idhorariodetalle = $row->idhorariodetalle;
-    $calificacion = $this->alumno->obtenerCalificacionMateria($idhorariodetalle,$idalumno,$idunidad);
-     $asistencia = $this->alumno->obtenerAsistenciaMateria($idhorariodetalle,$idalumno,$idunidad);
-    $tbl .=' <tr >
-           <td width="60" style="border:solid 1px black;" valign="bottom" align="center"  class="txtgeneral" >'.$numero++.'</td>
-            <td width="290" style="border:solid 1px black;" valign="bottom" class="txtgeneral">'.$row->nombreclase.'</td>
+            if (isset($materias) && !empty($materias)) {
+                $numero = 1;
+                $total_materia = 0;
+                $total_calificacion = 0;
+                $promedio_final = 0;
+                $total_reprobadas = 0;
+                $total_aprovadas = 0;
+                foreach ($materias as $row) {
+                    $total_materia = $total_materia + 1;
+                    $idhorariodetalle = $row->idhorariodetalle;
+                    $calificacion = $this->alumno->obtenerCalificacionMateria($idhorariodetalle, $idalumno, $idunidad);
+                    $asistencia = $this->alumno->obtenerAsistenciaMateria($idhorariodetalle, $idalumno, $idunidad);
+                    $tbl .= ' <tr >
+           <td width="60" style="border:solid 1px black;" valign="bottom" align="center"  class="txtgeneral" >' . $numero++ . '</td>
+            <td width="290" style="border:solid 1px black;" valign="bottom" class="txtgeneral">' . $row->nombreclase . '</td>
             <td width="60" style="border:solid 1px black;" valign="bottom"  align="center" class="txtgeneral">';
-                 if($asistencia != FALSE){
-                    $total_falta = 0;
-                        foreach ($asistencia as  $value) {
-                           $total_falta = $total_falta + 1;
+                    if ($asistencia != false) {
+                        $total_falta = 0;
+                        foreach ($asistencia as $value) {
+                            $total_falta = $total_falta + 1;
                         }
-                    $tbl .= '<label>'.$total_falta.'</label>';
-                    }else{
+                        $tbl .= '<label>' . $total_falta . '</label>';
+                    } else {
                         $tbl .= '0';
                     }
-            $tbl .= '</td>
+                    $tbl .= '</td>
             <td width="130"style="border:solid 1px black;" align="center" valign="bottom" class="txtgeneral">';
-            if($calificacion != FALSE){
-                $total_calificacion = $total_calificacion + $calificacion->calificacion;
-                if($calificacion->calificacion < $detalle_configuracion[0]->calificacionminima ){
-                    $total_reprobadas = $total_reprobadas + 1;
-                     $tbl .= '<label style="color:red;">'.$calificacion->calificacion.'</label>';
-                }else{
-                    $total_aprovadas= $total_aprovadas + 1;
-                     $tbl .= '<label>'.$calificacion->calificacion.'</label>';
-                }
-            }else{
-                $tbl .= 'S/C';
-            }
-           $tbl .='</td>
+                    if ($calificacion != false) {
+                        $total_calificacion = $total_calificacion + $calificacion->calificacion;
+                        if ($calificacion->calificacion < $detalle_configuracion[0]->calificacionminima) {
+                            $total_reprobadas = $total_reprobadas + 1;
+                            $tbl .= '<label style="color:red;">' . $calificacion->calificacion . '</label>';
+                        } else {
+                            $total_aprovadas = $total_aprovadas + 1;
+                            $tbl .= '<label>' . $calificacion->calificacion . '</label>';
+                        }
+                    } else {
+                        $tbl .= 'S/C';
+                    }
+                    $tbl .= '</td>
           </tr>';
-  }
-  $promedio_final = $total_calificacion / $total_materia;
-}
-$tbl .='<tr >
+                }
+                $promedio_final = $total_calificacion / $total_materia;
+            }
+            $tbl .= '<tr >
    <td width="60" style="" valign="bottom" align="center"  class="txtgeneral" ></td>
     <td width="290" style="" valign="bottom"  align="center" class="txtgeneral"></td>
     <td width="60" style="border:solid 1px black; background-color:#ccc;" valign="bottom"  align="center" class="txtgeneral">PROMEDIO:</td>
-    <td width="130"style="border:solid 1px black; background-color:#ccc;" valign="bottom"  align="center" class="txtcalificacion">'.number_format($promedio_final,2).'</td>
+    <td width="130"style="border:solid 1px black; background-color:#ccc;" valign="bottom"  align="center" class="txtcalificacion">' . number_format($promedio_final, 2) . '</td>
   </tr>
   <tr >
    <td width="60" style="" valign="bottom" align="center"  class="txtgeneral" ></td>
@@ -224,723 +260,1006 @@ $tbl .='<tr >
    <td width="60" style="" valign="bottom" align="center"  class="txtgeneral" ></td>
     <td width="290" style="" valign="bottom"  align="center" class="txtgeneral"></td>
     <td width="60" class="txtgeneral"></td>
-    <td width="130"style="" valign="bottom"  align="right" class="txtgeneral">APROVADAS: '.$total_aprovadas.'</td>
+    <td width="130"style="" valign="bottom"  align="right" class="txtgeneral">APROVADAS: ' . $total_aprovadas . '</td>
   </tr>
    <tr >
    <td width="60" style="" valign="bottom" align="center"  class="txtgeneral"  ></td>
     <td width="290" style="" valign="bottom"  align="center" style="border-bottom:solid 2px black" class="txtgeneral"></td>
     <td width="60" class="txtgeneral" ></td>
-    <td width="130"style="" valign="bottom"  align="right" class="txtgeneral">REPROVADAS: '.$total_reprobadas.'</td>
+    <td width="130"style="" valign="bottom"  align="right" class="txtgeneral">REPROVADAS: ' . $total_reprobadas . '</td>
   </tr>
    <tr >
    <td width="60" style="" valign="bottom" align="center"  class="txtgeneral"  ></td>
-    <td width="290" style="" valign="bottom"  align="center" style="" class="txtgeneral">LRI.MARÍA ELENA DURÁN HERNÁNDEZ</td> 
+    <td width="290" style="" valign="bottom"  align="center" style="" class="txtgeneral">LRI.MARÍA ELENA DURÁN HERNÁNDEZ</td>
     <td width="190"  colspan= "2"  style="" valign="bottom"  align="center" class="txtgeneral"> *Sin validez oficial </td>
   </tr>
-  <tr > 
+  <tr >
     <td width="540"  colspan= "4"  style="" valign="bottom"  align="left" class="txtnota">   </td>
   </tr>
-  <tr > 
+  <tr >
     <td width="540"  colspan= "4"  style="" valign="bottom"  align="left" class="txtnota">  </td>
   </tr>
-  <tr > 
+  <tr >
     <td width="540"  colspan= "4"  style="" valign="bottom"  align="left" class="txtnota"> NOTA: AC = ACREDITADO, NA= NO ACREDITADO, MÍNIMA APROVATORIA = 7.0 </td>
   </tr>
   ';
-$tbl .='</table>
- 
+            $tbl .= '</table>
+
 
       ';
 
-        $pdf->writeHTML($tbl, true, false, false, false, '');
+            $pdf->writeHTML($tbl, true, false, false, false, '');
 
-    ob_end_clean();
+            ob_end_clean();
 
-
-        $pdf->Output('My-File-Name.pdf', 'I');
-         }else{
-        $data = array(
-            'heading'=>'Error',
-            'message'=>'Intente mas tarde.'
-        );
-         $this->load->view('errors/html/error_general',$data);
+            $pdf->Output('My-File-Name.pdf', 'I');
+        } else {
+            $data = array(
+                'heading' => 'Error',
+                'message' => 'Intente mas tarde.',
+            );
+            $this->load->view('errors/html/error_general', $data);
+        }
     }
-  }
     public function horario($idalumno = '')
     {
         $idalumno = $this->decode($idalumno);
-        if(isset($idalumno) && !empty($idalumno)){
-       $detalle = $this->alumno->showAllMateriasAlumno($idalumno);
-       $idhorario = '';
-       $tabla = "";
-       if(isset($detalle[0]->idhorario) && !empty($detalle[0]->idhorario)){
-        $idhorario =  $detalle[0]->idhorario;
-        $tabla = $this->generarHorarioPDF($idhorario,$idalumno);
-       } 
-        $data = array(
-            'idhorario'=>$idhorario,
-            'idalumno'=>$idalumno,
-            'controller'=>$this,
-            'tabla'=>$tabla
-        ); 
-        $this->load->view('tutor/header');
-        $this->load->view('tutor/alumnos/horario2',$data);
-        $this->load->view('tutor/footer');
-         }else{
-         $data = array(
-            'heading'=>'Error',
-            'message'=>'Error intente mas tarde.'
-        );
-         $this->load->view('errors/html/error_general',$data);
+        if (isset($idalumno) && !empty($idalumno)) {
+            $detalle = $this->alumno->showAllMateriasAlumno($idalumno);
+            $idhorario = '';
+            $tabla = "";
+            if (isset($detalle[0]->idhorario) && !empty($detalle[0]->idhorario)) {
+                $idhorario = $detalle[0]->idhorario;
+                $tabla = $this->generarHorarioPDF($idhorario, $idalumno);
+            }
+             $tabla = $this->horarioMostrar($idhorario, $idalumno);
+            $materias_repetir = $this->horario->materiasARepetir($idalumno);
+            $data = array(
+                'idhorario' => $idhorario,
+                'idalumno' => $idalumno,
+                'controller' => $this,
+                'tabla' => $tabla,
+                'materias_repetir' => $materias_repetir,
+            );
+            $this->load->view('tutor/header');
+            $this->load->view('tutor/alumnos/horario', $data);
+            $this->load->view('tutor/footer');
+        } else {
+            $data = array(
+                'heading' => 'Error',
+                'message' => 'Error intente mas tarde.',
+            );
+            $this->load->view('errors/html/error_general', $data);
+        }
     }
-    }
-     public function obtenerCalificacion($idhorario='',$idalumno = '')
+     public function horarioMostrar($idhorario = '', $idalumno = '')
     {
-      # code...
-      $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel);
-     $unidades =  $this->grupo->unidades($this->session->idplantel);
-     $materias = $this->alumno->showAllMaterias($idhorario);
-     $total_unidades =0;
-      $tabla ="";
-       $tabla .= '  <table class="table table-hover table-striped">
-       <thead class="bg-teal"> 
+        if ((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno))) {
+
+            $tabla = '
+        <style type="text/css">
+.txthorario{
+   font-size:12px;
+}
+.txttutor{
+   font-size:10px;
+}
+.txtdia{
+  font-size:14px;
+   font-weight: bold;
+   background-color:#ccc;
+}
+  .tblhorario tr td
+                {
+                    border:0px solid black;
+                }
+
+</style>';
+
+            $tabla .= '<table class="table table-hover table-striped"  > ';
+            $tabla .= ' <thead class="bg-teal"> ';
+            $tabla .= '<td   >Hora</td>';
+            $tabla .= '<td   >Lunes</td>';
+            $tabla .= '<td  >Martes</td>';
+            $tabla .= '<td >Miercoles</td>';
+            $tabla .= '<td  >Jueves</td>';
+            $tabla .= '<td  >Viernes</td>';
+
+            $tabla .= ' </thead>';
+            $array_materias_reprobadas = array();
+            $materias_reprobadas = $this->alumno->obtenerTodasMateriaReprobadasActivas($idalumno);
+            if (isset($materias_reprobadas) && !empty($materias_reprobadas)) {
+                foreach ($materias_reprobadas as $row) {
+                    array_push($array_materias_reprobadas, $row->idmateriaprincipal);
+                }
+            }
+            $reprobadas = implode(",", $array_materias_reprobadas);
+
+            $lunesAll = $this->horario->showAllDiaHorarioSinDua($idhorario, $reprobadas);
+
+            foreach ($lunesAll as $row) {
+                $tabla .= '<tr>';
+                $tabla .= '<td  ><strong>' . $row->hora . '</strong></td>';
+                $tabla .= '<td >' . $row->lunes . '</td>';
+                $tabla .= '<td  >' . $row->martes . '</td>';
+                $tabla .= '<td >' . $row->miercoles . '</td>';
+                $tabla .= '<td  >' . $row->jueves . '</td>';
+                $tabla .= '<td >' . $row->viernes . '</td>';
+
+                $tabla .= '</tr>';
+            }
+            $tabla .= '</table>';
+
+            return $tabla;
+        }
+    }
+    public function obtenerCalificacion($idhorario = '', $idalumno = '')
+    {
+        # code...
+        $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel);
+        $unidades = $this->grupo->unidades($this->session->idplantel);
+        $materias = $this->alumno->showAllMaterias($idhorario);
+        $total_unidades = 0;
+        $tabla = "";
+        $tabla .= '  <table class="table table-hover table-striped">
+       <thead class="bg-teal">
       <th>#</th>
       <th>Nombre de Materia</th>';
-       foreach($unidades as $block):
-          $total_unidades +=1;
-        $tabla .= '<th><strong>'.$block->nombreunidad.'</strong></th>';
-       endforeach; 
-          $tabla .= '<th>C. Final</th>';
-      $tabla .= '</thead>';
-      $c = 1;
-      if (isset($materias) && !empty($materias)) {
- $suma_calificacion = 0;
-      foreach($materias as $row){
-        //$alumn = $al->getAlumn();
-         $suma_calificacion = 0;
-        $tabla .= '<tr>
-        <td>'.$c++.'</td>
-        <td><strong>'.$row->nombreclase.'</strong><br><small>( '.$row->nombre.' '.$row->apellidop.' '.$row->apellidom.'</small>)</td>';
-      foreach($unidades as $block):
-      $val = $this->grupo->obtenerCalificacion($idalumno, $block->idunidad, $row->idhorariodetalle);
-      
-        $tabla .= '<td>';
-        if($val != false ){ 
-             $suma_calificacion = $suma_calificacion + $val->calificacion;
-            if($val->calificacion >= $detalle_configuracion[0]->calificacionminima){
-                 $tabla .='<label style="color:green;">'.$val->calificacion.'</label>'; 
-            }else{
-                $tabla .='<label style="color:red;">'.$val->calificacion.'</label>';
-            } 
-        }else{
-           $tabla .='<label>No registrado</label>';
-        } 
-      $tabla .= '</td>';
-      endforeach;
- $tabla .= '<td>';
-      $calificacion_final = number_format($suma_calificacion / $total_unidades,2);
-      if(validar_calificacion($calificacion_final,$detalle_configuracion[0]->calificacionminima )){
-      $tabla .='<label style="color:red;">'.number_format($suma_calificacion / $total_unidades,2).'</label>'; 
-      }else{
-          $tabla .='<label style="color:green;">'.number_format($suma_calificacion / $total_unidades,2).'</label>'; 
-      }
-      $tabla .= '</td>';
-        $tabla .= '</tr>';
-      
+        foreach ($unidades as $block):
+            $total_unidades += 1;
+            $tabla .= '<th><strong>' . $block->nombreunidad . '</strong></th>';
+        endforeach;
+        $tabla .= '<th>C. Final</th>';
+        $tabla .= '</thead>';
+        $c = 1;
+        if (isset($materias) && !empty($materias)) {
+            $suma_calificacion = 0;
+            foreach ($materias as $row) {
+                //$alumn = $al->getAlumn();
+                $suma_calificacion = 0;
+                $tabla .= '<tr>
+        <td>' . $c++ . '</td>
+        <td><strong>' . $row->nombreclase . '</strong><br><small>( ' . $row->nombre . ' ' . $row->apellidop . ' ' . $row->apellidom . '</small>)</td>';
+                foreach ($unidades as $block):
+                    $val = $this->grupo->obtenerCalificacion($idalumno, $block->idunidad, $row->idhorariodetalle);
 
-      }
-  }
-      $tabla .= '</table>';
-      return $tabla;
+                    $tabla .= '<td>';
+                    if ($val != false) {
+                        $suma_calificacion = $suma_calificacion + $val->calificacion;
+                        if ($val->calificacion >= $detalle_configuracion[0]->calificacionminima) {
+                            $tabla .= '<label style="color:green;">' . $val->calificacion . '</label>';
+                        } else {
+                            $tabla .= '<label style="color:red;">' . $val->calificacion . '</label>';
+                        }
+                    } else {
+                        $tabla .= '<label>No registrado</label>';
+                    }
+                    $tabla .= '</td>';
+                endforeach;
+                $tabla .= '<td>';
+                $calificacion_final = number_format($suma_calificacion / $total_unidades, 2);
+                if (validar_calificacion($calificacion_final, $detalle_configuracion[0]->calificacionminima)) {
+                    $tabla .= '<label style="color:red;">' . number_format($suma_calificacion / $total_unidades, 2) . '</label>';
+                } else {
+                    $tabla .= '<label style="color:green;">' . number_format($suma_calificacion / $total_unidades, 2) . '</label>';
+                }
+                $tabla .= '</td>';
+                $tabla .= '</tr>';
+
+            }
+        }
+        $tabla .= '</table>';
+        return $tabla;
 
     }
-     public function boletas($idalumno = '')
+    public function boletas($idalumno = '')
     {
         Permission::grant(uri_string());
         $idalumno = $this->decode($idalumno);
-        if(isset($idalumno) && !empty($idalumno)){
-        $detalle = $this->alumno->showAllMateriasAlumno($idalumno);
-         if(isset( $detalle[0]->idhorario) && !empty( $detalle[0]->idhorario)){
-        $idhorario = $detalle[0]->idhorario; 
-        $tabla = $this->obtenerCalificacion($idhorario,$idalumno);
-        $datosalumno = $this->alumno->showAllAlumnoId($idalumno);
-        $datoshorario = $this->horario->showNivelGrupo($idhorario); 
-        $unidades =  $this->grupo->unidades($this->session->idplantel); 
-         $data = array(
-            'idhorario'=>$idhorario,
-            'idalumno'=>$idalumno,
-            'tabla'=>$tabla,
-            'datosalumno'=>$datosalumno,
-            'datoshorario'=>$datoshorario,
-            'calificacion'=>$this->obtenerCalificacionAlumnoPorNivel($idhorario,$idalumno),
-            'unidades'=>$unidades,
-            'controller'=>$this
-        );
-        $this->load->view('tutor/header');
-        $this->load->view('tutor/alumnos/boletas',$data);
-        $this->load->view('tutor/footer');
-         }else{
-        $data = array(
-            'heading'=>'Notificación',
-            'message'=>'El Alumno(a) no tiene registrado Calificación.'
-        );
-         $this->load->view('errors/html/error_general',$data);
-    }
-    }else{
-        $data = array(
-            'heading'=>'Error',
-            'message'=>'Intente mas tarde.'
-        );
-         $this->load->view('errors/html/error_general',$data);
-    }
+        if (isset($idalumno) && !empty($idalumno)) {
+            $detalle = $this->alumno->showAllMateriasAlumno($idalumno);
+            if (isset($detalle[0]->idhorario) && !empty($detalle[0]->idhorario)) {
+                $idhorario = $detalle[0]->idhorario;
+                $grupo = $this->alumno->obtenerGrupo($idalumno);
+        if ($grupo != false) {
+            $idhorario = $grupo->idhorario;
+        }
+
+        if ($idhorario != "") {
+
+            
+            $calificacion = "";
+            $tabla = $this->obtenerCalificacion2($idhorario, $idalumno);
+            $datosalumno = $this->alumno->showAllAlumnoId($idalumno);
+            $datoshorario = $this->horario->showNivelGrupo($idhorario);
+            $array_materias_reprobadas = array();
+            $materias_reprobadas = $this->alumno->obtenerTodasMateriaReprobadasActivas($idalumno);
+            if (isset($materias_reprobadas) && !empty($materias_reprobadas)) {
+                foreach ($materias_reprobadas as $row) {
+                    array_push($array_materias_reprobadas, $row->idmateriaprincipal);
+                }
+            }
+            $reprobadas = implode(",", $array_materias_reprobadas);
+
+            $materias = $this->alumno->showAllMaterias($idhorario, $reprobadas);
+            $unidades = $this->grupo->unidades($this->session->idplantel);
+            $idnivelestudio = $datoshorario->idnivelestudio;
+            $idniveleducativo = $datoshorario->idniveleducativo;
+            $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
+            $idperiodo = $datoshorario->idperiodo;
+            $alumno_grupo = $this->grupo->detalleAlumnoGrupo($idalumno, $idperiodo);
+            $total_unidades = 0;
+            $total_materia = 0;
+            if ($materias != false) {
+                foreach ($materias as $row) {
+                    # code...
+                    $total_materia = $total_materia + 1;
+                }
+            }
+            if ($unidades != false) {
+                foreach ($unidades as $row) {
+                    # code...
+                    $total_unidades = $total_unidades + 1;
+                }
+            }
+            $datoscalifiacacion = $this->horario->calificacionGeneralAlumno($idhorario, $idalumno);
+            if ($datoscalifiacacion != false && $total_materia > 0) {
+                $calificacion = ($datoscalifiacacion->calificaciongeneral / $total_unidades) / $total_materia;
+            }
+            $detalle_oportunidad = $this->alumno->detalleOportunidadExamen($this->session->idplantel, 1);
+            $numero_oportunidad = $detalle_oportunidad->numero;
+            $detalle_siguiente_oportunidad = $this->alumno->siguienteOportunidadExamen($this->session->idplantel, $numero_oportunidad);
+            $detalle_calificacion = $this->alumno->calificacionAlumno($idalumno, $idhorario, $detalle_oportunidad->idoportunidadexamen);
+
+            $total_aprovadas = 0;
+            $total_reprovadas = 0;
+            if ($detalle_calificacion) {
+                foreach ($detalle_calificacion as $row) {
+                    if (validar_calificacion($row->calificacion, $detalle_configuracion[0]->calificacion_minima)) {
+                        //REPROVADAS
+                        $total_reprovadas += 1;
+                    } else {
+                        //APROBADAS
+                        $total_aprovadas += 1;
+                    }
+                }
+            }
+
+            $calificacion_minima = $detalle_configuracion[0]->calificacion_minima;
+            $reprovatorio_permitido = $detalle_configuracion[0]->reprovandas_minima;
+
+            $estatus_alumno = calcularReprovado($idnivelestudio, $idniveleducativo, $total_materia, $total_aprovadas, $total_reprovadas, $reprovatorio_permitido, $calificacion, $calificacion_minima);
+            $mostrar_estatus = mostrarReprovado($idnivelestudio, $idniveleducativo, $total_materia, $total_aprovadas, $total_reprovadas, $reprovatorio_permitido, $calificacion, $calificacion_minima);
+
+            $data = array(
+                'idhorario' => $idhorario,
+                'idalumno' => $idalumno,
+                'tabla' => $tabla,
+                'datosalumno' => $datosalumno,
+                'datoshorario' => $datoshorario,
+                'calificacion' => $calificacion,
+                'controller' => $this,
+                'estatus_nivel' => $estatus_alumno,
+                'oportunidades' => $this->grupo->showAllOportunidades($this->session->idplantel),
+                'nivel_educativo' => $idniveleducativo,
+                'mostrar_estatus' => $mostrar_estatus,
+                // 'detalle_siguiente_oportunidad'=>$detalle_siguiente_oportunidad
+            );
+            $this->load->view('alumno/header');
+            $this->load->view('alumno/kardex/calificacion', $data);
+            $this->load->view('alumno/footer');
+        } else {
+            $data = array(
+                'idhorario' => $idhorario,
+            );
+           $this->load->view('tutor/header');
+                $this->load->view('tutor/alumnos/boletas', $data);
+                $this->load->view('tutor/footer');
+        }
+              
+            } else {
+                $data = array(
+                    'heading' => 'Notificación',
+                    'message' => 'El Alumno(a) no tiene registrado Calificación.',
+                );
+                $this->load->view('errors/html/error_general', $data);
+            }
+        } else {
+            $data = array(
+                'heading' => 'Error',
+                'message' => 'Intente mas tarde.',
+            );
+            $this->load->view('errors/html/error_general', $data);
+        }
 
     }
-    public function materias($idalumno='')
+     public function obtenerCalificacion2($idhorario = '', $idalumno = '')
+    {
+        # code...
+        Permission::grant(uri_string());
+        $unidades = $this->grupo->unidades($this->session->idplantel);
+        $array_materias_reprobadas = array();
+        $materias_reprobadas = $this->alumno->obtenerTodasMateriaReprobadasActivas($idalumno);
+        if (isset($materias_reprobadas) && !empty($materias_reprobadas)) {
+            foreach ($materias_reprobadas as $row) {
+                array_push($array_materias_reprobadas, $row->idmateriaprincipal);
+            }
+        }
+        $reprobadas = implode(",", $array_materias_reprobadas);
+
+        $materias = $this->alumno->showAllMaterias($idhorario, $reprobadas);
+        $datoshorario = $this->horario->showNivelGrupo($idhorario);
+        $idnivelestudio = $datoshorario->idnivelestudio;
+
+        $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
+        $total_unidades = 0;
+        $total_materia = 0;
+        if ($materias != false) {
+            foreach ($materias as $row) {
+                # code...
+                $total_materia = $total_materia + 1;
+            }
+        }
+        $tabla = "";
+        $tabla .= '<table class="table  table-striped  table-hover">
+        <thead class="bg-teal">
+      <th>#</th>
+      <th>MATERIA</th>';
+        foreach ($unidades as $block):
+            $total_unidades += 1;
+            $tabla .= '<th><strong>' . $block->nombreunidad . '</strong></th>';
+        endforeach;
+        $tabla .= '<th>C. FINAL</th>';
+        $tabla .= '</thead>';
+        $c = 1;
+        if (isset($materias) && !empty($materias)) {
+            $suma_calificacion = 0;
+            foreach ($materias as $row) {
+                //$alumn = $al->getAlumn();
+                $suma_calificacion = 0;
+                $tabla .= '<tr>
+        <td>' . $c++ . '</td>
+        <td>';
+                if ($row->opcion == 0) {
+                    $tabla .= '<label style="color:red;">R: </label>';
+                }
+                $tabla .= '<strong>' . $row->nombreclase . '</strong><br><small>( ' . $row->nombre . ' ' . $row->apellidop . ' ' . $row->apellidom . '</small>)</td>';
+                foreach ($unidades as $block):
+                    $val = $this->grupo->obtenerCalificacion($idalumno, $block->idunidad, $row->idhorariodetalle);
+
+                    $tabla .= '<td>';
+                    if ($val != false) {
+                        $suma_calificacion = $suma_calificacion + $val->calificacion;
+                        if (validar_calificacion($val->calificacion, $detalle_configuracion[0]->calificacion_minima)) {
+                            $tabla .= '<label style="color:red;">' . $val->calificacion . '</label>';
+                        } else {
+                            $tabla .= '<label style="color:green;">' . $val->calificacion . '</label>';
+                        }
+                    } else {
+                        $tabla .= '<label>No registrado</label>';
+                    }
+                    $tabla .= '</td>';
+
+                endforeach;
+                $tabla .= '<td>';
+                $calificacion_final = number_format($suma_calificacion / $total_unidades, 2);
+                if (validar_calificacion($calificacion_final, $detalle_configuracion[0]->calificacion_minima)) {
+                    if ($suma_calificacion > 0.0) {
+                        $tabla .= '<label style="color:red;">' . number_format($suma_calificacion / $total_unidades, 2) . '</label>';
+                    } else {
+                        $tabla .= '<label "> </label>';
+                    }
+                } else {
+                    $tabla .= '<label style="color:green;">' . number_format($suma_calificacion / $total_unidades, 2) . '</label>';
+                }
+                $tabla .= '</td>';
+                $tabla .= '</tr>';
+            }
+        }
+        $tabla .= '</table>';
+        return $tabla;
+    }
+
+    public function obtenerCalificacionPrimaria($idhorario = '', $idalumno = '')
+    {
+        # code...
+        Permission::grant(uri_string());
+        $idplantel = $this->session->idplantel;
+        $datoshorario = $this->horario->showNivelGrupo($idhorario);
+        $idnivelestudio = $datoshorario->idnivelestudio;
+
+        $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
+        $calificaciones = $this->alumno->calificacionFinalPrimaria($idalumno, $idhorario, $idplantel);
+        $tabla = "";
+        $tabla .= '<table class="table  table-striped  table-hover">
+        <thead class="bg-teal">
+         <th>#</th>
+        <th>Nombre de Materia</th>';
+        $tabla .= '<th>C. Final</th>';
+        $tabla .= '</thead>';
+        $c = 1;
+
+        foreach ($calificaciones as $row) {
+            $tabla .= '<tr>';
+            $tabla .= '<td>' . $c++ . '</td>';
+            $tabla .= '<td>' . $row->nombreclase . '</td>';
+
+            if ($row->calificacion < $detalle_configuracion[0]->calificacion_minima) {
+                $tabla .= '<td><strong>NA</strong></td>';
+            } else {
+                $tabla .= '<td>' . $row->calificacion . '</td>';
+            }
+            $tabla .= '</tr>';
+        }
+
+        $tabla .= '</table>';
+        return $tabla;
+    }
+
+    public function materias($idalumno = '')
     {
         Permission::grant(uri_string());
         $materias = $this->alumno->showAllMateriasAlumno($idalumno);
         $alumno = $this->alumno->detalleAlumno($idalumno);
-         $data = array(
-            'materias'=>$materias,
-            'alumno'=>$alumno,
-            'idalumno'=>$idalumno
+        $data = array(
+            'materias' => $materias,
+            'alumno' => $alumno,
+            'idalumno' => $idalumno,
         );
         $this->load->view('tutor/header');
-        $this->load->view('tutor/alumnos/materias',$data);
+        $this->load->view('tutor/alumnos/materias', $data);
         $this->load->view('tutor/footer');
     }
-   
-    public function examen($idhorario='',$idhorariodetalle = '',$idalumno = '')
+
+    public function examen($idhorario = '', $idhorariodetalle = '', $idalumno = '')
     {
         Permission::grant(uri_string());
-      $unidades =  $this->grupo->unidades($this->session->idplantel);
-      $alumns = $this->grupo->alumnosGrupo($idhorario);
-      $detalle = $this->grupo->detalleClase($idhorariodetalle);
-      //var_dump($detalle);
-      $nombreclase = $detalle[0]->nombreclase;
-     // echo $this->obtenerCalificacion($idhorario,$idhorariodetalle);
-      $data = array(
-        'alumnos'=>$alumns,
-        'idhorario'=>$idhorario,
-        'idhorariodetalle'=>$idhorariodetalle,
-        'unidades'=>$unidades,
-        'nombreclase'=>$nombreclase,
-        'tabla' => $this->obtenerCalificacion($idhorario,$idhorariodetalle,$idalumno)
-      );
+        $unidades = $this->grupo->unidades($this->session->idplantel);
+        $alumns = $this->grupo->alumnosGrupo($idhorario);
+        $detalle = $this->grupo->detalleClase($idhorariodetalle);
+        //var_dump($detalle);
+        $nombreclase = $detalle[0]->nombreclase;
+        // echo $this->obtenerCalificacion($idhorario,$idhorariodetalle);
+        $data = array(
+            'alumnos' => $alumns,
+            'idhorario' => $idhorario,
+            'idhorariodetalle' => $idhorariodetalle,
+            'unidades' => $unidades,
+            'nombreclase' => $nombreclase,
+            'tabla' => $this->obtenerCalificacion($idhorario, $idhorariodetalle, $idalumno),
+        );
 
-       $this->load->view('docente/header');
-        $this->load->view('docente/grupo/examen',$data);
+        $this->load->view('docente/header');
+        $this->load->view('docente/grupo/examen', $data);
         $this->load->view('docente/footer');
 
     }
-    public function tareas($idalumno = '',$idnivelestudio = '',$idperiodo = ''){
+    public function tareas($idalumno = '', $idnivelestudio = '', $idperiodo = '')
+    {
         Permission::grant(uri_string());
         $idalumno = $this->decode($idalumno);
         $idperiodo = $this->decode($idperiodo);
-        if((isset($idalumno) && !empty($idalumno)) && (isset($idperiodo) && !empty($idperiodo))){
+        if ((isset($idalumno) && !empty($idalumno)) && (isset($idperiodo) && !empty($idperiodo))) {
             $detalle = $this->alumno->showAllMateriasAlumno($idalumno);
-            if(isset($detalle[0]->idhorario) && !empty($detalle[0]->idhorario)){
+            if (isset($detalle[0]->idhorario) && !empty($detalle[0]->idhorario)) {
                 $idhorario = $detalle[0]->idhorario;
-                $idhorariodetalle =  $detalle[0]->idhorariodetalle;
+                $idhorariodetalle = $detalle[0]->idhorariodetalle;
                 $tareas = $this->alumno->showAllTareaAlumno($idhorario);
                 $data = array(
-                    'tareas'=>$tareas,
-                    'controller'=>$this
+                    'tareas' => $tareas,
+                    'controller' => $this,
                 );
-                    $this->load->view('tutor/header');
-                    $this->load->view('tutor/alumnos/tareas',$data);
-                    $this->load->view('tutor/footer');
-                }else{
+                $this->load->view('tutor/header');
+                $this->load->view('tutor/alumnos/tareas', $data);
+                $this->load->view('tutor/footer');
+            } else {
                 $data = array(
-                    'heading'=>'Notificación',
-                    'message'=>'El Alumno(a) no tiene registrado Tareas.'
+                    'heading' => 'Notificación',
+                    'message' => 'El Alumno(a) no tiene registrado Tareas.',
                 );
-                $this->load->view('errors/html/error_general',$data);
+                $this->load->view('errors/html/error_general', $data);
             }
-        
-         }else{
-        $data = array(
-            'heading'=>'Error',
-            'message'=>'Intente mas tarde.'
-        );
-         $this->load->view('errors/html/error_general',$data);
-    }
+
+        } else {
+            $data = array(
+                'heading' => 'Error',
+                'message' => 'Intente mas tarde.',
+            );
+            $this->load->view('errors/html/error_general', $data);
+        }
     }
 
     public function detalletarea($idtarea = '')
     {
         $idtarea = $this->decode($idtarea);
-        if(isset($idtarea) && !empty($idtarea)){
+        if (isset($idtarea) && !empty($idtarea)) {
             $detalle_tarea = $this->mensaje->detalleTarea($idtarea);
             $data = array(
-                'tarea'=>$detalle_tarea
+                'tarea' => $detalle_tarea,
             );
-             $this->load->view('tutor/header');
-             $this->load->view('tutor/detalle/tarea',$data);
-             $this->load->view('tutor/footer');
+            $this->load->view('tutor/header');
+            $this->load->view('tutor/detalle/tarea', $data);
+            $this->load->view('tutor/footer');
 
-        }else{
-              $data = array(
-                    'heading'=>'Error',
-                    'message'=>'Intente mas tarde.'
-                );
-             $this->load->view('errors/html/error_general',$data);
+        } else {
+            $data = array(
+                'heading' => 'Error',
+                'message' => 'Intente mas tarde.',
+            );
+            $this->load->view('errors/html/error_general', $data);
         }
     }
- 
-     public function asistencias($idalumno='')
+
+    public function asistencias($idalumno = '')
     {
         Permission::grant(uri_string());
-         $idalumno = $this->decode($idalumno);
-        if(isset($idalumno) && !empty($idalumno)){
-       $detalle = $this->alumno->showAllMateriasAlumno($idalumno);
-       if(isset($detalle[0]->idhorario) && !empty($detalle[0]->idhorario)){
-       $idhorario = $detalle[0]->idhorario;
-       $idhorariodetalle =  $detalle[0]->idhorariodetalle;
- 
-        $alumns = $this->grupo->alumnosGrupo($idhorario);
-        $motivo = $this->grupo->motivoAsistencia();
-        $unidades = $this->grupo->unidades($this->session->idplantel);
-        $fechainicio = date("Y-m-d");
-        $fechafin = date("Y-m-d");
-        $table = $this->obetnerAsistencia($idhorario,$fechainicio,$fechafin,$idhorariodetalle,$idalumno);
-        $detalle = $this->grupo->detalleClase($idhorariodetalle);
-        //var_dump($table);
-        $nombreclase = $detalle[0]->nombreclase;
-        $data = array(
-            'alumnos'=>$alumns, 
-            'motivos'=>$motivo,
-            'idhorario'=>$idhorario,
-            'idhorariodetalle'=>$idhorariodetalle,
-            'tabla'=>$table,
-            'nombreclase'=>$nombreclase,
-            'unidades'=>$unidades,
-            'idalumno'=>$idalumno,
-            'controller'=>$this
-        );
-        $this->load->view('tutor/header');
-        $this->load->view('tutor/alumnos/asistencias',$data);
-        $this->load->view('tutor/footer');
-        }else{
+        $idalumno = $this->decode($idalumno);
+        if (isset($idalumno) && !empty($idalumno)) {
+            $detalle = $this->alumno->showAllMateriasAlumno($idalumno);
+            if (isset($detalle[0]->idhorario) && !empty($detalle[0]->idhorario)) {
+                $idhorario = $detalle[0]->idhorario;
+                $idhorariodetalle = $detalle[0]->idhorariodetalle;
+
+                //$alumns = $this->grupo->alumnosGrupo($idhorario);
+                $motivo = $this->grupo->motivoAsistencia();
+                $unidades = $this->grupo->unidades($this->session->idplantel);
+                $fechainicio = date("Y-m-d");
+                $fechafin = date("Y-m-d");
+                $table = $this->obetnerAsistencia($idhorario, $fechainicio, $fechafin, $idhorariodetalle, $idalumno);
+                $detalle = $this->grupo->detalleClase($idhorariodetalle);
+                //var_dump($table);
+                $nombreclase = $detalle[0]->nombreclase;
                 $data = array(
-                    'heading'=>'Notificación',
-                    'message'=>'El Alumno(a) no tiene registrado Asistencia.'
+                    //alumnos' => $alumns,
+                    'motivos' => $motivo,
+                    'idhorario' => $idhorario,
+                    'idhorariodetalle' => $idhorariodetalle,
+                    'tabla' => $table,
+                    'nombreclase' => $nombreclase,
+                    'unidades' => $unidades,
+                    'idalumno' => $idalumno,
+                    'controller' => $this,
                 );
-                $this->load->view('errors/html/error_general',$data);
+                $this->load->view('tutor/header');
+                $this->load->view('tutor/alumnos/asistencias', $data);
+                $this->load->view('tutor/footer');
+            } else {
+                $data = array(
+                    'heading' => 'Notificación',
+                    'message' => 'El Alumno(a) no tiene registrado Asistencia.',
+                );
+                $this->load->view('errors/html/error_general', $data);
             }
-        
-         }else{
-        $data = array(
-            'heading'=>'Error',
-            'message'=>'Intente mas tarde.'
-        );
-         $this->load->view('errors/html/error_general',$data);
-    }
+
+        } else {
+            $data = array(
+                'heading' => 'Error',
+                'message' => 'Intente mas tarde.',
+            );
+            $this->load->view('errors/html/error_general', $data);
+        }
     }
 
-     public function obetnerAsistencia($idhorario,$fechainicio,$fechafin,$idhorariodetalle,$idalumno)
-    { 
+    public function obetnerAsistencia($idhorario, $fechainicio, $fechafin, $idhorariodetalle, $idalumno)
+    {
         Permission::grant(uri_string());
-       //  $alumns = $this->grupo->alumnosGrupo($idhorario);
-         $tabla = "";  
-         $materias = $this->alumno->showAllMaterias($idhorario); 
+        //  $alumns = $this->grupo->alumnosGrupo($idhorario);
+        $tabla = "";
+        $array_materias_reprobadas = array();
+        $materias_reprobadas = $this->alumno->obtenerTodasMateriaReprobadasActivas($idalumno);
+        if (isset($materias_reprobadas) && !empty($materias_reprobadas)) {
+            foreach ($materias_reprobadas as $row) {
+                array_push($array_materias_reprobadas, $row->idmateriaprincipal);
+            }
+        }
+        $reprobadas = implode(",", $array_materias_reprobadas);
+
+        $materias = $this->alumno->showAllMaterias($idhorario, $reprobadas);
         // var_dump($materias);
 
-        $range= ((strtotime($fechafin)-strtotime($fechainicio))+(24*60*60)) /(24*60*60);
+        $range = ((strtotime($fechafin) - strtotime($fechainicio)) + (24 * 60 * 60)) / (24 * 60 * 60);
         //$range= ((strtotime($_GET["finish_at"])-strtotime($_GET["start_at"]))+(24*60*60)) /(24*60*60);
-        
+
         $tabla .= ' <table class="table table-hover table-striped">
                                             <thead class="bg-teal">
             <th>#</th>
-            <th>Nombre</th>';
-            for($i=0;$i<$range;$i++):
-               setlocale(LC_ALL, 'es_ES');
-            $fecha = strftime("%A, %d de %B", strtotime($fechainicio)+($i*(24*60*60)));
+            <th>MATERIA</th>';
+        for ($i = 0; $i < $range; $i++):
+            setlocale(LC_ALL, 'es_ES');
+            $fecha = strftime("%A, %d de %B", strtotime($fechainicio) + ($i * (24 * 60 * 60)));
 
-           $tabla .= '<th>'. utf8_encode($fecha).'</th>';
-           //echo date("d-M",strtotime($_GET["start_at"])+($i*(24*60*60)));
-           endfor;
-           $tabla .= '</thead>';
-            $n = 1;
-             foreach($materias as $row){
-               $tabla .='<tr>';
-               $tabla .='<td>'.$n++.'</td>';
-               $tabla .='<td><strong>'.$row->nombreclase.'</strong><br><small>( '.$row->nombre.' '.$row->apellidop.' '.$row->apellidom.'</small>)</td>';
-             for($i=0;$i<$range;$i++):
-                    $date_at= date("Y-m-d",strtotime($fechainicio)+($i*(24*60*60)));
-                   // $asist = AssistanceData::getByATD($alumn->id,$_GET["team_id"],$date_at);
-                    $asist = $this->grupo->listaAsistencia($idalumno,$idhorario,$date_at,$idhorariodetalle);
-                        
+            $tabla .= '<th>' . utf8_encode($fecha) . '</th>';
+            //echo date("d-M",strtotime($_GET["start_at"])+($i*(24*60*60)));
+        endfor;
+        $tabla .= '</thead>';
+        $n = 1;
+        foreach ($materias as $row) {
+            $tabla .= '<tr>';
+            $tabla .= '<td>' . $n++ . '</td>';
+            $tabla .= '<td>';
+                if ($row->opcion == 0) {
+                    $tabla .= '<label style="color:red;">R: </label>';
+                }
 
-
+             $tabla .= '<strong>' . $row->nombreclase . '</strong><br><small>( ' . $row->nombre . ' ' . $row->apellidop . ' ' . $row->apellidom . '</small>)</td>';
+            for ($i = 0; $i < $range; $i++):
+                $date_at = date("Y-m-d", strtotime($fechainicio) + ($i * (24 * 60 * 60)));
+                // $asist = AssistanceData::getByATD($alumn->id,$_GET["team_id"],$date_at);
+                $asist = $this->grupo->listaAsistencia($idalumno, $idhorario, $date_at, $row->idhorariodetalle);
+ 
                 $tabla .= '<td>';
-                 if($asist != false){ 
-                      switch ($asist->idmotivo) {
-                          case 1:
-                              # code...
-                                $tabla .='<span class="label label-success">'.$asist->nombremotivo.'</span>';
-                                
+                if ($asist != false) {
+                    switch ($asist->idmotivo) {
+                        case 1:
+                            # code...
+                            $tabla .= '<span class="label label-success">' . $asist->nombremotivo . '</span>';
 
                             break;
-                                  case 2:
-                                  $tabla .='<span class="label label-warning">'.$asist->nombremotivo.'</span>';
-                                  
-                              break;
-                                  case 3:
-                                  $tabla .='<span class="label label-info">'.$asist->nombremotivo.'</span>';
-                              
-                                  
-                              break;
-                                  case 4:
-                                  $tabla .='<span class="label label-danger">'.$asist->nombremotivo.'</span>';
-                                  
-                                  # code...
-                              break;
-                          
-                          default:
-                              # code...
-                              break;
-                      }
-                 }else{
-                    $tabla .= "No registrado";
-                 }
-                   
+                        case 2:
+                            $tabla .= '<span class="label label-warning">' . $asist->nombremotivo . '</span>';
+
+                            break;
+                        case 3:
+                            $tabla .= '<span class="label label-info">' . $asist->nombremotivo . '</span>';
+
+                            break;
+                        case 4:
+                            $tabla .= '<span class="label label-danger">' . $asist->nombremotivo . '</span>';
+
+                            # code...
+                            break;
+
+                        default:
+                            # code...
+                            break;
+                    }
+                } else {
+                    $tabla .= "No registrado.";
+                }
+
                 $tabla .= '</td>';
-             endfor; 
-                $tabla .= '</tr>';
-                
+            endfor;
+            $tabla .= '</tr>';
 
-            }
-$tabla .= '</table>';
- 
-return $tabla;
+        }
+        $tabla .= '</table>';
 
+        return $tabla;
 
     }
 
-
-      public function obetnerAsistenciaAlu($idalumno,$idhorario,$idhorariodetalle,$fechainicio,$fechafin,$idmotivo)
-    { 
+    public function obetnerAsistenciaAlu($idalumno, $idhorario, $idhorariodetalle, $fechainicio, $fechafin, $idmotivo)
+    {
         Permission::grant(uri_string());
-        $idhorario =$this->decode($idhorario); 
-        $idhorariodetalle = $this->decode($idhorariodetalle); 
-        $idalumno = $this->decode($idalumno); 
-        if((isset($idhorario) && !empty($idhorario)) &&
-        (isset($idhorariodetalle) && !empty($idhorariodetalle)) &&
-        (isset($idalumno) && !empty($idalumno)) &&
-        (isset($fechainicio) && !empty($fechainicio)) &&
-        (isset($fechafin) && !empty($fechafin)) &&
-        (isset($idmotivo) ) ){
-       //  $alumns = $this->grupo->alumnosGrupo($idhorario);
-         $tabla = "";  
-         $materias = $this->alumno->showAllMaterias($idhorario); 
-        // var_dump($materias);
+        $idhorario = $this->decode($idhorario);
+        $idhorariodetalle = $this->decode($idhorariodetalle);
+        $idalumno = $this->decode($idalumno);
+        if ((isset($idhorario) && !empty($idhorario)) &&
+            (isset($idhorariodetalle) && !empty($idhorariodetalle)) &&
+            (isset($idalumno) && !empty($idalumno)) &&
+            (isset($fechainicio) && !empty($fechainicio)) &&
+            (isset($fechafin) && !empty($fechafin)) &&
+            (isset($idmotivo))) {
+            //  $alumns = $this->grupo->alumnosGrupo($idhorario);
+              $tabla = "";
+        $array_materias_reprobadas = array();
+        $materias_reprobadas = $this->alumno->obtenerTodasMateriaReprobadasActivas($idalumno);
+        if (isset($materias_reprobadas) && !empty($materias_reprobadas)) {
+            foreach ($materias_reprobadas as $row) {
+                array_push($array_materias_reprobadas, $row->idmateriaprincipal);
+            }
+        }
+        $reprobadas = implode(",", $array_materias_reprobadas);
 
-        $range= ((strtotime($fechafin)-strtotime($fechainicio))+(24*60*60)) /(24*60*60);
-        //$range= ((strtotime($_GET["finish_at"])-strtotime($_GET["start_at"]))+(24*60*60)) /(24*60*60);
+        $materias = $this->alumno->showAllMaterias($idhorario, $reprobadas);
         
-        $tabla .= '  <table id="tablageneral2" class="table table-striped   dt-responsive nowrap" cellspacing="0" width="100%">
-            <thead class="bg-teal"> 
+            // var_dump($materias);
+
+            $range = ((strtotime($fechafin) - strtotime($fechainicio)) + (24 * 60 * 60)) / (24 * 60 * 60);
+            //$range= ((strtotime($_GET["finish_at"])-strtotime($_GET["start_at"]))+(24*60*60)) /(24*60*60);
+
+            $tabla .= '  <table id="tablageneral2" class="table table-striped   dt-responsive nowrap" cellspacing="0" width="100%">
+            <thead class="bg-teal">
             <th>#</th>
             <th>Nombre</th>';
-            for($i=0;$i<$range;$i++):
-           setlocale(LC_ALL, 'es_ES');
-                       
-            $fecha = strftime("%A, %d de %B", strtotime($fechainicio)+($i*(24*60*60)));
-             $domingo = date('N',strtotime($fechainicio)+($i*(24*60*60)));
-            if($domingo != '7' ){
-                 if($domingo != '6' ){
-                    $tabla .= '<th>'. utf8_encode($fecha).'</th>';
-                 }
-            }
-           //echo date("d-M",strtotime($_GET["start_at"])+($i*(24*60*60)));
-           endfor;
-           $tabla .= '</thead>';
-            $n = 1;
-             foreach($materias as $row){
-               $tabla .='<tr>';
-               $tabla .='<td>'.$n++.'</td>';
-               $tabla .='<td><strong>'.$row->nombreclase.'</strong><br><small>( '.$row->nombre.' '.$row->apellidop.' '.$row->apellidom.'</small>)</td>';
-             for($i=0;$i<$range;$i++):
-                    $date_at= date("Y-m-d",strtotime($fechainicio)+($i*(24*60*60)));
-                        $domingo = date('N',strtotime($fechainicio)+($i*(24*60*60)));
-                   // $asist = AssistanceData::getByATD($alumn->id,$_GET["team_id"],$date_at);
-                    $asist = $this->grupo->listaAsistenciaBuscar($idalumno,$idhorario,$date_at,$idhorariodetalle,$idmotivo);
-                        
+            for ($i = 0; $i < $range; $i++):
+                setlocale(LC_ALL, 'es_ES');
 
-                  if($domingo != '7' ){
-                      if($domingo != '6' ){
-                $tabla .= '<td>';
-                 if($asist != false){ 
-                      switch ($asist->idmotivo) {
-                          case 1:
-                              # code...
-                                $tabla .='<span class="label label-success">'.$asist->nombremotivo.'</span>';
-                                
-
-                            break;
-                                  case 2:
-                                  $tabla .='<span class="label label-warning">'.$asist->nombremotivo.'</span>';
-                                  
-                              break;
-                                  case 3:
-                                  $tabla .='<span class="label label-info">'.$asist->nombremotivo.'</span>';
-                              
-                                  
-                              break;
-                                  case 4:
-                                  $tabla .='<span class="label label-danger">'.$asist->nombremotivo.'</span>';
-                                  
-                                  # code...
-                              break;
-                          
-                          default:
-                              # code...
-                              break;
-                      }
-                 }else{
-                    $tabla .= "No registrado";
-                 }
-                   
-                $tabla .= '</td>';
-                  }
+                $fecha = strftime("%A, %d de %B", strtotime($fechainicio) + ($i * (24 * 60 * 60)));
+                $domingo = date('N', strtotime($fechainicio) + ($i * (24 * 60 * 60)));
+                if ($domingo != '7') {
+                    if ($domingo != '6') {
+                        $tabla .= '<th>' . utf8_encode($fecha) . '</th>';
+                    }
                 }
-             endfor; 
+                //echo date("d-M",strtotime($_GET["start_at"])+($i*(24*60*60)));
+            endfor;
+            $tabla .= '</thead>';
+            $n = 1;
+            foreach ($materias as $row) {
+                $tabla .= '<tr>';
+                $tabla .= '<td>' . $n++ . '</td>';
+                $tabla .= '<td>';
+                  if ($row->opcion == 0) {
+                    $tabla .= '<label style="color:red;">R: </label>';
+                }
+
+                $tabla .= ' <strong>' . $row->nombreclase . '</strong><br><small>( ' . $row->nombre . ' ' . $row->apellidop . ' ' . $row->apellidom . '</small>)</td>';
+                for ($i = 0; $i < $range; $i++):
+                    $date_at = date("Y-m-d", strtotime($fechainicio) + ($i * (24 * 60 * 60)));
+                    $domingo = date('N', strtotime($fechainicio) + ($i * (24 * 60 * 60)));
+                    // $asist = AssistanceData::getByATD($alumn->id,$_GET["team_id"],$date_at);
+                    $asist = $this->grupo->listaAsistenciaBuscar($idalumno, $idhorario, $date_at,  $row->idhorariodetalle, $idmotivo);
+
+                    if ($domingo != '7') {
+                        if ($domingo != '6') {
+                            $tabla .= '<td>';
+                            if ($asist != false) {
+                                switch ($asist->idmotivo) {
+                                    case 1:
+                                        # code...
+                                        $tabla .= '<span class="label label-success">' . $asist->nombremotivo . '</span>';
+
+                                        break;
+                                    case 2:
+                                        $tabla .= '<span class="label label-warning">' . $asist->nombremotivo . '</span>';
+
+                                        break;
+                                    case 3:
+                                        $tabla .= '<span class="label label-info">' . $asist->nombremotivo . '</span>';
+
+                                        break;
+                                    case 4:
+                                        $tabla .= '<span class="label label-danger">' . $asist->nombremotivo . '</span>';
+
+                                        # code...
+                                        break;
+
+                                    default:
+                                        # code...
+                                        break;
+                                }
+                            } else {
+                                $tabla .= "No registrado";
+                            }
+
+                            $tabla .= '</td>';
+                        }
+                    }
+                endfor;
                 $tabla .= '</tr>';
-                
 
-            } 
-             $tabla .= '</table>';
+            }
+            $tabla .= '</table>';
             $detalle = $this->alumno->showAllMateriasAlumno($idalumno);
-             $motivo = $this->grupo->motivoAsistencia();
-        $unidades = $this->grupo->unidades($this->session->idplantel);
-          $nombreclase = $detalle[0]->nombreclase;
-        $data = array( 
-            'motivos'=>$motivo,
-            'idhorario'=>$idhorario,
-            'idhorariodetalle'=>$idhorariodetalle,
-            'tabla'=>$tabla,
-            'nombreclase'=>$nombreclase,
-            'unidades'=>$unidades,
-            'idalumno'=>$idalumno,
-            'controller'=>$this
-        );
-        $this->load->view('tutor/header');
-        $this->load->view('tutor/asistencia/busqueda',$data);
-        $this->load->view('tutor/footer'); 
-   }else{
-        $data = array(
-            'heading'=>'Error',
-            'message'=>'Intente mas tarde.'
-        );
-         $this->load->view('errors/html/error_general',$data);
-    }
+            $motivo = $this->grupo->motivoAsistencia();
+            $unidades = $this->grupo->unidades($this->session->idplantel);
+            $nombreclase = $detalle[0]->nombreclase;
+            $data = array(
+                'motivos' => $motivo,
+                'idhorario' => $idhorario,
+                'idhorariodetalle' => $idhorariodetalle,
+                'tabla' => $tabla,
+                'nombreclase' => $nombreclase,
+                'unidades' => $unidades,
+                'idalumno' => $idalumno,
+                'controller' => $this,
+            );
+            $this->load->view('tutor/header');
+            $this->load->view('tutor/asistencia/busqueda', $data);
+            $this->load->view('tutor/footer');
+        } else {
+            $data = array(
+                'heading' => 'Error',
+                'message' => 'Intente mas tarde.',
+            );
+            $this->load->view('errors/html/error_general', $data);
+        }
 
     }
-function encode($string)
-{
-    $encrypted = $this->encryption->encrypt($string);
-    if ( !empty($string) )
+    public function encode($string)
     {
-        $encrypted = strtr($encrypted, array('/' => '~'));
+        $encrypted = $this->encryption->encrypt($string);
+        if (!empty($string)) {
+            $encrypted = strtr($encrypted, array('/' => '~'));
+        }
+        return $encrypted;
     }
-    return $encrypted;
-}
 
-function decode($string)
-{
-    $string = strtr($string, array('~' => '/'));
-    return $this->encryption->decrypt($string);
-} 
-    public function pagos($idalumno = '',$idnivel = '',$idperiodo = '')
-    { 
+    public function decode($string)
+    {
+        $string = strtr($string, array('~' => '/'));
+        return $this->encryption->decrypt($string);
+    }
+    public function pagos($idalumno = '', $idnivel = '', $idperiodo = '')
+    {
         Permission::grant(uri_string());
         $idalumno = $this->decode($idalumno);
         $idnivel = $this->decode($idnivel);
         $idperiodo = $this->decode($idperiodo);
         //$this->encryption->initialize(array('driver' => 'openssl'));
-        if((isset($idalumno) && !empty($idalumno)) && (isset($idnivel) && !empty($idnivel)) && (isset($idperiodo) && !empty($idperiodo))){
-        $pago_inicio = $this->alumno->showAllPagoInscripcion($idalumno,$idperiodo); 
-        $pago_colegiaturas = $this->alumno->showAllPagoColegiaturas($idalumno,$idperiodo); 
-        $meses = $this->tutor->showAllMeses($idalumno,$idperiodo);
-        $detalle_alumno = $this->alumno->detalleAlumno($idalumno);
-         $nombre_alumno = $detalle_alumno->apellidop.' '.$detalle_alumno->apellidom.' '.$detalle_alumno->nombre;
-        $data = array(
-            'pago_inicio'=>$pago_inicio,
-            'pago_colegiaturas'=>$pago_colegiaturas,
-            'idalumno'=>$this->encode($idalumno),
-            'idperiodo'=>$this->encode($idperiodo),
-            'idnivel'=>$this->encode($idnivel), 
-            'meses'=>$meses,
-             'nombre_alumno'=>$nombre_alumno
-        );
-        $this->load->view('tutor/header');
-        $this->load->view('tutor/alumnos/pagos',$data);
-        $this->load->view('tutor/footer');
-         }else{
-         $data = array(
-            'heading'=>'Error',
-            'message'=>'Error intente mas tarde.'
-        );
-         $this->load->view('errors/html/error_general',$data);
+        if ((isset($idalumno) && !empty($idalumno)) && (isset($idnivel) && !empty($idnivel)) && (isset($idperiodo) && !empty($idperiodo))) {
+            $pago_inicio = $this->alumno->showAllPagoInscripcion($idalumno, $idperiodo);
+            $pago_colegiaturas = $this->alumno->showAllPagoColegiaturas($idalumno, $idperiodo);
+            $meses = $this->tutor->showAllMeses($idalumno, $idperiodo);
+            $detalle_alumno = $this->alumno->detalleAlumno($idalumno);
+            $nombre_alumno = $detalle_alumno->apellidop . ' ' . $detalle_alumno->apellidom . ' ' . $detalle_alumno->nombre;
+            $data = array(
+                'pago_inicio' => $pago_inicio,
+                'pago_colegiaturas' => $pago_colegiaturas,
+                'idalumno' => $this->encode($idalumno),
+                'idperiodo' => $this->encode($idperiodo),
+                'idnivel' => $this->encode($idnivel),
+                'meses' => $meses,
+                'nombre_alumno' => $nombre_alumno,
+            );
+            $this->load->view('tutor/header');
+            $this->load->view('tutor/alumnos/pagos', $data);
+            $this->load->view('tutor/footer');
+        } else {
+            $data = array(
+                'heading' => 'Error',
+                'message' => 'Error intente mas tarde.',
+            );
+            $this->load->view('errors/html/error_general', $data);
+        }
     }
-    }
-    public function pagoi($idalumno = '',$idperiodo = '',$idnivel = '',$tipo = '')
+    public function pagoi($idalumno = '', $idperiodo = '', $idnivel = '', $tipo = '')
     {
         Permission::grant(uri_string());
-         $idalumno = $this->decode($idalumno);
-          $idperiodo = $this->decode($idperiodo);
-           $idnivel = $this->decode($idnivel); 
-        
-        if((isset($idalumno) && !empty($idalumno)) && (isset($idperiodo) && !empty($idperiodo)) && (isset($idnivel) && !empty($idnivel)) && (isset($tipo) && !empty($tipo)))
-        {
-            $mensaje = "";
-        if($tipo == 1){
-            $detalle = $this->tutor->precioColegiatura(2,$idnivel);
-            $mensaje .= "PAGO DE REINSCRIPCIÓN";
-         }elseif($tipo == 2){
-             $detalle = $this->tutor->precioColegiatura(3,$idnivel);
-             $mensaje .= "PAGO DE MENSUALIDAD";
-         }else{
-             $detalle = false;
-         }
+        $idalumno = $this->decode($idalumno);
+        $idperiodo = $this->decode($idperiodo);
+        $idnivel = $this->decode($idnivel);
 
-        if($detalle != false){
-         $descuento = $detalle[0]->descuento;
-          $detalle_alumno = $this->alumno->detalleAlumno($idalumno);
-         $nombre_alumno = $detalle_alumno->apellidop.' '.$detalle_alumno->apellidom.' '.$detalle_alumno->nombre;
-         $data = array( 
-            'idalumno'=>$this->encode($idalumno),
-            'idperiodo'=>$this->encode($idperiodo),
-            'descuento'=>$descuento,
-            'mensaje'=>$mensaje,
-            'idnivel'=>$this->encode($idnivel),
-            'formapago'=>1,
-            'nombre_alumno'=>$nombre_alumno
-        );
-         $this->load->view('tutor/header');
-        $this->load->view('tutor/alumnos/pago_inscripcion',$data);
-        $this->load->view('tutor/footer');
-        
-    }else{
-         $data = array(
-            'heading'=>'Notificación',
-            'message'=>'No se puede pagar por el momento, intente mas tarde.'
-        );
-         $this->load->view('errors/html/error_general',$data);
+        if ((isset($idalumno) && !empty($idalumno)) && (isset($idperiodo) && !empty($idperiodo)) && (isset($idnivel) && !empty($idnivel)) && (isset($tipo) && !empty($tipo))) {
+            $mensaje = "";
+            if ($tipo == 1) {
+                $detalle = $this->tutor->precioColegiatura(2, $idnivel);
+                $mensaje .= "PAGO DE REINSCRIPCIÓN";
+            } elseif ($tipo == 2) {
+                $detalle = $this->tutor->precioColegiatura(3, $idnivel);
+                $mensaje .= "PAGO DE MENSUALIDAD";
+            } else {
+                $detalle = false;
+            }
+
+            if ($detalle != false) {
+                $descuento = $detalle[0]->descuento;
+                $detalle_alumno = $this->alumno->detalleAlumno($idalumno);
+                $nombre_alumno = $detalle_alumno->apellidop . ' ' . $detalle_alumno->apellidom . ' ' . $detalle_alumno->nombre;
+                $data = array(
+                    'idalumno' => $this->encode($idalumno),
+                    'idperiodo' => $this->encode($idperiodo),
+                    'descuento' => $descuento,
+                    'mensaje' => $mensaje,
+                    'idnivel' => $this->encode($idnivel),
+                    'formapago' => 1,
+                    'nombre_alumno' => $nombre_alumno,
+                );
+                $this->load->view('tutor/header');
+                $this->load->view('tutor/alumnos/pago_inscripcion', $data);
+                $this->load->view('tutor/footer');
+
+            } else {
+                $data = array(
+                    'heading' => 'Notificación',
+                    'message' => 'No se puede pagar por el momento, intente mas tarde.',
+                );
+                $this->load->view('errors/html/error_general', $data);
+            }
+        } else {
+            $data = array(
+                'heading' => 'Error',
+                'message' => 'Error intente mas tarde.',
+            );
+            $this->load->view('errors/html/error_general', $data);
+        }
     }
-    }else{
-         $data = array(
-            'heading'=>'Error',
-            'message'=>'Error intente mas tarde.'
-        );
-         $this->load->view('errors/html/error_general',$data);
-    }
-    }
-     public function pagoc($idalumno = '',$idperiodo = '',$idnivel = '',$tipo = '')
+    public function pagoc($idalumno = '', $idperiodo = '', $idnivel = '', $tipo = '')
     {
         date_default_timezone_set("America/Mexico_City");
         Permission::grant(uri_string());
-         $idalumno = $this->decode($idalumno);
-          $idperiodo = $this->decode($idperiodo);
-           $idnivel = $this->decode($idnivel); 
-        
-        if((isset($idalumno) && !empty($idalumno)) && (isset($idperiodo) && !empty($idperiodo)) && (isset($idnivel) && !empty($idnivel)) && (isset($tipo) && !empty($tipo)))
-        {
-            $mensaje = "";
-        if($tipo == 1){
-            $detalle = $this->tutor->precioColegiatura(2,$idnivel);
-            $mensaje .= "PAGO DE REINSCRIPCIÓN";
-         }elseif($tipo == 2){
-             $detalle = $this->tutor->precioColegiatura(3,$idnivel);
-             $mensaje .= "PAGO DE MENSUALIDAD";
-         }else{
-             $detalle = false;
-         }
+        $idalumno = $this->decode($idalumno);
+        $idperiodo = $this->decode($idperiodo);
+        $idnivel = $this->decode($idnivel);
+        $idplantel = $this->session->idplantel;
 
-        if($detalle != false){
-           $detalle_descuento = $this->estadocuenta->descuentoPagosInicio($idalumno,$idperiodo,3);  
-           $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel);
-           $recargo = 0; 
-            if($detalle_descuento[0]->idniveleducativo == 1){
-                  //PRIMARIA  
-                   $dia_actual = date('Y-m-d');
-                   $year_actual = date('Y');
-                   $mes_actual = date('m');
-                     $detalle_configuracion[0]->diaultimorecargo;
-                     $dia_pago =date('Y-m-d',strtotime($detalle_configuracion[0]->diaultimorecargo."-".$mes_actual."-".$year_actual));
-                    if($dia_actual > $dia_pago){
-                        $recargo +=   $detalle_configuracion[0]->totalrecargo;
-                    }else{
-                          $recargo +=   0;
-                    }
-                  
-                }elseif($detalle_descuento[0]->idniveleducativo == 2){
-                     //SECUNDARIA 
+        if ((isset($idalumno) && !empty($idalumno)) && (isset($idperiodo) && !empty($idperiodo)) && (isset($idnivel) && !empty($idnivel)) && (isset($tipo) && !empty($tipo))) {
+            $mensaje = "";
+            if ($tipo == 1) {
+                $detalle = $this->tutor->precioColegiatura(2, $idnivel);
+                $mensaje .= "PAGO DE REINSCRIPCIÓN";
+            } elseif ($tipo == 2) {
+                $detalle = $this->tutor->precioColegiatura(3, $idnivel);
+                $mensaje .= "PAGO DE MENSUALIDAD";
+            } else {
+                $detalle = false;
+            }
+
+            if ($detalle != false) {
+                $detalle_descuento = $this->estadocuenta->descuentoPagosInicio($idalumno, $idperiodo, 3,$idplantel);
+                $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel);
+                $recargo = 0;
+                if ($detalle_descuento[0]->idniveleducativo == 1) {
+                    //PRIMARIA
                     $dia_actual = date('Y-m-d');
-                   $year_actual = date('Y');
-                   $mes_actual = date('m');
-                   $dia_pago =date('Y-m-d',strtotime($detalle_configuracion[0]->diaultimorecargo."-".$mes_actual."-".$year_actual));
-                        if($dia_actual > $dia_pago){
-                            $recargo +=   $detalle_configuracion[0]->totalrecargo;
-                        }else{
-                              $recargo +=  0;
-                        }
-                 
-                }elseif($detalle_descuento[0]->idniveleducativo == 3){
-                  //PREPA 
-                   $dia_actual = date('Y-m-d');
-                   $year_actual = date('Y');
-                   $mes_actual = date('m');
-                   $dia_pago =date('Y-m-d',strtotime($detalle_configuracion[0]->diaultimorecargo."-".$mes_actual."-".$year_actual));
-                      if($dia_actual > $dia_pago){
-                          $recargo +=   $detalle_configuracion[0]->totalrecargo;
-                      }else{
-                            $recargo +=   0;
-                      }
-                 
-                }else{
-                   $recargo = 0;
+                    $year_actual = date('Y');
+                    $mes_actual = date('m');
+                    $detalle_configuracion[0]->diaultimorecargo;
+                    $dia_pago = date('Y-m-d', strtotime($detalle_configuracion[0]->diaultimorecargo . "-" . $mes_actual . "-" . $year_actual));
+                    if ($dia_actual > $dia_pago) {
+                        $recargo += $detalle_configuracion[0]->totalrecargo;
+                    } else {
+                        $recargo += 0;
+                    }
+
+                } elseif ($detalle_descuento[0]->idniveleducativo == 2) {
+                    //SECUNDARIA
+                    $dia_actual = date('Y-m-d');
+                    $year_actual = date('Y');
+                    $mes_actual = date('m');
+                    $dia_pago = date('Y-m-d', strtotime($detalle_configuracion[0]->diaultimorecargo . "-" . $mes_actual . "-" . $year_actual));
+                    if ($dia_actual > $dia_pago) {
+                        $recargo += $detalle_configuracion[0]->totalrecargo;
+                    } else {
+                        $recargo += 0;
+                    }
+
+                } elseif ($detalle_descuento[0]->idniveleducativo == 3) {
+                    //PREPA
+                    $dia_actual = date('Y-m-d');
+                    $year_actual = date('Y');
+                    $mes_actual = date('m');
+                    $dia_pago = date('Y-m-d', strtotime($detalle_configuracion[0]->diaultimorecargo . "-" . $mes_actual . "-" . $year_actual));
+                    if ($dia_actual > $dia_pago) {
+                        $recargo += $detalle_configuracion[0]->totalrecargo;
+                    } else {
+                        $recargo += 0;
+                    }
+
+                } else {
+                    $recargo = 0;
                 }
 
-         $descuento = $detalle[0]->descuento;
-         $meses = $this->tutor->showAllMeses($idalumno,$idperiodo);
-         $detalle_alumno = $this->alumno->detalleAlumno($idalumno);
-         $nombre_alumno = $detalle_alumno->apellidop.' '.$detalle_alumno->apellidom.' '.$detalle_alumno->nombre;
-         $data = array( 
-            'idalumno'=>$this->encode($idalumno),
-            'idperiodo'=>$this->encode($idperiodo),
-            'colegiatura'=>$descuento,
-            'descuento'=>$descuento + $recargo,
-            'mensaje'=>$mensaje,
-            'meses'=>$meses,
-            'msgrecargo'=>'RECARGO',
-            'recargo'=>$recargo,
-            'idnivel'=>$this->encode($idnivel),
-            'formapago'=>1,
-            'nombre_alumno'=>$nombre_alumno
-        );
-         $this->load->view('tutor/header');
-        $this->load->view('tutor/alumnos/pago_colegiatura',$data);
-        $this->load->view('tutor/footer');
-        
-    }else{
-         $data = array(
-            'heading'=>'Notificación',
-            'message'=>'No se puede pagar por el momento, intente mas tarde.'
-        );
-         $this->load->view('errors/html/error_general',$data);
-    }
-    }else{
-         $data = array(
-            'heading'=>'Error',
-            'message'=>'Error intente mas tarde.'
-        );
-         $this->load->view('errors/html/error_general',$data);
-    }
+                $descuento = $detalle[0]->descuento;
+                $meses = $this->tutor->showAllMeses($idalumno, $idperiodo);
+                $detalle_alumno = $this->alumno->detalleAlumno($idalumno);
+                $nombre_alumno = $detalle_alumno->apellidop . ' ' . $detalle_alumno->apellidom . ' ' . $detalle_alumno->nombre;
+                $data = array(
+                    'idalumno' => $this->encode($idalumno),
+                    'idperiodo' => $this->encode($idperiodo),
+                    'colegiatura' => $descuento,
+                    'descuento' => $descuento + $recargo,
+                    'mensaje' => $mensaje,
+                    'meses' => $meses,
+                    'msgrecargo' => 'RECARGO',
+                    'recargo' => $recargo,
+                    'idnivel' => $this->encode($idnivel),
+                    'formapago' => 1,
+                    'nombre_alumno' => $nombre_alumno,
+                );
+                $this->load->view('tutor/header');
+                $this->load->view('tutor/alumnos/pago_colegiatura', $data);
+                $this->load->view('tutor/footer');
+
+            } else {
+                $data = array(
+                    'heading' => 'Notificación',
+                    'message' => 'No se puede pagar por el momento, intente mas tarde.',
+                );
+                $this->load->view('errors/html/error_general', $data);
+            }
+        } else {
+            $data = array(
+                'heading' => 'Error',
+                'message' => 'Error intente mas tarde.',
+            );
+            $this->load->view('errors/html/error_general', $data);
+        }
     }
 
-    public function buscarCP() {
+    public function buscarCP()
+    {
         # code...
         $cp = $_POST['b'];
         $array = $this->alumno->showColonias($cp);
@@ -955,7 +1274,8 @@ function decode($string)
         }
         echo $select;
     }
-        public function buscarMunicipioCP() {
+    public function buscarMunicipioCP()
+    {
         # code...
         $cp = $_POST['b'];
         $array = $this->alumno->showMunicipio($cp);
@@ -970,7 +1290,8 @@ function decode($string)
         echo $select;
     }
 
-    public function buscarEstadoCP() {
+    public function buscarEstadoCP()
+    {
         # code...
         $cp = $_POST['b'];
         $array = $this->alumno->showEstado($cp);
@@ -984,7 +1305,7 @@ function decode($string)
         }
         echo $select;
     }
-    
+
     public function pagotarjeta()
     {
         //PAGO DE REISCRIPCION O INSCRIPCION CON TARJETA
@@ -992,1093 +1313,1249 @@ function decode($string)
         $idperiodo = $this->decode($this->input->post('periodo'));
         $idalumno = $this->decode($this->input->post('alumno'));
         $idnivel = $this->decode($this->input->post('nivel'));
-        if((isset($idnivel) && !empty($idnivel)) && (isset($idperiodo) && !empty($idperiodo)) && (isset($idalumno) && !empty($idalumno))){
+        if ((isset($idnivel) && !empty($idnivel)) && (isset($idperiodo) && !empty($idperiodo)) && (isset($idalumno) && !empty($idalumno))) {
             try {
                 $idtutor = $this->session->idtutor;
                 $detalle_tutor = $this->tutor->detalleTutor($idtutor);
-                $nombretarjetahabiente  = $this->input->post('nombretitular');
-                $calle  = $this->input->post('calletitular');
-                $nombretarjetahabiente  = $this->input->post('nombretitular');
-                $numero  = $this->input->post('numerocasa');
-                $idcolonia  = $this->input->post('colonia');
+                $nombretarjetahabiente = $this->input->post('nombretitular');
+                $calle = $this->input->post('calletitular');
+                $nombretarjetahabiente = $this->input->post('nombretitular');
+                $numero = $this->input->post('numerocasa');
+                $idcolonia = $this->input->post('colonia');
                 $detalle_colonia = $this->tutor->detalleColonia($idcolonia);
-                $cp  = $this->input->post('cp');
-                $descuento  = $this->input->post('descuento'); 
-                $mensaje  = $this->input->post('mensaje');
-                  $folio = generateRandomString();
-                     $validar_mes = $this->estadocuenta->validarAddReincripcion($idalumno,$idperiodo);
-              
-                if($validar_mes == false){
-                        $response = [];
-                        Openpay::setProductionMode(false);
-                        $openpay = Openpay::getInstance('mds4bdhgvbese0knzu2x', 'sk_f95d7349163642fba9f5a71021b3f6d5');
-                        $customer = array(
-                            'name' => strtoupper($nombretarjetahabiente),
-                            'last_name' => '',
-                            'email' => $detalle_tutor->correo,
-                            'phone_number' => $detalle_tutor->telefono,
-                            'address' => array(
-                                'line1' => strtoupper($calle . ' ' . $numero),
-                                'line2' => strtoupper($detalle_colonia[0]->nombrecolonia),
-                                'line3' => '',
-                                'postal_code' => $cp,
-                                'state' => strtoupper($detalle_colonia[0]->nombreestado),
-                                'city' => strtoupper($detalle_colonia[0]->nombremunicipio),
-                                'country_code' => 'MX'));
+                $cp = $this->input->post('cp');
+                $descuento = $this->input->post('descuento');
+                $mensaje = $this->input->post('mensaje');
+                $folio = generateRandomString();
+                $validar_mes = $this->estadocuenta->validarAddReincripcion($idalumno, $idperiodo);
 
-                        $chargeData = array(
-                            'method' => 'card',
-                            'source_id' => $_POST["token_id"],
-                            'amount' => (float) $descuento,
-                            'description' => $mensaje,
-                            'device_session_id' => $_POST["deviceIdHiddenFieldName"],
-                            'customer' => $customer
-                        );
+                if ($validar_mes == false) {
+                    $response = [];
+                    Openpay::setProductionMode(false);
+                    $openpay = Openpay::getInstance('mds4bdhgvbese0knzu2x', 'sk_f95d7349163642fba9f5a71021b3f6d5');
+                    $customer = array(
+                        'name' => strtoupper($nombretarjetahabiente),
+                        'last_name' => '',
+                        'email' => $detalle_tutor->correo,
+                        'phone_number' => $detalle_tutor->telefono,
+                        'address' => array(
+                            'line1' => strtoupper($calle . ' ' . $numero),
+                            'line2' => strtoupper($detalle_colonia[0]->nombrecolonia),
+                            'line3' => '',
+                            'postal_code' => $cp,
+                            'state' => strtoupper($detalle_colonia[0]->nombreestado),
+                            'city' => strtoupper($detalle_colonia[0]->nombremunicipio),
+                            'country_code' => 'MX'));
 
-                        $charge = $openpay->charges->create($chargeData);
-                        $response['charge'] = $charge;  
-                         $idopenpay = $charge->id;
-                         $idorden = $charge->order_id;
-                         $autorizacion = $charge->authorization; 
-                         //SE AGREGA EL PAGO A LA TABLA DE PAGO DE INICIO
-                        $add_cobro = array(
-                            'folio'=>$folio,
-                            'idperiodo'=>$idperiodo,
-                            'idalumno'=>$idalumno, 
-                            'idtipopagocol'=>2,
-                            'descuento'=>$descuento,
-                            'totalrecargo'=>0.00,
-                            'recargo'=>0,
-                            'condonar'=>0,
-                            'idopenpay'=>$idopenpay,
-                            'idorden'=>$idorden, 
-                            'online'=>1,
-                            'pagado'=>1,
-                            'fechapago'=>date('Y-m-d H:i:s'),
-                            'eliminado'=>0,
-                            'idusuario'=> $this->session->user_id,
-                            'fecharegistro'=>date('Y-m-d H:i:s')
-                        );
-                      $idpago =  $this->tutor->addCobroReinscripcion($add_cobro);
+                    $chargeData = array(
+                        'method' => 'card',
+                        'source_id' => $_POST["token_id"],
+                        'amount' => (float) $descuento,
+                        'description' => $mensaje,
+                        'device_session_id' => $_POST["deviceIdHiddenFieldName"],
+                        'customer' => $customer,
+                    );
 
-                      //SE AGREGA EL PAGO A LA TABLA DE DETALLE DE PAGO DE INICIO
+                    $charge = $openpay->charges->create($chargeData);
+                    $response['charge'] = $charge;
+                    $idopenpay = $charge->id;
+                    $idorden = $charge->order_id;
+                    $autorizacion = $charge->authorization;
+                    //SE AGREGA EL PAGO A LA TABLA DE PAGO DE INICIO
+                    $add_cobro = array(
+                        'folio' => $folio,
+                        'idperiodo' => $idperiodo,
+                        'idalumno' => $idalumno,
+                        'idtipopagocol' => 2,
+                        'descuento' => $descuento,
+                        'totalrecargo' => 0.00,
+                        'recargo' => 0,
+                        'condonar' => 0,
+                        'idopenpay' => $idopenpay,
+                        'idorden' => $idorden,
+                        'online' => 1,
+                        'pagado' => 1,
+                        'fechapago' => date('Y-m-d H:i:s'),
+                        'eliminado' => 0,
+                        'idusuario' => $this->session->user_id,
+                        'fecharegistro' => date('Y-m-d H:i:s'),
+                    );
+                    $idpago = $this->tutor->addCobroReinscripcion($add_cobro);
 
-                      $data_detalle_cobro = array(
-                          'idpago'=>$idpago,
-                          'idformapago'=>2,
-                          'autorizacion'=>$autorizacion,
-                          'descuento'=>$descuento,
-                          'idusuario'=> $this->session->user_id,
-                          'fecharegistro'=>date('Y-m-d H:i:s')
-                      );
-                        $this->tutor->addDetallePagoInicio($data_detalle_cobro); 
+                    //SE AGREGA EL PAGO A LA TABLA DE DETALLE DE PAGO DE INICIO
 
-                              $data = array(  
-                                'tipo_error'=>0, 
-                                'msg'=>"AUTORIZACIÓN: ".$autorizacion
-                            ); 
-                           echo json_encode($data);
-                        }else{
-                               $data = array(  
-                                'tipo_error'=>1, 
-                                'msg'=>"La Reinscripción o Inscripción ya se encuentra pagado."
-                            ); 
-                           echo json_encode($data);
-                        }
-                       
-                    } catch (OpenpayApiTransactionError $e) {
-                        $mensaje = "";
-                        switch ($e->getErrorCode()) {
-                            case 3001:
-                                $mensaje .= "La tarjeta fue declinada.";
-                                break;
-                            case 3002:
-                                $mensaje .= "La tarjeta ha expirado.";
-                                break;
-                            case 3003:
-                                $mensaje .= "La tarjeta no tiene fondos suficientes.";
-                                break;
-                            case 3004:
-                                $mensaje .= "La tarjeta ha sido identificada como una tarjeta robada.";
-                                break;
-                            case 3005:
-                                $mensaje .= "La tarjeta ha sido rechazada por el sistema antifraudes.";
-                                break;
-                            case 3006:
-                                $mensaje .= "La operación no esta permitida para este cliente o esta transacción.";
-                                break;
-                            case 3007:
-                                $mensaje .= "Deprecado. La tarjeta fue declinada.";
-                                break;
-                            case 3008:
-                                $mensaje .= "La tarjeta no es soportada en transacciones en línea.";
-                                break;
-                            case 3009:
-                                $mensaje .= "La tarjeta fue reportada como perdida.";
-                                break;
-                            case 3010:
-                                $mensaje .= "El banco ha restringido la tarjeta.";
-                                break;
-                            case 3011:
-                                $mensaje .= "El banco ha solicitado que la tarjeta sea retenida. Contacte al banco.";
-                                break;
-                            case 3012:
-                                $mensaje .= "Se requiere solicitar al banco autorización para realizar este pago.";
-                                break;
+                    $data_detalle_cobro = array(
+                        'idpago' => $idpago,
+                        'idformapago' => 2,
+                        'autorizacion' => $autorizacion,
+                        'descuento' => $descuento,
+                        'idusuario' => $this->session->user_id,
+                        'fecharegistro' => date('Y-m-d H:i:s'),
+                    );
+                    $this->tutor->addDetallePagoInicio($data_detalle_cobro);
 
-                            default:
-                                $mensaje .= $e->getMessage();
-                                break;
-                        }
-                          $data = array(  
-                                'tipo_error'=>1, 
-                                'msg'=>$mensaje
-                            ); 
-                           echo json_encode($data);
-                        
-                    } catch (OpenpayApiRequestError $e) {
+                    $data = array(
+                        'tipo_error' => 0,
+                        'msg' => "AUTORIZACIÓN: " . $autorizacion,
+                    );
+                    echo json_encode($data);
+                } else {
+                    $data = array(
+                        'tipo_error' => 1,
+                        'msg' => "La Reinscripción o Inscripción ya se encuentra pagado.",
+                    );
+                    echo json_encode($data);
+                }
+
+            } catch (OpenpayApiTransactionError $e) {
+                $mensaje = "";
+                switch ($e->getErrorCode()) {
+                    case 3001:
+                        $mensaje .= "La tarjeta fue declinada.";
+                        break;
+                    case 3002:
+                        $mensaje .= "La tarjeta ha expirado.";
+                        break;
+                    case 3003:
+                        $mensaje .= "La tarjeta no tiene fondos suficientes.";
+                        break;
+                    case 3004:
+                        $mensaje .= "La tarjeta ha sido identificada como una tarjeta robada.";
+                        break;
+                    case 3005:
+                        $mensaje .= "La tarjeta ha sido rechazada por el sistema antifraudes.";
+                        break;
+                    case 3006:
+                        $mensaje .= "La operación no esta permitida para este cliente o esta transacción.";
+                        break;
+                    case 3007:
+                        $mensaje .= "Deprecado. La tarjeta fue declinada.";
+                        break;
+                    case 3008:
+                        $mensaje .= "La tarjeta no es soportada en transacciones en línea.";
+                        break;
+                    case 3009:
+                        $mensaje .= "La tarjeta fue reportada como perdida.";
+                        break;
+                    case 3010:
+                        $mensaje .= "El banco ha restringido la tarjeta.";
+                        break;
+                    case 3011:
+                        $mensaje .= "El banco ha solicitado que la tarjeta sea retenida. Contacte al banco.";
+                        break;
+                    case 3012:
+                        $mensaje .= "Se requiere solicitar al banco autorización para realizar este pago.";
+                        break;
+
+                    default:
                         $mensaje .= $e->getMessage();
-                          $data = array(  
-                                'tipo_error'=>1, 
-                                'msg'=>$mensaje
-                            ); 
-                           echo json_encode($data);
-                         
-                    } catch (OpenpayApiConnectionError $e) {
-                        $mensaje .= $e->getMessage();
-                          $data = array(  
-                                'tipo_error'=>1, 
-                                'msg'=>$mensaje
-                            ); 
-                           echo json_encode($data);
-                       
-                    } catch (OpenpayApiAuthError $e) {
-                        $mensaje .= $e->getMessage();
-                           $data = array(  
-                                'tipo_error'=>1, 
-                                'msg'=>$mensaje
-                            ); 
-                           echo json_encode($data);
-                      
-                    } catch (OpenpayApiError $e) {
-                        $mensaje .= $e->getMessage();
-                         $data = array(  
-                                'tipo_error'=>1, 
-                                'msg'=>$mensaje
-                            ); 
-                           echo json_encode($data);
-                         
-                    } catch (Exception $e) {
-                        $mensaje .= $e->getMessage();
-                           $data = array(  
-                                'tipo_error'=>1, 
-                                'msg'=>$mensaje
-                            ); 
-                           echo json_encode($data);
-                        
-                    }
-                      }else{
-         $data = array(
-            'heading'=>'Error',
-            'message'=>'Error intente mas tarde.'
-        );
-         $this->load->view('errors/html/error_general',$data);
+                        break;
+                }
+                $data = array(
+                    'tipo_error' => 1,
+                    'msg' => $mensaje,
+                );
+                echo json_encode($data);
+
+            } catch (OpenpayApiRequestError $e) {
+                $mensaje .= $e->getMessage();
+                $data = array(
+                    'tipo_error' => 1,
+                    'msg' => $mensaje,
+                );
+                echo json_encode($data);
+
+            } catch (OpenpayApiConnectionError $e) {
+                $mensaje .= $e->getMessage();
+                $data = array(
+                    'tipo_error' => 1,
+                    'msg' => $mensaje,
+                );
+                echo json_encode($data);
+
+            } catch (OpenpayApiAuthError $e) {
+                $mensaje .= $e->getMessage();
+                $data = array(
+                    'tipo_error' => 1,
+                    'msg' => $mensaje,
+                );
+                echo json_encode($data);
+
+            } catch (OpenpayApiError $e) {
+                $mensaje .= $e->getMessage();
+                $data = array(
+                    'tipo_error' => 1,
+                    'msg' => $mensaje,
+                );
+                echo json_encode($data);
+
+            } catch (Exception $e) {
+                $mensaje .= $e->getMessage();
+                $data = array(
+                    'tipo_error' => 1,
+                    'msg' => $mensaje,
+                );
+                echo json_encode($data);
+
+            }
+        } else {
+            $data = array(
+                'heading' => 'Error',
+                'message' => 'Error intente mas tarde.',
+            );
+            $this->load->view('errors/html/error_general', $data);
         }
     }
-    
-     public function pagotarjetac()
+
+    public function pagotarjetac()
     {
         //PAGO DE COLEGIATURA CON TARJETAS
+        Permission::grant(uri_string());
+        $idplantel = $this->session->idplantel;
+        $idperiodo = $this->decode($this->input->post('periodo'));
+        $idalumno = $this->decode($this->input->post('alumno'));
+        $idnivel = $this->decode($this->input->post('nivel'));
+        if ((isset($idnivel) && !empty($idnivel)) && (isset($idperiodo) && !empty($idperiodo)) && (isset($idalumno) && !empty($idalumno))) {
+            $meses = $this->tutor->showAllMeses($idalumno, $idperiodo);
+            try {
+                $idtutor = $this->session->idtutor;
+                $detalle_tutor = $this->tutor->detalleTutor($idtutor);
+                $nombretarjetahabiente = $this->input->post('nombretitular');
+                $calle = $this->input->post('calletitular');
+                $nombretarjetahabiente = $this->input->post('nombretitular');
+                $numero = $this->input->post('numerocasa');
+                $idcolonia = $this->input->post('colonia');
+                $detalle_colonia = $this->tutor->detalleColonia($idcolonia);
+                $cp = $this->input->post('cp');
+                $descuento = $this->input->post('descuento');
+                $mensaje = $this->input->post('mensaje');
+                $idmes = $this->input->post('mespago');
+                $detalle_mes = $this->tutor->detalleMes($idmes);
+                $validar_mes = $this->estadocuenta->validarAddColegiatura($idalumno, $idperiodo, $idmes);
+
+                if ($validar_mes == false) {
+                    $detalle_descuento = $this->estadocuenta->descuentoPagosInicio($idalumno, $idperiodo, 3,$idplantel);
+                    $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel);
+                    $recargo = 0;
+                    if ($detalle_descuento[0]->idniveleducativo == 1) {
+                        //PRIMARIA
+                        $dia_actual = date('Y-m-d');
+                        $year_actual = date('Y');
+                        $mes_actual = date('m');
+                        $detalle_configuracion[0]->diaultimorecargo;
+                        $dia_pago = date('Y-m-d', strtotime($detalle_configuracion[0]->diaultimorecargo . "-" . $mes_actual . "-" . $year_actual));
+                        if ($dia_actual > $dia_pago) {
+                            $recargo += $detalle_configuracion[0]->totalrecargo;
+                        } else {
+                            $recargo += 0;
+                        }
+
+                    } elseif ($detalle_descuento[0]->idniveleducativo == 2) {
+                        //SECUNDARIA
+                        $dia_actual = date('Y-m-d');
+                        $year_actual = date('Y');
+                        $mes_actual = date('m');
+                        $dia_pago = date('Y-m-d', strtotime($detalle_configuracion[0]->diaultimorecargo . "-" . $mes_actual . "-" . $year_actual));
+                        if ($dia_actual > $dia_pago) {
+                            $recargo += $detalle_configuracion[0]->totalrecargo;
+                        } else {
+                            $recargo += 0;
+                        }
+
+                    } elseif ($detalle_descuento[0]->idniveleducativo == 3) {
+                        //PREPA
+                        $dia_actual = date('Y-m-d');
+                        $year_actual = date('Y');
+                        $mes_actual = date('m');
+                        $dia_pago = date('Y-m-d', strtotime($detalle_configuracion[0]->diaultimorecargo . "-" . $mes_actual . "-" . $year_actual));
+                        if ($dia_actual > $dia_pago) {
+                            $recargo += $detalle_configuracion[0]->totalrecargo;
+                        } else {
+                            $recargo += 0;
+                        }
+
+                    } else {
+                        $recargo = 0;
+                    }
+
+                    $folio = generateRandomString();
+                    $response = [];
+                    Openpay::setProductionMode(false);
+                    $openpay = Openpay::getInstance('mds4bdhgvbese0knzu2x', 'sk_f95d7349163642fba9f5a71021b3f6d5');
+                    $customer = array(
+                        'name' => strtoupper($nombretarjetahabiente),
+                        'last_name' => '',
+                        'email' => $detalle_tutor->correo,
+                        'phone_number' => $detalle_tutor->telefono,
+                        'address' => array(
+                            'line1' => strtoupper($calle . ' ' . $numero),
+                            'line2' => strtoupper($detalle_colonia[0]->nombrecolonia),
+                            'line3' => '',
+                            'postal_code' => $cp,
+                            'state' => strtoupper($detalle_colonia[0]->nombreestado),
+                            'city' => strtoupper($detalle_colonia[0]->nombremunicipio),
+                            'country_code' => 'MX'));
+
+                    $chargeData = array(
+                        'method' => 'card',
+                        'source_id' => $_POST["token_id"],
+                        'amount' => (float) $descuento,
+                        'description' => $mensaje . " DE " . $detalle_mes[0]->nombremes,
+                        'device_session_id' => $_POST["deviceIdHiddenFieldName"],
+                        'customer' => $customer,
+                    );
+
+                    $charge = $openpay->charges->create($chargeData);
+                    $response['charge'] = $charge;
+                    $idopenpay = $charge->id;
+                    $idorden = $charge->order_id;
+                    $autorizacion = $charge->authorization;
+                    //SE CREA UN REGISTRO EN LA TABLA ESTADO DE CUENTA
+                    $add_estadocuenta = array(
+                        'folio' => $folio,
+                        'idperiodo' => $idperiodo,
+                        'idalumno' => $idalumno,
+                        'descuento' => $descuento,
+                        'totalrecargo' => $recargo,
+                        'recargo' => ($recargo > 0) ? 1 : 0,
+                        'condonar' => 0,
+                        'idopenpay' => $idopenpay,
+                        'idorden' => $idorden,
+                        'online' => 1,
+                        'pagado' => 1,
+                        'fechapago' => date('Y-m-d H:i:s'),
+                        'eliminado' => 0,
+                        'idusuario' => $this->session->user_id,
+                        'fecharegistro' => date('Y-m-d H:i:s'),
+                    );
+                    $idestadocuenta = $this->tutor->addEstadoCuenta($add_estadocuenta);
+                    //SE CRE UN REGISTRO EN LA TABLA DETALLE DE PAGO
+                    $add_detalle_pago = array(
+                        'idestadocuenta' => $idestadocuenta,
+                        'idformapago' => 2,
+                        'descuento' => $descuento,
+                        'autorizacion' => $autorizacion,
+                        'fechapago' => date('Y-m-d H:i:s'),
+                        'idusuario' => $this->session->user_id,
+                        'fecharegistro' => date('Y-m-d H:i:s'),
+                    );
+                    $data_detalle_estadocuenta = array(
+                        'idestadocuenta' => $idestadocuenta,
+                        'idmes' => $idmes,
+                        'idusuario' => $this->session->user_id,
+                        'fecharegistro' => date('Y-m-d H:i:s'),
+                    );
+                    $this->tutor->addDetalleEstadoCuenta($data_detalle_estadocuenta);
+                    $this->tutor->addDetallePago($add_detalle_pago);
+                    $data = array(
+                        'tipo_error' => 0,
+                        'msg' => "AUTORIZACIÓN: " . $autorizacion,
+                    );
+                    echo json_encode($data);
+                } else {
+                    $data = array(
+                        'tipo_error' => 1,
+                        'msg' => "EL Mes ya se encuentra pagado.",
+                    );
+                    echo json_encode($data);
+                }
+
+            } catch (OpenpayApiTransactionError $e) {
+                $mensaje = "";
+                switch ($e->getErrorCode()) {
+                    case 3001:
+                        $mensaje .= "La tarjeta fue declinada.";
+                        break;
+                    case 3002:
+                        $mensaje .= "La tarjeta ha expirado.";
+                        break;
+                    case 3003:
+                        $mensaje .= "La tarjeta no tiene fondos suficientes.";
+                        break;
+                    case 3004:
+                        $mensaje .= "La tarjeta ha sido identificada como una tarjeta robada.";
+                        break;
+                    case 3005:
+                        $mensaje .= "La tarjeta ha sido rechazada por el sistema antifraudes.";
+                        break;
+                    case 3006:
+                        $mensaje .= "La operación no esta permitida para este cliente o esta transacción.";
+                        break;
+                    case 3007:
+                        $mensaje .= "Deprecado. La tarjeta fue declinada.";
+                        break;
+                    case 3008:
+                        $mensaje .= "La tarjeta no es soportada en transacciones en línea.";
+                        break;
+                    case 3009:
+                        $mensaje .= "La tarjeta fue reportada como perdida.";
+                        break;
+                    case 3010:
+                        $mensaje .= "El banco ha restringido la tarjeta.";
+                        break;
+                    case 3011:
+                        $mensaje .= "El banco ha solicitado que la tarjeta sea retenida. Contacte al banco.";
+                        break;
+                    case 3012:
+                        $mensaje .= "Se requiere solicitar al banco autorización para realizar este pago.";
+                        break;
+
+                    default:
+                        $mensaje .= $e->getMessage();
+                        break;
+                }
+
+                $data = array(
+                    'tipo_error' => 1,
+                    'msg' => $mensaje,
+                );
+                echo json_encode($data);
+
+            } catch (OpenpayApiRequestError $e) {
+                $mensaje .= $e->getMessage();
+                $data = array(
+                    'tipo_error' => 1,
+                    'msg' => $mensaje,
+                );
+                echo json_encode($data);
+
+            } catch (OpenpayApiConnectionError $e) {
+                $mensaje .= $e->getMessage();
+                $data = array(
+                    'tipo_error' => 1,
+                    'msg' => $mensaje,
+                );
+                echo json_encode($data);
+
+            } catch (OpenpayApiAuthError $e) {
+                $mensaje .= $e->getMessage();
+                $data = array(
+                    'tipo_error' => 1,
+                    'msg' => $mensaje,
+                );
+                echo json_encode($data);
+
+            } catch (OpenpayApiError $e) {
+                $mensaje .= $e->getMessage();
+                $data = array(
+                    'tipo_error' => 1,
+                    'msg' => $mensaje,
+                );
+                echo json_encode($data);
+
+            } catch (Exception $e) {
+                $mensaje .= $e->getMessage();
+                $data = array(
+                    'tipo_error' => 1,
+                    'msg' => $mensaje,
+                );
+                echo json_encode($data);
+
+            }
+
+        } else {
+            $data = array(
+                'heading' => 'Error',
+                'message' => 'Error intente mas tarde.',
+            );
+            $this->load->view('errors/html/error_general', $data);
+        }
+    }
+
+    public function pagotienda()
+    {
+        //PAGO DE INSCRIPCION O REINCRIPCION EN PAGO EN TIENDA
         Permission::grant(uri_string());
         $idperiodo = $this->decode($this->input->post('periodo'));
         $idalumno = $this->decode($this->input->post('alumno'));
         $idnivel = $this->decode($this->input->post('nivel'));
-        if((isset($idnivel) && !empty($idnivel)) && (isset($idperiodo) && !empty($idperiodo)) && (isset($idalumno) && !empty($idalumno))){
-          $meses = $this->tutor->showAllMeses($idalumno,$idperiodo);
+        if ((isset($idnivel) && !empty($idnivel)) && (isset($idperiodo) && !empty($idperiodo)) && (isset($idalumno) && !empty($idalumno))) {
             try {
                 $idtutor = $this->session->idtutor;
                 $detalle_tutor = $this->tutor->detalleTutor($idtutor);
-                $nombretarjetahabiente  = $this->input->post('nombretitular');
-                $calle  = $this->input->post('calletitular');
-                $nombretarjetahabiente  = $this->input->post('nombretitular');
-                $numero  = $this->input->post('numerocasa');
-                $idcolonia  = $this->input->post('colonia');
-                $detalle_colonia = $this->tutor->detalleColonia($idcolonia);
-                $cp  = $this->input->post('cp');
-                $descuento  = $this->input->post('descuento'); 
-                $mensaje  = $this->input->post('mensaje');
-                $idmes  = $this->input->post('mespago');
-                $detalle_mes = $this->tutor->detalleMes($idmes);
-                $validar_mes = $this->estadocuenta->validarAddColegiatura($idalumno,$idperiodo,$idmes);
-              
-                if($validar_mes == false){
-                     $detalle_descuento = $this->estadocuenta->descuentoPagosInicio($idalumno,$idperiodo,3);  
-           $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel);
-           $recargo = 0; 
-            if($detalle_descuento[0]->idniveleducativo == 1){
-                  //PRIMARIA  
-                   $dia_actual = date('Y-m-d');
-                   $year_actual = date('Y');
-                   $mes_actual = date('m');
-                     $detalle_configuracion[0]->diaultimorecargo;
-                     $dia_pago =date('Y-m-d',strtotime($detalle_configuracion[0]->diaultimorecargo."-".$mes_actual."-".$year_actual));
-                    if($dia_actual > $dia_pago){
-                        $recargo +=   $detalle_configuracion[0]->totalrecargo;
-                    }else{
-                          $recargo +=   0;
-                    }
-                  
-                }elseif($detalle_descuento[0]->idniveleducativo == 2){
-                     //SECUNDARIA 
-                    $dia_actual = date('Y-m-d');
-                   $year_actual = date('Y');
-                   $mes_actual = date('m');
-                   $dia_pago =date('Y-m-d',strtotime($detalle_configuracion[0]->diaultimorecargo."-".$mes_actual."-".$year_actual));
-                        if($dia_actual > $dia_pago){
-                            $recargo +=   $detalle_configuracion[0]->totalrecargo;
-                        }else{
-                              $recargo +=  0;
-                        }
-                 
-                }elseif($detalle_descuento[0]->idniveleducativo == 3){
-                  //PREPA 
-                   $dia_actual = date('Y-m-d');
-                   $year_actual = date('Y');
-                   $mes_actual = date('m');
-                   $dia_pago =date('Y-m-d',strtotime($detalle_configuracion[0]->diaultimorecargo."-".$mes_actual."-".$year_actual));
-                      if($dia_actual > $dia_pago){
-                          $recargo +=   $detalle_configuracion[0]->totalrecargo;
-                      }else{
-                            $recargo +=   0;
-                      }
-                 
-                }else{
-                   $recargo = 0;
+                $descuento = $this->input->post('descuento');
+                $mensaje = $this->input->post('mensaje');
+                $folio = generateRandomString();
+                $validar_pago = $this->estadocuenta->validarAddReincripcion($idalumno, $idperiodo);
+                if ($validar_pago == false) {
+                    $response = [];
+                    Openpay::setProductionMode(false);
+                    $openpay = Openpay::getInstance('mds4bdhgvbese0knzu2x', 'sk_f95d7349163642fba9f5a71021b3f6d5');
+                    $customer = array(
+                        'name' => strtoupper($detalle_tutor->nombre),
+                        'last_name' => strtoupper($detalle_tutor->apellidop . ' ' . $detalle_tutor->apellidom),
+                        'email' => $detalle_tutor->correo,
+                        'phone_number' => $detalle_tutor->telefono,
+                    );
+                    $chargeData = array(
+                        'method' => 'store',
+                        'amount' => $descuento,
+                        'description' => $mensaje,
+                        'customer' => $customer);
+                    $charge = $openpay->charges->create($chargeData);
+                    $response['charge'] = $charge;
+                    $idopenpay = $charge->id;
+                    $idorden = $charge->order_id;
+                    $autorizacion = $charge->authorization;
+                    $barcode = $charge->payment_method->barcode_url;
+                    $referencia = $charge->payment_method->reference;
+                    $add_cobro = array(
+                        'folio' => $folio,
+                        'idperiodo' => $idperiodo,
+                        'idalumno' => $idalumno,
+                        'idtipopagocol' => 2,
+                        'descuento' => $descuento,
+                        'totalrecargo' => 0.00,
+                        'recargo' => 0,
+                        'condonar' => 0,
+                        'idopenpay' => $idopenpay,
+                        'idorden' => $idorden,
+                        'online' => 1,
+                        'pagado' => 0,
+                        'fechapago' => date('Y-m-d H:i:s'),
+                        'eliminado' => 0,
+                        'idusuario' => $this->session->user_id,
+                        'fecharegistro' => date('Y-m-d H:i:s'),
+                    );
+                    $idpago = $this->tutor->addCobroReinscripcion($add_cobro);
+                    //AGREGAR COBRO A TABLA DETALLE DE PAGO INICIO
+                    $data_detalle_cobro = array(
+                        'idpago' => $idpago,
+                        'idformapago' => 1,
+                        'autorizacion' => $autorizacion,
+                        'descuento' => $descuento,
+                        'idusuario' => $this->session->user_id,
+                        'fecharegistro' => date('Y-m-d H:i:s'),
+                    );
+                    $this->tutor->addDetallePagoInicio($data_detalle_cobro);
+
+                    $data = array(
+                        'tipo_error' => 0,
+                        'msg' => "Descargar el Documento.",
+                        'referencia' => $referencia,
+                    );
+                    echo json_encode($data);
+                } else {
+                    $data = array(
+                        'tipo_error' => 1,
+                        'msg' => "La Reinscripción o Inscripción ya se encuentra pagado.",
+                    );
+                    echo json_encode($data);
                 }
 
-                $folio = generateRandomString();
-                        $response = [];
-                        Openpay::setProductionMode(false);
-                        $openpay = Openpay::getInstance('mds4bdhgvbese0knzu2x', 'sk_f95d7349163642fba9f5a71021b3f6d5');
-                        $customer = array(
-                            'name' => strtoupper($nombretarjetahabiente),
-                            'last_name' => '',
-                            'email' => $detalle_tutor->correo,
-                            'phone_number' => $detalle_tutor->telefono,
-                            'address' => array(
-                                'line1' => strtoupper($calle . ' ' . $numero),
-                                'line2' => strtoupper($detalle_colonia[0]->nombrecolonia),
-                                'line3' => '',
-                                'postal_code' => $cp,
-                                'state' => strtoupper($detalle_colonia[0]->nombreestado),
-                                'city' => strtoupper($detalle_colonia[0]->nombremunicipio),
-                                'country_code' => 'MX'));
+            } catch (OpenpayApiTransactionError $e) {
+                $mensaje = "";
+                switch ($e->getErrorCode()) {
+                    case 3001:
+                        $mensaje .= "La tarjeta fue declinada.";
+                        break;
+                    case 3002:
+                        $mensaje .= "La tarjeta ha expirado.";
+                        break;
+                    case 3003:
+                        $mensaje .= "La tarjeta no tiene fondos suficientes.";
+                        break;
+                    case 3004:
+                        $mensaje .= "La tarjeta ha sido identificada como una tarjeta robada.";
+                        break;
+                    case 3005:
+                        $mensaje .= "La tarjeta ha sido rechazada por el sistema antifraudes.";
+                        break;
+                    case 3006:
+                        $mensaje .= "La operación no esta permitida para este cliente o esta transacción.";
+                        break;
+                    case 3007:
+                        $mensaje .= "Deprecado. La tarjeta fue declinada.";
+                        break;
+                    case 3008:
+                        $mensaje .= "La tarjeta no es soportada en transacciones en línea.";
+                        break;
+                    case 3009:
+                        $mensaje .= "La tarjeta fue reportada como perdida.";
+                        break;
+                    case 3010:
+                        $mensaje .= "El banco ha restringido la tarjeta.";
+                        break;
+                    case 3011:
+                        $mensaje .= "El banco ha solicitado que la tarjeta sea retenida. Contacte al banco.";
+                        break;
+                    case 3012:
+                        $mensaje .= "Se requiere solicitar al banco autorización para realizar este pago.";
+                        break;
 
-                        $chargeData = array(
-                            'method' => 'card',
-                            'source_id' => $_POST["token_id"],
-                            'amount' => (float) $descuento,
-                            'description' => $mensaje." DE ".$detalle_mes[0]->nombremes,
-                            'device_session_id' => $_POST["deviceIdHiddenFieldName"],
-                            'customer' => $customer
-                        );
+                    default:
+                        $mensaje .= $e->getMessage();
+                        break;
+                }
+                $data = array(
+                    'tipo_error' => 1,
+                    'msg' => $mensaje,
+                );
+                echo json_encode($data);
 
-                        $charge = $openpay->charges->create($chargeData);
-                        $response['charge'] = $charge;  
-                         $idopenpay = $charge->id;
-                         $idorden = $charge->order_id;
-                         $autorizacion = $charge->authorization;   
-                        //SE CREA UN REGISTRO EN LA TABLA ESTADO DE CUENTA
-                        $add_estadocuenta = array(
-                            'folio'=>$folio, 
-                            'idperiodo'=>$idperiodo,
-                            'idalumno'=>$idalumno, 
-                            'descuento'=>$descuento,
-                            'totalrecargo'=>$recargo,
-                            'recargo'=>($recargo > 0) ? 1 : 0 ,
-                            'condonar'=>0,
-                            'idopenpay'=>$idopenpay,
-                            'idorden'=>$idorden, 
-                            'online'=>1,
-                            'pagado'=>1,
-                            'fechapago'=>date('Y-m-d H:i:s'), 
-                            'eliminado'=>0,
-                            'idusuario'=> $this->session->user_id,
-                            'fecharegistro'=>date('Y-m-d H:i:s')
-                        );
-                        $idestadocuenta = $this->tutor->addEstadoCuenta($add_estadocuenta);
-                        //SE CRE UN REGISTRO EN LA TABLA DETALLE DE PAGO
-                        $add_detalle_pago = array(
-                            'idestadocuenta'=>$idestadocuenta,
-                            'idformapago'=>2,
-                            'descuento'=>$descuento,
-                            'autorizacion'=>$autorizacion,
-                            'fechapago'=>date('Y-m-d H:i:s'), 
-                            'idusuario'=> $this->session->user_id,
-                            'fecharegistro'=>date('Y-m-d H:i:s')
-                        );
-                        $data_detalle_estadocuenta = array(
-                            'idestadocuenta'=>$idestadocuenta,
-                            'idmes'=>$idmes,
-                            'idusuario'=> $this->session->user_id,
-                            'fecharegistro'=>date('Y-m-d H:i:s')
-                        );
-                        $this->tutor->addDetalleEstadoCuenta($data_detalle_estadocuenta);
-                        $this->tutor->addDetallePago($add_detalle_pago); 
-                              $data = array(  
-                                'tipo_error'=>0, 
-                                'msg'=>"AUTORIZACIÓN: ".$autorizacion
-                            ); 
-                           echo json_encode($data);
-                        }else{
-                               $data = array(  
-                                'tipo_error'=>1, 
-                                'msg'=>"EL Mes ya se encuentra pagado."
-                            ); 
-                           echo json_encode($data);
-                        }
-                       
-                    } catch (OpenpayApiTransactionError $e) {
-                        $mensaje = "";
-                        switch ($e->getErrorCode()) {
-                            case 3001:
-                                $mensaje .= "La tarjeta fue declinada.";
-                                break;
-                            case 3002:
-                                $mensaje .= "La tarjeta ha expirado.";
-                                break;
-                            case 3003:
-                                $mensaje .= "La tarjeta no tiene fondos suficientes.";
-                                break;
-                            case 3004:
-                                $mensaje .= "La tarjeta ha sido identificada como una tarjeta robada.";
-                                break;
-                            case 3005:
-                                $mensaje .= "La tarjeta ha sido rechazada por el sistema antifraudes.";
-                                break;
-                            case 3006:
-                                $mensaje .= "La operación no esta permitida para este cliente o esta transacción.";
-                                break;
-                            case 3007:
-                                $mensaje .= "Deprecado. La tarjeta fue declinada.";
-                                break;
-                            case 3008:
-                                $mensaje .= "La tarjeta no es soportada en transacciones en línea.";
-                                break;
-                            case 3009:
-                                $mensaje .= "La tarjeta fue reportada como perdida.";
-                                break;
-                            case 3010:
-                                $mensaje .= "El banco ha restringido la tarjeta.";
-                                break;
-                            case 3011:
-                                $mensaje .= "El banco ha solicitado que la tarjeta sea retenida. Contacte al banco.";
-                                break;
-                            case 3012:
-                                $mensaje .= "Se requiere solicitar al banco autorización para realizar este pago.";
-                                break;
+            } catch (OpenpayApiRequestError $e) {
+                $mensaje .= $e->getMessage();
+                $data = array(
+                    'tipo_error' => 1,
+                    'msg' => $mensaje,
+                );
+                echo json_encode($data);
 
-                            default:
-                                $mensaje .= $e->getMessage();
-                                break;
-                        }
-                         
-                         $data = array(  
-                                'tipo_error'=>1, 
-                                'msg'=>$mensaje
-                            ); 
-                           echo json_encode($data);
-                        
-                    } catch (OpenpayApiRequestError $e) {
-                        $mensaje .= $e->getMessage(); 
-                             $data = array(  
-                                'tipo_error'=>1, 
-                                'msg'=>$mensaje
-                            ); 
-                           echo json_encode($data);
-                         
-                    } catch (OpenpayApiConnectionError $e) {
-                        $mensaje .= $e->getMessage(); 
-                              $data = array(  
-                                'tipo_error'=>1, 
-                                'msg'=>$mensaje
-                            ); 
-                           echo json_encode($data);
-                       
-                    } catch (OpenpayApiAuthError $e) {
-                        $mensaje .= $e->getMessage(); 
-                              $data = array(  
-                                'tipo_error'=>1, 
-                                'msg'=>$mensaje
-                            ); 
-                           echo json_encode($data);
-                      
-                    } catch (OpenpayApiError $e) {
-                        $mensaje .= $e->getMessage(); 
-                              $data = array(  
-                                'tipo_error'=>1, 
-                                'msg'=>$mensaje
-                            ); 
-                           echo json_encode($data);
-                         
-                    } catch (Exception $e) {
-                        $mensaje .= $e->getMessage(); 
-                              $data = array(  
-                                'tipo_error'=>1, 
-                                'msg'=>$mensaje
-                            ); 
-                           echo json_encode($data);
-                        
-                    }
-                    
-                      }else{
-         $data = array(
-            'heading'=>'Error',
-            'message'=>'Error intente mas tarde.'
-        );
-         $this->load->view('errors/html/error_general',$data);
+            } catch (OpenpayApiConnectionError $e) {
+                $mensaje .= $e->getMessage();
+                $data = array(
+                    'tipo_error' => 1,
+                    'msg' => $mensaje,
+                );
+                echo json_encode($data);
+
+            } catch (OpenpayApiAuthError $e) {
+                $mensaje .= $e->getMessage();
+                $data = array(
+                    'tipo_error' => 1,
+                    'msg' => $mensaje,
+                );
+                echo json_encode($data);
+
+            } catch (OpenpayApiError $e) {
+                $mensaje .= $e->getMessage();
+                $data = array(
+                    'tipo_error' => 1,
+                    'msg' => $mensaje,
+                );
+                echo json_encode($data);
+
+            } catch (Exception $e) {
+                $mensaje .= $e->getMessage();
+                $data = array(
+                    'tipo_error' => 1,
+                    'msg' => $mensaje,
+                );
+                echo json_encode($data);
+
+            }
+        } else {
+            $data = array(
+                'heading' => 'Error',
+                'message' => 'Error intente mas tarde.',
+            );
+            $this->load->view('errors/html/error_general', $data);
         }
     }
- 
- 
- public function pagotienda()
- {
-     //PAGO DE INSCRIPCION O REINCRIPCION EN PAGO EN TIENDA
-     Permission::grant(uri_string());
+    public function pagotiendac()
+    {
+        //PAGO EN TIENDA DE LAS COLEGIATURAS
+        Permission::grant(uri_string());
         $idperiodo = $this->decode($this->input->post('periodo'));
         $idalumno = $this->decode($this->input->post('alumno'));
         $idnivel = $this->decode($this->input->post('nivel'));
-        if((isset($idnivel) && !empty($idnivel)) && (isset($idperiodo) && !empty($idperiodo)) && (isset($idalumno) && !empty($idalumno))){
+        if ((isset($idnivel) && !empty($idnivel)) && (isset($idperiodo) && !empty($idperiodo)) && (isset($idalumno) && !empty($idalumno))) {
+            $meses = $this->tutor->showAllMeses($idalumno, $idperiodo);
             try {
-                 $idtutor = $this->session->idtutor;
+                $idtutor = $this->session->idtutor;
                 $detalle_tutor = $this->tutor->detalleTutor($idtutor);
-                $descuento  = $this->input->post('descuento'); 
-                $mensaje  = $this->input->post('mensaje');
-                $folio = generateRandomString();
-                $validar_pago = $this->estadocuenta->validarAddReincripcion($idalumno,$idperiodo);
-                if($validar_pago == false){
-                        $response = [];
-                        Openpay::setProductionMode(false);
-                        $openpay = Openpay::getInstance('mds4bdhgvbese0knzu2x', 'sk_f95d7349163642fba9f5a71021b3f6d5');
-                         $customer = array(
-                            'name' => strtoupper($detalle_tutor->nombre),
-                            'last_name' => strtoupper($detalle_tutor->apellidop.' '.$detalle_tutor->apellidom),
-                            'email' => $detalle_tutor->correo,
-                            'phone_number' => $detalle_tutor->telefono
-                        );
-                        $chargeData = array(
-                                    'method' => 'store',
-                                    'amount' => $descuento,
-                                    'description' => $mensaje,
-                                     'customer' => $customer); 
-                        $charge = $openpay->charges->create($chargeData);
-                        $response['charge'] = $charge;  
-                         $idopenpay = $charge->id;
-                         $idorden = $charge->order_id;
-                         $autorizacion = $charge->authorization;
-                         $barcode = $charge->payment_method->barcode_url;
-                         $referencia =$charge->payment_method->reference; 
-                        $add_cobro = array(
-                            'folio'=>$folio,
-                            'idperiodo'=>$idperiodo,
-                            'idalumno'=>$idalumno, 
-                            'idtipopagocol'=>2,
-                            'descuento'=>$descuento,
-                            'totalrecargo'=>0.00,
-                            'recargo'=>0,
-                            'condonar'=>0,
-                            'idopenpay'=>$idopenpay,
-                            'idorden'=>$idorden, 
-                            'online'=>1,
-                            'pagado'=>0,
-                            'fechapago'=>date('Y-m-d H:i:s'),
-                            'eliminado'=>0,
-                            'idusuario'=> $this->session->user_id,
-                            'fecharegistro'=>date('Y-m-d H:i:s')
-                        );
-                        $idpago = $this->tutor->addCobroReinscripcion($add_cobro);
-                        //AGREGAR COBRO A TABLA DETALLE DE PAGO INICIO
-                        $data_detalle_cobro = array(
-                          'idpago'=>$idpago,
-                          'idformapago'=>1,
-                          'autorizacion'=>$autorizacion,
-                          'descuento'=>$descuento,
-                          'idusuario'=> $this->session->user_id,
-                          'fecharegistro'=>date('Y-m-d H:i:s')
-                      );
-                        $this->tutor->addDetallePagoInicio($data_detalle_cobro);
- 
-                               $data = array(  
-                                'tipo_error'=>0, 
-                                'msg'=>"Descargar el Documento.",
-                                'referencia'=>$referencia
-                            ); 
-                           echo json_encode($data);
-                        }else{
-                             $data = array(  
-                                'tipo_error'=>1, 
-                                'msg'=>"La Reinscripción o Inscripción ya se encuentra pagado.", 
-                            ); 
-                           echo json_encode($data);
-                        }
-                       
-                    } catch (OpenpayApiTransactionError $e) {
-                        $mensaje = "";
-                        switch ($e->getErrorCode()) {
-                            case 3001:
-                                $mensaje .= "La tarjeta fue declinada.";
-                                break;
-                            case 3002:
-                                $mensaje .= "La tarjeta ha expirado.";
-                                break;
-                            case 3003:
-                                $mensaje .= "La tarjeta no tiene fondos suficientes.";
-                                break;
-                            case 3004:
-                                $mensaje .= "La tarjeta ha sido identificada como una tarjeta robada.";
-                                break;
-                            case 3005:
-                                $mensaje .= "La tarjeta ha sido rechazada por el sistema antifraudes.";
-                                break;
-                            case 3006:
-                                $mensaje .= "La operación no esta permitida para este cliente o esta transacción.";
-                                break;
-                            case 3007:
-                                $mensaje .= "Deprecado. La tarjeta fue declinada.";
-                                break;
-                            case 3008:
-                                $mensaje .= "La tarjeta no es soportada en transacciones en línea.";
-                                break;
-                            case 3009:
-                                $mensaje .= "La tarjeta fue reportada como perdida.";
-                                break;
-                            case 3010:
-                                $mensaje .= "El banco ha restringido la tarjeta.";
-                                break;
-                            case 3011:
-                                $mensaje .= "El banco ha solicitado que la tarjeta sea retenida. Contacte al banco.";
-                                break;
-                            case 3012:
-                                $mensaje .= "Se requiere solicitar al banco autorización para realizar este pago.";
-                                break;
-
-                            default:
-                                $mensaje .= $e->getMessage();
-                                break;
-                        } 
-                              $data = array(  
-                                'tipo_error'=>1, 
-                                'msg'=>$mensaje, 
-                            ); 
-                           echo json_encode($data);
-                        
-                    } catch (OpenpayApiRequestError $e) {
-                        $mensaje .= $e->getMessage(); 
-                             $data = array(  
-                                'tipo_error'=>1, 
-                                'msg'=>$mensaje, 
-                            ); 
-                           echo json_encode($data);
-                         
-                    } catch (OpenpayApiConnectionError $e) {
-                        $mensaje .= $e->getMessage(); 
-                             $data = array(  
-                                'tipo_error'=>1, 
-                                'msg'=>$mensaje, 
-                            ); 
-                           echo json_encode($data);
-                       
-                    } catch (OpenpayApiAuthError $e) {
-                        $mensaje .= $e->getMessage(); 
-                             $data = array(  
-                                'tipo_error'=>1, 
-                                'msg'=>$mensaje, 
-                            ); 
-                           echo json_encode($data);
-                      
-                    } catch (OpenpayApiError $e) {
-                        $mensaje .= $e->getMessage(); 
-                             $data = array(  
-                                'tipo_error'=>1, 
-                                'msg'=>$mensaje, 
-                            ); 
-                           echo json_encode($data);
-                         
-                    } catch (Exception $e) {
-                        $mensaje .= $e->getMessage(); 
-                             $data = array(  
-                                'tipo_error'=>1, 
-                                'msg'=>$mensaje, 
-                            ); 
-                           echo json_encode($data);
-                        
-                    }
-                      }else{
-         $data = array(
-            'heading'=>'Error',
-            'message'=>'Error intente mas tarde.'
-        );
-         $this->load->view('errors/html/error_general',$data);
-        }
- }
- public function pagotiendac()
- {
-     //PAGO EN TIENDA DE LAS COLEGIATURAS
-     Permission::grant(uri_string());
-        $idperiodo = $this->decode($this->input->post('periodo'));
-        $idalumno = $this->decode($this->input->post('alumno'));
-        $idnivel = $this->decode($this->input->post('nivel'));
-        if((isset($idnivel) && !empty($idnivel)) && (isset($idperiodo) && !empty($idperiodo)) && (isset($idalumno) && !empty($idalumno))){
-           $meses = $this->tutor->showAllMeses($idalumno,$idperiodo);
-            try {
-                 $idtutor = $this->session->idtutor;
-                $detalle_tutor = $this->tutor->detalleTutor($idtutor);
-                $descuento  = $this->input->post('descuento'); 
-                $mensaje  = $this->input->post('mensaje');
-                $idmes  = $this->input->post('mespago');
+                $descuento = $this->input->post('descuento');
+                $mensaje = $this->input->post('mensaje');
+                $idmes = $this->input->post('mespago');
                 $detalle_mes = $this->tutor->detalleMes($idmes);
                 $folio = generateRandomString();
-                   $validar_mes = $this->estadocuenta->validarAddColegiatura($idalumno,$idperiodo,$idmes);
-                  $detalle_descuento = $this->estadocuenta->descuentoPagosInicio($idalumno,$idperiodo,3);  
-           $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel);
-           $recargo = 0; 
-            if($detalle_descuento[0]->idniveleducativo == 1){
-                  //PRIMARIA  
-                   $dia_actual = date('Y-m-d');
-                   $year_actual = date('Y');
-                   $mes_actual = date('m');
-                     $detalle_configuracion[0]->diaultimorecargo;
-                     $dia_pago =date('Y-m-d',strtotime($detalle_configuracion[0]->diaultimorecargo."-".$mes_actual."-".$year_actual));
-                    if($dia_actual > $dia_pago){
-                        $recargo +=   $detalle_configuracion[0]->totalrecargo;
-                    }else{
-                          $recargo +=   0;
-                    }
-                  
-                }elseif($detalle_descuento[0]->idniveleducativo == 2){
-                     //SECUNDARIA 
+                $idplantel = $this->session->idplantel;
+                $validar_mes = $this->estadocuenta->validarAddColegiatura($idalumno, $idperiodo, $idmes);
+                $detalle_descuento = $this->estadocuenta->descuentoPagosInicio($idalumno, $idperiodo, 3,$idplantel);
+                $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel);
+                $recargo = 0;
+                if ($detalle_descuento[0]->idniveleducativo == 1) {
+                    //PRIMARIA
                     $dia_actual = date('Y-m-d');
-                   $year_actual = date('Y');
-                   $mes_actual = date('m');
-                   $dia_pago =date('Y-m-d',strtotime($detalle_configuracion[0]->diaultimorecargo."-".$mes_actual."-".$year_actual));
-                        if($dia_actual > $dia_pago){
-                            $recargo +=   $detalle_configuracion[0]->totalrecargo;
-                        }else{
-                              $recargo +=  0;
-                        }
-                 
-                }elseif($detalle_descuento[0]->idniveleducativo == 3){
-                  //PREPA 
-                   $dia_actual = date('Y-m-d');
-                   $year_actual = date('Y');
-                   $mes_actual = date('m');
-                   $dia_pago =date('Y-m-d',strtotime($detalle_configuracion[0]->diaultimorecargo."-".$mes_actual."-".$year_actual));
-                      if($dia_actual > $dia_pago){
-                          $recargo +=   $detalle_configuracion[0]->totalrecargo;
-                      }else{
-                            $recargo +=   0;
-                      }
-                 
-                }else{
-                   $recargo = 0;
+                    $year_actual = date('Y');
+                    $mes_actual = date('m');
+                    $detalle_configuracion[0]->diaultimorecargo;
+                    $dia_pago = date('Y-m-d', strtotime($detalle_configuracion[0]->diaultimorecargo . "-" . $mes_actual . "-" . $year_actual));
+                    if ($dia_actual > $dia_pago) {
+                        $recargo += $detalle_configuracion[0]->totalrecargo;
+                    } else {
+                        $recargo += 0;
+                    }
+
+                } elseif ($detalle_descuento[0]->idniveleducativo == 2) {
+                    //SECUNDARIA
+                    $dia_actual = date('Y-m-d');
+                    $year_actual = date('Y');
+                    $mes_actual = date('m');
+                    $dia_pago = date('Y-m-d', strtotime($detalle_configuracion[0]->diaultimorecargo . "-" . $mes_actual . "-" . $year_actual));
+                    if ($dia_actual > $dia_pago) {
+                        $recargo += $detalle_configuracion[0]->totalrecargo;
+                    } else {
+                        $recargo += 0;
+                    }
+
+                } elseif ($detalle_descuento[0]->idniveleducativo == 3) {
+                    //PREPA
+                    $dia_actual = date('Y-m-d');
+                    $year_actual = date('Y');
+                    $mes_actual = date('m');
+                    $dia_pago = date('Y-m-d', strtotime($detalle_configuracion[0]->diaultimorecargo . "-" . $mes_actual . "-" . $year_actual));
+                    if ($dia_actual > $dia_pago) {
+                        $recargo += $detalle_configuracion[0]->totalrecargo;
+                    } else {
+                        $recargo += 0;
+                    }
+
+                } else {
+                    $recargo = 0;
                 }
 
-                   if($validar_mes == false){
-                     
+                if ($validar_mes == false) {
+
                     $response = [];
-                        Openpay::setProductionMode(false);
-                        $openpay = Openpay::getInstance('mds4bdhgvbese0knzu2x', 'sk_f95d7349163642fba9f5a71021b3f6d5');
-                         $customer = array(
-                            'name' => strtoupper($detalle_tutor->nombre),
-                            'last_name' => strtoupper($detalle_tutor->apellidop.' '.$detalle_tutor->apellidom),
-                            'email' => $detalle_tutor->correo,
-                            'phone_number' => $detalle_tutor->telefono
-                        );
-                        $chargeData = array(
-                                    'method' => 'store',
-                                    'amount' => $descuento,
-                                    'description' => $mensaje." DE ".$detalle_mes[0]->nombremes,
-                                     'customer' => $customer); 
-                        $charge = $openpay->charges->create($chargeData);
-                        $response['charge'] = $charge; 
-                        //var_dump($charge);
-                         $idopenpay = $charge->id;
-                         $idorden = $charge->order_id;
-                         $autorizacion = $charge->authorization;
-                         $barcode = $charge->payment_method->barcode_url;
-                         $referencia =$charge->payment_method->reference; 
+                    Openpay::setProductionMode(false);
+                    $openpay = Openpay::getInstance('mds4bdhgvbese0knzu2x', 'sk_f95d7349163642fba9f5a71021b3f6d5');
+                    $customer = array(
+                        'name' => strtoupper($detalle_tutor->nombre),
+                        'last_name' => strtoupper($detalle_tutor->apellidop . ' ' . $detalle_tutor->apellidom),
+                        'email' => $detalle_tutor->correo,
+                        'phone_number' => $detalle_tutor->telefono,
+                    );
+                    $chargeData = array(
+                        'method' => 'store',
+                        'amount' => $descuento,
+                        'description' => $mensaje . " DE " . $detalle_mes[0]->nombremes,
+                        'customer' => $customer);
+                    $charge = $openpay->charges->create($chargeData);
+                    $response['charge'] = $charge;
+                    //var_dump($charge);
+                    $idopenpay = $charge->id;
+                    $idorden = $charge->order_id;
+                    $autorizacion = $charge->authorization;
+                    $barcode = $charge->payment_method->barcode_url;
+                    $referencia = $charge->payment_method->reference;
 
-                        $add_estadocuenta = array(
-                            'folio'=>$folio, 
-                            'idperiodo'=>$idperiodo,
-                            'idalumno'=>$idalumno, 
-                            'descuento'=>$descuento,
-                            'totalrecargo'=>$recargo,
-                            'recargo'=>($recargo > 0) ? 1 : 0 ,
-                            'condonar'=>0,
-                            'idopenpay'=>$idopenpay,
-                            'idorden'=>$idorden, 
-                            'online'=>1,
-                            'pagado'=>0,
-                            'fechapago'=>date('Y-m-d H:i:s'), 
-                            'eliminado'=>0,
-                            'idusuario'=> $this->session->user_id,
-                            'fecharegistro'=>date('Y-m-d H:i:s')
-                        );
-                        $idestadocuenta = $this->tutor->addEstadoCuenta($add_estadocuenta);
-                        $add_detalle_pago = array(
-                            'idestadocuenta'=>$idestadocuenta,
-                            'idformapago'=>1,
-                            'descuento'=>$descuento,
-                            'autorizacion'=>$autorizacion,
-                            'fechapago'=>date('Y-m-d H:i:s'), 
-                            'idusuario'=> $this->session->user_id,
-                            'fecharegistro'=>date('Y-m-d H:i:s')
-                        );
-                        $this->tutor->addDetallePago($add_detalle_pago);
+                    $add_estadocuenta = array(
+                        'folio' => $folio,
+                        'idperiodo' => $idperiodo,
+                        'idalumno' => $idalumno,
+                        'descuento' => $descuento,
+                        'totalrecargo' => $recargo,
+                        'recargo' => ($recargo > 0) ? 1 : 0,
+                        'condonar' => 0,
+                        'idopenpay' => $idopenpay,
+                        'idorden' => $idorden,
+                        'online' => 1,
+                        'pagado' => 0,
+                        'fechapago' => date('Y-m-d H:i:s'),
+                        'eliminado' => 0,
+                        'idusuario' => $this->session->user_id,
+                        'fecharegistro' => date('Y-m-d H:i:s'),
+                    );
+                    $idestadocuenta = $this->tutor->addEstadoCuenta($add_estadocuenta);
+                    $add_detalle_pago = array(
+                        'idestadocuenta' => $idestadocuenta,
+                        'idformapago' => 1,
+                        'descuento' => $descuento,
+                        'autorizacion' => $autorizacion,
+                        'fechapago' => date('Y-m-d H:i:s'),
+                        'idusuario' => $this->session->user_id,
+                        'fecharegistro' => date('Y-m-d H:i:s'),
+                    );
+                    $this->tutor->addDetallePago($add_detalle_pago);
 
-                        $data_detalle_estadocuenta = array(
-                            'idestadocuenta'=>$idestadocuenta,
-                            'idmes'=>$idmes,
-                            'idusuario'=> $this->session->user_id,
-                            'fecharegistro'=>date('Y-m-d H:i:s')
-                        );
-                        $this->tutor->addDetalleEstadoCuenta($data_detalle_estadocuenta);
+                    $data_detalle_estadocuenta = array(
+                        'idestadocuenta' => $idestadocuenta,
+                        'idmes' => $idmes,
+                        'idusuario' => $this->session->user_id,
+                        'fecharegistro' => date('Y-m-d H:i:s'),
+                    );
+                    $this->tutor->addDetalleEstadoCuenta($data_detalle_estadocuenta);
 
-                            $data = array(  
-                                'tipo_error'=>0, 
-                                'msg'=>"Descargar el Documento.",
-                                'referencia'=>$referencia
-                            ); 
-                           echo json_encode($data);
-                        }else{
-                               $data = array(  
-                                'tipo_error'=>1, 
-                                'msg'=>"El Mes ya se encuentra pagado.", 
-                            ); 
-                           echo json_encode($data);
-                        }
-                       
-                    } catch (OpenpayApiTransactionError $e) {
-                        $mensaje = "";
-                        switch ($e->getErrorCode()) {
-                            case 3001:
-                                $mensaje .= "La tarjeta fue declinada.";
-                                break;
-                            case 3002:
-                                $mensaje .= "La tarjeta ha expirado.";
-                                break;
-                            case 3003:
-                                $mensaje .= "La tarjeta no tiene fondos suficientes.";
-                                break;
-                            case 3004:
-                                $mensaje .= "La tarjeta ha sido identificada como una tarjeta robada.";
-                                break;
-                            case 3005:
-                                $mensaje .= "La tarjeta ha sido rechazada por el sistema antifraudes.";
-                                break;
-                            case 3006:
-                                $mensaje .= "La operación no esta permitida para este cliente o esta transacción.";
-                                break;
-                            case 3007:
-                                $mensaje .= "Deprecado. La tarjeta fue declinada.";
-                                break;
-                            case 3008:
-                                $mensaje .= "La tarjeta no es soportada en transacciones en línea.";
-                                break;
-                            case 3009:
-                                $mensaje .= "La tarjeta fue reportada como perdida.";
-                                break;
-                            case 3010:
-                                $mensaje .= "El banco ha restringido la tarjeta.";
-                                break;
-                            case 3011:
-                                $mensaje .= "El banco ha solicitado que la tarjeta sea retenida. Contacte al banco.";
-                                break;
-                            case 3012:
-                                $mensaje .= "Se requiere solicitar al banco autorización para realizar este pago.";
-                                break;
+                    $data = array(
+                        'tipo_error' => 0,
+                        'msg' => "Descargar el Documento.",
+                        'referencia' => $referencia,
+                    );
+                    echo json_encode($data);
+                } else {
+                    $data = array(
+                        'tipo_error' => 1,
+                        'msg' => "El Mes ya se encuentra pagado.",
+                    );
+                    echo json_encode($data);
+                }
 
-                            default:
-                                $mensaje .= $e->getMessage();
-                                break;
-                        }
-                        
-                            $data = array(  
-                                'tipo_error'=>1, 
-                                'msg'=>$mensaje
-                            ); 
-                           echo json_encode($data);
-                        
-                    } catch (OpenpayApiRequestError $e) {
+            } catch (OpenpayApiTransactionError $e) {
+                $mensaje = "";
+                switch ($e->getErrorCode()) {
+                    case 3001:
+                        $mensaje .= "La tarjeta fue declinada.";
+                        break;
+                    case 3002:
+                        $mensaje .= "La tarjeta ha expirado.";
+                        break;
+                    case 3003:
+                        $mensaje .= "La tarjeta no tiene fondos suficientes.";
+                        break;
+                    case 3004:
+                        $mensaje .= "La tarjeta ha sido identificada como una tarjeta robada.";
+                        break;
+                    case 3005:
+                        $mensaje .= "La tarjeta ha sido rechazada por el sistema antifraudes.";
+                        break;
+                    case 3006:
+                        $mensaje .= "La operación no esta permitida para este cliente o esta transacción.";
+                        break;
+                    case 3007:
+                        $mensaje .= "Deprecado. La tarjeta fue declinada.";
+                        break;
+                    case 3008:
+                        $mensaje .= "La tarjeta no es soportada en transacciones en línea.";
+                        break;
+                    case 3009:
+                        $mensaje .= "La tarjeta fue reportada como perdida.";
+                        break;
+                    case 3010:
+                        $mensaje .= "El banco ha restringido la tarjeta.";
+                        break;
+                    case 3011:
+                        $mensaje .= "El banco ha solicitado que la tarjeta sea retenida. Contacte al banco.";
+                        break;
+                    case 3012:
+                        $mensaje .= "Se requiere solicitar al banco autorización para realizar este pago.";
+                        break;
+
+                    default:
                         $mensaje .= $e->getMessage();
-                      
-                               $data = array(  
-                                'tipo_error'=>1, 
-                                'msg'=>$mensaje
-                            ); 
-                           echo json_encode($data);
-                         
-                    } catch (OpenpayApiConnectionError $e) {
-                        $mensaje .= $e->getMessage();
-                        
-                               $data = array(  
-                                'tipo_error'=>1, 
-                                'msg'=>$mensaje
-                            ); 
-                           echo json_encode($data);
-                       
-                    } catch (OpenpayApiAuthError $e) {
-                        $mensaje .= $e->getMessage();
-                      
-                               $data = array(  
-                                'tipo_error'=>1, 
-                                'msg'=>$mensaje
-                            ); 
-                           echo json_encode($data);
-                      
-                    } catch (OpenpayApiError $e) {
-                        $mensaje .= $e->getMessage();
-                      
-                               $data = array(  
-                                'tipo_error'=>1, 
-                                'msg'=>$mensaje
-                            ); 
-                           echo json_encode($data);
-                         
-                    } catch (Exception $e) {
-                        $mensaje .= $e->getMessage();
-                        
-                               $data = array(  
-                                'tipo_error'=>1, 
-                                'msg'=>$mensaje
-                            ); 
-                           echo json_encode($data);
-                        
-                    }
-                      }else{
-         $data = array(
-            'heading'=>'Error',
-            'message'=>'Error intente mas tarde.'
-        );
-         $this->load->view('errors/html/error_general',$data);
+                        break;
+                }
+
+                $data = array(
+                    'tipo_error' => 1,
+                    'msg' => $mensaje,
+                );
+                echo json_encode($data);
+
+            } catch (OpenpayApiRequestError $e) {
+                $mensaje .= $e->getMessage();
+
+                $data = array(
+                    'tipo_error' => 1,
+                    'msg' => $mensaje,
+                );
+                echo json_encode($data);
+
+            } catch (OpenpayApiConnectionError $e) {
+                $mensaje .= $e->getMessage();
+
+                $data = array(
+                    'tipo_error' => 1,
+                    'msg' => $mensaje,
+                );
+                echo json_encode($data);
+
+            } catch (OpenpayApiAuthError $e) {
+                $mensaje .= $e->getMessage();
+
+                $data = array(
+                    'tipo_error' => 1,
+                    'msg' => $mensaje,
+                );
+                echo json_encode($data);
+
+            } catch (OpenpayApiError $e) {
+                $mensaje .= $e->getMessage();
+
+                $data = array(
+                    'tipo_error' => 1,
+                    'msg' => $mensaje,
+                );
+                echo json_encode($data);
+
+            } catch (Exception $e) {
+                $mensaje .= $e->getMessage();
+
+                $data = array(
+                    'tipo_error' => 1,
+                    'msg' => $mensaje,
+                );
+                echo json_encode($data);
+
+            }
+        } else {
+            $data = array(
+                'heading' => 'Error',
+                'message' => 'Error intente mas tarde.',
+            );
+            $this->load->view('errors/html/error_general', $data);
         }
- }
+    }
     public function kardex()
     {
         Permission::grant(uri_string());
         $alumnos = $this->alumno->showAllAlumnosTutor($this->session->idtutor);
         $data = array(
-            'alumnos'=>$alumnos,
-            'controller'=>$this
+            'alumnos' => $alumnos,
+            'controller' => $this,
+             
         );
         $this->load->view('tutor/header');
-        $this->load->view('tutor/alumnos/alumnos',$data);
+        $this->load->view('tutor/alumnos/alumnos', $data);
         $this->load->view('tutor/footer');
-       //$kardex = $this->alumno->allKardex($id);  
+        //$kardex = $this->alumno->allKardex($id);
+    }
+        public function calificacionFinal($idalumno) {  
+        $detalle = $this->alumno->allKardex($idalumno);
+        $calificacion_periodo = 0;
+        $suma_periodo = 0;
+        $calificacion_global = 0; 
+        if (isset($detalle) && !empty($detalle)) {
+            foreach ($detalle as $det) {
+                $suma_periodo++;
+                $idhorario = $det->idhorario;
+                $idperiodo = $det->idperiodo;
+                $materias = $this->alumno->showAllMateriasPasadas($idhorario, $idalumno, $idperiodo);
+
+                if (isset($materias) && !empty($materias)) {
+
+                    $oportunidades_examen = $this->alumno->showAllOportunidadesExamen($this->session->idplantel);
+                    $total_materia = 0;
+                    $suma_calificacion = 0;
+                    $calificacion = 0;
+                    foreach ($materias as $row) {
+                        $idnivelestudio = $row->idnivelestudio;
+                        $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
+                        $total_materia = $total_materia + 1;
+                        $idhorariodetalle = $row->idhorariodetalle;
+                        $calificacion = 0;
+                        foreach ($oportunidades_examen as $oportunidad) {
+                            $idoportunidadexamen = $oportunidad->idoportunidadexamen;
+                            $detalle_calificacion = $this->alumno->calificacionSecuPrepa($idalumno, $idhorariodetalle, $idoportunidadexamen);
+                            if ($detalle_calificacion && $calificacion == 0) {
+                                if ($detalle_calificacion[0]->calificacion >= $detalle_configuracion[0]->calificacion_minima) {
+                                    $calificacion .= $detalle_calificacion[0]->calificacion;
+                                    $suma_calificacion += $calificacion;
+                                }
+                            }
+                        }
+                    }
+
+                      $calificacion = $suma_calificacion / $total_materia;
+                                
+                    $calificacion_periodo +=   number_format($calificacion,2);
+                }  
+            }
+        }
+        //return number_format(($calificacion_periodo/$suma_periodo),2);
+        $calificacion_global =number_format(($calificacion_periodo/$suma_periodo),2);
+                                
+         return $calificacion_global;
     }
     public function detalle($idalumno = '')
     {
         Permission::grant(uri_string());
         $idalumno = $this->decode($idalumno);
-        if(isset($idalumno) && !empty($idalumno)){
-         $kardex = $this->alumno->allKardex($idalumno);
-         $detalle_alumno = $this->alumno->showAllAlumnoId($idalumno);
-         
-         $total_periodo = 0;
-         $suma_calificacion = 0;
-               if($kardex != FALSE){
-            foreach ($kardex as $row) {
-                $total_periodo = $total_periodo + 1;
-                 $idhorario = $row->idhorario; 
-                 $materias = $this->alumno->showAllMaterias($idhorario);
-                 $unidades = $this->alumno->showAllUnidades($this->session->idplantel);
-                 //var_dump($materias);
-                 $total_materia = 0;
-                 $total_unidad = 0;
-                    if ($materias != FALSE) { 
-                        foreach ($materias as $row) { 
-                            $total_materia = $total_materia + 1;
-                        }
-                    } 
-                    if(isset($unidades) && !empty($unidades)){
-                        foreach ($unidades as $value) {
-                            $total_unidad = $total_unidad + 1;
-                        }
-                    } 
-                    $datoscalifiacacion = $this->horario->calificacionGeneralAlumno($idhorario,$idalumno);
-                     if($datoscalifiacacion != FALSE && $total_materia > 0){
-                          $suma_calificacion= ($datoscalifiacacion->calificaciongeneral / $total_unidad) / $total_materia;
-                         }
-                        // echo $suma_calificacion;
+        if (isset($idalumno) && !empty($idalumno)) {
+            $kardex = $this->alumno->allKardex($idalumno);
+            $detalle_alumno = $this->alumno->showAllAlumnoId($idalumno);
 
-            }
-           $calificacion_final = $suma_calificacion / $total_periodo;
-        } 
-         $alumnos = $this->alumno->showAllAlumnosTutor($this->session->idtutor);
-        $data = array(
-            'kardex'=>$kardex,
-            'idalumno'=>$idalumno,
-            'detalle_alumno'=>$detalle_alumno,
-            'controller'=>$this
-        );
-        $this->load->view('tutor/header');
-        $this->load->view('tutor/alumnos/kardex',$data);
-        $this->load->view('tutor/footer');
-         }else{
-         $data = array(
-            'heading'=>'Error',
-            'message'=>'Error intente mas tarde.'
-        );
-         $this->load->view('errors/html/error_general',$data);
+            
+            $alumnos = $this->alumno->showAllAlumnosTutor($this->session->idtutor);
+            $data = array(
+                'kardex' => $kardex,
+                'idalumno' => $idalumno,
+                'promedio'=>$this->calificacionFinal($idalumno),
+                'detalle_alumno' => $detalle_alumno,
+                'controller' => $this,
+            );
+            $this->load->view('tutor/header');
+            $this->load->view('tutor/alumnos/kardex', $data);
+            $this->load->view('tutor/footer');
+        } else {
+            $data = array(
+                'heading' => 'Error',
+                'message' => 'Error intente mas tarde.',
+            );
+            $this->load->view('errors/html/error_general', $data);
         }
     }
-     public function obtenerCalificacionAlumnoPorNivel($idhorario='',$idalumno = '')
+    public function obtenerCalificacionAlumnoPorNivel($idhorario = '', $idalumno = '')
     {
         Permission::grant(uri_string());
-      # code...
-     $unidades =  $this->grupo->unidades($this->session->idplantel);
-     $materias = $this->alumno->showAllMaterias($idhorario);
-     $total_unidad = 0;
-     $total_materia = 0;
-     $suma_calificacion = 0; 
-     $promedio = 0;
- 
-      $c = 1;
-      if (isset($materias) && !empty($materias)) {
-      
-        foreach($unidades as $block):
-        $total_unidad += 1;
-       endforeach; 
-      
-       foreach($materias as $row){
-       $total_materia +=1;
-      
-       foreach($unidades as $block):
-      $val = $this->grupo->obtenerCalificacion($idalumno, $block->idunidad, $row->idhorariodetalle);
-      
-      
-        if($val != false ){ 
-         $suma_calificacion +=$val->calificacion; 
-        }  
-      endforeach; 
-      
+        # code...
+        $unidades = $this->grupo->unidades($this->session->idplantel);
+        $materias = $this->alumno->showAllMaterias($idhorario);
+        $total_unidad = 0;
+        $total_materia = 0;
+        $suma_calificacion = 0;
+        $promedio = 0;
 
-      }
-      $promedio = ($suma_calificacion / $total_unidad) / $total_materia;
-  } 
-  
-      return $promedio;
+        $c = 1;
+        if (isset($materias) && !empty($materias)) {
+
+            foreach ($unidades as $block):
+                $total_unidad += 1;
+            endforeach;
+
+            foreach ($materias as $row) {
+                $total_materia += 1;
+
+                foreach ($unidades as $block):
+                    $val = $this->grupo->obtenerCalificacion($idalumno, $block->idunidad, $row->idhorariodetalle);
+
+                    if ($val != false) {
+                        $suma_calificacion += $val->calificacion;
+                    }
+                endforeach;
+
+            }
+            $promedio = ($suma_calificacion / $total_unidad) / $total_materia;
+        }
+
+        return $promedio;
 
     }
-     public function historial($idhorario = '',$idalumno = '')
+    public function historial($idhorario = '', $idalumno = '',$idperiodo = '')
     {
         Permission::grant(uri_string());
         $idhorario = $this->decode($idhorario);
         $idalumno = $this->decode($idalumno);
-        if((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno))){
-         $tabla = $this->obtenerCalificacion($idhorario,$idalumno);
-        $datosalumno = $this->alumno->showAllAlumnoId($idalumno);
-        $datoshorario = $this->horario->showNivelGrupo($idhorario); 
-        $unidades =  $this->grupo->unidades($this->session->idplantel);
+          $idperiodo = $this->decode($idperiodo);
+        if ((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno)) && (isset($idperiodo) && !empty($idperiodo))) {
+           // $tabla = $this->obtenerCalificacion($idhorario, $idalumno);
+            $datosalumno = $this->alumno->showAllAlumnoId($idalumno);
+            $datoshorario = $this->horario->showNivelGrupo($idhorario);
+            $unidades = $this->grupo->unidades($this->session->idplantel);
+            $idnivelestudio = $datoshorario->idnivelestudio;
+            $idniveleducativo = $datoshorario->idniveleducativo;
+            $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
+            if ($idniveleducativo == 1) {
+                //PRIMARIA
+                //$tabla = $this->obtenerCalificacionPrimaria($idhorario,$idalumno);
+                $tabla = $this->obtenerCalificacionPrimaria($idhorario, $idalumno);
+            }
+            if ($idniveleducativo == 2) {
+                //SECUNDARIA
+                $tabla = $this->obtenerCalificacionSecundaria($idhorario, $idalumno,$idperiodo);
+            }
+            if ($idniveleducativo == 3) {
+                //PREPARATORIA
+                  $tabla = $this->obtenerCalificacionSecundaria($idhorario, $idalumno,$idperiodo);
+            }
+//CODIGO PARA OBTENER LA CALIFICACION DEL NIVEL
+     $materias = $this->alumno->showAllMateriasPasadas($idhorario,$idalumno,$idperiodo);
+            $oportunidades_examen = $this->alumno->showAllOportunidadesExamen($this->session->idplantel);
+            $total_materia = 0;
+            $suma_calificacion = 0;
+            foreach ($materias as $row) {
+                $total_materia = $total_materia + 1;
+                $idhorariodetalle = $row->idhorariodetalle;
+                $calificacion = 0;
+                foreach ($oportunidades_examen as $oportunidad) {
+                    $idoportunidadexamen = $oportunidad->idoportunidadexamen;
+                    $detalle_calificacion = $this->alumno->calificacionSecuPrepa($idalumno, $idhorariodetalle, $idoportunidadexamen);
+                    if ($detalle_calificacion && $calificacion == 0) {
+                        if ($detalle_calificacion[0]->calificacion >= $detalle_configuracion[0]->calificacion_minima) {
+                            $calificacion .= $detalle_calificacion[0]->calificacion;
+                            $suma_calificacion += $calificacion;
+                        }
+                    }
+                }
+            }
+            $calificacion = 0;
+            $calificacion = $suma_calificacion / $total_materia;
+            //FIN DEL CODIGO PARA OBTENER LA CALIFICACION DEL NIVEL
+
+            $data = array(
+                'idhorario' => $idhorario,
+                'idalumno' => $idalumno,
+                'tabla' => $tabla,
+                'datosalumno' => $datosalumno,
+                'datoshorario' => $datoshorario,
+                'calificacion' =>$calificacion,
+                'unidades' => $unidades,
+                'controller' => $this,
+            );
+            $this->load->view('tutor/header');
+            $this->load->view('tutor/alumnos/kardex_detalle', $data);
+            $this->load->view('tutor/footer');
+        } else {
+            $data = array(
+                'heading' => 'Error',
+                'message' => 'Error intente mas tarde.',
+            );
+            $this->load->view('errors/html/error_general', $data);
+        }
+
+    }
        
-        # code...
-       // printf($tabla);
-
-          $data = array(
-            'idhorario'=>$idhorario,
-            'idalumno'=>$idalumno,
-            'tabla'=>$tabla,
-            'datosalumno'=>$datosalumno,
-            'datoshorario'=>$datoshorario,
-            'calificacion'=>$this->obtenerCalificacionAlumnoPorNivel($idhorario,$idalumno),
-            'unidades'=>$unidades,
-            'controller'=>$this
-        );
-        $this->load->view('tutor/header');
-        $this->load->view('tutor/alumnos/kardex2',$data);
-        $this->load->view('tutor/footer');
-    }else{
-        $data = array(
-            'heading'=>'Error',
-            'message'=>'Error intente mas tarde.'
-        );
-         $this->load->view('errors/html/error_general',$data);
-    }
-
-    }
-     public function horario2($idhorario,$idalumno)
+     public function obtenerCalificacionSecundaria($idhorario = '', $idalumno = '',$idperiodo = '')
     {
         # code...
         Permission::grant(uri_string());
-          $idhorario = $this->decode($idhorario);
-          $idalumno = $this->decode($idalumno);
-        if((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno))){
-       
-        //$tabla = $this->obtenerCalificacion($idhorario);
-        $data = array(
-            'idhorario'=>$idhorario,
-            'idalumno'=>$idalumno,
-            'controller'=>$this,
-            'tabla'=>$this->generarHorarioPDF($idhorario,$idalumno)
-        ); 
-        $this->load->view('tutor/header');
-        $this->load->view('tutor/alumnos/horario2',$data);
-        $this->load->view('tutor/footer');
-         }else{
-        $data = array(
-            'heading'=>'Error',
-            'message'=>'Error intente mas tarde.'
-        );
-         $this->load->view('errors/html/error_general',$data);
-    }
-    }
 
-        public function generarHorarioPDF($idhorario = '',$idalumno='')
+        $unidades = $this->grupo->unidades($this->session->idplantel);
+        $materias = $this->alumno->showAllMateriasPasadas($idhorario,$idalumno,$idperiodo);
+        $datoshorario = $this->horario->showNivelGrupo($idhorario);
+        $idnivelestudio = $datoshorario->idnivelestudio;
+        $oportunidades_examen = $this->alumno->showAllOportunidadesExamen($this->session->idplantel);
+
+        $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
+        $total_unidades = 0;
+        $total_materia = 0;
+        if ($materias != false) {
+            foreach ($materias as $row) {
+                # code...
+                $total_materia = $total_materia + 1;
+            }
+        }
+        $tabla = "";
+        $tabla .= '<table class="table  table-striped  table-hover">
+        <thead class="bg-teal">
+      <th>NO.</th>
+      <th>MATERIA</th>
+         <th>CRÉDITO</th>';
+        $tabla .= '<th>CALIFICACIÓN</th>';
+           $tabla .= '<th></th>';
+        $tabla .= '</thead>';
+        $c = 1;
+
+        foreach ($materias as $row) {
+            $idhorariodetalle = $row->idhorariodetalle;
+            $calificacion = 0;
+            foreach ($oportunidades_examen as $oportunidad) {
+                $idoportunidadexamen = $oportunidad->idoportunidadexamen;
+                $detalle_calificacion = $this->alumno->calificacionSecuPrepa($idalumno, $idhorariodetalle, $idoportunidadexamen);
+                if ($detalle_calificacion && $calificacion == 0) {
+                    $calificacion .= $detalle_calificacion[0]->calificacion;
+                }
+            }
+            $tabla .= '<tr>';
+            $tabla .= '<td>' . $c++ . '</td>';
+            $tabla .= '<td><strong>' . $row->nombreclase . '</strong></td>';
+            $tabla .= '<td>' . $row->credito . '</td>';
+            $tabla .= '<td>';
+            if ($detalle_configuracion[0]->calificacion_minima < $calificacion) {
+                $tabla .= '<label>' . number_format($calificacion, 2) . '</label>';
+            } else {
+                  $tabla .= '<label style="color:red;">NA</label>';
+            }
+
+            $tabla .= '</td>';
+              $tabla .= '<td>';
+             if($row->opcion == 0){
+                   $tabla .= '<label style="color:blue;">R</label>';
+             } 
+           
+            $tabla .= '</td>';
+            $tabla .= '</tr>';
+        }
+
+        $tabla .= '</table>';
+        return $tabla;
+    }
+    
+    public function generarHorarioPDF($idhorario = '', $idalumno = '')
     {
-     /* $idhorario = $this->decode($idhorario);
-      $idalumno = $this->decode($idalumno);
-        if((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno)) ){
-        */
-          $detalle_logo = $this->alumno->logo($this->session->idplantel);
-        $logo = base_url() . '/assets/images/escuelas/'.$detalle_logo[0]->logoplantel;
-        $logo2 = base_url() . '/assets/images/escuelas/'.$detalle_logo[0]->logosegundo;
-        
-        $alumno = $this->alumno->detalleAlumno($idalumno);
-        $grupo = $this->horario->showNivelGrupo($idhorario);
-        $dias = $this->alumno->showAllDias();
-        $datelle_alumno = $this->alumno->showAllMateriasAlumno($idalumno,1);
-        if(isset($datelle_alumno) && !empty($datelle_alumno)){
-        $this->load->library('tcpdf');  
-        $hora = date("h:i:s a");
-        //$linkimge = base_url() . '/assets/images/woorilogo.png';
-        $fechaactual = date('d/m/Y');
-        $pdf = new Pdf('P', 'mm', 'A4', true, 'UTF-8', false);
-        $pdf->SetTitle('Horario de clases.');
-        $pdf->SetHeaderMargin(30);
-        $pdf->SetTopMargin(10);
-        $pdf->setFooterMargin(20);
-        $pdf->SetAutoPageBreak(true);
-        $pdf->SetAuthor('Author');
-        $pdf->SetDisplayMode('real', 'default');
-        $pdf->setPrintHeader(false);
-        $pdf->setPrintFooter(false);
+ if ((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno))) {
 
-        $pdf->AddPage();
-        $tabla = '
+            $tabla = '
+        <style type="text/css">
+.txthorario{
+   font-size:12px;
+}
+.txttutor{
+   font-size:10px;
+}
+.txtdia{
+  font-size:14px;
+   font-weight: bold;
+   background-color:#ccc;
+}
+  .tblhorario tr td
+                {
+                    border:0px solid black;
+                }
+
+</style>';
+
+            $tabla .= '<table class="table table-hover table-striped"  > ';
+            $tabla .= ' <thead class="bg-teal"> ';
+            $tabla .= '<td   >Hora</td>';
+            $tabla .= '<td   >Lunes</td>';
+            $tabla .= '<td  >Martes</td>';
+            $tabla .= '<td >Miercoles</td>';
+            $tabla .= '<td  >Jueves</td>';
+            $tabla .= '<td  >Viernes</td>';
+
+            $tabla .= ' </thead>';
+            $array_materias_reprobadas = array();
+            $materias_reprobadas = $this->alumno->obtenerTodasMateriaReprobadasActivas($idalumno);
+            if (isset($materias_reprobadas) && !empty($materias_reprobadas)) {
+                foreach ($materias_reprobadas as $row) {
+                    array_push($array_materias_reprobadas, $row->idmateriaprincipal);
+                }
+            }
+            $reprobadas = implode(",", $array_materias_reprobadas);
+
+            $lunesAll = $this->horario->showAllDiaHorarioSinDua($idhorario, $reprobadas);
+
+            foreach ($lunesAll as $row) {
+                $tabla .= '<tr>';
+                $tabla .= '<td  ><strong>' . $row->hora . '</strong></td>';
+                $tabla .= '<td >' . $row->lunes . '</td>';
+                $tabla .= '<td  >' . $row->martes . '</td>';
+                $tabla .= '<td >' . $row->miercoles . '</td>';
+                $tabla .= '<td  >' . $row->jueves . '</td>';
+                $tabla .= '<td >' . $row->viernes . '</td>';
+
+                $tabla .= '</tr>';
+            }
+            $tabla .= '</table>';
+
+            return $tabla;
+        }
+    }
+    public function descargar($idhorario = '', $idalumno = '')
+    {
+         $idalumno = $this->decode($idalumno);
+        $idhorario = $this->decode($idhorario);
+        if ((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno))) {
+            $detalle_logo = $this->alumno->logo($this->session->idplantel);
+            $ubicacion_imagen = '/assets/images/escuelas/';
+            $logo = base_url() . $ubicacion_imagen . $detalle_logo[0]->logoplantel;
+            $logo2 = base_url() . $ubicacion_imagen . $detalle_logo[0]->logosegundo;
+
+            $alumno = $this->alumno->detalleAlumno($idalumno);
+            $grupo = $this->horario->showNivelGrupo($idhorario);
+            $dias = $this->alumno->showAllDias();
+            $datelle_alumno = $this->alumno->showAllMateriasAlumno($idalumno);
+            if (isset($datelle_alumno) && !empty($datelle_alumno)) {
+                $this->load->library('tcpdf');
+                $hora = date("h:i:s a");
+                $fechaactual = date('d/m/Y');
+                $pdf = new Pdf('P', 'mm', 'A4', true, 'UTF-8', false);
+                $pdf->SetTitle('Horario de clases.');
+                $pdf->SetHeaderMargin(30);
+                $pdf->SetTopMargin(10);
+                $pdf->setFooterMargin(20);
+                $pdf->SetAutoPageBreak(true);
+                $pdf->SetAuthor('Author');
+                $pdf->SetDisplayMode('real', 'default');
+                $pdf->setPrintHeader(false);
+                $pdf->setPrintFooter(false);
+
+                $pdf->AddPage();
+                $tabla = '
         <style type="text/css">
     .txtn{
-        font-size:12px;
+        font-size:9px;
     }
     .direccion{
-        font-size:12px;
+        font-size:8px;
     }
     .nombreplantel{
-        font-size:16px;
+        font-size:10px;
         font-weight:bolder;
     }
     .telefono{
-          font-size:12px;
+          font-size:8px;
     }
     .boleta{
          font-size:9px;
@@ -2090,258 +2567,63 @@ function decode($string)
     }
     .txtgeneral{
          font-size:8px;
-         font-weight:bolder; 
+         font-weight:bolder;
     }
     .txtnota{
          font-size:6px;
-         font-weight:bolder; 
-    } 
+         font-weight:bolder;
+    }
     .txtcalificacion{
         font-size:10px;
-         font-weight:bolder; 
-    } 
+         font-weight:bolder;
+    }
     .imgtitle{
         width:55px;
 
     }
     .titulo{
      font-family:Verdana, Geneva, sans-serif;
-      font-size:11px; 
+      font-size:8px;
     font-weight:bold;
     border-bottom:solid 1px #000000;
 }
 .result{
      font-family:Verdana, Geneva, sans-serif;
-      font-size:12px; 
+      font-size:8px;
     font-weight:bold;
 }.nombreclase{
    font-size:12px;
    font-weight: bold;
 }
 .txthorario{
-   font-size:10px;
+   font-size:8px;
 }
 .txttutor{
    font-size:10px;
 }
 .txtdia{
-  font-size:15px;
+  font-size:8px;
    font-weight: bold;
    background-color:#ccc;
 }
-</style>
-<div id="areimprimir">  
-          <table width="950" border="0" cellpadding="2" cellspacing="0">
-  <tr>
-    <td width="101" align="center"><img   class="imgtitle" src="' . $logo2 . '" /></td>
-    <td colspan="2" align="center">
-            <label class="nombreplantel">'.$datelle_alumno[0]->nombreplantel.'</label><br>
-            <label class="txtn">'.$datelle_alumno[0]->asociado.'</label><br>
-            <label class="direccion">'.$datelle_alumno[0]->direccion.'</label><br>
-            <label class="telefono">TELÉFONO: '.$datelle_alumno[0]->telefono.'</label>
-    </td>
-    <td width="137" align="center"><img   class="imgtitle" src="' . $logo . '" /></td>
-  </tr> 
-    <tr>
-    <td align="center"  style=""><label class="titulo">Matricula</label></td>
-    <td align="center"  style=""><label class="titulo">Alumno</label></td>
-    <td align="center"  style=""><label class="titulo">Nivel Escolar</label></td>
-    <td align="center"  style=""><label class="titulo">Periodo Escolar</label></td>
-  </tr>
-  <tr>
-    <td align="center"><label class="result">'.$alumno->matricula.'</label></td>
-    <td align="center"><label class="result">'.$alumno->nombre.' '.$alumno->apellidop.' '.$alumno->apellidom.'</label></td>
-    <td align="center"><label class="result">'.$grupo->nombrenivel.' '.$grupo->nombregrupo.'</label></td>
-    <td align="center"><label class="result">'.$grupo->mesinicio.' '.$grupo->yearinicio.' - '.$grupo->mesfin.' '.$grupo->yearfin.'</label></td>
-  </tr> 
-  </table> <br/>';
-
-       $tabla .= '<table  width="950" border="1">
-      <thead> 
-    ';
-       foreach($dias as $dia):
-        $tabla .= '<th align="center" class="txtdia text-center">'.$dia->nombredia.'</th>';
-       endforeach; 
-
-      $tabla .= '</thead>';
-      $c = 1; 
-        //$alumn = $al->getAlumn();
-       
-        $tabla .= '<tr valign="top">';
-      foreach($dias as $block):
-       $lunes = $this->horario->showAllDiaHorario($idhorario,$block->iddia);
-        $tabla .= '<td>';
-        $tabla .= '<table   border="0" >';
-        if($lunes != false ){ 
-          foreach($lunes as $row){
-              $tabla .= '<tr>
-              <td width="200" style="border-bottom:solid #ccc 1px; height:70px; padding-left:5px; padding-right:5px;">';
-             if(strtoupper($row->opcion) == "NORMAL"){ 
-                 $tabla .='<ul>';
-                 $tabla .='<li class="nombreclase">'.$row->nombreclase.'</li>';
-                  $tabla .='<li class="txthorario">'.date('h:i A', strtotime($row->horainicial)).' - '.date('h:i A', strtotime($row->horafinal)).'</li>';
-                   $tabla .='<li class="txttutor">'.$row->nombre.' '.$row->apellidop.' '.$row->apellidom.'</li>';
-                 $tabla .='</ul>';
-             }
-            if(strtoupper($row->opcion) == "DESCANSO"){
-              $tabla.='<label class="nombreclase"> '.$row->nombreclase.'</label>';
-            }
-             if(strtoupper($row->opcion) == "SIN CLASES"){
-              //$tabla.='<label class="nombreclase">SIN CLASES</label>';
-            }
-            $tabla .= '</td>
-            </tr>';
-         }
-        }else{
-           $tabla .='<label>No registrado</label>';
-        } 
-         $tabla .= '</table>';
-      $tabla .= '</td>';
-      endforeach;
-
-        $tabla .= '</tr>';
-      
-
-      
-      $tabla .= '</table></div>';  
-      
-      return $tabla;  
-      
-      }else{
-        return "";
-      }
-        }
-        public function descargar($idhorario = '',$idalumno = '')
-        {
-          $idalumno = $this->decode($idalumno);
-          $idhorario = $this->decode($idhorario);
-          if((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno))){
-        $detalle_logo = $this->alumno->logo($this->session->idplantel);
-        $logo = base_url() . '/assets/images/escuelas/'.$detalle_logo[0]->logoplantel;
-        $logo2 = base_url() . '/assets/images/escuelas/'.$detalle_logo[0]->logosegundo;
-        
-        $alumno = $this->alumno->detalleAlumno($idalumno);
-        $grupo = $this->horario->showNivelGrupo($idhorario);
-        $dias = $this->alumno->showAllDias();
-        $datelle_alumno = $this->alumno->showAllMateriasAlumno($idalumno);
-        $this->load->library('tcpdf');  
-        $hora = date("h:i:s a");
-        //$linkimge = base_url() . '/assets/images/woorilogo.png';
-        $fechaactual = date('d/m/Y');
-        $pdf = new Pdf('P', 'mm', 'A4', true, 'UTF-8', false);
-        $pdf->SetTitle('Horario de clases.');
-        $pdf->SetHeaderMargin(30);
-        $pdf->SetTopMargin(10);
-        $pdf->setFooterMargin(20);
-        $pdf->SetAutoPageBreak(true);
-        $pdf->SetAuthor('Author');
-        $pdf->SetDisplayMode('real', 'default');
-        $pdf->setPrintHeader(false);
-        $pdf->setPrintFooter(false);
-
-        $pdf->AddPage();
-        $tabla = '
-        <style type="text/css">
-    .txtn{
-        font-size:12px;
-    }
-    .direccion{
-        font-size:12px;
-    }
-    .nombreplantel{
-        font-size:16px;
-        font-weight:bolder;
-    }
-    .telefono{
-          font-size:12px;
-    }
-    .boleta{
-         font-size:9px;
-         font-weight:bolder;
-    }
-     .periodo{
-         font-size:9px;
-         font-weight:bolder;
-    }
-    .txtgeneral{
-         font-size:8px;
-         font-weight:bolder; 
-    }
-    .txtnota{
-         font-size:6px;
-         font-weight:bolder; 
-    } 
-    .txtcalificacion{
-        font-size:10px;
-         font-weight:bolder; 
-    } 
-    .imgtitle{
-        width:55px;
-
-    }
-    .titulo{
-     font-family:Verdana, Geneva, sans-serif;
-      font-size:10px; 
-    font-weight:bold;
-    border-bottom:solid 1px #000000; 
-}
-@page{
-  size:0;
-  margin-leff:20px;
-  margin-right:20px;
-  margin-top:5px;
-}
-@media print{
-  #btnimprimir2{
-    display:none;
-  }
-}
-ul{
-      list-style-type: none;
-      margin: 0;
-      padding: 0; 
-    }
-.result{
-     font-family:Verdana, Geneva, sans-serif;
-      font-size:9px; 
-    font-weight:bold;
-}.nombreclase{
-   font-size:10px;
-   font-weight: bold;
-}
-.txthorario{
-   font-size:9px;
-}
-.txttutor{
-   font-size:9px;
-}
-.txtdia{
-  font-size:15px;
-   font-weight: bold;
-   background-color:#ccc;
-   border:1px  solid #ccc;
-}
-   table {
-            border-collapse:collapse; 
-            }
-   .tblhorario tr td
+  .tblhorario tr td
                 {
-                    border:0px  solid black;
+                    border:0px solid black;
                 }
 
 </style>
-<div id="areaimprimir">  
-          <table width="950" border="0" >
+<div id="areimprimir">
+          <table width="600" border="0" cellpadding="2" cellspacing="0">
   <tr>
     <td width="101" align="center"><img   class="imgtitle" src="' . $logo2 . '" /></td>
     <td colspan="2" align="center">
-            <label class="nombreplantel">'.$detalle_logo[0]->nombreplantel.'</label><br>
-            <label class="txtn">'.$detalle_logo[0]->asociado.'</label><br>
-            <label class="direccion">'.$detalle_logo[0]->direccion.'</label><br>
-            <label class="telefono">TELÉFONO: '.$detalle_logo[0]->telefono.'</label>
+            <label class="nombreplantel">' . $datelle_alumno[0]->nombreplantel . '</label><br>
+            <label class="txtn">' . $datelle_alumno[0]->asociado . '</label><br>
+            <label class="direccion">' . $datelle_alumno[0]->direccion . '</label><br>
+            <label class="telefono">TELÉFONO: ' . $datelle_alumno[0]->telefono . '</label>
     </td>
     <td width="137" align="center"><img   class="imgtitle" src="' . $logo . '" /></td>
-  </tr> 
+  </tr>
     <tr>
     <td align="center"  style=""><label class="titulo">Matricula</label></td>
     <td align="center"  style=""><label class="titulo">Alumno</label></td>
@@ -2349,125 +2631,84 @@ ul{
     <td align="center"  style=""><label class="titulo">Periodo Escolar</label></td>
   </tr>
   <tr>
-    <td align="center"><label class="result">'.$alumno->matricula.'</label></td>
-    <td align="center"><label class="result">'.$alumno->nombre.' '.$alumno->apellidop.' '.$alumno->apellidom.'</label></td>
-    <td align="center"><label class="result">'.$grupo->nombrenivel.' '.$grupo->nombregrupo.'</label></td>
-    <td align="center"><label class="result">'.$grupo->mesinicio.' '.$grupo->yearinicio.' - '.$grupo->mesfin.' '.$grupo->yearfin.'</label></td>
-  </tr> 
-  </table> <br/>';
+    <td align="center"><label class="result">' . $alumno->matricula . '</label></td>
+    <td align="center"><label class="result">' . $alumno->nombre . ' ' . $alumno->apellidop . ' ' . $alumno->apellidom . '</label></td>
+    <td align="center"><label class="result">' . $grupo->nombrenivel . ' ' . $grupo->nombregrupo . '</label></td>
+    <td align="center"><label class="result">' . $grupo->mesinicio . ' ' . $grupo->yearinicio . ' - ' . $grupo->mesfin . ' ' . $grupo->yearfin . '</label></td>
+  </tr>
+  </table> <br/><br/>';
 
-       $tabla .= '<table class="tblepr"  width="950" border="0">
-      <thead> 
-    ';
-       foreach($dias as $dia):
-        $tabla .= '<th align="center" class="txtdia text-center">'.$dia->nombredia.'</th>';
-       endforeach; 
+                $tabla .= '<table class="tblhorario" width="600" cellpadding="2" > ';
+                $tabla .= '<tr>';
+                $tabla .= '<td width="65" align="center" class="txtdia">Hora</td>';
+                $tabla .= '<td width="93" align="center" class="txtdia">Lunes</td>';
+                $tabla .= '<td width="93" align="center" class="txtdia">Martes</td>';
+                $tabla .= '<td width="93" align="center" class="txtdia">Miercoles</td>';
+                $tabla .= '<td width="93" align="center" class="txtdia">Jueves</td>';
+                $tabla .= '<td width="93" align="center" class="txtdia">Viernes</td>';
 
-      $tabla .= '</thead>';
-      $c = 1; 
-        //$alumn = $al->getAlumn();
-       
-        $tabla .= '<tr valign="top">';
-      foreach($dias as $block):
-       $lunes = $this->horario->showAllDiaHorario($idhorario,$block->iddia);
-        $tabla .= '<td>';
-        $tabla .= '<table   class="tblhorario"  border="0" >';
-        if($lunes != false ){ 
-          foreach($lunes as $row){
-              $tabla .= '<tr>
-              <td width="200" style="border:solid #ccc 1px; height:60px; padding-left:5px; padding-right:5px;">';
-             if(strtoupper($row->opcion) == "NORMAL"){ 
-                 $tabla .='<ul>';
-                 $tabla .='<li class="nombreclase">'.$row->nombreclase.'</li>';
-                  $tabla .='<li class="txthorario">'.date('h:i A', strtotime($row->horainicial)).' - '.date('h:i A', strtotime($row->horafinal)).'</li>';
-                   $tabla .='<li class="txttutor">'.$row->nombre.' '.$row->apellidop.' '.$row->apellidom.'</li>';
-                 $tabla .='</ul>';
-             }
-            if(strtoupper($row->opcion) == "DESCANSO"){
-              $tabla.='<label class="nombreclase"> '.$row->nombreclase.'</label>';
+                $tabla .= '</tr>';
+                $lunesAll = $this->horario->showAllDiaHorarioSinDua($idhorario);
+
+                foreach ($lunesAll as $row) {
+                    $tabla .= '<tr>';
+                    $tabla .= '<td width="65" class="txthorario">' . $row->hora . '</td>';
+                    $tabla .= '<td width="93" class="txthorario">' . $row->lunes . '</td>';
+                    $tabla .= '<td  width="93"class="txthorario">' . $row->martes . '</td>';
+                    $tabla .= '<td  width="93"class="txthorario">' . $row->miercoles . '</td>';
+                    $tabla .= '<td width="93" class="txthorario">' . $row->jueves . '</td>';
+                    $tabla .= '<td width="93" class="txthorario">' . $row->viernes . '</td>';
+
+                    $tabla .= '</tr>';
+                }
+                $tabla .= '</table>';
+
+                $pdf->writeHTML($tabla, true, false, false, false, '');
+
+                ob_end_clean();
+
+                $pdf->Output('Kardex de Calificaciones', 'I');
+            } else {
+                return "";
             }
-             if(strtoupper($row->opcion) == "SIN CLASES"){
-              //$tabla.='<label class="nombreclase">SIN CLASES</label>';
-            }
-            $tabla .= '</td>
-            </tr>';
-         }
-        }else{
-           $tabla .='<label>No registrado</label>';
-        } 
-         $tabla .= '</table>';
-      $tabla .= '</td>';
-      endforeach;
-
-        $tabla .= '</tr>';
-      
-
-      
-      $tabla .= '</table></div>';
-      echo $tabla;
-      echo '<button type="button" id="btnimprimir2" onclick="imprimirDiv()" >IMPRIMIR</button>';
-      echo '
-      <script>
- imprimirDiv();
-function imprimirDiv(){
-  //alert(divName);
-  var printContents =document.getElementById("areaimprimir").innerHTML;
-  var originalContents = document.body.innerHTML;
-  document.body.innerHTML = printContents; 
-  window.print();
-  document.body.innerHTML= originalContents;
-}
-$(document).ready(function(){
-  $("#btnimprimir2").trigger("click");
-});
-document.getElementById("btnimprimir2").onclick = imprimirDiv;
-</script>
-      ';
-       }else{
-        $data = array(
-            'heading'=>'Error',
-            'message'=>'Error intente mas tarde.'
-        );
-         $this->load->view('errors/html/error_general',$data);
-    }
         }
-        public function imprimirkardex($idhorario='',$idalumno = '')
+    }
+    public function imprimirkardex($idhorario = '', $idalumno = '')
     {
         Permission::grant(uri_string());
         $alumno = $this->alumno->detalleAlumno($idalumno);
         $grupop = $this->horario->showNivelGrupo($idhorario);
-        $unidades =  $this->grupo->unidades($this->session->idplantel);
+        $unidades = $this->grupo->unidades($this->session->idplantel);
         $materias = $this->alumno->showAllMaterias($idhorario);
         $detalle_logo = $this->alumno->logo($this->session->idplantel);
-        $logo = base_url() . '/assets/images/escuelas/'.$detalle_logo[0]->logoplantel;
-        $logo2 = base_url() . '/assets/images/escuelas/'.$detalle_logo[0]->logosegundo;
+        $logo = base_url() . '/assets/images/escuelas/' . $detalle_logo[0]->logoplantel;
+        $logo2 = base_url() . '/assets/images/escuelas/' . $detalle_logo[0]->logosegundo;
         $total_unidades = 0;
-        $calificacion = "";   
+        $calificacion = "";
         $materias = $this->alumno->showAllMaterias($idhorario);
         $total_materia = 0;
-        if ($materias != FALSE) { 
+        if ($materias != false) {
             foreach ($materias as $row) {
                 # code...
                 $total_materia = $total_materia + 1;
             }
-        } 
-         if ($unidades != FALSE) { 
+        }
+        if ($unidades != false) {
             foreach ($unidades as $row) {
                 # code...
                 $total_unidades = $total_unidades + 1;
             }
-        } 
-        $datoscalifiacacion = $this->horario->calificacionGeneralAlumno($idhorario,$idalumno);
-         if($datoscalifiacacion != FALSE && $total_materia > 0){
-            $calificacion= ($datoscalifiacacion->calificaciongeneral / $total_unidades) / $total_materia;
-         }
+        }
+        $datoscalifiacacion = $this->horario->calificacionGeneralAlumno($idhorario, $idalumno);
+        if ($datoscalifiacacion != false && $total_materia > 0) {
+            $calificacion = ($datoscalifiacacion->calificaciongeneral / $total_unidades) / $total_materia;
+        }
 
-
-       $this->load->library('tcpdf');  
+        $this->load->library('tcpdf');
         $hora = date("h:i:s a");
         //$linkimge = base_url() . '/assets/images/woorilogo.png';
-      
-       $datelle_alumno = $this->alumno->showAllMateriasAlumno($idalumno);
+
+        $datelle_alumno = $this->alumno->showAllMateriasAlumno($idalumno);
         $fechaactual = date('d/m/Y');
         $pdf = new Pdf('P', 'mm', 'A4', true, 'UTF-8', false);
         $pdf->SetTitle('Horario de clases.');
@@ -2486,13 +2727,13 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
 <style type="text/css">
 .titulodias{font-size:9px; font-weight:bold;}
 .cajon{
-    font-size:9px; 
-    font-weight:bold;  
-    border-bottom:solid 1px black;  
+    font-size:9px;
+    font-weight:bold;
+    border-bottom:solid 1px black;
     border-left:solid 1px black;
-     border-right:solid 1px black;  
+     border-right:solid 1px black;
       padding:900px 20px 20px 20px;
-}  
+}
  .txtn{
         font-size:6px;
     }
@@ -2500,21 +2741,21 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
         font-size:6px;
     }
 .escuela{
-      font-size:12px; 
+      font-size:12px;
     font-weight:bold;
 }
 .horario{
-      font-size:10px; 
+      font-size:10px;
     font-weight:bold;
 }
 .titulo{
-      font-size:8px; 
+      font-size:8px;
     font-weight:bold;
 }
 .result{
-      font-size:8px; 
+      font-size:8px;
     font-weight:bold;
-} 
+}
     .nombreplantel{
         font-size:11px;
         font-weight:bolder;
@@ -2529,7 +2770,7 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
     .promedio{
            font-size:10px;
     }
-.tblcalificacion  td 
+.tblcalificacion  td
                 {
                     border:0px  solid black;
                 }
@@ -2541,24 +2782,24 @@ tblcalificacion  {border-collapse:collapse}
      background-color:#ccc;
 }
 .subtitulocal{
-     font-family:Verdana, Geneva, sans-serif; 
-     font-size:7px; 
+     font-family:Verdana, Geneva, sans-serif;
+     font-size:7px;
 }
 </style>
  <table width="580" border="0" cellpadding="0" cellspacing="4">
    <tr>
     <td width="101" align="left"><img   class="imgtitle" src="' . $logo2 . '" /></td>
     <td colspan="2" align="center">
-            <label class="nombreplantel">'.$datelle_alumno[0]->nombreplantel.'</label><br>
+            <label class="nombreplantel">' . $datelle_alumno[0]->nombreplantel . '</label><br>
             <label class="txtn">INCORPORADA A LA UNIVERSIDAD DE GUANAJUATO SEGÚN EL OFICIO 14/ABRIL/1972</label><br>
-            <label class="direccion">'.$datelle_alumno[0]->direccion.'</label><br>
-            <label class="telefono">TELÉFONO: '.$datelle_alumno[0]->telefono.' EXT 1</label>
+            <label class="direccion">' . $datelle_alumno[0]->direccion . '</label><br>
+            <label class="telefono">TELÉFONO: ' . $datelle_alumno[0]->telefono . ' EXT 1</label>
     </td>
     <td width="137" align="right"><img   class="imgtitle" src="' . $logo . '" /></td>
   </tr>
-   
+
   <tr>
-    <td colspan="4" align="center"><label class="horario">KARDEX ESCOLAR</label></td> 
+    <td colspan="4" align="center"><label class="horario">KARDEX ESCOLAR</label></td>
     </tr>
    <tr>
     <td align="center"  style="border-bottom:solid 1px #000000;"><label class="titulo">Matricula</label></td>
@@ -2567,60 +2808,59 @@ tblcalificacion  {border-collapse:collapse}
     <td align="center"  style="border-bottom:solid 1px #000000;"><label class="titulo">Periodo Escolar</label></td>
   </tr>
   <tr>
-    <td align="center"><label class="result">'.$alumno->matricula.'</label></td>
-    <td align="center"><label class="result">'.$alumno->nombre.' '.$alumno->apellidop.' '.$alumno->apellidom.'</label></td>
-    <td align="center"><label class="result">'.$grupop->nombrenivel.' '.$grupop->nombregrupo.'</label></td>
-    <td align="center"><label class="result">'.$grupop->mesinicio.' - '.$grupop->mesfin.' '.$grupop->yearfin.'</label></td>
-  </tr> 
+    <td align="center"><label class="result">' . $alumno->matricula . '</label></td>
+    <td align="center"><label class="result">' . $alumno->nombre . ' ' . $alumno->apellidop . ' ' . $alumno->apellidom . '</label></td>
+    <td align="center"><label class="result">' . $grupop->nombrenivel . ' ' . $grupop->nombregrupo . '</label></td>
+    <td align="center"><label class="result">' . $grupop->mesinicio . ' - ' . $grupop->mesfin . ' ' . $grupop->yearfin . '</label></td>
+  </tr>
 </table>
 <br><br>
  ';
- $tbl .= '<table class="tblcalificacion" cellpadding="2"  >
+        $tbl .= '<table class="tblcalificacion" cellpadding="2"  >
       <tr>
       <td width="30" class="titulocal">#</td>
       <td width="180" class="titulocal">MATERIA</td>';
-       foreach($unidades as $block):
-        $tbl .= '<td class="titulocal">'.$block->nombreunidad.'</td>';
-       endforeach; 
-
-      $tbl .= '</tr>';
-      $c = 1;
-      foreach($materias as $row){
-        //$alumn = $al->getAlumn();
-      
-        $tbl .= '<tr>
-        <td width="30" class="subtitulocal">'.$c++.'</td>
-        <td width="180" class="subtitulocal">'.$row->nombreclase.'</td>';
-      foreach($unidades as $block):
-      $val = $this->grupo->obtenerCalificacion($idalumno, $block->idunidad, $row->idhorariodetalle);
-      //var_dump($val);
-        $tbl .= '<td class="subtitulocal">';
-        if($val != false ){ 
-          $tbl .='<label>'.$val->calificacion.'</label>'; 
-        }else{
-           $tbl .='<label>No registrado</label>';
-        } 
-      $tbl .= '</td>';
-      endforeach;
+        foreach ($unidades as $block):
+            $tbl .= '<td class="titulocal">' . $block->nombreunidad . '</td>';
+        endforeach;
 
         $tbl .= '</tr>';
-      
+        $c = 1;
+        foreach ($materias as $row) {
+            //$alumn = $al->getAlumn();
 
-      }
-      $tbl .= '</table>';
-      $tbl .= '
+            $tbl .= '<tr>
+        <td width="30" class="subtitulocal">' . $c++ . '</td>
+        <td width="180" class="subtitulocal">' . $row->nombreclase . '</td>';
+            foreach ($unidades as $block):
+                $val = $this->grupo->obtenerCalificacion($idalumno, $block->idunidad, $row->idhorariodetalle);
+                //var_dump($val);
+                $tbl .= '<td class="subtitulocal">';
+                if ($val != false) {
+                    $tbl .= '<label>' . $val->calificacion . '</label>';
+                } else {
+                    $tbl .= '<label>No registrado</label>';
+                }
+                $tbl .= '</td>';
+            endforeach;
+
+            $tbl .= '</tr>';
+
+        }
+        $tbl .= '</table>';
+        $tbl .= '
 <br><br>
       <table border="0" width="531">
         <tr>
             <td align="right" class="promedio" >
                 Promedio: <strong>';
-                if(isset($calificacion) && !empty($calificacion)){
-                   $tbl .= number_format($calificacion,2);
-                }else{
-                    $tbl .='<label>0.0</label>';
-                }
-                
-                $tbl .= '</strong>
+        if (isset($calificacion) && !empty($calificacion)) {
+            $tbl .= number_format($calificacion, 2);
+        } else {
+            $tbl .= '<label>0.0</label>';
+        }
+
+        $tbl .= '</strong>
             </td>
         </tr>
       </table>
@@ -2628,100 +2868,95 @@ tblcalificacion  {border-collapse:collapse}
 
         $pdf->writeHTML($tbl, true, false, false, false, '');
 
-    ob_end_clean();
-
+        ob_end_clean();
 
         $pdf->Output('Kardex de Calificaciones', 'I');
 
     }
 
-    public function mensajes($idalumno = '',$idnivel = '',$idperiodo = '')
+    public function mensajes($idalumno = '', $idnivel = '', $idperiodo = '')
     {
         Permission::grant(uri_string());
         $idalumno = $this->decode($idalumno);
-        if(isset($idalumno) && !empty($idalumno)){
-        $idhorario = '';
-        $mensajes = '';
-       $detalle = $this->alumno->showAllMateriasAlumno($idalumno,1);
-        if($detalle){
-     
-       if(isset($detalle[0]->idhorario) && !empty($detalle[0]->idhorario)){
-        $idhorario =  $detalle[0]->idhorario;
-       } 
-       $mensajes = $this->mensaje->showAllMensajeAlumno($idhorario);
-        }
-       $data = array(
-            'mensajes'=>$mensajes,
-            'controller'=>$this
-       );
-        $this->load->view('tutor/header');
-        $this->load->view('tutor/alumnos/mensajes',$data);
-        $this->load->view('tutor/footer');
-        }else{
-              $data = array(
-            'heading'=>'Error',
-            'message'=>'Error intente mas tarde.'
-        );
-         $this->load->view('errors/html/error_general',$data);
+        if (isset($idalumno) && !empty($idalumno)) {
+            $idhorario = '';
+            $mensajes = '';
+            $detalle = $this->alumno->showAllMateriasAlumno($idalumno, 1);
+            if ($detalle) {
+
+                if (isset($detalle[0]->idhorario) && !empty($detalle[0]->idhorario)) {
+                    $idhorario = $detalle[0]->idhorario;
+                }
+                $mensajes = $this->mensaje->showAllMensajeAlumno($idhorario);
+            }
+            $data = array(
+                'mensajes' => $mensajes,
+                'controller' => $this,
+            );
+            $this->load->view('tutor/header');
+            $this->load->view('tutor/alumnos/mensajes', $data);
+            $this->load->view('tutor/footer');
+        } else {
+            $data = array(
+                'heading' => 'Error',
+                'message' => 'Error intente mas tarde.',
+            );
+            $this->load->view('errors/html/error_general', $data);
         }
 
-        
     }
     public function detallemensaje($idmensaje = '')
-{
-    $idmensaje = $this->decode($idmensaje);
-    if(isset($idmensaje) && !empty($idmensaje)){
-        $detalle_mensaje = $this->mensaje->detalleMensaje($idmensaje);
-        //var_dump($detalle_tarea);
-        $data = array(
-          'mensaje'=>$detalle_mensaje
-        );
-        $this->load->view('tutor/header');
-        $this->load->view('tutor/detalle/mensaje',$data);
-        $this->load->view('tutor/footer');
-         }else{
-              $data = array(
-            'heading'=>'Error',
-            'message'=>'Error intente mas tarde.'
-        );
-         $this->load->view('errors/html/error_general',$data);
-        }
-}
-   /*
-    public function noficaciones()
     {
-        $body = @file_get_contents('php://input');
-        $data = json_decode($body);
-        http_response_code(200); // Return 200 OK 
-    }
-    public function crear_webhooks()
-    {
-       $openpay = Openpay::getInstance('moiep6umtcnanql3jrxp', 'sk_3433941e467c1055b178ce26348b0fac');
-
-        $webhook = array(
-            'url' => 'http://requestb.in/11vxrsf1',
-            'user' => 'juanito',
-            'password' => 'passjuanito',
-                'event_types' => array(
-                'charge.refunded',
-                'charge.failed',
-                'charge.cancelled',
-                'charge.created',
-                'chargeback.accepted'
-                )
+        $idmensaje = $this->decode($idmensaje);
+        if (isset($idmensaje) && !empty($idmensaje)) {
+            $detalle_mensaje = $this->mensaje->detalleMensaje($idmensaje);
+            //var_dump($detalle_tarea);
+            $data = array(
+                'mensaje' => $detalle_mensaje,
             );
-
-        $webhook = $openpay->webhooks->add($webhook);
+            $this->load->view('tutor/header');
+            $this->load->view('tutor/detalle/mensaje', $data);
+            $this->load->view('tutor/footer');
+        } else {
+            $data = array(
+                'heading' => 'Error',
+                'message' => 'Error intente mas tarde.',
+            );
+            $this->load->view('errors/html/error_general', $data);
+        }
     }
-    public function solicitar_webhooks()
-    {
-        $openpay = Openpay::getInstance('moiep6umtcnanql3jrxp', 'sk_3433941e467c1055b178ce26348b0fac');
+    /*
+public function noficaciones()
+{
+$body = @file_get_contents('php://input');
+$data = json_decode($body);
+http_response_code(200); // Return 200 OK
+}
+public function crear_webhooks()
+{
+$openpay = Openpay::getInstance('moiep6umtcnanql3jrxp', 'sk_3433941e467c1055b178ce26348b0fac');
 
-        $webhook = $openpay->webhooks->get('wxvanstudf4ssme8khmc');
-    }
-    */
+$webhook = array(
+'url' => 'http://requestb.in/11vxrsf1',
+'user' => 'juanito',
+'password' => 'passjuanito',
+'event_types' => array(
+'charge.refunded',
+'charge.failed',
+'charge.cancelled',
+'charge.created',
+'chargeback.accepted'
+)
+);
 
+$webhook = $openpay->webhooks->add($webhook);
+}
+public function solicitar_webhooks()
+{
+$openpay = Openpay::getInstance('moiep6umtcnanql3jrxp', 'sk_3433941e467c1055b178ce26348b0fac');
 
+$webhook = $openpay->webhooks->get('wxvanstudf4ssme8khmc');
+}
+ */
 
-  
 }

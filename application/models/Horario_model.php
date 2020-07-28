@@ -90,7 +90,7 @@ class Horario_model extends CI_Model {
         }
     }
     public function detalleHorarioDetalle($idhorariodetalle = '') {
-        $this->db->select('m.nombreclase, m.idmateria, p.idprofesor, pm.idprofesormateria, h.idhorario');
+        $this->db->select('m.nombreclase, h.idgrupo, m.idmateria, p.idprofesor, h.idperiodo, pm.idprofesormateria, h.idhorario');
         $this->db->from('tblhorario h');
         $this->db->join('tblhorario_detalle hd', 'h.idhorario = hd.idhorario');
         $this->db->join('tblprofesor_materia pm', 'pm.idprofesormateria = hd.idmateria');

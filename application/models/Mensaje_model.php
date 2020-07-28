@@ -28,8 +28,42 @@ class Mensaje_model extends CI_Model {
             return false;
         }
     } 
+        public function showAllMensajeATutor($profesores = '') {
+        $this->db->select("m.idmensaje, m.idnotificacionalumno, m.idnotificaciontutor, ma.nombreclase,LEFT(m.mensaje, 90) as mensaje, DATE_FORMAT(m.fecharegistro,'%d/%m/%Y') as fecha");
+        $this->db->from('tblmensaje m'); 
+        $this->db->join('tblhorario_detalle hd','hd.idhorariodetalle = m.idhorariodetalle');
+        $this->db->join('tblprofesor_materia pm','hd.idmateria = pm.idprofesormateria');
+        $this->db->join('tblmateria ma','pm.idmateria = ma.idmateria');
+        if(isset($profesores) && !empty($profesores)){ 
+        $this->db->where_in('hd.idmateria', $profesores);
+        } 
+        $this->db->where('m.eliminado',0);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    } 
+       public function showAllTareaATutor($profesores = '') {
+        $this->db->select('t.idtarea, t.idnotificacionalumno, t.idnotificaciontutor,hd.idhorariodetalle,hd.idhorario, hd.horainicial, hd.horafinal, m.nombreclase,p.nombre, p.apellidop, p.apellidom,t.tarea, t.fechaentrega');
+        $this->db->from('tblhorario_detalle hd');
+        $this->db->join('tblprofesor_materia pm', 'hd.idmateria = pm.idprofesormateria');
+        $this->db->join('tblmateria m', 'm.idmateria = pm.idmateria');
+        $this->db->join('tblprofesor p', 'p.idprofesor = pm.idprofesor');
+        $this->db->join('tbltarea t', 't.idhorariodetalle = hd.idhorariodetalle'); 
+        if (isset($idmateria) && !empty($idmateria)) {
+           $this->db->where_in('hd.idmateria', $profesores);
+        }
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
     public function showAllMensajeAlumno($idhorario = '') {
-        $this->db->select("m.idmensaje, ma.nombreclase,LEFT(m.mensaje, 90) as mensaje, DATE_FORMAT(m.fecharegistro,'%d/%m/%Y') as fecha");
+        $this->db->select("m.idmensaje, m.idnotificacionalumno, m.idnotificaciontutor, ma.nombreclase,LEFT(m.mensaje, 90) as mensaje, DATE_FORMAT(m.fecharegistro,'%d/%m/%Y') as fecha");
         $this->db->from('tblmensaje m'); 
         $this->db->join('tblhorario_detalle hd','hd.idhorariodetalle = m.idhorariodetalle');
         $this->db->join('tblprofesor_materia pm','hd.idmateria = pm.idprofesormateria');
@@ -88,6 +122,18 @@ class Mensaje_model extends CI_Model {
     {
         $this->db->where('idmensaje', $id);
         $this->db->update('tblmensaje', $field);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+      
+
+    }
+          public function updateTarea($id, $field)
+    {
+        $this->db->where('idtarea', $id);
+        $this->db->update('tbltarea', $field);
         if ($this->db->affected_rows() > 0) {
             return true;
         } else {

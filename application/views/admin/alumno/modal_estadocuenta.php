@@ -17,7 +17,7 @@
                         <div class="col-md-6 col-sm-12 col-xs-12 "> 
                             <div class="form-group"> 
                                 <select style="border-bottom: solid #ebebeb 2px; margin-top:15px;"  v-model="newCobroInicio.idtipopagocol"  :class="{'is-invalid': formValidate.idtipopagocol}" class="form-control">
-                                    <option value="">-- SELECCIONAR CONCEPTO DE PAGO--</option>
+                                    <option value="">-- CONCEPTO DE PAGO--</option>
                                     <option   v-for="option in tipospago" v-bind:value="option.idtipopagocol">
                                         {{ option.concepto }} 
                                     </option>
@@ -85,8 +85,7 @@
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12 ">
                             <table class=" table table-striped dt-responsive nowrap" cellspacing="0">
-                                <caption class="bg-teal" > <center><strong>DETALLLE DE FORMA DE PAGO</strong></center></caption>
-                                <thead class="bg-teal">
+                                 <thead class="bg-teal">
                                 <th>Forma de Pago</th>
                                 <th>Descuento</th>
                                 <th>Número de Autorización</th>
@@ -221,7 +220,6 @@
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12 ">
                            <table class=" table table-striped dt-responsive nowrap" cellspacing="0">
-                                <caption class="bg-teal" > <center><strong>DETALLLE DE FORMA DE PAGO</strong></center></caption>
                                 <thead class="bg-teal">
                                 <th>Forma de Pago</th>
                                 <th>Descuento</th>

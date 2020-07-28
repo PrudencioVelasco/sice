@@ -27,6 +27,7 @@ var vede = new Vue({
         ciclos_escolares:[],
         beca_actual: [],
         grupo_actual:[],
+        calificacion:[],
         becas:[],
         asignarGrupo: {
             idalumno: my_var_2,
@@ -51,6 +52,7 @@ var vede = new Vue({
         this.showAllCiclosEscolares();
         this.becaActual();
         this.showAllBecas();
+        this.calificacionAlumno();
         
     },
     methods: {
@@ -82,6 +84,14 @@ var vede = new Vue({
                     idalumno: this.idalumno
                 }
             }).then(response => (this.alumno = response.data.alumno));
+
+        },
+         calificacionAlumno() {
+            axios.get(this.url + "Alumno/calificacionGlobal/", {
+                params: {
+                    idalumno: this.idalumno
+                }
+            }).then(response => (this.calificacion = response.data.datos));
 
         },
         grupoActual() {

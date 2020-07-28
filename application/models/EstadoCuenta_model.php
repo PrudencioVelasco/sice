@@ -202,19 +202,34 @@ public function showAllFormasPago() {
         return $query->first_row();
     }
 
-    public function descuentoPagosInicio($idalumno = '',$idperiodo = '', $idtipo = '') {
-        $this->db->select("co.descuento,p.idniveleducativo, b.descuento as descuentobeca,(co.descuento - (b.descuento / 100 * co.descuento)) as beca");
-        $this->db->from('tblcolegiatura co');  
-        $this->db->join('tblgrupo g ', ' g.idnivelestudio = co.idnivelestudio');
-        $this->db->join('tblalumno_grupo ag ', ' ag.idgrupo = g.idgrupo');
-        $this->db->join('tblbeca b ', 'b.idbeca = ag.idbeca');
-        $this->db->join('tblalumno a ', 'a.idalumno = ag.idalumno');
-        $this->db->join('tblplantel p ', 'a.idplantel = p.idplantel');
-        $this->db->where('ag.idalumno',$idalumno);
-        $this->db->where('ag.idperiodo',$idperiodo);  
-        $this->db->where('co.activo',1);  
-         $this->db->where('co.idtipopagocol',$idtipo);  
-         $query = $this->db->get();
+    public function descuentoPagosInicio($idalumno = '',$idperiodo = '', $idtipo = '',$idplantel) {
+          $query = $this->db->query("SELECT 
+    idniveleducativo,
+    descuentobeca,
+     descuento,
+     (descuento - (descuentobeca / 100 * descuento)) AS beca
+FROM
+    (SELECT 
+        p.idniveleducativo,
+            b.descuento AS descuentobeca,
+            (SELECT 
+                    COALESCE(co.descuento, 0)
+                FROM
+                    tblcolegiatura co
+                WHERE
+                    co.idplantel = $idplantel
+                        AND co.idtipopagocol = $idtipo
+                        AND co.activo = 1) AS descuento
+    FROM
+        tblgrupo g
+    JOIN tblalumno_grupo ag ON ag.idgrupo = g.idgrupo
+    JOIN tblbeca b ON b.idbeca = ag.idbeca
+    JOIN tblalumno a ON a.idalumno = ag.idalumno
+    JOIN tblplantel p ON a.idplantel = p.idplantel
+    WHERE
+        ag.idalumno = $idalumno AND ag.idperiodo = $idperiodo) tbl;");
+        //  return $query->result();
+
         if ($query->num_rows() > 0) {
             return $query->result();
         } else {

@@ -6,33 +6,7 @@ if (typeof my_var_1 === "undefined") {
 }
 
 
-Vue.config.devtools = true
-Vue.component('modal', { //modal
-    template: `
-   <transition name="modal">
-      <div class="modal-mask">
-        <div class="modal-wrapper">
-          <div class="modal-dialog">
-			    <div class="modal-content">
-
-			      <div class="modal-header">
-				        <h5 class="modal-title"> <slot name="head"></slot></h5>
-				       </div>
-
-			      <div class="modal-body" style="background-color:#fff;">
-			         <slot name="body"></slot>
-			      </div>
-			      <div class="modal-footer">
-
-			         <slot name="foot"></slot>
-			      </div>
-			    </div>
-          </div>
-        </div>
-      </div>
-    </transition>
-    `
-})
+Vue.config.devtools = true;
 var v = new Vue({
     el: '#app',
     data: {
@@ -41,23 +15,24 @@ var v = new Vue({
         editModal: false,
         editPasswordModal: false,
         cargando: false,
-        error: false, 
+        error: false,
         alumnos: [],
         datos_tutor: [],
-        url_image: my_var_1 +'/assets/tutores/',
+        url_image: my_var_1 + '/assets/tutores/',
         especialidades: [],
-        tipossanguineos: [], 
+        tipossanguineos: [],
         search: { text: '' },
-        emptyResult: false, 
+        emptyResult: false,
         chooseAlumno: {},
         formValidate: [],
-        file:'',
+        file: '',
         cambiarPassword: {
-           
+
             passwordanterior: '',
             passwordnueva: '',
             passwordrepita: '',
-            smserror: ''},
+            smserror: ''
+        },
         successMSG: '',
 
         //pagination
@@ -68,8 +43,8 @@ var v = new Vue({
         directives: { columnSortable }
     },
     created() {
-        this.showAll(); 
-        this.detalleTutor(); 
+        this.showAll();
+        this.detalleTutor();
         this.showAllEspecialidades();
         this.showAllTiposSanguineos();
     },
@@ -87,17 +62,17 @@ var v = new Vue({
             // sort your array data like this.userArray
             this.alumnos.sort(sortFn);
         },
-        
-    showAllEspecialidades() {
-        axios.get(this.url + "Alumno/showAllEspecialidades/")
-            .then(response => (this.especialidades = response.data.especialidades));
 
-    }, 
-    showAllTiposSanguineos() {
-        axios.get(this.url + "Alumno/showAllTiposSanguineos/")
-            .then(response => (this.tipossanguineos = response.data.tipossanguineos));
+        showAllEspecialidades() {
+            axios.get(this.url + "Alumno/showAllEspecialidades/")
+                .then(response => (this.especialidades = response.data.especialidades));
 
-    },  
+        },
+        showAllTiposSanguineos() {
+            axios.get(this.url + "Alumno/showAllTiposSanguineos/")
+                .then(response => (this.tipossanguineos = response.data.tipossanguineos));
+
+        },
         showAll() {
             axios.get(this.url + "Perfil/showAllAlumnoTutor").then(function (response) {
                 if (response.data.alumnos == null) {
@@ -112,7 +87,7 @@ var v = new Vue({
                 .then(response => (this.datos_tutor = response.data.datos_tutor));
 
         },
-       
+
         searchAlumno() {
             var formData = v.formData(v.search);
             axios.post(this.url + "Perfil/searchAlumnosTutor", formData).then(function (response) {
@@ -123,8 +98,8 @@ var v = new Vue({
 
                 }
             })
-        }, 
-        updateDatosTutor(){
+        },
+        updateDatosTutor() {
             v.error = false;
             v.cargando = true;
             var formData = v.formData(v.datos_tutor); axios.post(this.url + "Perfil/updateDatosTutor", formData).then(function (response) {
@@ -143,7 +118,7 @@ var v = new Vue({
                         showConfirmButton: false,
                         timer: 1500
                     });
-                  
+
 
                 }
             })
@@ -171,15 +146,15 @@ var v = new Vue({
 
                 }
             })
-        }, 
+        },
         subirFoto() {
             v.error = false;
             v.cargando = true;
             var formData = v.formData();
-            formData.append('file',this.file); 
-            axios.post(this.url + "Perfil/subirFotoTutor", formData,{
-                headers:{
-                    'Content-Type':'multipart/form-dara'
+            formData.append('file', this.file);
+            axios.post(this.url + "Perfil/subirFotoTutor", formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-dara'
                 }
             }).then(function (response) {
                 if (response.data.error) {
@@ -198,13 +173,13 @@ var v = new Vue({
                         timer: 1500
                     });
 
-                  
+
                 }
-            }).catch(function(){
+            }).catch(function () {
                 console.log('ERROR AL SUBIR LA IMAGEN.');
             })
         },
-        onChangeFileUpload(){
+        onChangeFileUpload() {
             this.file = this.$refs.file.files[0];
         },
         updatePasswordTutor() {
@@ -252,7 +227,7 @@ var v = new Vue({
 
         selectAlumno(alumno) {
             v.chooseAlumno = alumno;
-             
+
         },
         clearMSG() {
             setTimeout(function () {
@@ -260,22 +235,22 @@ var v = new Vue({
             }, 3000); // disappearing message success in 2 sec
         },
         clearAll() {
-            v.detalleTutor(); 
+            v.detalleTutor();
             $('#editRegister').modal('hide');
             $('#addRegister').modal('hide');
-            $('#subirFoto').modal('hide'); 
-            v.cambiarPassword = { 
+            $('#subirFoto').modal('hide');
+            v.cambiarPassword = {
                 passwordanterior: '',
                 passwordnueva: '',
                 passwordrepita: '',
                 smserror: ''
             },
-            v.formValidate = false;
+                v.formValidate = false;
             v.addModal = false;
             v.editPasswordModal = false;
             v.editModal = false;
             v.error = false;
-            v.cargando = false; 
+            v.cargando = false;
             v.file = '';
             this.$refs.file.files[0] = '';
             v.refresh()

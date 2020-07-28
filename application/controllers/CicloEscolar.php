@@ -311,10 +311,18 @@ class CicloEscolar extends CI_Controller {
             $idperiodo = $this->input->get('idperiodo');
             $query = $this->ciclo->deleteCicloEscolar($idperiodo);
             if ($query) {
-                $result['ciclos'] = true;
+                $result['error'] = false;
+            } else {
+                $result['error'] = true;
+                $result['msg'] = array(
+                    'msgerror' => 'No se puede Elimnar registro.'
+                );
             }
         } else {
-            $result['ciclos'] = false;
+            $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
+            );
         }
         if (isset($result) && !empty($result)) {
             echo json_encode($result);

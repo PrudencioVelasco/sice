@@ -11,34 +11,7 @@ if (typeof my_var_2 === "undefined") {
 
 
 
-Vue.config.devtools = true
-Vue.component('modal', { //modal
-    template: `
-   <transition name="modal">
-      <div class="modal-mask">
-        <div class="modal-wrapper">
-          <div class="modal-dialog">
-			    <div class="modal-content">
-
-
-			      <div class="modal-header">
-				        <h5 class="modal-title"> <slot name="head"></slot></h5>
-				      </div>
-
-			      <div class="modal-body" style="background-color:#fff;">
-			         <slot name="body"></slot>
-			      </div>
-			      <div class="modal-footer">
-
-			         <slot name="foot"></slot>
-			      </div>
-			    </div>
-          </div>
-        </div>
-      </div>
-    </transition>
-    `
-})
+Vue.config.devtools = true;
 var v = new Vue({
     el: '#app',
     data: {
@@ -51,7 +24,7 @@ var v = new Vue({
         //deleteModal:false,
         materias: [],
         clases: [],
-        search: { text: '' },
+        search: {text: ''},
         emptyResult: false,
         newMateria: {
             idmateria: my_var_2,
@@ -67,7 +40,7 @@ var v = new Vue({
         rowCountPage: 10,
         totalMaterias: 0,
         pageRange: 2,
-        directives: { columnSortable }
+        directives: {columnSortable}
     },
     created() {
         this.showAll();
@@ -158,7 +131,7 @@ var v = new Vue({
                             id: id
                         }
                     }).then(function (response) {
-                        if (response.data.materias == true) {
+                        if (response.data.error == false) {
                             //v.noResult()
                             v.clearAll();
                             v.clearMSG();
@@ -171,7 +144,7 @@ var v = new Vue({
                             });
 
                         } else {
-                            swal("Información", "No se puede quitar la Materia", "info")
+                            swal("Información", response.data.msg.msgerror, "info")
                             v.cargando = false;
                         }
                     }).catch((error) => {
@@ -186,7 +159,8 @@ var v = new Vue({
         updateMateria() {
             v.cargando = true;
             v.error = false;
-            var formData = v.formData(v.chooseMateria); axios.post(this.url + "Materia/updateMateriaSeriada", formData).then(function (response) {
+            var formData = v.formData(v.chooseMateria);
+            axios.post(this.url + "Materia/updateMateriaSeriada", formData).then(function (response) {
                 if (response.data.error) {
                     v.formValidate = response.data.msg;
                     v.cargando = false;
@@ -206,17 +180,6 @@ var v = new Vue({
                 }
             })
         },
-
-        /* deleteUser(){
-              var formData = v.formData(v.chooseUser);
-               axios.post(this.url+"user/deleteUser", formData).then(function(response){
-                 if(!response.data.error){
-                      v.successMSG = response.data.success;
-                     v.clearAll();
-                     v.clearMSG();
-                 }
-             })
-         },*/
         formData(obj) {
             var formData = new FormData();
             for (var key in obj) {
@@ -265,15 +228,14 @@ var v = new Vue({
         noResult() {
 
             v.emptyResult = true;  // become true if the record is empty, print 'No Record Found'
-            v.materias = null
-            v.totalMaterias = 0 //remove current page if is empty
+            v.materias = null;
+            v.totalMaterias = 0; //remove current page if is empty
 
         },
 
-
         pageUpdate(pageNumber) {
             v.currentPage = pageNumber; //receive currentPage number came from pagination template
-            v.refresh()
+            v.refresh();
         },
         refresh() {
             v.search.text ? v.searchMateria() : v.showAll(); //for preventing

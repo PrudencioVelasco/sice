@@ -140,8 +140,9 @@ class Profesor_model extends CI_Model {
     
        public function detalleProfesor($idprofesor)
     {
-        $this->db->select('t.*');
-        $this->db->from('tblprofesor t'); 
+        $this->db->select('t.*,p.idniveleducativo');
+        $this->db->from('tblprofesor t');
+        $this->db->join('tblplantel p', 't.idplantel = p.idplantel');
         $this->db->where('t.idprofesor', $idprofesor);
         $query = $this->db->get();
 

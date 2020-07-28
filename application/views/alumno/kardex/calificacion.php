@@ -7,7 +7,7 @@
     <div class="col-md-12">
       <div class="x_panel">
         <div class="x_title">
-          <h2><strong>CALIFICACIÓN DEL ALUMNO(A)</strong></h2>
+          <h2><strong><i class="fa fa-tasks"></i> CALIFICACIÓN DEL ALUMNO(A)</strong></h2>
           <ul class="nav navbar-right panel_toolbox">
 <!--             <h3><small>C. del Nivel: </small><strong style="color: green">
              <?php 
@@ -42,26 +42,27 @@
               
           </div>  <br>
           <div class="row">
-              <div class="col-md-6 col-sm-12 col-xs-12 " align="left">
-                <?php
-             // if(isset($estatus_nivel) && !empty($estatus_nivel)){
-                   ?>
-<!--               <label>ESTATUS: </label> <?php //echo $estatus_nivel; ?> -->
-                <?php 
-             // }
-             ?>
-             </div>
-             <?php
-              if(isset($mostrar_estatus) && !empty($mostrar_estatus) && $mostrar_estatus == true){
-                   ?>
-                        <div class="col-md-6 col-sm-12 col-xs-12 " align="right">
-                          <a href="<?php echo site_url('Aalumno/oportunidades/'.$controller->encode($idalumno).'/'.$controller->encode($idhorario)) ?>" class="btn btn-success btn-sm waves-effect">Segunda oportunidad  <span class="badge"><?php echo $total_reprobados; ?></span></a>
+                  <div class="col-md-6 col-sm-12 col-xs-12 " align="left"> 
+                  </div>
+                  <?php
+                  if (isset($mostrar_estatus) && !empty($mostrar_estatus) && $mostrar_estatus == true) {
+                      ?>
+                      <div class="col-md-6 col-sm-12 col-xs-12 " align="right">
+                          <?php
+                          if ((isset($oportunidades) && !empty($oportunidades))) {
+                              foreach ($oportunidades as $row) {
+                                  ?>
+                                  <a href="<?php echo site_url('Aalumno/oportunidades/' . $controller->encode($idalumno) . '/' . $controller->encode($idhorario) . '/' . $controller->encode($row->idoportunidadexamen) . '/' . $controller->encode($row->numero)) ?>" class="btn btn-success btn-sm waves-effect"><?php echo $row->nombreoportunidad ?></a>
+                                  <?php
+                              }
+                          }
+                          ?>
                       </div>
-                  <?php  
-              }
-             ?>
+                      <?php
+                  }
+                  ?>
 
-          </div>
+              </div>
           <br>
           <div class="row">   
             <?php
@@ -70,18 +71,18 @@
               }
             ?> 
           </div>
-          <div class="row">
+<!--          <div class="row">
               <div class="col-md-12 col-sm-12 col-xs-12 " align="right">
                 <?php
-                 if(isset($calificacion) && !empty($calificacion)){
+                 //if(isset($calificacion) && !empty($calificacion)){
                    ?>
-                     <a target="_blank" href="<?php echo site_url('Aalumno/imprimirkardex/'.$controller->encode($idhorario).'/'.$controller->encode($idalumno)) ?>" class="btn btn-primary"><i class="fa fa-print"></i> IMPRIMIR KARDEX</a>
+                     <a target="_blank" href="<?php //echo site_url('Aalumno/imprimirkardex/'.$controller->encode($idhorario).'/'.$controller->encode($idalumno)) ?>" class="btn btn-primary"><i class="fa fa-print"></i> IMPRIMIR KARDEX</a>
                    <?php 
-                  }
+                  //}
                 ?>
               
               </div>
-          </div>
+          </div>-->
                 <?php } else {?>
                      <div class="row">
                       <div class="col-md-12 col-sm-12 col-xs-12 " align="center">

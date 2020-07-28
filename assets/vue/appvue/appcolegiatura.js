@@ -6,34 +6,7 @@ if (typeof my_var_1 === "undefined") {
 }
 
 
-Vue.config.devtools = true
-Vue.component('modal', { //modal
-    template: `
-   <transition name="modal">
-      <div class="modal-mask">
-        <div class="modal-wrapper">
-          <div class="modal-dialog">
-			    <div class="modal-content">
-
-
-			      <div class="modal-header">
-				        <h5 class="modal-title"> <slot name="head"></slot></h5>
-				       </div>
-
-			      <div class="modal-body" style="background-color:#fff;">
-			         <slot name="body"></slot>
-			      </div>
-			      <div class="modal-footer">
-
-			         <slot name="foot"></slot>
-			      </div>
-			    </div>
-          </div>
-        </div>
-      </div>
-    </transition>
-    `
-})
+Vue.config.devtools = true;
 var v = new Vue({
     el: '#app',
     data: {
@@ -82,7 +55,7 @@ var v = new Vue({
             this.colegiaturas.sort(sortFn);
         },
         showAll() {
-            axios.get(this.url + "Catalogo/showAll").then(function (response) {
+            axios.get(this.url + "Colegiatura/showAll").then(function (response) {
                 if (response.data.colegiaturas == null) {
                     v.noResult()
                 } else {
@@ -91,18 +64,18 @@ var v = new Vue({
             })
         },
         showAllNiveles() {
-            axios.get(this.url + "Catalogo/showAllNiveles/")
+            axios.get(this.url + "Colegiatura/showAllNiveles/")
                 .then(response => (this.niveles = response.data.niveles));
 
         }, 
         showAllConceptos() {
-            axios.get(this.url + "Catalogo/showAllConceptos/")
+            axios.get(this.url + "Colegiatura/showAllConceptos/")
                 .then(response => (this.conceptos = response.data.conceptos));
 
         }, 
         searchColegiatura() {
             var formData = v.formData(v.search);
-            axios.post(this.url + "Catalogo/searchColegiatura", formData).then(function (response) {
+            axios.post(this.url + "Colegiatura/searchColegiatura", formData).then(function (response) {
                 if (response.data.colegiaturas == null || response.data.colegiaturas == false) {
                     v.noResult()
                 } else {
@@ -115,7 +88,7 @@ var v = new Vue({
             v.cargando = true;
             v.error = false;
             var formData = v.formData(v.newColegiatura);
-            axios.post(this.url + "Catalogo/addColegiatura", formData).then(function (response) {
+            axios.post(this.url + "Colegiatura/addColegiatura", formData).then(function (response) {
                 if (response.data.error) {
                     v.formValidate = response.data.msg;
                     v.error = true;
@@ -137,7 +110,8 @@ var v = new Vue({
         updateColegiatura() {
             v.cargando = true;
             v.error = false;
-            var formData = v.formData(v.chooseColegiatura); axios.post(this.url + "Catalogo/updateColegiatura", formData).then(function (response) {
+            var formData = v.formData(v.chooseColegiatura); 
+            axios.post(this.url + "Colegiatura/updateColegiatura", formData).then(function (response) {
                 if (response.data.error) {
                     v.formValidate = response.data.msg;
                     v.error = true;
@@ -172,13 +146,12 @@ var v = new Vue({
             }).then((result) => {
                 if (result.value) {
 
-                    axios.get(this.url + "Catalogo/deleteColegiatura", {
+                    axios.get(this.url + "Colegiatura/deleteColegiatura", {
                         params: {
                             idcolegiatura: id
                         }
                     }).then(function (response) {
-                        if (response.data.colegiaturas == true) {
-                            //v.noResult()
+                        if (response.data.error == false) {
                             swal({
                                 position: 'center',
                                 type: 'success',
@@ -189,7 +162,7 @@ var v = new Vue({
                             v.clearAll();
                             v.clearMSG();
                         } else {
-                            swal("Información", "No se puede eliminar la Colegiatura", "info")
+                            swal("Información", response.data.msg.msgerror, "info")
                         }
                         console.log(response);
                     }).catch((error) => {
@@ -197,18 +170,7 @@ var v = new Vue({
                     })
                 }
             })
-        },
-
-        /* deleteUser(){
-              var formData = v.formData(v.chooseUser);
-               axios.post(this.url+"user/deleteUser", formData).then(function(response){
-                 if(!response.data.error){
-                      v.successMSG = response.data.success;
-                     v.clearAll();
-                     v.clearMSG();
-                 }
-             })
-         },*/
+        }, 
         formData(obj) {
             var formData = new FormData();
             for (var key in obj) {
@@ -256,15 +218,15 @@ var v = new Vue({
         noResult() {
 
             v.emptyResult = true;  // become true if the record is empty, print 'No Record Found'
-            v.colegiaturas = null
-            v.totalColegiaturas = 0 //remove current page if is empty
+            v.colegiaturas = null;
+            v.totalColegiaturas = 0; //remove current page if is empty
 
         },
 
 
         pageUpdate(pageNumber) {
             v.currentPage = pageNumber; //receive currentPage number came from pagination template
-            v.refresh()
+            v.refresh();
         },
         refresh() {
             v.search.text ? v.searchColegiatura() : v.showAll(); //for preventing

@@ -40,7 +40,9 @@
                                         </label>
                                     </li>
                                     <li>
-                                        <i class="fa fa-check-circle" style="color:#0cb62c;" ></i> <label>Promedio Gral. --- </label>
+                                        <i class="fa fa-check-circle" style="color:#0cb62c;" ></i> 
+                                        <label  v-if="!calificacion">Promedio Gral.  </label>
+                                         <label  v-if="calificacion">Promedio Gral. {{calificacion.promedio}} </label>
                                     </li>
                                     <li>
                                         <i class="fa fa-check-circle " style="color:#0cb62c;"></i> <label>{{alumno.nombreespecialidad}}</label>
@@ -120,7 +122,7 @@
                                                                 ?>
                                                             </td>
                                                             <td align="right">
-                                                                <a class="btn btn-default  waves-effect waves-black"  href="<?php echo site_url('Alumno/historial/' . $row->idhorario . '/' . $id) ?>"><i class="fa fa-list-alt" aria-hidden="true"></i> Boleta</a>
+                                                                <a class="btn btn-default  waves-effect waves-black"  href="<?php echo site_url('Alumno/historial/' . $row->idhorario . '/' . $id.'/'.$row->idperiodo) ?>"><i class="fa fa-list-alt" aria-hidden="true"></i> Boleta</a>
 <!--                                                                <div class="btn-group" role="group">
                                                                     <div class="btn-group" role="group">
                                                                         <button type="button" class="btn btn-primary waves-effect dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

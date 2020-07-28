@@ -106,81 +106,68 @@
      }
      if($niveleducativo == 2){
          //SECUANDARIA
-           if($idnivel == 1){ 
-             if($total_reprovado > $reprobado_permitido){
-                $mensaje = false;
-            }elseif($calificacion_optenida >= $calificacion_minima){
-                if($total_reprovado > 0){
-                    $mensaje = true;
-                }else{
-                      $mensaje = false;
-                }
-                
-            }
+           if ($idnivel == 1) {
+            if ($total_reprovado > $reprobado_permitido) {
+                $mensaje = true;
+            } elseif ($calificacion_optenida >= $calificacion_minima) {
 
-         }
-         if($idnivel == 2){ 
-             if($total_reprovado > $reprobado_permitido){
                 $mensaje = false;
-            }elseif($calificacion_optenida >= $calificacion_minima){
-                if($total_reprovado > 0){
-                    $mensaje = true;
-                }else{
-                      $mensaje = false;
-                }
-                
+            } else {
+                $mensaje = false;
+            }
+        }
+        if($idnivel == 2){ 
+            if ($total_reprovado > $reprobado_permitido) {
+                $mensaje = true;
+            } elseif ($calificacion_optenida >= $calificacion_minima) {
+
+                $mensaje = false;
+            } else {
+                $mensaje = false;
             }
 
          }
           if($idnivel == 3){ 
-             if($total_reprovado > $reprobado_permitido){
+          if ($total_reprovado > $reprobado_permitido) {
+                $mensaje = true;
+            } elseif ($calificacion_optenida >= $calificacion_minima) {
+
                 $mensaje = false;
-            }elseif($calificacion_optenida >= $calificacion_minima){
-                if($total_reprovado > 0){
-                    $mensaje = true;
-                }else{
-                      $mensaje = false;
-                }
-                
+            } else {
+                $mensaje = false;
             }
 
          }
           if($idnivel == 4){ 
-             if($total_reprovado > $reprobado_permitido){
+          if ($total_reprovado > $reprobado_permitido) {
+                $mensaje = true;
+            } elseif ($calificacion_optenida >= $calificacion_minima) {
+
                 $mensaje = false;
-            }elseif($calificacion_optenida >= $calificacion_minima){
-                if($total_reprovado > 0){
-                    $mensaje = true;
-                }else{
-                      $mensaje = false;
-                }
-                
+            } else {
+                $mensaje = false;
             }
 
          }
           if($idnivel == 5){ 
-             if($total_reprovado > $reprobado_permitido){
+           if ($total_reprovado > $reprobado_permitido) {
+                $mensaje = true;
+            } elseif ($calificacion_optenida >= $calificacion_minima) {
+
                 $mensaje = false;
-            }elseif($calificacion_optenida >= $calificacion_minima){
-                if($total_reprovado > 0){
-                    $mensaje = true;
-                }else{
-                      $mensaje = false;
-                }
-                
+            } else {
+                $mensaje = false;
             }
 
          }
           if($idnivel == 6){ 
-             if($total_reprovado > $reprobado_permitido){
+           if ($total_reprovado > $reprobado_permitido) {
+                $mensaje = true;
+            } elseif ($calificacion_optenida >= $calificacion_minima) {
+
                 $mensaje = false;
-            }elseif($calificacion_optenida >= $calificacion_minima){
-                if($total_reprovado > 0){
-                    $mensaje = true;
-                }else{
-                      $mensaje = false;
-                }
-                
+            } else {
+                $mensaje = false;
             }
 
          }

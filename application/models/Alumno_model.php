@@ -32,6 +32,7 @@ class Alumno_model extends CI_Model {
             return false;
         }
     }
+ 
 
     public function showAllEstatusAlumno() {
         $this->db->select('ae.*');
@@ -122,12 +123,14 @@ class Alumno_model extends CI_Model {
     }
 
     public function showAllAlumnosTutorActivos($idtutor = '') {
-        $this->db->select('a.idalumno, a.nombre, a.apellidop, a.apellidom,ne.nombrenivel, ne.idnivelestudio, g.nombregrupo, g.idgrupo, ag.idperiodo');
+        $this->db->select('a.idalumno, h.idhorario, a.nombre, a.apellidop, a.apellidom,ne.nombrenivel, ne.idnivelestudio, g.nombregrupo, g.idgrupo, ag.idperiodo');
         $this->db->from('tblalumno a');
         $this->db->join('tbltutoralumno ta', 'a.idalumno=ta.idalumno');
         $this->db->join('tblalumno_grupo ag', 'ag.idalumno=a.idalumno');
         $this->db->join('tblgrupo g', 'g.idgrupo=ag.idgrupo');
         $this->db->join('tblnivelestudio ne', 'g.idnivelestudio=ne.idnivelestudio');
+        $this->db->join('tblhorario h','h.idperiodo = ag.idperiodo');
+        $this->db->where('h.idgrupo = ag.idgrupo'); 
         $this->db->where('ta.idtutor', $idtutor);
         $this->db->where('ag.activo', 1);
         $this->db->order_by('a.apellidop ASC');
@@ -181,8 +184,10 @@ class Alumno_model extends CI_Model {
         $this->db->join('tbltipopagocol tp2', 'tp2.idtipopagocol = pi.idtipopagocol');
         $this->db->join('tbldetalle_pago_inicio dpi', 'pi.idpago = dpi.idpago');
         $this->db->join('tbltipo_pago tp', 'tp.idtipopago = dpi.idformapago');
+        //$this->db->join('tblperiodo p', 'p.idperiodo = pi.idperiodo');
         $this->db->where('pi.idalumno', $idalumno);
-        $this->db->where('pi.idperiodo', $idperiodo);
+        $this->db->where('pi.idperiodo', $idperiodo); 
+        //$this->db->where('p.activo',1);
         $this->db->where('pi.eliminado', 0);
         $this->db->group_by('dpi.idpago');
         $this->db->select_sum('dpi.descuento');
@@ -458,7 +463,7 @@ FROM
     JOIN tblprofesor_materia pm ON hd.idmateria = pm.idprofesormateria
     JOIN tblmateria m ON m.idmateria = pm.idmateria
     JOIN tblprofesor p ON p.idprofesor = pm.idprofesor
-    WHERE (pe.activo = 1 OR h.activo =1) AND mr.estatus = 1 AND  dr.idhorario = ' . $idhorario . ') materias
+    WHERE (pe.activo = 1 OR h.activo =1) AND mr.estatus = 1) materias
 GROUP BY idmateria , nombreclase ASC';
 
         $query = $this->db->query($sql);
@@ -469,9 +474,8 @@ GROUP BY idmateria , nombreclase ASC';
         }
     }
 
-    public function showAllMateriasPasadas($idhorario) {
-        $query = $this->db->query("SELECT 
-    idprofesormateri,
+    public function showAllMateriasPasadas($idhorario,$idalumno,$idperiodo) {
+        $query = $this->db->query("SELECT   idnivelestudio, idprofesormateri,
     idhorariodetalle,
     idhorario,
     horainicial,
@@ -482,51 +486,86 @@ GROUP BY idmateria , nombreclase ASC';
     apellidom,
     idmateria,
     opcion,
-    credito
+    credito FROM (
+SELECT 
+    g.idnivelestudio,
+    hd.idmateria AS idprofesormateri,
+    hd.idhorariodetalle,
+    hd.idhorario,
+    hd.horainicial,
+    hd.horafinal,
+    m.nombreclase,
+    p.nombre,
+    p.apellidop,
+    p.apellidom,
+    m.idmateria,
+    0 AS opcion,
+    m.credito
 FROM
-    (SELECT 
-        hd.idmateria AS idprofesormateri,
-            hd.idhorariodetalle,
-            hd.idhorario,
-            hd.horainicial,
-            hd.horafinal,
-            m.nombreclase,
-            p.nombre,
-            p.apellidop,
-            p.apellidom,
-            m.idmateria,
-            1 as opcion,
-            m.credito
-    FROM
-        tblhorario_detalle hd
-    JOIN tblprofesor_materia pm ON hd.idmateria = pm.idprofesormateria
-    JOIN tblmateria m ON m.idmateria = pm.idmateria
-    JOIN tblprofesor p ON p.idprofesor = pm.idprofesor
-    WHERE
-        hd.idhorario = $idhorario UNION ALL
-        SELECT 
-        hd.idmateria AS idprofesormateri,
-            hd.idhorariodetalle,
-            hd.idhorario,
-            hd.horainicial,
-            hd.horafinal,
-            m.nombreclase,
-            p.nombre,
-            p.apellidop,
-            p.apellidom,
-            m.idmateria,
-            0 as opcion,
-             m.credito
-    FROM
-        tblmateria_reprobada mr
-    INNER JOIN tbldetalle_reprobada dr ON mr.idreprobada = dr.idreprobada
-    INNER JOIN tblhorario_detalle hd ON dr.idprofesormateria = hd.idmateria
-    INNER JOIN tblhorario h ON h.idhorario = hd.idhorario
-    INNER JOIN tblperiodo pe ON h.idperiodo = pe.idperiodo
-    JOIN tblprofesor_materia pm ON hd.idmateria = pm.idprofesormateria
-    JOIN tblmateria m ON m.idmateria = pm.idmateria
-    JOIN tblprofesor p ON p.idprofesor = pm.idprofesor ) materias
-     GROUP BY idmateria , nombreclase ASC;");
+    tblmateria_reprobada mr
+        INNER JOIN
+    tbldetalle_reprobada dr ON mr.idreprobada = dr.idreprobada
+        INNER JOIN
+    tblhorario_detalle hd ON dr.idprofesormateria = hd.idmateria
+        INNER JOIN
+    tblhorario h ON h.idhorario = hd.idhorario
+        INNER JOIN
+    tblperiodo pe ON h.idperiodo = pe.idperiodo
+        JOIN
+    tblprofesor_materia pm ON hd.idmateria = pm.idprofesormateria
+        JOIN
+    tblmateria m ON m.idmateria = pm.idmateria
+        JOIN
+    tblprofesor p ON p.idprofesor = pm.idprofesor
+        JOIN
+    tblalumno_grupo ag ON ag.idalumnogrupo = mr.idalumnogrupo
+    JOIN tblgrupo g ON g.idgrupo = h.idgrupo
+    AND h.idperiodo = $idperiodo
+    AND ag.idalumno = $idalumno
+    AND h.idhorario NOT IN ($idhorario)
+    UNION ALL 
+ SELECT 
+  g.idnivelestudio,
+    hd.idmateria AS idprofesormateri,
+    hd.idhorariodetalle,
+    hd.idhorario,
+    hd.horainicial,
+    hd.horafinal,
+    m.nombreclase,
+    p.nombre,
+    p.apellidop,
+    p.apellidom,
+    m.idmateria,
+    1 AS opcion,
+    m.credito
+FROM
+    tblhorario_detalle hd
+        JOIN
+    tblprofesor_materia pm ON hd.idmateria = pm.idprofesormateria
+        JOIN
+    tblmateria m ON m.idmateria = pm.idmateria
+        JOIN
+    tblprofesor p ON p.idprofesor = pm.idprofesor
+        JOIN
+    tblhorario h ON h.idhorario = hd.idhorario
+        JOIN
+    tblalumno_grupo ag ON ag.idperiodo = h.idperiodo
+    JOIN tblgrupo g ON g.idgrupo = h.idgrupo
+WHERE
+    ag.idgrupo = h.idgrupo
+        AND h.idperiodo = $idperiodo
+        AND ag.idalumno = $idalumno
+        AND pm.idmateria NOT IN (SELECT 
+            ms.idmateriaprincipal
+        FROM
+            tblmateria_reprobada mr
+                INNER JOIN
+            tblalumno_grupo ag ON mr.idalumnogrupo = ag.idalumnogrupo
+                INNER JOIN
+            tblmateria_seriada ms ON ms.idmateriasecundaria = mr.idmateria
+              WHERE ag.idalumno = $idalumno
+       )
+GROUP BY hd.idmateria) tabla");
         if ($query->num_rows() > 0) {
             return $query->result();
         } else {
@@ -556,7 +595,7 @@ FROM
     }
 
     public function showTareaAlumnoMateria($dhorario, $limitar_consulta = '') {
-        $this->db->select('hd.idhorariodetalle,hd.idhorario, hd.horainicial, hd.horafinal, m.nombreclase,p.nombre, p.apellidop, p.apellidom,LEFT(t.tarea, 90) as tarea, t.idtarea, t.fechaentrega');
+        $this->db->select('t.idnotificacionalumno,t.idnotificaciontutor,hd.idhorariodetalle,hd.idhorario, hd.horainicial, hd.horafinal, m.nombreclase,p.nombre, p.apellidop, p.apellidom,LEFT(t.tarea, 90) as tarea, t.idtarea, t.fechaentrega');
         $this->db->from('tblhorario_detalle hd');
         $this->db->join('tblprofesor_materia pm', 'hd.idmateria = pm.idprofesormateria');
         $this->db->join('tblmateria m', 'm.idmateria = pm.idmateria');
@@ -706,13 +745,12 @@ FROM
         }
     }
 
-
-    public function calificacionAlumno($idalumno, $idhorario) {
+    public function calificacionAlumno($idalumno, $idhorario, $idoportunidadexamen) {
         $query = $this->db->query("SELECT c.idalumno,  (sum(c.calificacion)/count(c.idunidad)) as calificacion,count(c.idunidad) as totalunidad
             FROM tblcalificacion c 
             WHERE c.idalumno = $idalumno
             AND c.idhorario = $idhorario
-            AND c.idoportunidadexamen = 1
+            AND c.idoportunidadexamen = $idoportunidadexamen
             AND c.idhorariodetalle NOT IN (SELECT 
                                             hd.idhorariodetalle
                                         FROM
@@ -764,6 +802,32 @@ FROM
         $this->db->where('a.idalumno', $idalumno);
         $this->db->where('a.idhorariodetalle', $idhorariodetalle);
         $this->db->order_by('a.fecha ASC');
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
+
+    public function detalleOportunidadExamen($idplantel, $numero = '') {
+        $this->db->select('oe.*');
+        $this->db->from('tbloportunidad_examen oe');
+        $this->db->where('oe.idplantel', $idplantel);
+        $this->db->where('oe.numero', $numero);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
+
+    public function siguienteOportunidadExamen($idplantel, $numero = '') {
+        $this->db->select('oe.*');
+        $this->db->from('tbloportunidad_examen oe');
+        $this->db->where('oe.idplantel', $idplantel);
+        $this->db->where('oe.numero > ', $numero);
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->first_row();
@@ -886,11 +950,13 @@ FROM
     public function allKardex($idalumno) {
         $query = $this->db->query("SELECT 
                             h.idhorario,
+                            p.idperiodo,
                             m.nombremes AS mesinicio,
                             y.nombreyear AS yearinicio,
                             m2.nombremes AS mesfin,
                             y2.nombreyear AS yearfin,
                             g.nombregrupo,
+                            g.idgrupo,
                             ne.idnivelestudio,
                             ne.nombrenivel,
                             en.idestatusnivel,
@@ -1110,6 +1176,18 @@ FROM
         }
     }
 
+    public function detalleReprobado($idreprobado) {
+        $this->db->select('mr.*');
+        $this->db->from('tblmateria_reprobada mr');
+        $this->db->where('mr.idreprobada', $idreprobado);
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
+
     public function obtenerAsistenciaMateria($idhorariodetalle = '', $idalumno = '', $idunidad = '') {
         $this->db->select('a.*');
         $this->db->from('tblasistencia a');
@@ -1134,7 +1212,8 @@ FROM
             return false;
         }
     }
-        public function deleteReprobada($id) {
+
+    public function deleteReprobada($id) {
         $this->db->where('iddetalle', $id);
         $this->db->delete('tbldetalle_reprobada');
         if ($this->db->affected_rows() > 0) {
@@ -1205,7 +1284,7 @@ FROM
                         c.idalumno = $idalumno 
                         AND c.idhorariodetalle = $idhorariodetalle
                         AND c.idoportunidadexamen = $oportunidad
-                    GROUP BY c.idhorariodetalle");
+                    GROUP BY hd.idmateria");
         //  return $query->result();
 
         if ($query->num_rows() > 0) {
@@ -1292,14 +1371,15 @@ FROM
                                 tblmateria m ON m.idmateria = pm.idmateria
                             WHERE
                                 c.idalumno = $idalumno AND c.idhorario = $idhorario
-                            GROUP BY c.idhorariodetalle");
+                            GROUP BY hd.idmateria");
         if ($query->num_rows() > 0) {
             return $query->result();
         } else {
             return false;
         }
     }
-        public function materiasAsignadas($idplantel = '') {
+
+    public function materiasAsignadas($idplantel = '') {
         $query = $this->db->query("SELECT 
                 dr.iddetalle,
                 a.idalumno,
@@ -1349,11 +1429,12 @@ FROM
             return false;
         }
     }
-            public function materiaPendientesAAsignar($idplantel = '') {
+
+    public function materiaPendientesAAsignar($idplantel = '') {
         $query = $this->db->query(" SELECT 
                 mr.idreprobada,
                 a.idalumno,
-                m.idmateria,
+                mr.idmateria,
                 a.nombre,
                 a.apellidop,
                 a.apellidom,
@@ -1381,7 +1462,8 @@ FROM
             return false;
         }
     }
-                public function showMateriaParaAsignar($idmateria, $idplantel = '') {
+
+    public function showMateriaParaAsignar($idmateria, $idplantel = '') {
         $query = $this->db->query("SELECT 
             hd.idhorariodetalle,
                             h.idhorario,
@@ -1415,7 +1497,8 @@ FROM
             return false;
         }
     }
-                    public function validarEliminarReprobada($iddetalle) {
+
+    public function validarEliminarReprobada($iddetalle) {
         $query = $this->db->query("SELECT 
                                     hd.*
                                 FROM
@@ -1439,5 +1522,81 @@ FROM
             return false;
         }
     }
-  
+
+    public function calificacionFinal($idalumno, $idplantel) {
+        $query = $this->db->query(" SELECT p.idperiodo,
+        CONCAT(a.apellidop, ' ', a.apellidom, ' ', a.nombre) AS alumno,
+            FORMAT((SUM(c.calificacion) / (COUNT(c.idunidad))), 2) AS calificacionxperiodo,
+            m.nombreclase,
+            m1.nombremes AS mesinicio,
+            y1.nombreyear AS yearinicio,
+            m2.nombremes AS mesfin,
+            y2.nombreyear AS yearfin,
+            MAX(c.idoportunidadexamen) AS oportunidadexamen
+    FROM
+        tblperiodo p
+    INNER JOIN tblhorario h ON p.idperiodo = h.idperiodo
+    INNER JOIN tblhorario_detalle hd ON h.idhorario = hd.idhorario
+    INNER JOIN tblcalificacion c ON hd.idhorariodetalle = c.idhorariodetalle
+    INNER JOIN tblalumno a ON a.idalumno = c.idalumno
+    INNER JOIN tblprofesor_materia pm ON pm.idprofesormateria = hd.idmateria
+    INNER JOIN tblmateria m ON m.idmateria = pm.idmateria
+    INNER JOIN tblmes m1 ON m1.idmes = p.idmesinicio
+    INNER JOIN tblmes m2 ON m2.idmes = p.idmesfin
+    INNER JOIN tblyear y1 ON y1.idyear = p.idyearinicio
+    INNER JOIN tblyear y2 ON y2.idyear = p.idyearfin
+    WHERE
+        c.idalumno = $idalumno
+        AND a.idplantel = $idplantel
+          AND (p.activo = 0 OR h.activo = 0)
+    GROUP BY p.idperiodo , h.idhorario , c.idalumno , hd.idmateria  ");
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+
+    public function calificacionPorOportunidad($idalumno, $idhorario, $idoportunidad, $idmateria = '') {
+        $sql = " SELECT 
+                        m.nombreclase,
+                        concat(p.nombre,' ',p.apellidop,' ',p.apellidom) as profesor,
+                        format((sum(c.calificacion) / count(c.idunidad)),2) as calificacionmateria,
+                        hd.idmateria
+
+                    FROM
+                        tblhorario h
+                            INNER JOIN
+                        tblhorario_detalle hd ON h.idhorario = hd.idhorario
+                            INNER JOIN
+                        tblcalificacion c ON hd.idhorariodetalle = c.idhorariodetalle
+                        inner join tblprofesor_materia pm on pm.idprofesormateria = hd.idmateria
+                        inner join tblmateria m on m.idmateria = pm.idmateria
+                        inner join tblprofesor p on p.idprofesor = pm.idprofesor
+                    WHERE
+                        hd.idmateria NOT IN (SELECT 
+                                dr.idprofesormateria
+                            FROM
+                                tbldetalle_reprobada dr
+                                    INNER JOIN
+                                tblmateria_reprobada mr ON dr.idreprobada = mr.idreprobada
+                                    INNER JOIN
+                                tblalumno_grupo ag ON ag.idalumnogrupo = mr.idalumnogrupo
+                                WHERE ag.idalumno = $idalumno
+                     AND dr.idhorario = $idhorario)
+                     AND c.idalumno = $idalumno
+                     AND h.idhorario = $idhorario
+                     AND c.idoportunidadexamen = $idoportunidad";
+        if (isset($idmateria) && !empty($idmateria)) {
+            $sql .= " AND hd.idmateria = $idmateria";
+        }
+        $sql .= " GROUP BY hd.idmateria , c.idalumno , h.idhorario";
+        $query = $this->db->query($sql);
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+
 }
