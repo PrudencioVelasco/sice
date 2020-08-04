@@ -4,7 +4,14 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="defaultModalLabel">PAGO DE REINSCRIPCIÓN O INSCRIPCIÓN</h4>
+                <div class="row">
+                    <div class="col-md-6 col-sm-12 col-xs-12 ">
+                        <h4 class="modal-title" id="defaultModalLabel">PAGO DE REINSCRIPCIÓN O INSCRIPCIÓN</h4>
+                    </div>
+                    <div class="col-md-6 col-sm-12 col-xs-12 " align="right">
+                        <h3 class="modal-title" id="defaultModalLabel" style="color: red;">TOTAL: {{cobro_pago_inicio | currency }}</h3>
+                    </div>
+                </div>
             </div>
             <div class="modal-body">
                 <div style=" height: 300px; padding-top:13px; padding-right:15px;  overflow-x: hidden; overflow-y: scroll;">
@@ -16,7 +23,7 @@
                     <div class="row"> 
                         <div class="col-md-6 col-sm-12 col-xs-12 "> 
                             <div class="form-group"> 
-                                <select style="border-bottom: solid #ebebeb 2px; margin-top:15px;"  v-model="newCobroInicio.idtipopagocol"  :class="{'is-invalid': formValidate.idtipopagocol}" class="form-control">
+                                <select style="border-bottom: solid #ebebeb 2px; margin-top:15px;"  @change="onChange($event)"  v-model="newCobroInicio.idtipopagocol"  :class="{'is-invalid': formValidate.idtipopagocol}" class="form-control">
                                     <option value="">-- CONCEPTO DE PAGO--</option>
                                     <option   v-for="option in tipospago" v-bind:value="option.idtipopagocol">
                                         {{ option.concepto }} 
@@ -38,8 +45,8 @@
                             </div>
 
                         </div>
-                    </div>
-                    <hr>
+                    </div> 
+                    <br/>
                     <div class="row" v-if="mostar_error_formapago">
                         <div class="col-md-12 col-sm-12 col-xs-12 ">
                             <label class="col-red">{{error_formapago}}</label>
@@ -85,7 +92,7 @@
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12 ">
                             <table class=" table table-striped dt-responsive nowrap" cellspacing="0">
-                                 <thead class="bg-teal">
+                                <thead class="bg-teal">
                                 <th>Forma de Pago</th>
                                 <th>Descuento</th>
                                 <th>Número de Autorización</th>
@@ -135,7 +142,15 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="largeModalLabel">COBRO DE COLEGIATURA</h4>
+
+                <div class="row">
+                    <div class="col-md-6 col-sm-12 col-xs-12 ">
+                        <h4 class="modal-title" id="largeModalLabel">COBRO DE COLEGIATURA</h4>  
+                    </div>
+                    <div class="col-md-6 col-sm-12 col-xs-12 " align="right">
+                        <h3 class="modal-title" id="largeModalLabel" style="color: red;">TOTAL: {{ cobro_colegiatura | currency }}</h3>
+                    </div>
+                </div>
             </div>
             <div class="modal-body">
                 <div style=" height: 300px; padding-top:13px; padding-right:15px;  overflow-x: hidden; overflow-y: scroll;">
@@ -145,13 +160,13 @@
                         </div>
                     </div>
                     <div class="row"> 
-                        <div class="col-md-6 col-sm-6 col-xs-12 ">
+                        <div class="col-md-8 col-sm-6 col-xs-12 ">
                             <div class="form-group">
                                 <label><font color="red">*</font> MES A PAGAR</label> 
                                 <p>
                                 <div v-for="(option,index) in meses" style="display: inline-block;" v-bind:key="option.idmes"> 
 
-                                    <input type="checkbox" v-model="newCobroColegiatura.coleccionMeses" class="filled-in" :id="'basic_checkbox_'+option.idmes" :value="option.idmes" />
+                                    <input type="checkbox" @change="calcularColegiatura" v-model="newCobroColegiatura.coleccionMeses" class="filled-in" :id="'basic_checkbox_'+option.idmes" :value="option.idmes" />
 
                                     <label style="padding-right:15px;"  :for="'basic_checkbox_'+option.idmes">   {{option.nombremes}}    </label>
                                 </div></p>
@@ -159,7 +174,7 @@
                                 <div class="col-red" v-html="formValidate.idmes"></div>
                             </div>
                         </div>
-                        <div class="col-md-6 col-sm-6 col-xs-12 " v-if="mostrar_condonar" align="center">
+                        <div class="col-md-4 col-sm-6 col-xs-12 " v-if="mostrar_condonar" align="center">
                             <div class="form-group">
                                 <label ><font color="red">*</font>  CONDONAR</label>
                                 <div class="demo-switch">
@@ -219,7 +234,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12 ">
-                           <table class=" table table-striped dt-responsive nowrap" cellspacing="0">
+                            <table class=" table table-striped dt-responsive nowrap" cellspacing="0">
                                 <thead class="bg-teal">
                                 <th>Forma de Pago</th>
                                 <th>Descuento</th>
@@ -276,7 +291,7 @@
             <div class="modal-body">
                 <div style=" height: 100px;   padding-right:15px;  overflow-x: hidden; overflow-y: scroll;">
                     <div class="row">
-                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                        <div class="col-md-12 col-sm-12 col-xs-12 ">
                             <label class="col-red" v-html="formValidate.msgerror"></label>
                         </div>
                     </div>

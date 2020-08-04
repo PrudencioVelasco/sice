@@ -38,16 +38,16 @@ $(document).ready(function () {
                     swal({
                         position: 'center',
                         type: 'success',
-                        title: 'Agregado!',
-                        text: 'Dar clic en el boton.',
+                        title: 'Registrado!',
+                        text: 'Fue registrado el mensaje con exito.',
                         showConfirmButton: true
                     }).then(function () {
                         location.reload();
                     });
                 } else {
                     swal({
-                        type: 'error',
-                        title: 'Oops...',
+                        type: 'info',
+                        title: 'Notificación',
                         html: val.error,
                         customClass: 'swal-wide',
                         footer: ''
@@ -81,15 +81,15 @@ $(document).ready(function () {
                         position: 'center',
                         type: 'success',
                         title: 'Modificado!',
-                        text: 'Dar clic en el boton.',
+                        text: 'Fue modificado el mensaje con exito.',
                         showConfirmButton: true
                     }).then(function () {
                         location.reload();
                     });
                 } else {
                     swal({
-                        type: 'error',
-                        title: 'Oops...',
+                        type: 'info',
+                        title: 'Notificación',
                         html: val.error,
                         customClass: 'swal-wide',
                         footer: ''

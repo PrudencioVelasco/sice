@@ -52,7 +52,7 @@
                                                 <tr v-for="row in colegiaturas" class="table-default">
                                                     <td>{{row.nombrenivel}}</td>
                                                      <td>{{row.concepto}}</td>
-                                                    <td><strong> ${{row.descuento}}</strong></td> 
+                                                    <td><strong> {{row.descuento | currency}}</strong></td> 
                                                     <td>
                                                         <span v-if="row.activo==1" class="label label-success">Activo</span>
                                                         <span v-else class="label label-danger">Inactivo</span>
@@ -125,6 +125,7 @@
     <div class="clearfix"></div>
     <div id="notif-group" class="tabbed_notifications"></div>
   </div>
+  <script src="<?php echo base_url(); ?>/assets/vue/vue2-filters.min.js"></script>
   <script data-my_var_1="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/vue/appvue/appcolegiatura.js"></script> 
 
 

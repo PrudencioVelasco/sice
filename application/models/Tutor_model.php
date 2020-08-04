@@ -166,11 +166,14 @@ class Tutor_model extends CI_Model {
         }
     }
 
-    public function precioColegiatura($idtipo = '', $idnivel = '') {
+    public function precioColegiatura($idtipo = '', $idnivel = '',$idplantel = '') {
         $this->db->select('c.descuento');
         $this->db->from('tblcolegiatura c');
         $this->db->where('c.idnivelestudio', $idnivel);
         $this->db->where('c.idtipopagocol', $idtipo);
+        if(isset($idplantel) && !empty($idplantel)){
+        $this->db->where('c.idplantel', $idplantel);
+        }
         $this->db->where('c.activo', 1);
         $this->db->where('c.eliminado', 0);
         $query = $this->db->get();

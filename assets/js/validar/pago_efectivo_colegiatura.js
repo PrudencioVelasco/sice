@@ -34,8 +34,8 @@ $(document).ready(function () {
                 var val = JSON.parse(data); 
                 if (val.tipo_error == 1) {
                     Swal.fire({
-                        type: 'error',
-                        title: 'Oops...',
+                        type: 'info',
+                        title: 'Información.',
                         text: val.msg
                     });
                     //Habilita el boton de pagar
@@ -51,9 +51,9 @@ $(document).ready(function () {
         });
     }else{
             Swal.fire({
-                type: 'error',
-                title: 'Oops...',
-                text:'Seleccione el Mes a Pagar.'
+                type: 'info',
+                title: 'Información.',
+                text:'SELECCIONAR EL MES A PAGAR.'
             });
     }
     });

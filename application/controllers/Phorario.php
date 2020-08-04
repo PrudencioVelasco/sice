@@ -417,7 +417,9 @@ class Phorario extends CI_Controller {
                 'heading' => 'Error',
                 'message' => 'Error intente mas tarde.'
             );
-            $this->load->view('errors/html/error_general', $data);
+            $this->load->view('docente/header');
+            $this->load->view('docente/error/general', $data);
+            $this->load->view('docente/footer');
         }
     }
 
@@ -586,7 +588,9 @@ class Phorario extends CI_Controller {
                 'heading' => 'Error',
                 'message' => 'Error intente mas tarde.'
             );
-            $this->load->view('errors/html/error_general', $data);
+           $this->load->view('docente/header');
+            $this->load->view('docente/error/general', $data);
+            $this->load->view('docente/footer');
         }
     }
 

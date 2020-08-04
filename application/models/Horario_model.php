@@ -104,6 +104,17 @@ class Horario_model extends CI_Model {
             return false;
         }
     }
+        public function detalleHorario($idhorario = '') {
+        $this->db->select('h.idgrupo, h.idhorario');
+        $this->db->from('tblhorario h'); 
+        $this->db->where('h.idhorario',$idhorario);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+             return $query->first_row();
+        } else {
+            return false;
+        }
+    }
     public function validarActivoCicloEscolar($idhorario = '', $idplantel = '') {
         $this->db->select('h.*');
         $this->db->from('tblhorario h');

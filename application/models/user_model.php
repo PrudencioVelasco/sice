@@ -147,9 +147,9 @@ class User_model extends CI_Model
         $this->db->where('ur.id_rol IN (13,14)'); 
         $this->db->where('u.idtipousuario', 2); 
         $this->db->where('p.usuario', $usuario); 
-      if (isset($idplantel) && !empty($idplantel)) {
-        $this->db->where('p.idplantel',$idplantel);
-        }
+//       if (isset($idplantel) && !empty($idplantel)) {
+//        $this->db->where('p.idplantel',$idplantel);
+//        }
         $query = $this->db->get();
         //$query = $this->db->get('permissions');
         if ($query->num_rows() > 0) {

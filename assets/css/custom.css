@@ -4863,7 +4863,7 @@ a:hover {
   height: 0;
   clear: both;
   visibility: hidden;
-  padding-top: 10px;
+/*  padding-top: 10px;*/
 }
 .login_content {
   margin: 0 auto;

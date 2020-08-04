@@ -45,9 +45,9 @@
                                         <td><?php echo $row->nombrenivel; ?></td>
                                         <td><?php echo $row->nombregrupo; ?> </td>
                                         <td align="right">
-                                            <a class="btn btn-info"
+                                            <a class="btn btn-default" 
                                                 href="<?php echo site_url('Aalumno/historial/' . $controller->encode($row->idhorario).'/'.$controller->encode($row->idperiodo)) ?>"><i
-                                                    class="fa fa-list-alt"></i> Calificación</a>
+                                                    class="fa fa-list-alt" style="color: #249dfa;"></i> Calificaciones</a>
 
                                         </td>
                                     </tr>

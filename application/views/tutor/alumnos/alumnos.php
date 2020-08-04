@@ -41,7 +41,7 @@
                                               <td align="right">
 
                                                   <a href="<?php echo site_url('Tutores/detalle/'.$controller->encode($value->idalumno)) ?>"
-                                                      class="btn btn-info"> <i class=" fa fa-eye "></i> Ver detalle</a>
+                                                     class="btn btn-default"> <i class=" fa fa-eye" style="color:#208fee;"></i> Ver detalle</a>
                                               </td>
                                           </tr>
                                           <?php

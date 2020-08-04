@@ -5,6 +5,7 @@ $(document).ready(function () {
         var my_var_1 = 'some_default_value';
     } 
     $("#payment-form2").validate({
+        
         rules: {
             nombretitular: "required",
             mes: "required",
@@ -18,7 +19,8 @@ $(document).ready(function () {
             numerotarjeta: {
                 required: true,
                 digits: true,
-                number: true
+                number: true,
+                 rangelength: [15, 18]
             },
             codigo: {
                 required: true,
@@ -46,7 +48,8 @@ $(document).ready(function () {
             numerotarjeta: {
                 required: "Campo requerido.",
                 digits: "Solo número.",
-                number: "Solo número."
+                number: "Solo número.",
+                rangelength: "Total de numeros incorrectos."
             },
             codigo: {
                 required: "Campo requerido.",
@@ -60,7 +63,8 @@ $(document).ready(function () {
             }
         }
 
-    });
+    }).settings.ignore = 
+     ':not(select:hidden, input:visible, textarea:visible)';
 
  
     OpenPay.setId('mds4bdhgvbese0knzu2x');
@@ -104,15 +108,16 @@ $(document).ready(function () {
                 var val = JSON.parse(JSON.stringify(data)); 
                 if (val.tipo_error == 1){
                     Swal.fire({
-                        type: 'error',
-                        title: 'Oops...',
+                        type: 'info',
+                        title: 'Notificación.',
                         text: val.msg
                     }); 
                     //Habilita el boton de pagar
                     $("#pay-button2").prop("disabled", false);
                 }else{
                     //Deshabilitamos el boton de pagar
-                    swal("Exito!", val.msg, "success");
+                    //swal("Exito!", val.msg, "success");
+                    window.location.href =  my_var_1 +"Tutores/exito/"+val.alumno+'/'+val.idestadocuenta+'/'+val.tipo_pago;
                     $("#pay-button2").prop("disabled", true);
                     $('#cnombretitular').val('');
                     $('#cnumerotarjeta').val('');
@@ -134,8 +139,8 @@ $(document).ready(function () {
       
         $('#msmerror').val(desc);
         Swal.fire({
-            type: 'error',
-            title: 'Oops...',
+            type: 'info',
+            title: 'Notificación.',
             text: desc
         });
         //alert("ERROR [" + response.status + "] " + desc);

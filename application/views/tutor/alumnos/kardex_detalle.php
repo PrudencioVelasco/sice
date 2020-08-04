@@ -9,7 +9,7 @@
                       <div class="x_title">
                           <h2><strong>BOLETA DE CALIFICACIONES</strong></h2>
                           <ul class="nav navbar-right panel_toolbox">
-                              <h3><small>Calificación por Nivel: </small><strong style="color: green">
+                              <h3><small>Promedio: </small><strong style="color: green">
                                       <?php 
                 //$calificacion 
              if(isset($calificacion) && !empty($calificacion)){

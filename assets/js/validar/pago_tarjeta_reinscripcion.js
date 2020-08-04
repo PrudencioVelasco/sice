@@ -104,15 +104,16 @@ $(document).ready(function () {
                 var val = JSON.parse(JSON.stringify(data));
                 if (val.tipo_error == 1) {
                     Swal.fire({
-                        type: 'error',
-                        title: 'Oops...',
+                        type: 'info',
+                        title: 'Notificación',
                         text: val.msg
                     });
                     //Habilita el boton de pagar
-                    $("pay-buttonir").prop("disabled", false);
+                    $("#pay-buttonir").prop("disabled", false);
                 } else {
                     //Deshabilitamos el boton de pagar
-                    swal("Exito!", val.msg, "success");
+                   // swal("Exito!", val.msg, "success");
+                    window.location.href =  my_var_1 +"Tutores/exito/"+val.alumno+'/'+val.idestadocuenta+'/'+val.tipo_pago;
                     $("#pay-buttonir").prop("disabled", true);
 
                     $('#nombretitular').val('');
@@ -132,11 +133,11 @@ $(document).ready(function () {
 
     var error_callbak = function (response) {
         var desc = response.data.description != undefined ? response.data.description : response.message;
-        console.log(desc);
+        
         $('#msmerror').val(desc);
         Swal.fire({
-            type: 'error',
-            title: 'Oops...',
+            type: 'info',
+            title: 'Notificación',
             text: desc
         });
         //alert("ERROR [" + response.status + "] " + desc);

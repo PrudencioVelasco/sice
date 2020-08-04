@@ -1,5 +1,3 @@
- 
-
 <script src="<?php echo base_url(); ?>/assets/js/bootstrap.min.js"></script>
 
 <!-- bootstrap progress js -->
@@ -18,7 +16,7 @@
 <script src="<?php echo base_url(); ?>/assets/js/moment/moment.min.js"></script>
 <script src="<?php echo base_url(); ?>/assets/js/calendar/fullcalendar.min.js"></script>
 
-
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>-->
 <!-- Datatables-->
 <script src="<?php echo base_url(); ?>/assets/js/datatables/jquery.dataTables.min.js"></script>
 <script src="<?php echo base_url(); ?>/assets/js/datatables/dataTables.bootstrap.js"></script>
@@ -35,7 +33,7 @@
 <script src="<?php echo base_url(); ?>/assets/js/datatables/responsive.bootstrap.min.js"></script>
 <script src="<?php echo base_url(); ?>/assets/js/datatables/dataTables.scroller.min.js"></script>
 
-
+<script src="<?php echo base_url(); ?>/assets/js/bootstrap-select.js" type="text/javascript"></script>
 
 <!-- Ckeditor -->
 <script src="<?php echo base_url(); ?>/assets/plugins/ckeditor/ckeditor.js"></script>
@@ -44,17 +42,14 @@
 <script src="<?php echo base_url(); ?>/assets/plugins/tinymce/tinymce.js"></script>
 <script src="<?php echo base_url(); ?>/assets/js/tablas.js"></script>
 
-<script  data-my_var_1="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/js/validar/direccion.js"></script>
-<script  data-my_var_1="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/js/validar/pago_tarjeta_colegiatura.js"></script>
-<script  data-my_var_1="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/js/validar/pago_tarjeta_reinscripcion.js"></script>
-<script  data-my_var_1="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/js/validar/pago_efectivo_colegiatura.js"></script>
-<script  data-my_var_1="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/js/validar/pago_efectivo_reinscripcion.js"></script>
-
-<!-- PNotify -->
+<script data-my_var_1="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/js/validar/direccion.js">
+</script>
+ <!-- PNotify -->
 <script type="text/javascript" src="<?php echo base_url(); ?>/assets/js/notify/pnotify.core.js"></script>
 <script type="text/javascript" src="<?php echo base_url(); ?>/assets/js/notify/pnotify.buttons.js"></script>
 <script type="text/javascript" src="<?php echo base_url(); ?>/assets/js/notify/pnotify.nonblock.js"></script>
-
+<script src="<?php echo base_url(); ?>/assets/plugins/node-waves/waves.js"></script>
+<script src="<?php echo base_url(); ?>/assets/js/admin.js"></script>
 <script>
     $(function () {
         var cnt = 10; //$("#custom_notifications ul.notifications li").length + 1;
@@ -132,7 +127,8 @@ if (isset($tareas) && !empty($tareas)) {
 if (isset($mensajes) && !empty($mensajes)) {
 
     foreach ($mensajes as $value) {
-        if ($value->idnotificaciontutor == 1) { ?>
+        if ($value->idnotificaciontutor == 1) {
+            ?>
                     new TabbedNotification({
                         title: 'MENSAJE',
                         text: <?php echo "'Usted tiene una nuevo mensaje de: $value->nombreclase'"; ?>,
@@ -148,14 +144,13 @@ if (isset($mensajes) && !empty($mensajes)) {
 
 
     });
-</script>
+</script> 
 <script type="text/javascript">
     $(function () {
         //CKEditor
         CKEDITOR.replace('ckeditor');
         CKEDITOR.config.height = 200;
     });
-
 </script>
 
 <script type="text/javascript">
@@ -164,11 +159,15 @@ if (isset($mensajes) && !empty($mensajes)) {
         CKEDITOR.replace('ckeditoredit');
         CKEDITOR.config.height = 200;
     });
-
 </script>
-
-
-
+<script type="text/javascript">
+    $(document).ready(function (e) {
+        $('.selectpicker').selectpicker();
+    });
+</script>
+<script>
+    $('#mensajecp').hide();
+</script>
 </body>
 
 </html>

@@ -25,5 +25,37 @@ class Webhook extends CI_Controller {
         $data = json_decode($body);
         http_response_code(200); // Return 200 OK 
 	} 
-  
+      /*
+public function noficaciones()
+{
+$body = @file_get_contents('php://input');
+$data = json_decode($body);
+http_response_code(200); // Return 200 OK
+}
+public function crear_webhooks()
+{
+$openpay = Openpay::getInstance('moiep6umtcnanql3jrxp', 'sk_3433941e467c1055b178ce26348b0fac');
+
+$webhook = array(
+'url' => 'http://requestb.in/11vxrsf1',
+'user' => 'juanito',
+'password' => 'passjuanito',
+'event_types' => array(
+'charge.refunded',
+'charge.failed',
+'charge.cancelled',
+'charge.created',
+'chargeback.accepted'
+)
+);
+
+$webhook = $openpay->webhooks->add($webhook);
+}
+public function solicitar_webhooks()
+{
+$openpay = Openpay::getInstance('moiep6umtcnanql3jrxp', 'sk_3433941e467c1055b178ce26348b0fac');
+
+$webhook = $openpay->webhooks->get('wxvanstudf4ssme8khmc');
+}
+ */
 }

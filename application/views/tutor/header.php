@@ -10,14 +10,16 @@
 
     <title>SICE - Sistema Integral de Control Escolar </title>
 
-    <!-- Bootstrap core CSS -->
+     <link rel="shortcut icon" href="<?php echo base_url(); ?>/assets/images/birrete.ico">  
+        <link rel="icon" href="<?php echo base_url(); ?>/assets/images/birrete.ico">
 
-    <link href="<?php echo base_url(); ?>/assets/css/bootstrap.min.css" rel="stylesheet">
+      <link href="<?php echo base_url(); ?>/assets/plugins/bootstrap/css/bootstrap.css" rel="stylesheet">
 
     <link href="<?php echo base_url(); ?>/assets/fonts/css/font-awesome.min.css" rel="stylesheet">
     <link href="<?php echo base_url(); ?>/assets/css/animate.min.css" rel="stylesheet">
 
-    <link href="<?php echo base_url(); ?>/assets/css/style.css" rel="stylesheet">
+   <link href="<?php echo base_url(); ?>/assets/css/style2.css" rel="stylesheet">
+        <link href="<?php echo base_url(); ?>/assets/plugins/node-waves/waves.css" rel="stylesheet">
     <!-- Custom styling plus plugins -->
     <link href="<?php echo base_url(); ?>/assets/css/custom.css" rel="stylesheet">
     <link href="<?php echo base_url(); ?>/assets/css/icheck/flat/green.css" rel="stylesheet">
@@ -25,14 +27,14 @@
     <link href="<?php echo base_url(); ?>/assets/css/calendar/fullcalendar.css" rel="stylesheet">
     <link href="<?php echo base_url(); ?>/assets/css/calendar/fullcalendar.print.css" rel="stylesheet" media="print">
     <script src="<?php echo base_url(); ?>/assets/js/jquery.min.js"></script>
-
-    <script src="<?php echo base_url(); ?>/assets/js/jquery.min.js"></script>
+ 
     <script src="<?php echo base_url() ?>/assets/vue/vue/vue.min.js"></script>
     <script src="<?php echo base_url() ?>/assets/vue/axios/axios.min.js"></script>
     <script src="<?php echo base_url(); ?>/assets/vue/pagination/pagination.js"></script>
     <script src="<?php echo base_url(); ?>/assets/vue/vue-column-sortable.js"></script>
 
-
+    <link href="<?php echo base_url(); ?>/assets/css/bootstrap-select.css" rel="stylesheet" type="text/css"/>
+   
     <link href="<?php echo base_url(); ?>/assets/media/css/dataTables.bootstrap.css" rel="stylesheet" type="text/css" />
     <link href="<?php echo base_url(); ?>/assets/js/datatables/buttons.bootstrap.min.css" rel="stylesheet"
         type="text/css" />
@@ -86,7 +88,7 @@
 
 
                     <!-- menu prile quick info -->
-                    <div class="profile">
+                    <div class="profile" style="margin-top: 50px;">
                         <div class="profile_pic">
                             <img src="<?php echo base_url(); ?>/assets/images/user2.png" alt="..."
                                 class="img-circle profile_img">
@@ -132,7 +134,7 @@
 
                         <ul class="nav navbar-nav navbar-right">
                             <li class="">
-                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown"
+                                <a  style=" padding:0 10px 0 0;" class="user-profile dropdown-toggle" data-toggle="dropdown"
                                     aria-expanded="false">
                                     <img src="<?php echo base_url(); ?>/assets/images/user2.png"
                                         alt=""><?php echo $this->session->nombre  ?>

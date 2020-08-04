@@ -37,7 +37,7 @@
                                                 <div class="col-md-12 col-sm-12 col-xs-12 ">
                                                     <div class="form-group">
                                                         <label><font color="red">*</font> Fecha de entrega</label>
-                                                        <input type="date"  style="border:solid #ccc 2px;"  name="fechaentrega" required="" class="form-control">
+                                                        <input type="date"  style="border-bottom:solid #ccc 1px;"  name="fechaentrega" required="" class="form-control">
                                                     </div>
                                                 </div>
                                             </div>
@@ -146,7 +146,7 @@
                                                             <div class="col-md-12 col-sm-12 col-xs-12 ">
                                                                 <div class="form-group">
                                                                     <label><font color="red">*</font>  Fecha de entrega</label>
-                                                                    <input type="date" name="fechaentrega" style="border:solid #ccc 2px;" class="form-control fechaentrega">
+                                                                    <input type="date" name="fechaentrega" style="border-bottom:solid #ccc 1px;" class="form-control fechaentrega">
                                                                 </div>
                                                             </div>
                                                         </div>

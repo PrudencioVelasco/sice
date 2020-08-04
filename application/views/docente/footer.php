@@ -41,7 +41,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $('#tablageneral3').DataTable({ 
-             keys: true,
+             keys: false,
             "scrollX": false,
             
            buttons: [

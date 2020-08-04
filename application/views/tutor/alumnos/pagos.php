@@ -8,9 +8,11 @@
                 <div class="x_panel">
                     <div class="x_title">
                         <h2><strong>PAGOS DE:
-                                <?php if (isset($nombre_alumno) && !empty($nombre_alumno)) {
+                                <?php
+                                if (isset($nombre_alumno) && !empty($nombre_alumno)) {
                                     echo $nombre_alumno;
-                                } ?></strong>
+                                }
+                                ?></strong>
                         </h2>
 
                         <div class="clearfix"></div>
@@ -20,11 +22,11 @@
                         <div class="row">
                                <?php if (isset($pago_inicio) && empty($pago_inicio)) { ?>
                                 <a href="<?php echo site_url('Tutores/pagoi/' . $idalumno . '/' . $idperiodo . '/' . $idnivel . '/1') ?>"
-                                   class="btn btn-default"> <i class="fa fa-money"></i> PAGAR REINSCRIPCIÓN</a>
-                               <?php } if (isset($meses) && !empty($meses)) { ?>
+                                   class="btn btn-default waves-effect"> <i class="fa fa-money"></i> PAGAR REINSCRIPCIÓN/INSCRIPCIÓN</a>
+                               <?php } if (isset($meses) && !empty($meses) && isset($pago_inicio) && !empty($pago_inicio)) { ?>
                                 <a href="<?php echo site_url('Tutores/pagoc/' . $idalumno . '/' . $idperiodo . '/' . $idnivel . '/2') ?>"
-                                   class="btn btn-primary"><i class="fa fa-money"></i> PAGAR COLEGIATURA</a>
-<?php } ?>
+                                   class="btn btn-primary waves-effect"><i class="fa fa-money"></i> PAGAR COLEGIATURA</a>
+                                    <?php } ?>
                             <hr>
 
                             <table id="tablageneral2" class="table table-striped   dt-responsive nowrap"

@@ -40,16 +40,16 @@ $(document).ready(function () {
                     swal({
                         position: 'center',
                         type: 'success',
-                        title: 'Agregado!',
-                        text: 'Dar clic en el boton.',
+                        title: 'Registrado!',
+                        text: 'Fue registrado las asistencias con exito.',
                         showConfirmButton: true 
                     }).then(function () {
                         location.reload();
                     });
                 } else {
                     swal({
-                        type: 'error',
-                        title: 'Oops...',
+                        type: 'info',
+                        title: 'Notificación',
                         html: val.error,
                         customClass: 'swal-wide',
                         footer: ''
@@ -80,7 +80,7 @@ $(document).ready(function () {
                         position: 'center',
                         type: 'success',
                         title: 'Eliminado!',
-                        text: 'Dar clic en el boton.',
+                        text: 'Fue eliminado las asientencias con exito.',
                         showConfirmButton: true 
                     }).then(function () {
                         location.reload();
@@ -95,8 +95,8 @@ $(document).ready(function () {
                 `<i class="fa fa-trash"></i> ELIMINAR`
             );
              swal({
-                type: 'error',
-                title: 'Oops...',
+                type: 'info',
+                title: 'Notificación',
                 html: 'Es necesario la Fecha',
                 customClass: 'swal-wide',
                 footer: ''
@@ -118,15 +118,15 @@ $(document).ready(function () {
                         position: 'center',
                         type: 'success',
                         title: 'Eliminado!',
-                        text: 'Dar clic en el boton.',
+                        text: 'Fue eliminado la asistencia con exito.',
                         showConfirmButton: true 
                     }).then(function () {
                         location.reload();
                     }); 
                 } else {
                     swal({
-                        type: 'error',
-                        title: 'Oops...',
+                        type: 'info',
+                        title: 'Notificación',
                         html: val.error,
                         customClass: 'swal-wide',
                         footer: ''
@@ -158,15 +158,15 @@ $(document).ready(function () {
                         position: 'center',
                         type: 'success',
                         title: 'Modificado!',
-                        text: 'Dar clic en el boton.',
+                        text: 'Fue modificado la asistencia con exito.',
                         showConfirmButton: true 
                     }).then(function () {
                         location.reload();
                     }); 
                 } else {
                     swal({
-                        type: 'error',
-                        title: 'Oops...',
+                        type: 'info',
+                        title: 'Notificación',
                         html: val.error,
                         customClass: 'swal-wide',
                         footer: ''

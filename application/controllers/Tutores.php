@@ -1,10 +1,11 @@
 <?php
+
 defined('BASEPATH') or exit('No direct script access allowed');
 date_default_timezone_set("America/Mexico_City");
-class Tutores extends CI_Controller
-{
-    public function __construct()
-    {
+
+class Tutores extends CI_Controller {
+
+    public function __construct() {
         parent::__construct();
 
         if (!isset($_SESSION['user_id'])) {
@@ -33,15 +34,14 @@ class Tutores extends CI_Controller
         $this->load->helper('numeroatexto_helper');
     }
 
-    public function index()
-    {
+    public function index() {
         // $_SESSION['user_id'];
-        Permission::grant(uri_string()); 
-         $alumnos = $this->alumno->showAllAlumnosTutorActivos($this->session->idtutor);
-         $mensajes ="";
-         $tareas = "";
-         if(isset($alumnos) && !empty($alumnos)){
-            foreach($alumnos as $row){
+        Permission::grant(uri_string());
+        $alumnos = $this->alumno->showAllAlumnosTutorActivos($this->session->idtutor);
+        $mensajes = "";
+        $tareas = "";
+        if (isset($alumnos) && !empty($alumnos)) {
+            foreach ($alumnos as $row) {
                 $idhorario = $row->idhorario;
                 $idperiodo = $row->idperiodo;
                 $idalumno = $row->idalumno;
@@ -55,29 +55,28 @@ class Tutores extends CI_Controller
                 $reprobadas = implode(",", $array_materias_reprobadas);
 
                 $materias = $this->alumno->showAllMaterias($idhorario, $reprobadas);
-                  if(isset($materias) && !empty($materias)){
-                  $array_profesor = array();
-                     foreach ($materias as $row) {
+                if (isset($materias) && !empty($materias)) {
+                    $array_profesor = array();
+                    foreach ($materias as $row) {
                         array_push($array_profesor, $row->idprofesormateri);
                     }
-                     $profesores = implode(",", $array_profesor);
-                     $mensajes = $this->mensaje->showAllMensajeATutor($profesores);
-                       $tareas = $this->mensaje->showAllTareaATutor($profesores);
-                  }
+                    $profesores = implode(",", $array_profesor);
+                    $mensajes = $this->mensaje->showAllMensajeATutor($profesores);
+                    $tareas = $this->mensaje->showAllTareaATutor($profesores);
+                }
             }
-         }
-                        
-         $data = array(
-             'mensajes'=>$mensajes,
-             'tareas'=>$tareas
-         );
-        $this->load->view('tutor/header');
-        $this->load->view('tutor/index',$data);
-        $this->load->view('tutor/footer');
+        }
 
+        $data = array(
+            'mensajes' => $mensajes,
+            'tareas' => $tareas
+        );
+        $this->load->view('tutor/header');
+        $this->load->view('tutor/index', $data);
+        $this->load->view('tutor/footer');
     }
-    public function alumnos()
-    {
+
+    public function alumnos() {
         Permission::grant(uri_string());
         $alumnos = $this->alumno->showAllAlumnosTutorActivos($this->session->idtutor);
 
@@ -89,8 +88,8 @@ class Tutores extends CI_Controller
         $this->load->view('tutor/alumnos/index', $data);
         $this->load->view('tutor/footer');
     }
-    public function boleta($idhorario = '', $idalumno = '', $idunidad = '')
-    {
+
+    public function boleta($idhorario = '', $idalumno = '', $idunidad = '') {
         Permission::grant(uri_string());
         $idhorario = $this->decode($idhorario);
         $idalumno = $this->decode($idalumno);
@@ -298,11 +297,13 @@ class Tutores extends CI_Controller
                 'heading' => 'Error',
                 'message' => 'Intente mas tarde.',
             );
-            $this->load->view('errors/html/error_general', $data);
+            $this->load->view('tutor/header');
+            $this->load->view('tutor/error/general', $data);
+            $this->load->view('tutor/footer');
         }
     }
-    public function horario($idalumno = '')
-    {
+
+    public function horario($idalumno = '') {
         $idalumno = $this->decode($idalumno);
         if (isset($idalumno) && !empty($idalumno)) {
             $detalle = $this->alumno->showAllMateriasAlumno($idalumno);
@@ -312,7 +313,7 @@ class Tutores extends CI_Controller
                 $idhorario = $detalle[0]->idhorario;
                 $tabla = $this->generarHorarioPDF($idhorario, $idalumno);
             }
-             $tabla = $this->horarioMostrar($idhorario, $idalumno);
+            $tabla = $this->horarioMostrar($idhorario, $idalumno);
             $materias_repetir = $this->horario->materiasARepetir($idalumno);
             $data = array(
                 'idhorario' => $idhorario,
@@ -326,14 +327,16 @@ class Tutores extends CI_Controller
             $this->load->view('tutor/footer');
         } else {
             $data = array(
-                'heading' => 'Error',
-                'message' => 'Error intente mas tarde.',
+                'heading' => 'Información',
+                'message' => 'Error, intente mas tarde.',
             );
-            $this->load->view('errors/html/error_general', $data);
+            $this->load->view('tutor/header');
+            $this->load->view('tutor/error/general', $data);
+            $this->load->view('tutor/footer');
         }
     }
-     public function horarioMostrar($idhorario = '', $idalumno = '')
-    {
+
+    public function horarioMostrar($idhorario = '', $idalumno = '') {
         if ((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno))) {
 
             $tabla = '
@@ -393,8 +396,8 @@ class Tutores extends CI_Controller
             return $tabla;
         }
     }
-    public function obtenerCalificacion($idhorario = '', $idalumno = '')
-    {
+
+    public function obtenerCalificacion($idhorario = '', $idalumno = '') {
         # code...
         $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel);
         $unidades = $this->grupo->unidades($this->session->idplantel);
@@ -445,15 +448,13 @@ class Tutores extends CI_Controller
                 }
                 $tabla .= '</td>';
                 $tabla .= '</tr>';
-
             }
         }
         $tabla .= '</table>';
         return $tabla;
-
     }
-    public function boletas($idalumno = '')
-    {
+
+    public function boletas($idalumno = '') {
         Permission::grant(uri_string());
         $idalumno = $this->decode($idalumno);
         if (isset($idalumno) && !empty($idalumno)) {
@@ -461,120 +462,122 @@ class Tutores extends CI_Controller
             if (isset($detalle[0]->idhorario) && !empty($detalle[0]->idhorario)) {
                 $idhorario = $detalle[0]->idhorario;
                 $grupo = $this->alumno->obtenerGrupo($idalumno);
-        if ($grupo != false) {
-            $idhorario = $grupo->idhorario;
-        }
-
-        if ($idhorario != "") {
-
-            
-            $calificacion = "";
-            $tabla = $this->obtenerCalificacion2($idhorario, $idalumno);
-            $datosalumno = $this->alumno->showAllAlumnoId($idalumno);
-            $datoshorario = $this->horario->showNivelGrupo($idhorario);
-            $array_materias_reprobadas = array();
-            $materias_reprobadas = $this->alumno->obtenerTodasMateriaReprobadasActivas($idalumno);
-            if (isset($materias_reprobadas) && !empty($materias_reprobadas)) {
-                foreach ($materias_reprobadas as $row) {
-                    array_push($array_materias_reprobadas, $row->idmateriaprincipal);
+                if ($grupo != false) {
+                    $idhorario = $grupo->idhorario;
                 }
-            }
-            $reprobadas = implode(",", $array_materias_reprobadas);
 
-            $materias = $this->alumno->showAllMaterias($idhorario, $reprobadas);
-            $unidades = $this->grupo->unidades($this->session->idplantel);
-            $idnivelestudio = $datoshorario->idnivelestudio;
-            $idniveleducativo = $datoshorario->idniveleducativo;
-            $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
-            $idperiodo = $datoshorario->idperiodo;
-            $alumno_grupo = $this->grupo->detalleAlumnoGrupo($idalumno, $idperiodo);
-            $total_unidades = 0;
-            $total_materia = 0;
-            if ($materias != false) {
-                foreach ($materias as $row) {
-                    # code...
-                    $total_materia = $total_materia + 1;
-                }
-            }
-            if ($unidades != false) {
-                foreach ($unidades as $row) {
-                    # code...
-                    $total_unidades = $total_unidades + 1;
-                }
-            }
-            $datoscalifiacacion = $this->horario->calificacionGeneralAlumno($idhorario, $idalumno);
-            if ($datoscalifiacacion != false && $total_materia > 0) {
-                $calificacion = ($datoscalifiacacion->calificaciongeneral / $total_unidades) / $total_materia;
-            }
-            $detalle_oportunidad = $this->alumno->detalleOportunidadExamen($this->session->idplantel, 1);
-            $numero_oportunidad = $detalle_oportunidad->numero;
-            $detalle_siguiente_oportunidad = $this->alumno->siguienteOportunidadExamen($this->session->idplantel, $numero_oportunidad);
-            $detalle_calificacion = $this->alumno->calificacionAlumno($idalumno, $idhorario, $detalle_oportunidad->idoportunidadexamen);
+                if ($idhorario != "") {
 
-            $total_aprovadas = 0;
-            $total_reprovadas = 0;
-            if ($detalle_calificacion) {
-                foreach ($detalle_calificacion as $row) {
-                    if (validar_calificacion($row->calificacion, $detalle_configuracion[0]->calificacion_minima)) {
-                        //REPROVADAS
-                        $total_reprovadas += 1;
-                    } else {
-                        //APROBADAS
-                        $total_aprovadas += 1;
+
+                    $calificacion = "";
+                    $tabla = $this->obtenerCalificacion2($idhorario, $idalumno);
+                    $datosalumno = $this->alumno->showAllAlumnoId($idalumno);
+                    $datoshorario = $this->horario->showNivelGrupo($idhorario);
+                    $array_materias_reprobadas = array();
+                    $materias_reprobadas = $this->alumno->obtenerTodasMateriaReprobadasActivas($idalumno);
+                    if (isset($materias_reprobadas) && !empty($materias_reprobadas)) {
+                        foreach ($materias_reprobadas as $row) {
+                            array_push($array_materias_reprobadas, $row->idmateriaprincipal);
+                        }
                     }
+                    $reprobadas = implode(",", $array_materias_reprobadas);
+
+                    $materias = $this->alumno->showAllMaterias($idhorario, $reprobadas);
+                    $unidades = $this->grupo->unidades($this->session->idplantel);
+                    $idnivelestudio = $datoshorario->idnivelestudio;
+                    $idniveleducativo = $datoshorario->idniveleducativo;
+                    $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
+                    $idperiodo = $datoshorario->idperiodo;
+                    $alumno_grupo = $this->grupo->detalleAlumnoGrupo($idalumno, $idperiodo);
+                    $total_unidades = 0;
+                    $total_materia = 0;
+                    if ($materias != false) {
+                        foreach ($materias as $row) {
+                            # code...
+                            $total_materia = $total_materia + 1;
+                        }
+                    }
+                    if ($unidades != false) {
+                        foreach ($unidades as $row) {
+                            # code...
+                            $total_unidades = $total_unidades + 1;
+                        }
+                    }
+                    $datoscalifiacacion = $this->horario->calificacionGeneralAlumno($idhorario, $idalumno);
+                    if ($datoscalifiacacion != false && $total_materia > 0) {
+                        $calificacion = ($datoscalifiacacion->calificaciongeneral / $total_unidades) / $total_materia;
+                    }
+                    $detalle_oportunidad = $this->alumno->detalleOportunidadExamen($this->session->idplantel, 1);
+                    $numero_oportunidad = $detalle_oportunidad->numero;
+                    $detalle_siguiente_oportunidad = $this->alumno->siguienteOportunidadExamen($this->session->idplantel, $numero_oportunidad);
+                    $detalle_calificacion = $this->alumno->calificacionAlumno($idalumno, $idhorario, $detalle_oportunidad->idoportunidadexamen);
+
+                    $total_aprovadas = 0;
+                    $total_reprovadas = 0;
+                    if ($detalle_calificacion) {
+                        foreach ($detalle_calificacion as $row) {
+                            if (validar_calificacion($row->calificacion, $detalle_configuracion[0]->calificacion_minima)) {
+                                //REPROVADAS
+                                $total_reprovadas += 1;
+                            } else {
+                                //APROBADAS
+                                $total_aprovadas += 1;
+                            }
+                        }
+                    }
+
+                    $calificacion_minima = $detalle_configuracion[0]->calificacion_minima;
+                    $reprovatorio_permitido = $detalle_configuracion[0]->reprovandas_minima;
+
+                    $estatus_alumno = calcularReprovado($idnivelestudio, $idniveleducativo, $total_materia, $total_aprovadas, $total_reprovadas, $reprovatorio_permitido, $calificacion, $calificacion_minima);
+                    $mostrar_estatus = mostrarReprovado($idnivelestudio, $idniveleducativo, $total_materia, $total_aprovadas, $total_reprovadas, $reprovatorio_permitido, $calificacion, $calificacion_minima);
+
+                    $data = array(
+                        'idhorario' => $idhorario,
+                        'idalumno' => $idalumno,
+                        'tabla' => $tabla,
+                        'datosalumno' => $datosalumno,
+                        'datoshorario' => $datoshorario,
+                        'calificacion' => $calificacion,
+                        'controller' => $this,
+                        'estatus_nivel' => $estatus_alumno,
+                        'oportunidades' => $this->grupo->showAllOportunidades($this->session->idplantel),
+                        'nivel_educativo' => $idniveleducativo,
+                        'mostrar_estatus' => $mostrar_estatus,
+                            // 'detalle_siguiente_oportunidad'=>$detalle_siguiente_oportunidad
+                    );
+                    $this->load->view('tutor/header');
+                    $this->load->view('tutor/alumnos/calificacion', $data);
+                    $this->load->view('tutor/footer');
+                } else {
+                    $data = array(
+                        'idhorario' => $idhorario,
+                    );
+                    $this->load->view('tutor/header');
+                    $this->load->view('tutor/alumnos/boletas', $data);
+                    $this->load->view('tutor/footer');
                 }
-            }
-
-            $calificacion_minima = $detalle_configuracion[0]->calificacion_minima;
-            $reprovatorio_permitido = $detalle_configuracion[0]->reprovandas_minima;
-
-            $estatus_alumno = calcularReprovado($idnivelestudio, $idniveleducativo, $total_materia, $total_aprovadas, $total_reprovadas, $reprovatorio_permitido, $calificacion, $calificacion_minima);
-            $mostrar_estatus = mostrarReprovado($idnivelestudio, $idniveleducativo, $total_materia, $total_aprovadas, $total_reprovadas, $reprovatorio_permitido, $calificacion, $calificacion_minima);
-
-            $data = array(
-                'idhorario' => $idhorario,
-                'idalumno' => $idalumno,
-                'tabla' => $tabla,
-                'datosalumno' => $datosalumno,
-                'datoshorario' => $datoshorario,
-                'calificacion' => $calificacion,
-                'controller' => $this,
-                'estatus_nivel' => $estatus_alumno,
-                'oportunidades' => $this->grupo->showAllOportunidades($this->session->idplantel),
-                'nivel_educativo' => $idniveleducativo,
-                'mostrar_estatus' => $mostrar_estatus,
-                // 'detalle_siguiente_oportunidad'=>$detalle_siguiente_oportunidad
-            );
-            $this->load->view('alumno/header');
-            $this->load->view('alumno/kardex/calificacion', $data);
-            $this->load->view('alumno/footer');
-        } else {
-            $data = array(
-                'idhorario' => $idhorario,
-            );
-           $this->load->view('tutor/header');
-                $this->load->view('tutor/alumnos/boletas', $data);
-                $this->load->view('tutor/footer');
-        }
-              
             } else {
                 $data = array(
                     'heading' => 'Notificación',
                     'message' => 'El Alumno(a) no tiene registrado Calificación.',
                 );
-                $this->load->view('errors/html/error_general', $data);
+                $this->load->view('tutor/header');
+                $this->load->view('tutor/error/general', $data);
+                $this->load->view('tutor/footer');
             }
         } else {
             $data = array(
-                'heading' => 'Error',
-                'message' => 'Intente mas tarde.',
+                'heading' => 'Información',
+                'message' => 'Error, intente mas tarde.',
             );
-            $this->load->view('errors/html/error_general', $data);
+            $this->load->view('tutor/header');
+            $this->load->view('tutor/error/general', $data);
+            $this->load->view('tutor/footer');
         }
-
     }
-     public function obtenerCalificacion2($idhorario = '', $idalumno = '')
-    {
+
+    public function obtenerCalificacion2($idhorario = '', $idalumno = '') {
         # code...
         Permission::grant(uri_string());
         $unidades = $this->grupo->unidades($this->session->idplantel);
@@ -660,8 +663,7 @@ class Tutores extends CI_Controller
         return $tabla;
     }
 
-    public function obtenerCalificacionPrimaria($idhorario = '', $idalumno = '')
-    {
+    public function obtenerCalificacionPrimaria($idhorario = '', $idalumno = '') {
         # code...
         Permission::grant(uri_string());
         $idplantel = $this->session->idplantel;
@@ -696,8 +698,7 @@ class Tutores extends CI_Controller
         return $tabla;
     }
 
-    public function materias($idalumno = '')
-    {
+    public function materias($idalumno = '') {
         Permission::grant(uri_string());
         $materias = $this->alumno->showAllMateriasAlumno($idalumno);
         $alumno = $this->alumno->detalleAlumno($idalumno);
@@ -711,8 +712,7 @@ class Tutores extends CI_Controller
         $this->load->view('tutor/footer');
     }
 
-    public function examen($idhorario = '', $idhorariodetalle = '', $idalumno = '')
-    {
+    public function examen($idhorario = '', $idhorariodetalle = '', $idalumno = '') {
         Permission::grant(uri_string());
         $unidades = $this->grupo->unidades($this->session->idplantel);
         $alumns = $this->grupo->alumnosGrupo($idhorario);
@@ -732,10 +732,9 @@ class Tutores extends CI_Controller
         $this->load->view('docente/header');
         $this->load->view('docente/grupo/examen', $data);
         $this->load->view('docente/footer');
-
     }
-    public function tareas($idalumno = '', $idnivelestudio = '', $idperiodo = '')
-    {
+
+    public function tareas($idalumno = '', $idnivelestudio = '', $idperiodo = '') {
         Permission::grant(uri_string());
         $idalumno = $this->decode($idalumno);
         $idperiodo = $this->decode($idperiodo);
@@ -757,20 +756,22 @@ class Tutores extends CI_Controller
                     'heading' => 'Notificación',
                     'message' => 'El Alumno(a) no tiene registrado Tareas.',
                 );
-                $this->load->view('errors/html/error_general', $data);
+                $this->load->view('tutor/header');
+                $this->load->view('tutor/error/general', $data);
+                $this->load->view('tutor/footer');
             }
-
         } else {
             $data = array(
                 'heading' => 'Error',
                 'message' => 'Intente mas tarde.',
             );
-            $this->load->view('errors/html/error_general', $data);
+            $this->load->view('tutor/header');
+            $this->load->view('tutor/error/general', $data);
+            $this->load->view('tutor/footer');
         }
     }
 
-    public function detalletarea($idtarea = '')
-    {
+    public function detalletarea($idtarea = '') {
         $idtarea = $this->decode($idtarea);
         if (isset($idtarea) && !empty($idtarea)) {
             $detalle_tarea = $this->mensaje->detalleTarea($idtarea);
@@ -780,18 +781,18 @@ class Tutores extends CI_Controller
             $this->load->view('tutor/header');
             $this->load->view('tutor/detalle/tarea', $data);
             $this->load->view('tutor/footer');
-
         } else {
             $data = array(
                 'heading' => 'Error',
                 'message' => 'Intente mas tarde.',
             );
-            $this->load->view('errors/html/error_general', $data);
+            $this->load->view('tutor/header');
+            $this->load->view('tutor/error/general', $data);
+            $this->load->view('tutor/footer');
         }
     }
 
-    public function asistencias($idalumno = '')
-    {
+    public function asistencias($idalumno = '') {
         Permission::grant(uri_string());
         $idalumno = $this->decode($idalumno);
         if (isset($idalumno) && !empty($idalumno)) {
@@ -828,20 +829,22 @@ class Tutores extends CI_Controller
                     'heading' => 'Notificación',
                     'message' => 'El Alumno(a) no tiene registrado Asistencia.',
                 );
-                $this->load->view('errors/html/error_general', $data);
+                $this->load->view('tutor/header');
+                $this->load->view('tutor/error/general', $data);
+                $this->load->view('tutor/footer');
             }
-
         } else {
             $data = array(
                 'heading' => 'Error',
                 'message' => 'Intente mas tarde.',
             );
-            $this->load->view('errors/html/error_general', $data);
+            $this->load->view('tutor/header');
+            $this->load->view('tutor/error/general', $data);
+            $this->load->view('tutor/footer');
         }
     }
 
-    public function obetnerAsistencia($idhorario, $fechainicio, $fechafin, $idhorariodetalle, $idalumno)
-    {
+    public function obetnerAsistencia($idhorario, $fechainicio, $fechafin, $idhorariodetalle, $idalumno) {
         Permission::grant(uri_string());
         //  $alumns = $this->grupo->alumnosGrupo($idhorario);
         $tabla = "";
@@ -877,16 +880,16 @@ class Tutores extends CI_Controller
             $tabla .= '<tr>';
             $tabla .= '<td>' . $n++ . '</td>';
             $tabla .= '<td>';
-                if ($row->opcion == 0) {
-                    $tabla .= '<label style="color:red;">R: </label>';
-                }
+            if ($row->opcion == 0) {
+                $tabla .= '<label style="color:red;">R: </label>';
+            }
 
-             $tabla .= '<strong>' . $row->nombreclase . '</strong><br><small>( ' . $row->nombre . ' ' . $row->apellidop . ' ' . $row->apellidom . '</small>)</td>';
+            $tabla .= '<strong>' . $row->nombreclase . '</strong><br><small>( ' . $row->nombre . ' ' . $row->apellidop . ' ' . $row->apellidom . '</small>)</td>';
             for ($i = 0; $i < $range; $i++):
                 $date_at = date("Y-m-d", strtotime($fechainicio) + ($i * (24 * 60 * 60)));
                 // $asist = AssistanceData::getByATD($alumn->id,$_GET["team_id"],$date_at);
                 $asist = $this->grupo->listaAsistencia($idalumno, $idhorario, $date_at, $row->idhorariodetalle);
- 
+
                 $tabla .= '<td>';
                 if ($asist != false) {
                     switch ($asist->idmotivo) {
@@ -920,39 +923,36 @@ class Tutores extends CI_Controller
                 $tabla .= '</td>';
             endfor;
             $tabla .= '</tr>';
-
         }
         $tabla .= '</table>';
 
         return $tabla;
-
     }
 
-    public function obetnerAsistenciaAlu($idalumno, $idhorario, $idhorariodetalle, $fechainicio, $fechafin, $idmotivo)
-    {
+    public function obetnerAsistenciaAlu($idalumno, $idhorario, $idhorariodetalle, $fechainicio, $fechafin, $idmotivo) {
         Permission::grant(uri_string());
         $idhorario = $this->decode($idhorario);
         $idhorariodetalle = $this->decode($idhorariodetalle);
         $idalumno = $this->decode($idalumno);
         if ((isset($idhorario) && !empty($idhorario)) &&
-            (isset($idhorariodetalle) && !empty($idhorariodetalle)) &&
-            (isset($idalumno) && !empty($idalumno)) &&
-            (isset($fechainicio) && !empty($fechainicio)) &&
-            (isset($fechafin) && !empty($fechafin)) &&
-            (isset($idmotivo))) {
+                (isset($idhorariodetalle) && !empty($idhorariodetalle)) &&
+                (isset($idalumno) && !empty($idalumno)) &&
+                (isset($fechainicio) && !empty($fechainicio)) &&
+                (isset($fechafin) && !empty($fechafin)) &&
+                (isset($idmotivo))) {
             //  $alumns = $this->grupo->alumnosGrupo($idhorario);
-              $tabla = "";
-        $array_materias_reprobadas = array();
-        $materias_reprobadas = $this->alumno->obtenerTodasMateriaReprobadasActivas($idalumno);
-        if (isset($materias_reprobadas) && !empty($materias_reprobadas)) {
-            foreach ($materias_reprobadas as $row) {
-                array_push($array_materias_reprobadas, $row->idmateriaprincipal);
+            $tabla = "";
+            $array_materias_reprobadas = array();
+            $materias_reprobadas = $this->alumno->obtenerTodasMateriaReprobadasActivas($idalumno);
+            if (isset($materias_reprobadas) && !empty($materias_reprobadas)) {
+                foreach ($materias_reprobadas as $row) {
+                    array_push($array_materias_reprobadas, $row->idmateriaprincipal);
+                }
             }
-        }
-        $reprobadas = implode(",", $array_materias_reprobadas);
+            $reprobadas = implode(",", $array_materias_reprobadas);
 
-        $materias = $this->alumno->showAllMaterias($idhorario, $reprobadas);
-        
+            $materias = $this->alumno->showAllMaterias($idhorario, $reprobadas);
+
             // var_dump($materias);
 
             $range = ((strtotime($fechafin) - strtotime($fechainicio)) + (24 * 60 * 60)) / (24 * 60 * 60);
@@ -980,7 +980,7 @@ class Tutores extends CI_Controller
                 $tabla .= '<tr>';
                 $tabla .= '<td>' . $n++ . '</td>';
                 $tabla .= '<td>';
-                  if ($row->opcion == 0) {
+                if ($row->opcion == 0) {
                     $tabla .= '<label style="color:red;">R: </label>';
                 }
 
@@ -989,7 +989,7 @@ class Tutores extends CI_Controller
                     $date_at = date("Y-m-d", strtotime($fechainicio) + ($i * (24 * 60 * 60)));
                     $domingo = date('N', strtotime($fechainicio) + ($i * (24 * 60 * 60)));
                     // $asist = AssistanceData::getByATD($alumn->id,$_GET["team_id"],$date_at);
-                    $asist = $this->grupo->listaAsistenciaBuscar($idalumno, $idhorario, $date_at,  $row->idhorariodetalle, $idmotivo);
+                    $asist = $this->grupo->listaAsistenciaBuscar($idalumno, $idhorario, $date_at, $row->idhorariodetalle, $idmotivo);
 
                     if ($domingo != '7') {
                         if ($domingo != '6') {
@@ -1028,7 +1028,6 @@ class Tutores extends CI_Controller
                     }
                 endfor;
                 $tabla .= '</tr>';
-
             }
             $tabla .= '</table>';
             $detalle = $this->alumno->showAllMateriasAlumno($idalumno);
@@ -1053,12 +1052,13 @@ class Tutores extends CI_Controller
                 'heading' => 'Error',
                 'message' => 'Intente mas tarde.',
             );
-            $this->load->view('errors/html/error_general', $data);
+            $this->load->view('tutor/header');
+            $this->load->view('tutor/error/general', $data);
+            $this->load->view('tutor/footer');
         }
-
     }
-    public function encode($string)
-    {
+
+    public function encode($string) {
         $encrypted = $this->encryption->encrypt($string);
         if (!empty($string)) {
             $encrypted = strtr($encrypted, array('/' => '~'));
@@ -1066,13 +1066,12 @@ class Tutores extends CI_Controller
         return $encrypted;
     }
 
-    public function decode($string)
-    {
+    public function decode($string) {
         $string = strtr($string, array('~' => '/'));
         return $this->encryption->decrypt($string);
     }
-    public function pagos($idalumno = '', $idnivel = '', $idperiodo = '')
-    {
+
+    public function pagos($idalumno = '', $idnivel = '', $idperiodo = '') {
         Permission::grant(uri_string());
         $idalumno = $this->decode($idalumno);
         $idnivel = $this->decode($idnivel);
@@ -1101,23 +1100,26 @@ class Tutores extends CI_Controller
                 'heading' => 'Error',
                 'message' => 'Error intente mas tarde.',
             );
-            $this->load->view('errors/html/error_general', $data);
+            $this->load->view('tutor/header');
+            $this->load->view('tutor/error/general', $data);
+            $this->load->view('tutor/footer');
         }
     }
-    public function pagoi($idalumno = '', $idperiodo = '', $idnivel = '', $tipo = '')
-    {
+
+    public function pagoi($idalumno = '', $idperiodo = '', $idnivel = '', $tipo = '') {
         Permission::grant(uri_string());
         $idalumno = $this->decode($idalumno);
         $idperiodo = $this->decode($idperiodo);
         $idnivel = $this->decode($idnivel);
+        $idplantel = $this->session->idplantel;
 
         if ((isset($idalumno) && !empty($idalumno)) && (isset($idperiodo) && !empty($idperiodo)) && (isset($idnivel) && !empty($idnivel)) && (isset($tipo) && !empty($tipo))) {
             $mensaje = "";
             if ($tipo == 1) {
-                $detalle = $this->tutor->precioColegiatura(2, $idnivel);
+                $detalle = $this->tutor->precioColegiatura(2, $idnivel, $idplantel);
                 $mensaje .= "PAGO DE REINSCRIPCIÓN";
             } elseif ($tipo == 2) {
-                $detalle = $this->tutor->precioColegiatura(3, $idnivel);
+                $detalle = $this->tutor->precioColegiatura(3, $idnivel, $idplantel);
                 $mensaje .= "PAGO DE MENSUALIDAD";
             } else {
                 $detalle = false;
@@ -1135,49 +1137,171 @@ class Tutores extends CI_Controller
                     'idnivel' => $this->encode($idnivel),
                     'formapago' => 1,
                     'nombre_alumno' => $nombre_alumno,
+                    'alumno' => $idalumno,
+                    'periodo' => $idperiodo
                 );
                 $this->load->view('tutor/header');
                 $this->load->view('tutor/alumnos/pago_inscripcion', $data);
                 $this->load->view('tutor/footer');
-
             } else {
                 $data = array(
                     'heading' => 'Notificación',
                     'message' => 'No se puede pagar por el momento, intente mas tarde.',
                 );
-                $this->load->view('errors/html/error_general', $data);
+                $this->load->view('tutor/header');
+                $this->load->view('tutor/error/general', $data);
+                $this->load->view('tutor/footer');
             }
         } else {
             $data = array(
                 'heading' => 'Error',
                 'message' => 'Error intente mas tarde.',
             );
-            $this->load->view('errors/html/error_general', $data);
+            $this->load->view('tutor/header');
+            $this->load->view('tutor/error/general', $data);
+            $this->load->view('tutor/footer');
         }
     }
-    public function pagoc($idalumno = '', $idperiodo = '', $idnivel = '', $tipo = '')
-    {
+
+    public function costoPagoInicio() {
+        $idplantel = $this->session->idplantel;
+        $idalumno = $this->input->post('alumno');
+        $idperiodo = $this->input->post('periodo');
+        $idconcepto = $this->input->post('concepto');
+        $cobro_colegiatura = 0;
+        $detalle_concepto = "";
+        switch ($idconcepto) {
+            case 1:
+                $detalle_concepto .= "INSCRIPCIÓN";
+                break;
+            case 2:
+                $detalle_concepto .= "REINSCRIPCIÓN";
+                break;
+
+            default:
+                $detalle_concepto .= "NO DEFINIDO";
+                break;
+        }
+        $detalle_niveleducativo = $this->alumno->detalleAlumnoNivelEducativo($idalumno, $idperiodo);
+        if ($detalle_niveleducativo) {
+            $idniveleducativo = $detalle_niveleducativo->idnivelestudio;
+            $detalle_descuento = $this->estadocuenta->descuentoPagosInicio($idalumno, $idperiodo, $idconcepto, $idplantel, $idniveleducativo);
+            if ($detalle_descuento) {
+                if ($detalle_descuento[0]->descuento > 0) {
+                    $cobro_colegiatura = $detalle_descuento[0]->descuento;
+                } else {
+                    $cobro_colegiatura = 0;
+                }
+            } else {
+                $cobro_colegiatura = 0;
+            }
+        } else {
+            $cobro_colegiatura = 0;
+        }
+
+        $result['resultado'] = array(
+            'concepto' => $detalle_concepto,
+            'costototal' => $cobro_colegiatura
+        );
+
+        if (isset($result) && !empty($result)) {
+            echo json_encode($result);
+        }
+    }
+
+    public function agregarCostoColegiatura() {
+        $idplantel = $this->session->idplantel;
+        $idalumno = $this->input->post('alumno');
+        $idperiodo = $this->input->post('periodo');
+        $idmes = $this->input->post('mes');
+        $costo_colegiatura = 0;
+        $recargo = 0;
+        $consto_normal = 0;
+        $detalle_niveleducativo = $this->alumno->detalleAlumnoNivelEducativo($idalumno, $idperiodo);
+        if ($detalle_niveleducativo) {
+            $idniveleducativo = $detalle_niveleducativo->idnivelestudio;
+            $detalle_descuento = $this->estadocuenta->descuentoPagosInicio($idalumno, $idperiodo, 3, $idplantel, $idniveleducativo);
+            $detalle_alumno = $this->alumno->detalleAlumno($idalumno);
+            $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $detalle_alumno->idniveleducativo);
+
+
+            if ($detalle_descuento[0]->idniveleducativo == 1) {
+                //PRIMARIA 
+
+                $dia_actual = date('Y-m-d');
+                $year_actual = date('Y');
+                $dia_pago = date('Y-m-d', strtotime($detalle_configuracion[0]->diaultimorecargo . "-" . $idmes . "-" . $year_actual));
+                if ($dia_actual > $dia_pago) {
+                    $recargo += $detalle_configuracion[0]->totalrecargo;
+                } else {
+                    $recargo += 0;
+                }
+            } elseif ($detalle_descuento[0]->idniveleducativo == 2) {
+                //SECUNDARIA 
+
+                $dia_actual = date('Y-m-d');
+                $year_actual = date('Y');
+                $dia_pago = date('Y-m-d', strtotime($detalle_configuracion[0]->diaultimorecargo . "-" . $idmes . "-" . $year_actual));
+                if ($dia_actual > $dia_pago) {
+                    $recargo += $detalle_configuracion[0]->totalrecargo;
+                } else {
+                    $recargo += 0;
+                }
+            } elseif ($detalle_descuento[0]->idniveleducativo == 3) {
+                //PREPA 
+
+                $dia_actual = date('Y-m-d');
+                $year_actual = date('Y');
+                $dia_pago = date('Y-m-d', strtotime($detalle_configuracion[0]->diaultimorecargo . "-" . $idmes . "-" . $year_actual));
+                if ($dia_actual > $dia_pago) {
+                    $recargo += $detalle_configuracion[0]->totalrecargo;
+                } else {
+                    $recargo += 0;
+                }
+            } else {
+                $recargo = 0;
+            }
+            $consto_normal = (($detalle_descuento[0]->descuento - ($detalle_descuento[0]->descuentobeca / 100 * $detalle_descuento[0]->descuento)) * 1);
+            $descuento_correcto = (($detalle_descuento[0]->descuento - ($detalle_descuento[0]->descuentobeca / 100 * $detalle_descuento[0]->descuento)) * 1) + $recargo;
+            $costo_colegiatura = $descuento_correcto;
+        } else {
+            $costo_colegiatura = 0;
+        }
+        $result['resultado'] = array(
+            'costototal' => $costo_colegiatura,
+            'colegiatura' => $consto_normal,
+            'recargo' => $recargo
+        );
+
+        if (isset($result) && !empty($result)) {
+            echo json_encode($result);
+        }
+    }
+
+    public function pagoc($idalumno = '', $idperiodo = '', $idnivel = '', $tipo = '') {
         date_default_timezone_set("America/Mexico_City");
         Permission::grant(uri_string());
         $idalumno = $this->decode($idalumno);
         $idperiodo = $this->decode($idperiodo);
         $idnivel = $this->decode($idnivel);
-        $idplantel = $this->session->idplantel;
 
-        if ((isset($idalumno) && !empty($idalumno)) && (isset($idperiodo) && !empty($idperiodo)) && (isset($idnivel) && !empty($idnivel)) && (isset($tipo) && !empty($tipo))) {
+        $detalle_niveleducativo = $this->alumno->detalleAlumnoNivelEducativo($idalumno, $idperiodo);
+        if ((isset($idalumno) && !empty($idalumno)) && (isset($idperiodo) && !empty($idperiodo)) && (isset($idnivel) && !empty($idnivel)) && (isset($tipo) && !empty($tipo)) && $detalle_niveleducativo) {
+            $idniveleducativo = $detalle_niveleducativo->idnivelestudio;
             $mensaje = "";
+            $idplantel = $this->session->idplantel;
             if ($tipo == 1) {
-                $detalle = $this->tutor->precioColegiatura(2, $idnivel);
+                $detalle = $this->tutor->precioColegiatura(2, $idnivel, $idplantel);
                 $mensaje .= "PAGO DE REINSCRIPCIÓN";
             } elseif ($tipo == 2) {
-                $detalle = $this->tutor->precioColegiatura(3, $idnivel);
+                $detalle = $this->tutor->precioColegiatura(3, $idnivel, $idplantel);
                 $mensaje .= "PAGO DE MENSUALIDAD";
             } else {
                 $detalle = false;
             }
 
             if ($detalle != false) {
-                $detalle_descuento = $this->estadocuenta->descuentoPagosInicio($idalumno, $idperiodo, 3,$idplantel);
+                $detalle_descuento = $this->estadocuenta->descuentoPagosInicio($idalumno, $idperiodo, 3, $idplantel, $idniveleducativo);
                 $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel);
                 $recargo = 0;
                 if ($detalle_descuento[0]->idniveleducativo == 1) {
@@ -1192,7 +1316,6 @@ class Tutores extends CI_Controller
                     } else {
                         $recargo += 0;
                     }
-
                 } elseif ($detalle_descuento[0]->idniveleducativo == 2) {
                     //SECUNDARIA
                     $dia_actual = date('Y-m-d');
@@ -1204,7 +1327,6 @@ class Tutores extends CI_Controller
                     } else {
                         $recargo += 0;
                     }
-
                 } elseif ($detalle_descuento[0]->idniveleducativo == 3) {
                     //PREPA
                     $dia_actual = date('Y-m-d');
@@ -1216,7 +1338,6 @@ class Tutores extends CI_Controller
                     } else {
                         $recargo += 0;
                     }
-
                 } else {
                     $recargo = 0;
                 }
@@ -1237,45 +1358,51 @@ class Tutores extends CI_Controller
                     'idnivel' => $this->encode($idnivel),
                     'formapago' => 1,
                     'nombre_alumno' => $nombre_alumno,
+                    'alumno' => $idalumno,
+                    'periodo' => $idperiodo
                 );
                 $this->load->view('tutor/header');
                 $this->load->view('tutor/alumnos/pago_colegiatura', $data);
                 $this->load->view('tutor/footer');
-
             } else {
                 $data = array(
                     'heading' => 'Notificación',
                     'message' => 'No se puede pagar por el momento, intente mas tarde.',
                 );
-                $this->load->view('errors/html/error_general', $data);
+                $this->load->view('tutor/header');
+                $this->load->view('tutor/error/general', $data);
+                $this->load->view('tutor/footer');
             }
         } else {
             $data = array(
                 'heading' => 'Error',
                 'message' => 'Error intente mas tarde.',
             );
-            $this->load->view('errors/html/error_general', $data);
+            $this->load->view('tutor/header');
+            $this->load->view('tutor/error/general', $data);
+            $this->load->view('tutor/footer');
         }
     }
 
-    public function buscarCP()
-    {
+    public function buscarCP() {
         # code...
         $cp = $_POST['b'];
         $array = $this->alumno->showColonias($cp);
 
         $select = "";
-        $select .= '<option value="">--SELECCIONAR--</option>';
+        //$select .= '<option value="">--SELECCIONAR--</option>';
         if (isset($array) && !empty($array)) {
             foreach ($array as $value) {
                 # code...
+                // $select .= '<option value="">--SELECCIONAR--</option>';
                 $select .= '<option value="' . $value->idcolonia . '">' . strtoupper($value->nombrecolonia) . '</option>';
             }
         }
+
         echo $select;
     }
-    public function buscarMunicipioCP()
-    {
+
+    public function buscarMunicipioCP() {
         # code...
         $cp = $_POST['b'];
         $array = $this->alumno->showMunicipio($cp);
@@ -1286,12 +1413,13 @@ class Tutores extends CI_Controller
                 # code...
                 $select .= '<option value="' . $value->idmunicipio . '">' . strtoupper($value->nombremunicipio) . '</option>';
             }
+        } else {
+            $select .= '<option value="">--SELECCIONAR--</option>';
         }
         echo $select;
     }
 
-    public function buscarEstadoCP()
-    {
+    public function buscarEstadoCP() {
         # code...
         $cp = $_POST['b'];
         $array = $this->alumno->showEstado($cp);
@@ -1302,12 +1430,13 @@ class Tutores extends CI_Controller
                 # code...
                 $select .= '<option value="' . $value->idestado . '">' . strtoupper($value->nombreestado) . '</option>';
             }
+        } else {
+            $select .= '<option value="">--SELECCIONAR--</option>';
         }
         echo $select;
     }
 
-    public function pagotarjeta()
-    {
+    public function pagotarjeta() {
         //PAGO DE REISCRIPCION O INSCRIPCION CON TARJETA
         Permission::grant(uri_string());
         $idperiodo = $this->decode($this->input->post('periodo'));
@@ -1317,10 +1446,12 @@ class Tutores extends CI_Controller
             try {
                 $idtutor = $this->session->idtutor;
                 $detalle_tutor = $this->tutor->detalleTutor($idtutor);
+                $detalle_alumno = $this->alumno->detalleAlumno($idalumno);
+                $matricula = $detalle_alumno->matricula;
                 $nombretarjetahabiente = $this->input->post('nombretitular');
                 $calle = $this->input->post('calletitular');
-                $nombretarjetahabiente = $this->input->post('nombretitular');
                 $numero = $this->input->post('numerocasa');
+                $idconcepto = $this->input->post('conceptopago');
                 $idcolonia = $this->input->post('colonia');
                 $detalle_colonia = $this->tutor->detalleColonia($idcolonia);
                 $cp = $this->input->post('cp');
@@ -1329,7 +1460,7 @@ class Tutores extends CI_Controller
                 $folio = generateRandomString();
                 $validar_mes = $this->estadocuenta->validarAddReincripcion($idalumno, $idperiodo);
 
-                if ($validar_mes == false) {
+                if ($validar_mes == false && $descuento > 0) {
                     $response = [];
                     Openpay::setProductionMode(false);
                     $openpay = Openpay::getInstance('mds4bdhgvbese0knzu2x', 'sk_f95d7349163642fba9f5a71021b3f6d5');
@@ -1351,7 +1482,7 @@ class Tutores extends CI_Controller
                         'method' => 'card',
                         'source_id' => $_POST["token_id"],
                         'amount' => (float) $descuento,
-                        'description' => $mensaje,
+                        'description' => $mensaje . ", MATRICULA: " . $matricula,
                         'device_session_id' => $_POST["deviceIdHiddenFieldName"],
                         'customer' => $customer,
                     );
@@ -1366,9 +1497,9 @@ class Tutores extends CI_Controller
                         'folio' => $folio,
                         'idperiodo' => $idperiodo,
                         'idalumno' => $idalumno,
-                        'idtipopagocol' => 2,
+                        'idtipopagocol' => $idconcepto,
                         'descuento' => $descuento,
-                        'totalrecargo' => 0.00,
+                        'totalrecargo' => 0,
                         'recargo' => 0,
                         'condonar' => 0,
                         'idopenpay' => $idopenpay,
@@ -1397,16 +1528,18 @@ class Tutores extends CI_Controller
                     $data = array(
                         'tipo_error' => 0,
                         'msg' => "AUTORIZACIÓN: " . $autorizacion,
+                        'alumno' => $this->encode($idalumno),
+                        'idestadocuenta' => $this->encode($idpago),
+                        'tipo_pago' => $this->encode(10)
                     );
                     echo json_encode($data);
                 } else {
                     $data = array(
                         'tipo_error' => 1,
-                        'msg' => "La Reinscripción o Inscripción ya se encuentra pagado.",
+                        'msg' => "La Reinscripción o Inscripción ya se encuentra pagado o el total esta en 0.",
                     );
                     echo json_encode($data);
                 }
-
             } catch (OpenpayApiTransactionError $e) {
                 $mensaje = "";
                 switch ($e->getErrorCode()) {
@@ -1456,7 +1589,6 @@ class Tutores extends CI_Controller
                     'msg' => $mensaje,
                 );
                 echo json_encode($data);
-
             } catch (OpenpayApiRequestError $e) {
                 $mensaje .= $e->getMessage();
                 $data = array(
@@ -1464,7 +1596,6 @@ class Tutores extends CI_Controller
                     'msg' => $mensaje,
                 );
                 echo json_encode($data);
-
             } catch (OpenpayApiConnectionError $e) {
                 $mensaje .= $e->getMessage();
                 $data = array(
@@ -1472,7 +1603,6 @@ class Tutores extends CI_Controller
                     'msg' => $mensaje,
                 );
                 echo json_encode($data);
-
             } catch (OpenpayApiAuthError $e) {
                 $mensaje .= $e->getMessage();
                 $data = array(
@@ -1480,7 +1610,6 @@ class Tutores extends CI_Controller
                     'msg' => $mensaje,
                 );
                 echo json_encode($data);
-
             } catch (OpenpayApiError $e) {
                 $mensaje .= $e->getMessage();
                 $data = array(
@@ -1488,7 +1617,6 @@ class Tutores extends CI_Controller
                     'msg' => $mensaje,
                 );
                 echo json_encode($data);
-
             } catch (Exception $e) {
                 $mensaje .= $e->getMessage();
                 $data = array(
@@ -1496,87 +1624,52 @@ class Tutores extends CI_Controller
                     'msg' => $mensaje,
                 );
                 echo json_encode($data);
-
             }
         } else {
             $data = array(
                 'heading' => 'Error',
                 'message' => 'Error intente mas tarde.',
             );
-            $this->load->view('errors/html/error_general', $data);
+            $this->load->view('tutor/header');
+            $this->load->view('tutor/error/general', $data);
+            $this->load->view('tutor/footer');
         }
     }
 
-    public function pagotarjetac()
-    {
+    public function pagotarjetac() {
         //PAGO DE COLEGIATURA CON TARJETAS
         Permission::grant(uri_string());
         $idplantel = $this->session->idplantel;
         $idperiodo = $this->decode($this->input->post('periodo'));
         $idalumno = $this->decode($this->input->post('alumno'));
         $idnivel = $this->decode($this->input->post('nivel'));
-        if ((isset($idnivel) && !empty($idnivel)) && (isset($idperiodo) && !empty($idperiodo)) && (isset($idalumno) && !empty($idalumno))) {
+        $detalle_niveleducativo = $this->alumno->detalleAlumnoNivelEducativo($idalumno, $idperiodo);
+
+
+        if ((isset($idnivel) && !empty($idnivel)) && (isset($idperiodo) && !empty($idperiodo)) && (isset($idalumno) && !empty($idalumno)) && $detalle_niveleducativo) {
             $meses = $this->tutor->showAllMeses($idalumno, $idperiodo);
+
+            $idniveleducativo = $detalle_niveleducativo->idnivelestudio;
             try {
                 $idtutor = $this->session->idtutor;
                 $detalle_tutor = $this->tutor->detalleTutor($idtutor);
+                $detalle_alumno = $this->alumno->detalleAlumno($idalumno);
+                $matricula = $detalle_alumno->matricula;
                 $nombretarjetahabiente = $this->input->post('nombretitular');
                 $calle = $this->input->post('calletitular');
-                $nombretarjetahabiente = $this->input->post('nombretitular');
                 $numero = $this->input->post('numerocasa');
                 $idcolonia = $this->input->post('colonia');
                 $detalle_colonia = $this->tutor->detalleColonia($idcolonia);
                 $cp = $this->input->post('cp');
                 $descuento = $this->input->post('descuento');
-                $mensaje = $this->input->post('mensaje');
+                $recargo = $this->input->post('recargo');
+                $mensaje = "";
+                $concepto_cobro = $this->input->post('mensaje');
                 $idmes = $this->input->post('mespago');
                 $detalle_mes = $this->tutor->detalleMes($idmes);
                 $validar_mes = $this->estadocuenta->validarAddColegiatura($idalumno, $idperiodo, $idmes);
 
-                if ($validar_mes == false) {
-                    $detalle_descuento = $this->estadocuenta->descuentoPagosInicio($idalumno, $idperiodo, 3,$idplantel);
-                    $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel);
-                    $recargo = 0;
-                    if ($detalle_descuento[0]->idniveleducativo == 1) {
-                        //PRIMARIA
-                        $dia_actual = date('Y-m-d');
-                        $year_actual = date('Y');
-                        $mes_actual = date('m');
-                        $detalle_configuracion[0]->diaultimorecargo;
-                        $dia_pago = date('Y-m-d', strtotime($detalle_configuracion[0]->diaultimorecargo . "-" . $mes_actual . "-" . $year_actual));
-                        if ($dia_actual > $dia_pago) {
-                            $recargo += $detalle_configuracion[0]->totalrecargo;
-                        } else {
-                            $recargo += 0;
-                        }
-
-                    } elseif ($detalle_descuento[0]->idniveleducativo == 2) {
-                        //SECUNDARIA
-                        $dia_actual = date('Y-m-d');
-                        $year_actual = date('Y');
-                        $mes_actual = date('m');
-                        $dia_pago = date('Y-m-d', strtotime($detalle_configuracion[0]->diaultimorecargo . "-" . $mes_actual . "-" . $year_actual));
-                        if ($dia_actual > $dia_pago) {
-                            $recargo += $detalle_configuracion[0]->totalrecargo;
-                        } else {
-                            $recargo += 0;
-                        }
-
-                    } elseif ($detalle_descuento[0]->idniveleducativo == 3) {
-                        //PREPA
-                        $dia_actual = date('Y-m-d');
-                        $year_actual = date('Y');
-                        $mes_actual = date('m');
-                        $dia_pago = date('Y-m-d', strtotime($detalle_configuracion[0]->diaultimorecargo . "-" . $mes_actual . "-" . $year_actual));
-                        if ($dia_actual > $dia_pago) {
-                            $recargo += $detalle_configuracion[0]->totalrecargo;
-                        } else {
-                            $recargo += 0;
-                        }
-
-                    } else {
-                        $recargo = 0;
-                    }
+                if ($validar_mes == false && $descuento > 0) {
 
                     $folio = generateRandomString();
                     $response = [];
@@ -1599,8 +1692,8 @@ class Tutores extends CI_Controller
                     $chargeData = array(
                         'method' => 'card',
                         'source_id' => $_POST["token_id"],
-                        'amount' => (float) $descuento,
-                        'description' => $mensaje . " DE " . $detalle_mes[0]->nombremes,
+                        'amount' => (float) ($descuento + $recargo),
+                        'description' => $concepto_cobro . " DE " . $detalle_mes[0]->nombremes . ", MATRICULA ALUMNO(A): " . $matricula,
                         'device_session_id' => $_POST["deviceIdHiddenFieldName"],
                         'customer' => $customer,
                     );
@@ -1615,7 +1708,7 @@ class Tutores extends CI_Controller
                         'folio' => $folio,
                         'idperiodo' => $idperiodo,
                         'idalumno' => $idalumno,
-                        'descuento' => $descuento,
+                        'descuento' => ($descuento + $recargo ),
                         'totalrecargo' => $recargo,
                         'recargo' => ($recargo > 0) ? 1 : 0,
                         'condonar' => 0,
@@ -1633,7 +1726,7 @@ class Tutores extends CI_Controller
                     $add_detalle_pago = array(
                         'idestadocuenta' => $idestadocuenta,
                         'idformapago' => 2,
-                        'descuento' => $descuento,
+                        'descuento' => ($descuento + $recargo ),
                         'autorizacion' => $autorizacion,
                         'fechapago' => date('Y-m-d H:i:s'),
                         'idusuario' => $this->session->user_id,
@@ -1647,9 +1740,13 @@ class Tutores extends CI_Controller
                     );
                     $this->tutor->addDetalleEstadoCuenta($data_detalle_estadocuenta);
                     $this->tutor->addDetallePago($add_detalle_pago);
+
                     $data = array(
                         'tipo_error' => 0,
                         'msg' => "AUTORIZACIÓN: " . $autorizacion,
+                        'alumno' => $this->encode($idalumno),
+                        'idestadocuenta' => $this->encode($idestadocuenta),
+                        'tipo_pago' => $this->encode(11)
                     );
                     echo json_encode($data);
                 } else {
@@ -1659,7 +1756,6 @@ class Tutores extends CI_Controller
                     );
                     echo json_encode($data);
                 }
-
             } catch (OpenpayApiTransactionError $e) {
                 $mensaje = "";
                 switch ($e->getErrorCode()) {
@@ -1710,7 +1806,6 @@ class Tutores extends CI_Controller
                     'msg' => $mensaje,
                 );
                 echo json_encode($data);
-
             } catch (OpenpayApiRequestError $e) {
                 $mensaje .= $e->getMessage();
                 $data = array(
@@ -1718,7 +1813,6 @@ class Tutores extends CI_Controller
                     'msg' => $mensaje,
                 );
                 echo json_encode($data);
-
             } catch (OpenpayApiConnectionError $e) {
                 $mensaje .= $e->getMessage();
                 $data = array(
@@ -1726,7 +1820,6 @@ class Tutores extends CI_Controller
                     'msg' => $mensaje,
                 );
                 echo json_encode($data);
-
             } catch (OpenpayApiAuthError $e) {
                 $mensaje .= $e->getMessage();
                 $data = array(
@@ -1734,7 +1827,6 @@ class Tutores extends CI_Controller
                     'msg' => $mensaje,
                 );
                 echo json_encode($data);
-
             } catch (OpenpayApiError $e) {
                 $mensaje .= $e->getMessage();
                 $data = array(
@@ -1742,7 +1834,6 @@ class Tutores extends CI_Controller
                     'msg' => $mensaje,
                 );
                 echo json_encode($data);
-
             } catch (Exception $e) {
                 $mensaje .= $e->getMessage();
                 $data = array(
@@ -1750,20 +1841,19 @@ class Tutores extends CI_Controller
                     'msg' => $mensaje,
                 );
                 echo json_encode($data);
-
             }
-
         } else {
             $data = array(
                 'heading' => 'Error',
                 'message' => 'Error intente mas tarde.',
             );
-            $this->load->view('errors/html/error_general', $data);
+            $this->load->view('tutor/header');
+            $this->load->view('tutor/error/general', $data);
+            $this->load->view('tutor/footer');
         }
     }
 
-    public function pagotienda()
-    {
+    public function pagotienda() {
         //PAGO DE INSCRIPCION O REINCRIPCION EN PAGO EN TIENDA
         Permission::grant(uri_string());
         $idperiodo = $this->decode($this->input->post('periodo'));
@@ -1771,13 +1861,17 @@ class Tutores extends CI_Controller
         $idnivel = $this->decode($this->input->post('nivel'));
         if ((isset($idnivel) && !empty($idnivel)) && (isset($idperiodo) && !empty($idperiodo)) && (isset($idalumno) && !empty($idalumno))) {
             try {
+                $mensaje = "";
                 $idtutor = $this->session->idtutor;
                 $detalle_tutor = $this->tutor->detalleTutor($idtutor);
                 $descuento = $this->input->post('descuento');
-                $mensaje = $this->input->post('mensaje');
+                $idconcepto = $this->input->post('conceptopago');
+                $concepto = $this->input->post('mensaje');
+                $detalle_alumno = $this->alumno->detalleAlumno($idalumno);
+                $matricula = $detalle_alumno->matricula;
                 $folio = generateRandomString();
                 $validar_pago = $this->estadocuenta->validarAddReincripcion($idalumno, $idperiodo);
-                if ($validar_pago == false) {
+                if ($validar_pago == false && $descuento > 0) {
                     $response = [];
                     Openpay::setProductionMode(false);
                     $openpay = Openpay::getInstance('mds4bdhgvbese0knzu2x', 'sk_f95d7349163642fba9f5a71021b3f6d5');
@@ -1790,9 +1884,10 @@ class Tutores extends CI_Controller
                     $chargeData = array(
                         'method' => 'store',
                         'amount' => $descuento,
-                        'description' => $mensaje,
+                        'description' => $concepto,
                         'customer' => $customer);
                     $charge = $openpay->charges->create($chargeData);
+
                     $response['charge'] = $charge;
                     $idopenpay = $charge->id;
                     $idorden = $charge->order_id;
@@ -1803,7 +1898,7 @@ class Tutores extends CI_Controller
                         'folio' => $folio,
                         'idperiodo' => $idperiodo,
                         'idalumno' => $idalumno,
-                        'idtipopagocol' => 2,
+                        'idtipopagocol' => $idconcepto,
                         'descuento' => $descuento,
                         'totalrecargo' => 0.00,
                         'recargo' => 0,
@@ -1838,11 +1933,10 @@ class Tutores extends CI_Controller
                 } else {
                     $data = array(
                         'tipo_error' => 1,
-                        'msg' => "La Reinscripción o Inscripción ya se encuentra pagado.",
+                        'msg' => "La Reinscripción o Inscripción ya se encuentra pagado o el total esta en 0.00.",
                     );
                     echo json_encode($data);
                 }
-
             } catch (OpenpayApiTransactionError $e) {
                 $mensaje = "";
                 switch ($e->getErrorCode()) {
@@ -1892,7 +1986,6 @@ class Tutores extends CI_Controller
                     'msg' => $mensaje,
                 );
                 echo json_encode($data);
-
             } catch (OpenpayApiRequestError $e) {
                 $mensaje .= $e->getMessage();
                 $data = array(
@@ -1900,7 +1993,6 @@ class Tutores extends CI_Controller
                     'msg' => $mensaje,
                 );
                 echo json_encode($data);
-
             } catch (OpenpayApiConnectionError $e) {
                 $mensaje .= $e->getMessage();
                 $data = array(
@@ -1908,7 +2000,6 @@ class Tutores extends CI_Controller
                     'msg' => $mensaje,
                 );
                 echo json_encode($data);
-
             } catch (OpenpayApiAuthError $e) {
                 $mensaje .= $e->getMessage();
                 $data = array(
@@ -1916,7 +2007,6 @@ class Tutores extends CI_Controller
                     'msg' => $mensaje,
                 );
                 echo json_encode($data);
-
             } catch (OpenpayApiError $e) {
                 $mensaje .= $e->getMessage();
                 $data = array(
@@ -1924,7 +2014,6 @@ class Tutores extends CI_Controller
                     'msg' => $mensaje,
                 );
                 echo json_encode($data);
-
             } catch (Exception $e) {
                 $mensaje .= $e->getMessage();
                 $data = array(
@@ -1932,80 +2021,43 @@ class Tutores extends CI_Controller
                     'msg' => $mensaje,
                 );
                 echo json_encode($data);
-
             }
         } else {
             $data = array(
                 'heading' => 'Error',
                 'message' => 'Error intente mas tarde.',
             );
-            $this->load->view('errors/html/error_general', $data);
+            $this->load->view('tutor/header');
+            $this->load->view('tutor/error/general', $data);
+            $this->load->view('tutor/footer');
         }
     }
-    public function pagotiendac()
-    {
+
+    public function pagotiendac() {
         //PAGO EN TIENDA DE LAS COLEGIATURAS
         Permission::grant(uri_string());
         $idperiodo = $this->decode($this->input->post('periodo'));
         $idalumno = $this->decode($this->input->post('alumno'));
         $idnivel = $this->decode($this->input->post('nivel'));
-        if ((isset($idnivel) && !empty($idnivel)) && (isset($idperiodo) && !empty($idperiodo)) && (isset($idalumno) && !empty($idalumno))) {
+        $detalle_niveleducativo = $this->alumno->detalleAlumnoNivelEducativo($idalumno, $idperiodo);
+        if ((isset($idnivel) && !empty($idnivel)) && (isset($idperiodo) && !empty($idperiodo)) && (isset($idalumno) && !empty($idalumno)) && $detalle_niveleducativo) {
             $meses = $this->tutor->showAllMeses($idalumno, $idperiodo);
+            $idniveleducativo = $detalle_niveleducativo->idnivelestudio;
             try {
+                $mensaje = "";
                 $idtutor = $this->session->idtutor;
                 $detalle_tutor = $this->tutor->detalleTutor($idtutor);
                 $descuento = $this->input->post('descuento');
-                $mensaje = $this->input->post('mensaje');
+                $recargo = $this->input->post('recargo');
+                $concepto_cobro = $this->input->post('mensaje');
                 $idmes = $this->input->post('mespago');
                 $detalle_mes = $this->tutor->detalleMes($idmes);
                 $folio = generateRandomString();
                 $idplantel = $this->session->idplantel;
                 $validar_mes = $this->estadocuenta->validarAddColegiatura($idalumno, $idperiodo, $idmes);
-                $detalle_descuento = $this->estadocuenta->descuentoPagosInicio($idalumno, $idperiodo, 3,$idplantel);
-                $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel);
-                $recargo = 0;
-                if ($detalle_descuento[0]->idniveleducativo == 1) {
-                    //PRIMARIA
-                    $dia_actual = date('Y-m-d');
-                    $year_actual = date('Y');
-                    $mes_actual = date('m');
-                    $detalle_configuracion[0]->diaultimorecargo;
-                    $dia_pago = date('Y-m-d', strtotime($detalle_configuracion[0]->diaultimorecargo . "-" . $mes_actual . "-" . $year_actual));
-                    if ($dia_actual > $dia_pago) {
-                        $recargo += $detalle_configuracion[0]->totalrecargo;
-                    } else {
-                        $recargo += 0;
-                    }
 
-                } elseif ($detalle_descuento[0]->idniveleducativo == 2) {
-                    //SECUNDARIA
-                    $dia_actual = date('Y-m-d');
-                    $year_actual = date('Y');
-                    $mes_actual = date('m');
-                    $dia_pago = date('Y-m-d', strtotime($detalle_configuracion[0]->diaultimorecargo . "-" . $mes_actual . "-" . $year_actual));
-                    if ($dia_actual > $dia_pago) {
-                        $recargo += $detalle_configuracion[0]->totalrecargo;
-                    } else {
-                        $recargo += 0;
-                    }
 
-                } elseif ($detalle_descuento[0]->idniveleducativo == 3) {
-                    //PREPA
-                    $dia_actual = date('Y-m-d');
-                    $year_actual = date('Y');
-                    $mes_actual = date('m');
-                    $dia_pago = date('Y-m-d', strtotime($detalle_configuracion[0]->diaultimorecargo . "-" . $mes_actual . "-" . $year_actual));
-                    if ($dia_actual > $dia_pago) {
-                        $recargo += $detalle_configuracion[0]->totalrecargo;
-                    } else {
-                        $recargo += 0;
-                    }
-
-                } else {
-                    $recargo = 0;
-                }
-
-                if ($validar_mes == false) {
+                if ($validar_mes == false && $descuento > 0) {
 
                     $response = [];
                     Openpay::setProductionMode(false);
@@ -2019,7 +2071,7 @@ class Tutores extends CI_Controller
                     $chargeData = array(
                         'method' => 'store',
                         'amount' => $descuento,
-                        'description' => $mensaje . " DE " . $detalle_mes[0]->nombremes,
+                        'description' => $concepto_cobro . " DE " . $detalle_mes[0]->nombremes,
                         'customer' => $customer);
                     $charge = $openpay->charges->create($chargeData);
                     $response['charge'] = $charge;
@@ -2034,7 +2086,7 @@ class Tutores extends CI_Controller
                         'folio' => $folio,
                         'idperiodo' => $idperiodo,
                         'idalumno' => $idalumno,
-                        'descuento' => $descuento,
+                        'descuento' => ($descuento + $recargo),
                         'totalrecargo' => $recargo,
                         'recargo' => ($recargo > 0) ? 1 : 0,
                         'condonar' => 0,
@@ -2051,7 +2103,7 @@ class Tutores extends CI_Controller
                     $add_detalle_pago = array(
                         'idestadocuenta' => $idestadocuenta,
                         'idformapago' => 1,
-                        'descuento' => $descuento,
+                        'descuento' => ($descuento + $recargo),
                         'autorizacion' => $autorizacion,
                         'fechapago' => date('Y-m-d H:i:s'),
                         'idusuario' => $this->session->user_id,
@@ -2076,11 +2128,10 @@ class Tutores extends CI_Controller
                 } else {
                     $data = array(
                         'tipo_error' => 1,
-                        'msg' => "El Mes ya se encuentra pagado.",
+                        'msg' => "El Mes ya se encuentra pagado o tiene como Total a pagar en 0.",
                     );
                     echo json_encode($data);
                 }
-
             } catch (OpenpayApiTransactionError $e) {
                 $mensaje = "";
                 switch ($e->getErrorCode()) {
@@ -2131,7 +2182,6 @@ class Tutores extends CI_Controller
                     'msg' => $mensaje,
                 );
                 echo json_encode($data);
-
             } catch (OpenpayApiRequestError $e) {
                 $mensaje .= $e->getMessage();
 
@@ -2140,7 +2190,6 @@ class Tutores extends CI_Controller
                     'msg' => $mensaje,
                 );
                 echo json_encode($data);
-
             } catch (OpenpayApiConnectionError $e) {
                 $mensaje .= $e->getMessage();
 
@@ -2149,7 +2198,6 @@ class Tutores extends CI_Controller
                     'msg' => $mensaje,
                 );
                 echo json_encode($data);
-
             } catch (OpenpayApiAuthError $e) {
                 $mensaje .= $e->getMessage();
 
@@ -2158,7 +2206,6 @@ class Tutores extends CI_Controller
                     'msg' => $mensaje,
                 );
                 echo json_encode($data);
-
             } catch (OpenpayApiError $e) {
                 $mensaje .= $e->getMessage();
 
@@ -2167,7 +2214,6 @@ class Tutores extends CI_Controller
                     'msg' => $mensaje,
                 );
                 echo json_encode($data);
-
             } catch (Exception $e) {
                 $mensaje .= $e->getMessage();
 
@@ -2176,35 +2222,36 @@ class Tutores extends CI_Controller
                     'msg' => $mensaje,
                 );
                 echo json_encode($data);
-
             }
         } else {
             $data = array(
                 'heading' => 'Error',
                 'message' => 'Error intente mas tarde.',
             );
-            $this->load->view('errors/html/error_general', $data);
+            $this->load->view('tutor/header');
+            $this->load->view('tutor/error/general', $data);
+            $this->load->view('tutor/footer');
         }
     }
-    public function kardex()
-    {
+
+    public function kardex() {
         Permission::grant(uri_string());
         $alumnos = $this->alumno->showAllAlumnosTutor($this->session->idtutor);
         $data = array(
             'alumnos' => $alumnos,
             'controller' => $this,
-             
         );
         $this->load->view('tutor/header');
         $this->load->view('tutor/alumnos/alumnos', $data);
         $this->load->view('tutor/footer');
         //$kardex = $this->alumno->allKardex($id);
     }
-        public function calificacionFinal($idalumno) {  
+
+    public function calificacionFinal($idalumno) {
         $detalle = $this->alumno->allKardex($idalumno);
         $calificacion_periodo = 0;
         $suma_periodo = 0;
-        $calificacion_global = 0; 
+        $calificacion_global = 0;
         if (isset($detalle) && !empty($detalle)) {
             foreach ($detalle as $det) {
                 $suma_periodo++;
@@ -2236,31 +2283,31 @@ class Tutores extends CI_Controller
                         }
                     }
 
-                      $calificacion = $suma_calificacion / $total_materia;
-                                
-                    $calificacion_periodo +=   number_format($calificacion,2);
-                }  
+                    $calificacion = $suma_calificacion / $total_materia;
+
+                    $calificacion_periodo += number_format($calificacion, 2);
+                }
             }
         }
         //return number_format(($calificacion_periodo/$suma_periodo),2);
-        $calificacion_global =number_format(($calificacion_periodo/$suma_periodo),2);
-                                
-         return $calificacion_global;
+        $calificacion_global = number_format(($calificacion_periodo / $suma_periodo), 2);
+
+        return $calificacion_global;
     }
-    public function detalle($idalumno = '')
-    {
+
+    public function detalle($idalumno = '') {
         Permission::grant(uri_string());
         $idalumno = $this->decode($idalumno);
         if (isset($idalumno) && !empty($idalumno)) {
             $kardex = $this->alumno->allKardex($idalumno);
             $detalle_alumno = $this->alumno->showAllAlumnoId($idalumno);
 
-            
+
             $alumnos = $this->alumno->showAllAlumnosTutor($this->session->idtutor);
             $data = array(
                 'kardex' => $kardex,
                 'idalumno' => $idalumno,
-                'promedio'=>$this->calificacionFinal($idalumno),
+                'promedio' => $this->calificacionFinal($idalumno),
                 'detalle_alumno' => $detalle_alumno,
                 'controller' => $this,
             );
@@ -2272,11 +2319,13 @@ class Tutores extends CI_Controller
                 'heading' => 'Error',
                 'message' => 'Error intente mas tarde.',
             );
-            $this->load->view('errors/html/error_general', $data);
+            $this->load->view('tutor/header');
+            $this->load->view('tutor/error/general', $data);
+            $this->load->view('tutor/footer');
         }
     }
-    public function obtenerCalificacionAlumnoPorNivel($idhorario = '', $idalumno = '')
-    {
+
+    public function obtenerCalificacionAlumnoPorNivel($idhorario = '', $idalumno = '') {
         Permission::grant(uri_string());
         # code...
         $unidades = $this->grupo->unidades($this->session->idplantel);
@@ -2303,22 +2352,20 @@ class Tutores extends CI_Controller
                         $suma_calificacion += $val->calificacion;
                     }
                 endforeach;
-
             }
             $promedio = ($suma_calificacion / $total_unidad) / $total_materia;
         }
 
         return $promedio;
-
     }
-    public function historial($idhorario = '', $idalumno = '',$idperiodo = '')
-    {
+
+    public function historial($idhorario = '', $idalumno = '', $idperiodo = '') {
         Permission::grant(uri_string());
         $idhorario = $this->decode($idhorario);
         $idalumno = $this->decode($idalumno);
-          $idperiodo = $this->decode($idperiodo);
+        $idperiodo = $this->decode($idperiodo);
         if ((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno)) && (isset($idperiodo) && !empty($idperiodo))) {
-           // $tabla = $this->obtenerCalificacion($idhorario, $idalumno);
+            // $tabla = $this->obtenerCalificacion($idhorario, $idalumno);
             $datosalumno = $this->alumno->showAllAlumnoId($idalumno);
             $datoshorario = $this->horario->showNivelGrupo($idhorario);
             $unidades = $this->grupo->unidades($this->session->idplantel);
@@ -2332,14 +2379,14 @@ class Tutores extends CI_Controller
             }
             if ($idniveleducativo == 2) {
                 //SECUNDARIA
-                $tabla = $this->obtenerCalificacionSecundaria($idhorario, $idalumno,$idperiodo);
+                $tabla = $this->obtenerCalificacionSecundaria($idhorario, $idalumno, $idperiodo);
             }
             if ($idniveleducativo == 3) {
                 //PREPARATORIA
-                  $tabla = $this->obtenerCalificacionSecundaria($idhorario, $idalumno,$idperiodo);
+                $tabla = $this->obtenerCalificacionSecundaria($idhorario, $idalumno, $idperiodo);
             }
 //CODIGO PARA OBTENER LA CALIFICACION DEL NIVEL
-     $materias = $this->alumno->showAllMateriasPasadas($idhorario,$idalumno,$idperiodo);
+            $materias = $this->alumno->showAllMateriasPasadas($idhorario, $idalumno, $idperiodo);
             $oportunidades_examen = $this->alumno->showAllOportunidadesExamen($this->session->idplantel);
             $total_materia = 0;
             $suma_calificacion = 0;
@@ -2368,7 +2415,7 @@ class Tutores extends CI_Controller
                 'tabla' => $tabla,
                 'datosalumno' => $datosalumno,
                 'datoshorario' => $datoshorario,
-                'calificacion' =>$calificacion,
+                'calificacion' => $calificacion,
                 'unidades' => $unidades,
                 'controller' => $this,
             );
@@ -2380,18 +2427,18 @@ class Tutores extends CI_Controller
                 'heading' => 'Error',
                 'message' => 'Error intente mas tarde.',
             );
-            $this->load->view('errors/html/error_general', $data);
+            $this->load->view('tutor/header');
+            $this->load->view('tutor/error/general', $data);
+            $this->load->view('tutor/footer');
         }
-
     }
-       
-     public function obtenerCalificacionSecundaria($idhorario = '', $idalumno = '',$idperiodo = '')
-    {
+
+    public function obtenerCalificacionSecundaria($idhorario = '', $idalumno = '', $idperiodo = '') {
         # code...
         Permission::grant(uri_string());
 
         $unidades = $this->grupo->unidades($this->session->idplantel);
-        $materias = $this->alumno->showAllMateriasPasadas($idhorario,$idalumno,$idperiodo);
+        $materias = $this->alumno->showAllMateriasPasadas($idhorario, $idalumno, $idperiodo);
         $datoshorario = $this->horario->showNivelGrupo($idhorario);
         $idnivelestudio = $datoshorario->idnivelestudio;
         $oportunidades_examen = $this->alumno->showAllOportunidadesExamen($this->session->idplantel);
@@ -2412,7 +2459,7 @@ class Tutores extends CI_Controller
       <th>MATERIA</th>
          <th>CRÉDITO</th>';
         $tabla .= '<th>CALIFICACIÓN</th>';
-           $tabla .= '<th></th>';
+        $tabla .= '<th></th>';
         $tabla .= '</thead>';
         $c = 1;
 
@@ -2434,15 +2481,15 @@ class Tutores extends CI_Controller
             if ($detalle_configuracion[0]->calificacion_minima < $calificacion) {
                 $tabla .= '<label>' . number_format($calificacion, 2) . '</label>';
             } else {
-                  $tabla .= '<label style="color:red;">NA</label>';
+                $tabla .= '<label style="color:red;">NA</label>';
             }
 
             $tabla .= '</td>';
-              $tabla .= '<td>';
-             if($row->opcion == 0){
-                   $tabla .= '<label style="color:blue;">R</label>';
-             } 
-           
+            $tabla .= '<td>';
+            if ($row->opcion == 0) {
+                $tabla .= '<label style="color:blue;">R</label>';
+            }
+
             $tabla .= '</td>';
             $tabla .= '</tr>';
         }
@@ -2450,10 +2497,9 @@ class Tutores extends CI_Controller
         $tabla .= '</table>';
         return $tabla;
     }
-    
-    public function generarHorarioPDF($idhorario = '', $idalumno = '')
-    {
- if ((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno))) {
+
+    public function generarHorarioPDF($idhorario = '', $idalumno = '') {
+        if ((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno))) {
 
             $tabla = '
         <style type="text/css">
@@ -2495,7 +2541,7 @@ class Tutores extends CI_Controller
             $reprobadas = implode(",", $array_materias_reprobadas);
 
             $lunesAll = $this->horario->showAllDiaHorarioSinDua($idhorario, $reprobadas);
-
+if(isset($lunesAll) && !empty($lunesAll)){
             foreach ($lunesAll as $row) {
                 $tabla .= '<tr>';
                 $tabla .= '<td  ><strong>' . $row->hora . '</strong></td>';
@@ -2507,14 +2553,18 @@ class Tutores extends CI_Controller
 
                 $tabla .= '</tr>';
             }
+            }else{
+                 $tabla .= '<tr><td colspan="6">Sin Horario.</td></tr>';
+            }
             $tabla .= '</table>';
 
             return $tabla;
         }
+        
     }
-    public function descargar($idhorario = '', $idalumno = '')
-    {
-         $idalumno = $this->decode($idalumno);
+
+    public function descargar($idhorario = '', $idalumno = '') {
+        $idalumno = $this->decode($idalumno);
         $idhorario = $this->decode($idhorario);
         if ((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno))) {
             $detalle_logo = $this->alumno->logo($this->session->idplantel);
@@ -2673,8 +2723,8 @@ class Tutores extends CI_Controller
             }
         }
     }
-    public function imprimirkardex($idhorario = '', $idalumno = '')
-    {
+
+    public function imprimirkardex($idhorario = '', $idalumno = '') {
         Permission::grant(uri_string());
         $alumno = $this->alumno->detalleAlumno($idalumno);
         $grupop = $this->horario->showNivelGrupo($idhorario);
@@ -2845,7 +2895,6 @@ tblcalificacion  {border-collapse:collapse}
             endforeach;
 
             $tbl .= '</tr>';
-
         }
         $tbl .= '</table>';
         $tbl .= '
@@ -2871,11 +2920,9 @@ tblcalificacion  {border-collapse:collapse}
         ob_end_clean();
 
         $pdf->Output('Kardex de Calificaciones', 'I');
-
     }
 
-    public function mensajes($idalumno = '', $idnivel = '', $idperiodo = '')
-    {
+    public function mensajes($idalumno = '', $idnivel = '', $idperiodo = '') {
         Permission::grant(uri_string());
         $idalumno = $this->decode($idalumno);
         if (isset($idalumno) && !empty($idalumno)) {
@@ -2901,12 +2948,13 @@ tblcalificacion  {border-collapse:collapse}
                 'heading' => 'Error',
                 'message' => 'Error intente mas tarde.',
             );
-            $this->load->view('errors/html/error_general', $data);
+            $this->load->view('tutor/header');
+            $this->load->view('tutor/error/general', $data);
+            $this->load->view('tutor/footer');
         }
-
     }
-    public function detallemensaje($idmensaje = '')
-    {
+
+    public function detallemensaje($idmensaje = '') {
         $idmensaje = $this->decode($idmensaje);
         if (isset($idmensaje) && !empty($idmensaje)) {
             $detalle_mensaje = $this->mensaje->detalleMensaje($idmensaje);
@@ -2922,41 +2970,298 @@ tblcalificacion  {border-collapse:collapse}
                 'heading' => 'Error',
                 'message' => 'Error intente mas tarde.',
             );
-            $this->load->view('errors/html/error_general', $data);
+            $this->load->view('tutor/header');
+            $this->load->view('tutor/error/general', $data);
+            $this->load->view('tutor/footer');
         }
     }
-    /*
-public function noficaciones()
-{
-$body = @file_get_contents('php://input');
-$data = json_decode($body);
-http_response_code(200); // Return 200 OK
-}
-public function crear_webhooks()
-{
-$openpay = Openpay::getInstance('moiep6umtcnanql3jrxp', 'sk_3433941e467c1055b178ce26348b0fac');
+     public function obtenerCalificacionOportunidades($idhorario = '', $idalumno = '', $idoportunidad_acterior, $idoportunidad_actual)
+    {
+        # code...
+        Permission::grant(uri_string());
+        $idplantel = $this->session->idplantel;
+        $datoshorario = $this->horario->showNivelGrupo($idhorario);
+        $idnivelestudio = $datoshorario->idnivelestudio;
 
-$webhook = array(
-'url' => 'http://requestb.in/11vxrsf1',
-'user' => 'juanito',
-'password' => 'passjuanito',
-'event_types' => array(
-'charge.refunded',
-'charge.failed',
-'charge.cancelled',
-'charge.created',
-'chargeback.accepted'
-)
-);
+        $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
+        $calificaciones = $this->alumno->calificacionPorOportunidad($idalumno, $idhorario, $idoportunidad_acterior);
+        $tabla = "";
+        $tabla .= '<table class="table  table-striped  table-hover">
+        <thead class="bg-teal">
+         <th>#</th>
+        <th>MATERIA</th>';
+        $tabla .= '<th>C. FINAL</th>';
+        $tabla .= '</thead>';
+        $c = 1;
 
-$webhook = $openpay->webhooks->add($webhook);
-}
-public function solicitar_webhooks()
-{
-$openpay = Openpay::getInstance('moiep6umtcnanql3jrxp', 'sk_3433941e467c1055b178ce26348b0fac');
+        foreach ($calificaciones as $row) {
+            if ($row->calificacionmateria < $detalle_configuracion[0]->calificacion_minima) {
+                $calificacion_alu = $this->alumno->calificacionPorOportunidad($idalumno, $idhorario, $idoportunidad_actual, $row->idmateria);
 
-$webhook = $openpay->webhooks->get('wxvanstudf4ssme8khmc');
-}
- */
+                $tabla .= '<tr>';
+                $tabla .= '<td>' . $c++ . '</td>';
+                $tabla .= '<td>' . $row->nombreclase . '</td>';
+                if (isset($calificacion_alu) && !empty($calificacion_alu)) {
+                    if ($calificacion_alu[0]->calificacionmateria < $detalle_configuracion[0]->calificacion_minima) {
+                        $tabla .= '<td style="color:red;"><strong>' . $calificacion_alu[0]->calificacionmateria . '</strong></td>';
+                    } else {
+                        $tabla .= '<td style="color:green;"><strong>' . $calificacion_alu[0]->calificacionmateria . '</strong></td>';
+                    }
+                } else {
+                    $tabla .= '<td>No registrado.</td>';
+                }
+                $tabla .= '</tr>';
+            }
+        }
+
+        $tabla .= '</table>';
+        return $tabla;
+    }
+
+    public function oportunidades($idalumno, $idhorario, $idopotunidad, $numero)
+    {
+        $idalumno = $this->decode($idalumno);
+        $idhorario = $this->decode($idhorario);
+        $idopotunidad = $this->decode($idopotunidad);
+        $numero = $this->decode($numero);
+        if ((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno)) && (isset($idopotunidad) && !empty($idopotunidad)) && (isset($numero) && !empty($numero))) {
+            $idplantel = $this->session->idplantel;
+            $detalle_oportunidad_anteriot = $this->grupo->obtenerOportunidadAnterior($numero, $idplantel);
+            $idoportunidad_anterior = $detalle_oportunidad_anteriot->idoportunidadexamen;
+            // $detalle_calificacion = $this->alumno->calificacionPorOportunidad($idalumno, $idhorario,$idoportunidad_anterior);
+            $detalle_oportunidad = $this->grupo->detalleOportunidad($idopotunidad);
+            $nombre_oportunidad = $detalle_oportunidad->nombreoportunidad;
+            $data = array(
+                'tabla' => $this->obtenerCalificacionOportunidades($idhorario, $idalumno, $idoportunidad_anterior, $idopotunidad),
+                'nombreoportunidad' => $nombre_oportunidad,
+            );
+            $this->load->view('tutor/header');
+            $this->load->view('tutor/alumnos/oportunidades', $data);
+            $this->load->view('tutor/footer');
+        } else {
+            $data = array(
+                'heading' => 'Error',
+                'message' => 'Error intente mas tarde.',
+            );
+           $this->load->view('tutor/header');
+            $this->load->view('tutor/error/general', $data);
+            $this->load->view('tutor/footer');
+        }
+    }
+
+    public function exito($idalumno_i = '', $idestasocuenta_i = '', $tipo_pago_i = '') {
+
+        $idalumno = $this->decode($idalumno_i);
+        $idestasocuenta = $this->decode($idestasocuenta_i);
+        $tipo_pago = $this->decode($tipo_pago_i);
+        if ((isset($idalumno) && !empty($idalumno)) && (isset($idestasocuenta) && !empty($idestasocuenta)) && (isset($tipo_pago) && !empty($tipo_pago))) {
+            $detalle_alumno = $this->alumno->detalleAlumno($idalumno);
+            $nombre_alumno = $detalle_alumno->nombre . " " . $detalle_alumno->apellidop . " " . $detalle_alumno->apellidom;
+            $concepto = "";
+            if ($tipo_pago == 11) {
+                $detalle_estadocuenta = $this->estadocuenta->detalleAlumnoRecibo($idestasocuenta);
+                $concepto .= "PAGO DE COLEGIATURA DEL MES DE " . $detalle_estadocuenta->nombremes;
+            } else {
+                $detalle_estadocuenta = $this->estadocuenta->detalleAlumnoPrimerRecibo($idestasocuenta);
+                $concepto .= "PAGO DE COLEGIATURA DEL MES DE " . $detalle_estadocuenta->concepto;
+            }
+            $fecha_pago = $detalle_estadocuenta->fechapagocompleto;
+            $date = date_create($fecha_pago);
+            $fecha_pago = date_format($date, "d/m/Y H:i:s");
+            $data = array(
+                'numero_autorizacion' => $detalle_estadocuenta->autorizacion,
+                'concepto' => $concepto,
+                'total_pagado' => $detalle_estadocuenta->descuento,
+                'alumno' => $nombre_alumno,
+                'fecha' => $fecha_pago,
+                'controller' => $this,
+                'idestadocuenta' => $idestasocuenta,
+                'idalumno' => $idalumno,
+                'tipo' => $tipo_pago
+            );
+            $this->load->view('tutor/header');
+            $this->load->view('tutor/alumnos/exito_pago', $data);
+            $this->load->view('tutor/footer');
+        } else {
+            $data = array(
+                'heading' => "Información",
+                'message' => 'Error, intente mas tarde.'
+            );
+            $this->load->view('tutor/header');
+            $this->load->view('tutor/error/general', $data);
+            $this->load->view('tutor/footer');
+        }
+    }
+
+    public function imprimir_recibo($idalumno_in = '', $idestadocuenta_in = '',$tipo_in = '') {
+        $idalumno = $this->decode($idalumno_in);
+        $idestasocuenta = $this->decode($idestadocuenta_in);
+        $tipo_pago = $this->decode($tipo_in);
+        if ((isset($idalumno) && !empty($idalumno)) && (isset($idestasocuenta) && !empty($idestasocuenta)) && (isset($tipo_pago) && !empty($tipo_pago))) {
+
+            $concepto = "";
+            $idperiodo = "";
+            if ($tipo_pago == 1) {
+                $detalle = $this->estadocuenta->detalleAlumnoRecibo($idestasocuenta);
+                $concepto .= "MENSUALIDAD DE " . $detalle->nombremes;
+                $idperiodo .= $detalle->idperiodo;
+            } else {
+                $detalle = $this->estadocuenta->detalleAlumnoPrimerRecibo($idestasocuenta);
+                $concepto .= $detalle->concepto;
+                $idperiodo .= $detalle->idperiodo;
+            }
+            $detalle_periodo = $this->estadocuenta->detallePeriodo($idperiodo);
+            $detalle_grupo = $this->estadocuenta->grupoAlumno($idalumno, $idperiodo);
+            $grupo = $detalle_grupo->nombrenivel . ' ' . $detalle_grupo->nombregrupo;
+            $ciclo_escolar = $detalle_periodo->mesiniciol . ' A ' . $detalle_periodo->mesfinl . ' DE ' . $detalle_periodo->yearfin;
+            $descuento = $detalle->descuento;
+            $logo = base_url() . '/assets/images/escuelas/' . $detalle->logoplantel;
+            $xcantidad = str_replace('.', '', $descuento);
+            if (FALSE === ctype_digit($xcantidad)) {
+                echo json_encode(array('leyenda' => 'La cantidad introducida no es válida.'));
+
+                return;
+            }
+            $response = array(
+                'leyenda' => num_to_letras($descuento)
+                , 'cantidad' => $descuento
+            );
+            //      echo json_encode($response);
+            $this->load->library('tcpdf');
+            //$linkimge = base_url() . '/assets/images/woorilogo.png';
+            //$datelle_alumno = $this->alumno->showAllMateriasAlumno($idalumno,1);
+            $fechaactual = date('d/m/Y');
+            $pdf = new Pdf('P', 'mm', 'A4', true, 'UTF-8', false);
+            $pdf->SetTitle('Recibo de Pago.');
+            $pdf->SetHeaderMargin(30);
+            $pdf->SetTopMargin(10);
+            $pdf->setFooterMargin(20);
+            $pdf->SetAutoPageBreak(true);
+            $pdf->SetAuthor('Sistema Integral para el Control Escolar');
+            $pdf->SetDisplayMode('real', 'default');
+            $pdf->setPrintHeader(false);
+            $pdf->setPrintFooter(false);
+
+            $pdf->AddPage();
+
+            $tbl = ' 
+        <style>
+          .txtgeneral{
+            font-size:10px;
+          }
+          .txtdireccion{
+             font-size:7px;
+             cell-spacing:0;
+          }
+          .imgtitle{
+        width:55px; 
+    }
+    .txtusuario{
+       font-size:8px;
+    }
+    .txtcliclo{
+      font-size:8px;
+    }
+    .txtplantel{
+      font-size:11px;
+      font-weight:bold;
+    }
+        </style>
+        <table width="575" border="0">
+  <tr>
+    <td colspan="2" rowspan="3" nowrap="nowrap" width="94" valing="top" aling="center"><img    class="imgtitle" src="' . $logo . '" /></td>
+    <td width="304" rowspan="3" nowrap="nowrap" align="center" valign="center">
+    <label class="txtplantel">' . $detalle->nombreplantel . '</label><br>
+    <label class="txtdireccion">' . $detalle->direccion . '</label><br>
+    <label class="txtdireccion"> TELEFONO: ' . $detalle->telefono . '</label><br>
+     <label class="txtdireccion"> CLAVE: ' . $detalle->clave . '</label>
+ 
+    
+    </td>
+    <td width="70" nowrap="nowrap" class="txtgeneral"><strong>Fecha:</strong></td>
+    <td width="73" nowrap="nowrap" class="txtgeneral">' . $detalle->fechapago . '</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap" class="txtgeneral"><strong>Autorización:</strong></td>
+    <td nowrap="nowrap" class="txtgeneral"><font color="red"><strong>' . $detalle->autorizacion . '</strong></font></td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">&nbsp;</td>
+    <td nowrap="nowrap">&nbsp;</td>
+  </tr>
+  <tr>
+    <td align="center" nowrap="nowrap" width="94">&nbsp;</td>
+    <td colspan="2" align="center" nowrap="nowrap" width="304">&nbsp;</td>
+    <td align="center" nowrap="nowrap" width="70" class="txtcliclo">GRUPO:</td>
+    <td align="center" nowrap="nowrap" width="73" align="left" class="txtcliclo">&nbsp;' . $grupo . '</td>
+  </tr>
+    <tr>
+    <td colspan="3" align="left" nowrap="nowrap" width="399" class="txtgeneral"><strong>Alumno(a):</strong> ' . $detalle->apellidop . ' ' . $detalle->apellidom . ' ' . $detalle->nombre . '</td>
+    <td colspan="2" align="center" nowrap="nowrap" width="143" class="txtcliclo">' . $ciclo_escolar . '</td>
+  </tr>
+     <tr>
+    <td align="center" nowrap="nowrap" width="94">&nbsp;</td>
+    <td colspan="2" align="center" nowrap="nowrap" width="304">&nbsp;</td>
+    <td align="center" nowrap="nowrap" width="70">&nbsp;</td>
+    <td align="center" nowrap="nowrap" width="73">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="94" align="center" nowrap="nowrap" class="txtgeneral" ><strong>Can</strong></td>
+    <td colspan="2" align="left" nowrap="nowrap" width="304" class="txtgeneral"><strong>Concepto</strong></td>
+    <td align="center" nowrap="nowrap" width="70" class="txtgeneral"><strong>Cantidad</strong></td>
+    <td align="center" nowrap="nowrap" width="73" class="txtgeneral">&nbsp;</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap" class="txtgeneral" align="center"style="border-top:solid 1px black;border-bottom:solid 1px black;">&nbsp;1</td>
+    <td colspan="2" nowrap="nowrap" class="txtgeneral" style="border-top:solid 1px black;border-bottom:solid 1px black;">' . $concepto . '</td>
+    <td nowrap="nowrap" class="txtgeneral" align="center" style="border-top:solid 1px black;border-bottom:solid 1px black;">$' . number_format($detalle->descuento, 2) . '</td>
+    <td nowrap="nowrap" class="txtgeneral" align="center" style="border-top:solid 1px black;border-bottom:solid 1px black;">&nbsp;</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">&nbsp;</td>
+    <td colspan="2" nowrap="nowrap" class="txtgeneral"></td>
+    <td nowrap="nowrap" class="txtgeneral" align="center"></td>
+    <td nowrap="nowrap">&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="3" nowrap="nowrap" class="txtgeneral"><strong>Forma de Pago:</strong> ' . $detalle->nombretipopago . '</td>
+    <td nowrap="nowrap"  class="txtgeneral">Subtotal:</td>
+    <td nowrap="nowrap" class="txtgeneral">$' . number_format($detalle->descuento, 2) . '</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">&nbsp;</td>
+    <td colspan="2" nowrap="nowrap">&nbsp;</td>
+    <td nowrap="nowrap"  class="txtgeneral">Total:</td>
+    <td nowrap="nowrap" class="txtgeneral"><strong>$' . number_format($detalle->descuento, 2) . '</strong></td>
+  </tr>
+  <tr>
+    <td colspan="3" nowrap="nowrap" class="txtgeneral"><strong>Cantidad con letra:</strong> ' . num_to_letras($descuento) . ' </td>
+    <td nowrap="nowrap"  class="txtgeneral"></td>
+    <td nowrap="nowrap">&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="3" nowrap="nowrap">&nbsp;</td>
+    <td nowrap="nowrap">&nbsp;</td>
+    <td nowrap="nowrap">&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="5" align="right" nowrap="nowrap" class="txtgeneral">Pagó en: <label class="txtusuario">EN LINEA</label></td>
+    
+  </tr>
+</table>';
+
+            $pdf->writeHTML($tbl, true, false, false, false, '');
+            ob_end_clean();
+            $pdf->Output('Kardex de Calificaciones', 'I');
+        } else {
+            $data = array(
+                'heading' => "Información",
+                'message' => 'Error, intente mas tarde.'
+            );
+            $this->load->view('tutor/header');
+            $this->load->view('tutor/error/general', $data);
+            $this->load->view('tutor/footer');
+        }
+    }
 
 }

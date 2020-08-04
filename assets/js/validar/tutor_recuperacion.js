@@ -55,8 +55,8 @@ $(document).ready(function () {
                     });
                 } else {
                     swal({
-                        type: 'error',
-                        title: 'Oops...',
+                        type: 'info',
+                        title: 'Notificación',
                         html: val.error,
                         customClass: 'swal-wide',
                         footer: ''
@@ -86,15 +86,15 @@ $(document).ready(function () {
                         position: 'center',
                         type: 'success',
                         title: 'Eliminado!',
-                        text: 'Dar clic en el boton.',
+                        text: 'Fue eliminado la calificación con exito.',
                         showConfirmButton: true
                     }).then(function () {
                         location.reload();
                     });
                 } else {
                     swal({
-                        type: 'error',
-                        title: 'Oops...',
+                        type: 'info',
+                        title: 'Notificación',
                         html: val.error,
                         customClass: 'swal-wide',
                         footer: ''
@@ -124,7 +124,7 @@ $(document).ready(function () {
                         position: 'center',
                         type: 'success',
                         title: 'Eliminado!',
-                        text: 'Dar clic en el boton.',
+                        text: 'Fue eliminado las calificaciones con exito.',
                         showConfirmButton: true
                     }).then(function () {
                         location.reload();
@@ -139,8 +139,8 @@ $(document).ready(function () {
                     });
                 } else {
                     swal({
-                        type: 'error',
-                        title: 'Oops...',
+                        type: 'info',
+                        title: 'Notificación',
                         html: val.error,
                         customClass: 'swal-wide',
                         footer: ''
@@ -170,15 +170,15 @@ $(document).ready(function () {
                         position: 'center',
                         type: 'success',
                         title: 'Eliminado!',
-                        text: 'Dar clic en el boton.',
+                        text: 'Fue eliminado la calificación con exito.',
                         showConfirmButton: true
                     }).then(function () {
                         location.reload();
                     });
                 } else {
                     swal({
-                        type: 'error',
-                        title: 'Oops...',
+                        type: 'info',
+                        title: 'Notificación',
                         html: val.error,
                         customClass: 'swal-wide',
                         footer: ''
@@ -210,15 +210,15 @@ $(document).ready(function () {
                         position: 'center',
                         type: 'success',
                         title: 'Modificado!',
-                        text: 'Dar clic en el boton.',
+                        text: 'Fue modificado la calificación con exito.',
                         showConfirmButton: true
                     }).then(function () {
                         location.reload();
                     });
                 } else {
                     swal({
-                        type: 'error',
-                        title: 'Oops...',
+                        type: 'info',
+                        title: 'Notificación',
                         html: val.error,
                         customClass: 'swal-wide',
                         footer: ''

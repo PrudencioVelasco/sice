@@ -255,7 +255,7 @@ class Aalumno extends CI_Controller
             $reprobadas = implode(",", $array_materias_reprobadas);
 
             $lunesAll = $this->horario->showAllDiaHorarioSinDua($idhorario, $reprobadas);
-
+            if(isset($lunesAll) && !empty($lunesAll)){
             foreach ($lunesAll as $row) {
                 $tabla .= '<tr>';
                 $tabla .= '<td  ><strong>' . $row->hora . '</strong></td>';
@@ -267,6 +267,8 @@ class Aalumno extends CI_Controller
 
                 $tabla .= '</tr>';
             }
+            }
+             $tabla .= '<tr><td colspan="6" align="center"><label>Sin registros</label></td></tr>';
             $tabla .= '</table>';
 
             return $tabla;

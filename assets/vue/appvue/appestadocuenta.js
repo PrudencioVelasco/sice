@@ -14,7 +14,7 @@ if (typeof my_var_3 === "undefined") {
 }
 
 
-Vue.config.devtools = true 
+Vue.config.devtools = true;
 var ve = new Vue({
     el: '#appestadocuenta',
     data: {
@@ -24,10 +24,8 @@ var ve = new Vue({
         addModal: false,
         addPagoModal: false,
         editModal: false,
-
         mostrar_condonar: false,
         checkbox_condonar: '',
-
         eliminarModalP: false,
         eliminarModalC: false,
         mostrar: false,
@@ -43,7 +41,10 @@ var ve = new Vue({
         mostar_error_formapago: false,
         error_formapago: '',
         btnpagarcolegiatura: false,
-        //deleteModal:false, 
+
+        cobro_colegiatura: 0,
+        cobro_pago_inicio: 0,
+
         ciclos: [],
         pagos: [],
         formaspago: [],
@@ -212,13 +213,13 @@ var ve = new Vue({
                     if (response.data == '') {
                         ve.solicitudes = null;
                         ve.noresultado = true;
-                        ve.dBuscandoAbtnbuscar();
+                        //ve.dBuscandoAbtnbuscar();
                     } else {
                         ve.solicitudes = response.data
                         ve.noresultado = false;
-                        ve.dBuscandoAbtnbuscar();
+                        //ve.dBuscandoAbtnbuscar();
                     }
-                });
+                }).finally(() => ve.dBuscandoAbtnbuscar());
 
                 axios.get(this.url + "EstadoCuenta/pagosInicio/", {
                     params: {
@@ -230,15 +231,15 @@ var ve = new Vue({
                         ve.pagos = null;
                         ve.noresultadoinicio = true;
                         ve.btnpagar = true;
-                        ve.dBuscandoAbtnbuscar();
+                        // ve.dBuscandoAbtnbuscar();
                     } else {
 
                         ve.pagos = response.data.pagos
                         ve.noresultadoinicio = false;
                         ve.btnpagar = false;
-                        ve.dBuscandoAbtnbuscar();
+                        // ve.dBuscandoAbtnbuscar();
                     }
-                });
+                }).finally(() => ve.dBuscandoAbtnbuscar());
 
                 axios.get(this.url + "EstadoCuenta/showAllMeses/", {
                     params: {
@@ -248,16 +249,16 @@ var ve = new Vue({
                 }).then(function (response) {
                     //console.log(response.data);
                     if (response.data.meses == null) {
-                        ve.dBuscandoAbtnbuscar();
+                        // ve.dBuscandoAbtnbuscar();
                         ve.btnpagarcolegiatura = false;
 
                     } else {
                         ve.meses = response.data.meses
                         ve.btnpagarcolegiatura = true;
-                        ve.dBuscandoAbtnbuscar();
+                        //ve.dBuscandoAbtnbuscar();
 
                     }
-                });
+                }).finally(() => ve.dBuscandoAbtnbuscar());
 
 
                 axios.get(this.url + "EstadoCuenta/descuentoPagoInicioInscripcion/", {
@@ -267,12 +268,12 @@ var ve = new Vue({
                     }
                 }).then(function (response) {
                     if (response.data.pagoinscripcion == null) {
-                        ve.dBuscandoAbtnbuscar();
+                        //ve.dBuscandoAbtnbuscar();
                     } else {
-                        ve.dBuscandoAbtnbuscar();
+                        //ve.dBuscandoAbtnbuscar();
                         ve.total_que_debe_pagar_inscripcion = response.data.pagoinscripcion;
                     }
-                });
+                }).finally(() => ve.dBuscandoAbtnbuscar());
                 axios.get(this.url + "EstadoCuenta/descuentoPagoInicioReinscripcion/", {
                     params: {
                         idperiodo: this.$refs.idperiodo.value,
@@ -280,12 +281,12 @@ var ve = new Vue({
                     }
                 }).then(function (response) {
                     if (response.data.pagoreinscripcion == null) {
-                        ve.dBuscandoAbtnbuscar();
+                        // ve.dBuscandoAbtnbuscar();
                     } else {
-                        ve.dBuscandoAbtnbuscar();
+                        //ve.dBuscandoAbtnbuscar();
                         ve.total_que_debe_pagar_reinscripcion = response.data.pagoreinscripcion;
                     }
-                });
+                }).finally(() => ve.dBuscandoAbtnbuscar());
                 axios.get(this.url + "EstadoCuenta/descuentoPagoColegiatura/", {
                     params: {
                         idperiodo: this.$refs.idperiodo.value,
@@ -293,12 +294,14 @@ var ve = new Vue({
                     }
                 }).then(function (response) {
                     if (response.data.pagocolegiatura == null) {
-                        ve.dBuscandoAbtnbuscar();
+                        //ve.dBuscandoAbtnbuscar();
                     } else {
-                        ve.dBuscandoAbtnbuscar();
+                        //ve.dBuscandoAbtnbuscar();
                         ve.total_que_debe_pagar_colegiatura = response.data.pagocolegiatura;
                     }
-                });
+                }).finally(() => ve.dBuscandoAbtnbuscar());
+
+
 
                 //ve.idperiodobuscado = this.$refs.idperiodo.value;
                 //then(response => (this.solicitudes = response.data))  
@@ -309,6 +312,47 @@ var ve = new Vue({
                 ve.loaging_buscar = false;
             }
 
+        },
+        calcularColegiatura(e) {
+            if (e.target.checked) {
+                var idmes = e.target.value;
+                axios.get(this.url + "EstadoCuenta/agregarCostoColegiatura/", {
+                    params: {
+                        idperiodo: this.$refs.idperiodo.value,
+                        idalumno: my_var_2,
+                        idmes: idmes
+                    }
+                }).then(function (response) {
+
+                    ve.cobro_colegiatura = (parseInt(response.data.cobro_colegiatura, 10) + parseInt(ve.cobro_colegiatura, 10));
+
+                });
+            } else {
+                var idmes = e.target.value;
+                axios.get(this.url + "EstadoCuenta/agregarCostoColegiatura/", {
+                    params: {
+                        idperiodo: this.$refs.idperiodo.value,
+                        idalumno: my_var_2,
+                        idmes: idmes
+                    }
+                }).then(function (response) {
+
+                    ve.cobro_colegiatura = (parseInt(ve.cobro_colegiatura, 10) - parseInt(response.data.cobro_colegiatura, 10));
+
+                });
+            }
+        },
+        onChange(event) {
+            ve.cobro_pago_inicio = 0;
+            var idconcepto = event.target.value;
+
+            axios.get(this.url + "EstadoCuenta/costoPagoInicio/", {
+                params: {
+                    idperiodo: this.$refs.idperiodo.value,
+                    idalumno: my_var_2,
+                    idconcepto: idconcepto
+                }
+            }).then(response => (ve.cobro_pago_inicio = parseInt(response.data.cobro_inicio, 10)));
         },
         estadocuentaAll() {
             axios.get(this.url + "EstadoCuenta/estadoCuenta/", {
@@ -572,6 +616,8 @@ var ve = new Vue({
             ve.addPagoModal = false;
             ve.eliminarModalP = false;
             ve.eliminarModalC = false;
+            ve.cobro_colegiatura = 0;
+            ve.cobro_pago_inicio = 0;
             ve.addPagoColegiaturaModal = false;
             ve.error = false;
             ve.cargando = false;

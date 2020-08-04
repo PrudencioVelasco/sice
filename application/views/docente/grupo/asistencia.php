@@ -7,9 +7,11 @@
             <div class="col-md-12">
                 <div class="x_panel">
                     <div class="x_title">
-                        <h2><strong>ASISTENCIA DE LOS ALUMNOS - <?php if (isset($nombreclase) && !empty($nombreclase)) {
-    echo $nombreclase;
-} ?> </strong></h2>
+                        <h2><strong>ASISTENCIA DE LOS ALUMNOS - <?php
+                                if (isset($nombreclase) && !empty($nombreclase)) {
+                                    echo $nombreclase;
+                                }
+                                ?> </strong></h2>
 
                         <div class="clearfix"></div>
                     </div>
@@ -36,13 +38,13 @@
                                                         <div class="col-md-6 col-sm-12 col-xs-12 ">
                                                             <div class="form-group">
                                                                 <label><font color="red">*</font> Fecha</label>
-                                                                <input type="date"  name="fecha" class="form-control">
+                                                                <input type="date" style="border-bottom: solid 1px #ccc;"   name="fecha" class="form-control">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6 col-sm-12 col-xs-12 ">
                                                             <div class="form-group">
                                                                 <label><font color="red">*</font> Unidad</label>
-                                                                <select name="unidad" required="" class="form-control">
+                                                                <select name="unidad" required="" style="border-bottom: solid 1px #ccc;" class="form-control">
                                                                     <option value="">-- SELECCIONAR --</option>
                                                                     <?php
                                                                     if (isset($unidades) && !empty($unidades)) {
@@ -64,7 +66,7 @@
                                                                 <thead>
                                                                     <tr>
                                                                         <th>#</th>
-                                                                        <th>Alumno</th> 
+                                                                        <th>ALUMNO</th> 
                                                                         <th></th>
                                                                     </tr>
                                                                 </thead>
@@ -89,17 +91,17 @@
                                                                                         foreach ($motivo as $value) {
                                                                                             ?>
                                                                                             <option value="<?php echo $value->idmotivo ?>"><?php echo $value->nombremotivo ?></option>
-                <?php
-            }
-        }
-        ?>
+                                                                                            <?php
+                                                                                        }
+                                                                                    }
+                                                                                    ?>
                                                                                 </select>
                                                                             </td>
                                                                         </tr>
-        <?php
-    }
-}
-?>
+                                                                        <?php
+                                                                    }
+                                                                }
+                                                                ?>
 
                                                                 </tbody>
                                                             </table>
@@ -130,7 +132,7 @@
                                     <div class="row clearfix">
                                         <div class="col-md-4 col-sm-12 col-xs-12 ">
                                             <div class="form-group"> 
-                                                <select name="unidad" required="" id="unidad"  class="form-control">
+                                                <select name="unidad" style="border-bottom: solid 1px #ccc;" required="" id="unidad"  class="form-control">
                                                     <option value="">-- UNIDAD --</option>
                                                     <option value="0">TODOS</option>
                                                     <?php
@@ -139,10 +141,10 @@
                                                             ?>
                                                             <option value="<?php echo $value->idunidad ?>"><?php echo $value->nombreunidad; ?></option>
 
-        <?php
-    }
-}
-?>
+                                                            <?php
+                                                        }
+                                                    }
+                                                    ?>
                                                 </select>
                                             </div>
                                         </div>
@@ -174,9 +176,9 @@
                         <div class="row"> 
                             <div class="col-lg-12 col-md-12 col-sm-4 col-xs-6">
                                 <div id="tblalumnos">
-<?php
-echo $tabla;
-?>
+                                    <?php
+                                    echo $tabla;
+                                    ?>
                                 </div> 
                             </div>
 
@@ -245,17 +247,17 @@ echo $tabla;
                     </div>
                     <div class="form-group">
                         <label ><font color="red">*</font> Opción</label><br>
-                        <select name="motivo" required="" class="form-control">
+                        <select name="motivo" style="border-bottom: solid 1px #ccc;" required="" class="form-control">
                             <option value="">-- SELECCIONAR --</option>
                             <?php
                             if (isset($motivo) && !empty($motivo)) {
                                 foreach ($motivo as $value) {
                                     ?>
                                     <option value="<?php echo $value->idmotivo ?>"><?php echo $value->nombremotivo ?></option>
-        <?php
-    }
-}
-?>
+                                    <?php
+                                }
+                            }
+                            ?>
                         </select>
                     </div> 
                 </div>

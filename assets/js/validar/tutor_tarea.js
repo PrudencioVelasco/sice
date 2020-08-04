@@ -41,7 +41,7 @@ $(document).ready(function () {
                         position: 'center',
                         type: 'success',
                         title: 'Registrado!',
-                        text: 'Dar clic en el boton.',
+                        text: 'Fue registrado con exito.',
                         showConfirmButton: true
                     }).then(function () {
                         location.reload();
@@ -49,8 +49,8 @@ $(document).ready(function () {
 
                 } else {
                     swal({
-                        type: 'error',
-                        title: 'Oops...',
+                        type: 'info',
+                        title: 'Notificación',
                         html: val.error,
                         customClass: 'swal-wide',
                         footer: ''
@@ -84,7 +84,7 @@ $(document).ready(function () {
                         position: 'center',
                         type: 'success',
                         title: 'Modificado!',
-                        text: 'Dar clic en el boton.',
+                        text: 'Fue modificado con exito.',
                         showConfirmButton: true
                     }).then(function () {
                         location.reload();
@@ -92,8 +92,8 @@ $(document).ready(function () {
 
                 } else {
                     swal({
-                        type: 'error',
-                        title: 'Oops...',
+                        type: 'info',
+                        title: 'Notificación',
                         html: val.error,
                         customClass: 'swal-wide',
                         footer: ''

@@ -208,7 +208,9 @@ class pGrupo extends CI_Controller {
                 'heading' => 'Error',
                 'message' => 'Intente mas tarde.',
             );
-            $this->load->view('errors/html/error_general', $data);
+            $this->load->view('docente/header');
+            $this->load->view('docente/error/general', $data);
+            $this->load->view('docente/footer');
         }
     }
 
@@ -224,7 +226,7 @@ class pGrupo extends CI_Controller {
             $range = ((strtotime($fechafin) - strtotime($fechainicio)) + (24 * 60 * 60)) / (24 * 60 * 60);
             //$range= ((strtotime($_GET["finish_at"])-strtotime($_GET["start_at"]))+(24*60*60)) /(24*60*60);
 
-            $tabla .= '  <table id="tablageneral2" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+            $tabla .= '  <table id="tablageneral2" class="table table-striped  dt-responsive nowrap" cellspacing="0" width="100%">
             <thead class="bg-teal">
             <th>#</th>
             <th>ALUMNO</th>';
@@ -455,7 +457,9 @@ class pGrupo extends CI_Controller {
                 'heading' => 'Error',
                 'message' => 'Error intente mas tarde.',
             );
-            $this->load->view('errors/html/error_general', $data);
+            $this->load->view('docente/header');
+            $this->load->view('docente/error/general', $data);
+            $this->load->view('docente/footer');
         }
     }
 
@@ -499,7 +503,9 @@ class pGrupo extends CI_Controller {
                 'heading' => 'Error',
                 'message' => 'Error intente mas tarde.',
             );
-            $this->load->view('errors/html/error_general', $data);
+             $this->load->view('docente/header');
+            $this->load->view('docente/error/general', $data);
+            $this->load->view('docente/footer');
         }
     }
 
@@ -523,7 +529,9 @@ class pGrupo extends CI_Controller {
                 'heading' => 'Error',
                 'message' => 'Error intente mas tarde.',
             );
-            $this->load->view('errors/html/error_general', $data);
+           $this->load->view('docente/header');
+            $this->load->view('docente/error/general', $data);
+            $this->load->view('docente/footer');
         }
     }
 
@@ -715,7 +723,7 @@ class pGrupo extends CI_Controller {
                 'label' => 'Unidad',
                 'rules' => 'trim|required',
                 'errors' => array(
-                    'required' => 'Fecha de entrega.',
+                    'required' => 'La fecha de entrega es requerido.',
                 ),
             ),
             array(
@@ -723,7 +731,7 @@ class pGrupo extends CI_Controller {
                 'label' => 'Calificación',
                 'rules' => 'trim|required',
                 'errors' => array(
-                    'required' => 'Tarea',
+                    'required' => 'La tarea es requerido',
                 ),
             ),
         );
@@ -762,7 +770,7 @@ class pGrupo extends CI_Controller {
                 'label' => 'Calificación',
                 'rules' => 'trim|required',
                 'errors' => array(
-                    'required' => 'Tarea',
+                    'required' => 'El mensaje es requerido',
                 ),
             ),
         );
@@ -801,7 +809,7 @@ class pGrupo extends CI_Controller {
                 'label' => 'Unidad',
                 'rules' => 'trim|required',
                 'errors' => array(
-                    'required' => 'Fecha de entrega.',
+                    'required' => 'Fecha de entrega es requerido.',
                 ),
             ),
             array(
@@ -809,7 +817,7 @@ class pGrupo extends CI_Controller {
                 'label' => 'Calificación',
                 'rules' => 'trim|required',
                 'errors' => array(
-                    'required' => 'Tarea',
+                    'required' => 'La tarean es requerido',
                 ),
             ),
         );
@@ -845,7 +853,7 @@ class pGrupo extends CI_Controller {
                 'label' => 'Calificación',
                 'rules' => 'trim|required',
                 'errors' => array(
-                    'required' => 'Tarea',
+                    'required' => 'El mensaje es requerido',
                 ),
             ),
         );
@@ -912,7 +920,10 @@ class pGrupo extends CI_Controller {
                 'heading' => 'Error',
                 'message' => 'Error intente mas tarde.',
             );
-            $this->load->view('errors/html/error_general', $data);
+            $this->load->view('docente/header');
+            $this->load->view('docente/error/general', $data);
+            $this->load->view('docente/footer');
+            
         }
     }
 
@@ -1209,7 +1220,9 @@ class pGrupo extends CI_Controller {
                 'heading' => 'Error',
                 'message' => 'Error intente mas tarde.',
             );
-            $this->load->view('errors/html/error_general', $data);
+            $this->load->view('docente/header');
+            $this->load->view('docente/error/general', $data);
+            $this->load->view('docente/footer');
         }
     }
 
