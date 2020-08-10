@@ -20,20 +20,20 @@
                                         leave-active-class="animated fadeOutRight">
                                         <div class="notification is-success text-center px-5 top-middle" v-if="successMSG" @click="successMSG = false">{{successMSG}}</div>
                                     </transition>
-                                    <div class="col-md-12">
+                                    <div class="col-md-12  col-sm-12 col-xs-12">
                                         <div class="row">
-                                            <div class="col-md-6">
+                                            <div class="col-md-6  col-sm-12 col-xs-12">
                                                 <button class="btn btn-round btn-primary waves-effect waves-black" @click=" abrirAddModal()"><i class='fa fa-plus'></i> Nuevo Rol</button>
                                                 <a  href="<?= base_url('/User/') ?>" class="btn btn-round btn-default waves-effect waves-black">Usuarios</a>
                                                 <a  href="<?= base_url('/Permiso/') ?>" class="btn btn-round btn-default waves-effect waves-black">Permisos</a>
 
                                             </div>
-                                            <div class="col-md-6"></div>
+                                            <div class="col-md-6  col-sm-12 col-xs-12"></div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-md-6">
+                                            <div class="col-md-6  col-sm-12 col-xs-12">
                                             </div>
-                                            <div class="col-md-6">
+                                            <div class="col-md-6  col-sm-12 col-xs-12">
                                                 <input placeholder="Buscar" type="search" class="form-control btn-round" :autofocus="'autofocus'"  v-model="search.text" @keyup="searchUser" name="search">
                                             </div>
                                         </div>

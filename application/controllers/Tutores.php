@@ -380,6 +380,7 @@ class Tutores extends CI_Controller {
 
             $lunesAll = $this->horario->showAllDiaHorarioSinDua($idhorario, $reprobadas);
 
+if(isset($lunesAll) && !empty($lunesAll)){
             foreach ($lunesAll as $row) {
                 $tabla .= '<tr>';
                 $tabla .= '<td  ><strong>' . $row->hora . '</strong></td>';
@@ -388,10 +389,13 @@ class Tutores extends CI_Controller {
                 $tabla .= '<td >' . $row->miercoles . '</td>';
                 $tabla .= '<td  >' . $row->jueves . '</td>';
                 $tabla .= '<td >' . $row->viernes . '</td>';
-
                 $tabla .= '</tr>';
             }
+            }else{
+             $tabla .= '<tr><td colspan="6" align="center"><label>Sin registros</label></td></tr>';
+            }
             $tabla .= '</table>';
+
 
             return $tabla;
         }
@@ -1338,7 +1342,30 @@ class Tutores extends CI_Controller {
                     } else {
                         $recargo += 0;
                     }
-                } else {
+                }elseif ($detalle_descuento[0]->idniveleducativo == 4) {
+                    //PREPA
+                    $dia_actual = date('Y-m-d');
+                    $year_actual = date('Y');
+                    $mes_actual = date('m');
+                    $dia_pago = date('Y-m-d', strtotime($detalle_configuracion[0]->diaultimorecargo . "-" . $mes_actual . "-" . $year_actual));
+                    if ($dia_actual > $dia_pago) {
+                        $recargo += $detalle_configuracion[0]->totalrecargo;
+                    } else {
+                        $recargo += 0;
+                    }
+                }elseif ($detalle_descuento[0]->idniveleducativo == 5) {
+                    //PREPA
+                    $dia_actual = date('Y-m-d');
+                    $year_actual = date('Y');
+                    $mes_actual = date('m');
+                    $dia_pago = date('Y-m-d', strtotime($detalle_configuracion[0]->diaultimorecargo . "-" . $mes_actual . "-" . $year_actual));
+                    if ($dia_actual > $dia_pago) {
+                        $recargo += $detalle_configuracion[0]->totalrecargo;
+                    } else {
+                        $recargo += 0;
+                    }
+                }
+                else {
                     $recargo = 0;
                 }
 
@@ -2290,7 +2317,9 @@ class Tutores extends CI_Controller {
             }
         }
         //return number_format(($calificacion_periodo/$suma_periodo),2);
+        if($calificacion_periodo > 0 && $suma_periodo > 0){
         $calificacion_global = number_format(($calificacion_periodo / $suma_periodo), 2);
+        }
 
         return $calificacion_global;
     }
@@ -2377,11 +2406,20 @@ class Tutores extends CI_Controller {
                 //$tabla = $this->obtenerCalificacionPrimaria($idhorario,$idalumno);
                 $tabla = $this->obtenerCalificacionPrimaria($idhorario, $idalumno);
             }
+            if ($idniveleducativo == 4) {
+                //PRIMARIA
+                //$tabla = $this->obtenerCalificacionPrimaria($idhorario,$idalumno);
+                $tabla = $this->obtenerCalificacionPrimaria($idhorario, $idalumno);
+            }
             if ($idniveleducativo == 2) {
                 //SECUNDARIA
                 $tabla = $this->obtenerCalificacionSecundaria($idhorario, $idalumno, $idperiodo);
             }
             if ($idniveleducativo == 3) {
+                //PREPARATORIA
+                $tabla = $this->obtenerCalificacionSecundaria($idhorario, $idalumno, $idperiodo);
+            }
+            if ($idniveleducativo == 5) {
                 //PREPARATORIA
                 $tabla = $this->obtenerCalificacionSecundaria($idhorario, $idalumno, $idperiodo);
             }
@@ -3101,7 +3139,7 @@ tblcalificacion  {border-collapse:collapse}
 
             $concepto = "";
             $idperiodo = "";
-            if ($tipo_pago == 1) {
+            if ($tipo_pago == 11) {
                 $detalle = $this->estadocuenta->detalleAlumnoRecibo($idestasocuenta);
                 $concepto .= "MENSUALIDAD DE " . $detalle->nombremes;
                 $idperiodo .= $detalle->idperiodo;

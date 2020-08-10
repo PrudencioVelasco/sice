@@ -48,7 +48,7 @@
                                     <timepicker 
                                         format="HH:mm"
                                         input-width="100%" 
-                                          :hour-range="[[5, 21]]"
+                                        :hour-range="[[5, 21]]"
                                         debug-mode
                                         auto-scroll
                                         placeholder="HH:mm"
@@ -76,7 +76,20 @@
                             </div>
                         </div> 
                     </div>  
-
+                    <div class="row">
+                        <div class="col-md-23 col-sm-12 col-xs-12 ">
+                            <div class="form-group form-float">
+                                <div class="form-line">
+                                    <label class="form-label">
+                                         URL VIDEOCONFERENCIA
+                                    </label>
+                                    <input type="text" v-model="newHorario.urlvideoconferencia" class="form-control"
+                                           :class="{'is-invalid': formValidate.urlvideoconferencia}" name="po">
+                                </div>
+                                <div class="col-red" v-html="formValidate.urlvideoconferencia"></div>
+                            </div>
+                        </div>   
+                    </div>
 
                 </div>
             </div>
@@ -208,16 +221,16 @@
                             <div class="form-group form-float ">
                                 <div class="form-line">
                                     <label><font color="red">*</font> HORA INICIAL</label>
-                                     <timepicker 
+                                    <timepicker 
                                         format="HH:mm"
                                         input-width="100%" 
-                                          :hour-range="[[5, 21]]"
+                                        :hour-range="[[5, 21]]"
                                         debug-mode
                                         auto-scroll
                                         placeholder="HH:mm"
                                         v-model="newHorario.horainicial">
                                     </timepicker>
-                                  
+
                                 </div>       
                                 <div class="col-red" v-html="formValidate.horainicial"></div>
                             </div>
@@ -226,10 +239,10 @@
                             <div class="form-group form-float ">
                                 <div class="form-line">
                                     <label ><font color="red">*</font> HORA FINAL</label>
-                                   <timepicker 
+                                    <timepicker 
                                         format="HH:mm"
                                         input-width="100%" 
-                                          :hour-range="[[5, 21]]"
+                                        :hour-range="[[5, 21]]"
                                         debug-mode
                                         auto-scroll
                                         placeholder="HH:mm"
@@ -315,16 +328,16 @@
                             <div class="form-group form-float ">
                                 <div class="form-line focused">
                                     <label ><font color="red">*</font> HORA INICIAL</label>
-                                     <timepicker 
+                                    <timepicker 
                                         format="HH:mm"
                                         input-width="100%" 
-                                          :hour-range="[[5, 21]]"
+                                        :hour-range="[[5, 21]]"
                                         debug-mode
                                         auto-scroll
                                         placeholder="HH:mm"
                                         v-model="chooseHorario.horainicial">
                                     </timepicker>
-                                  </div>
+                                </div>
                                 <div class="col-red" v-html="formValidate.horainicial"></div>
                             </div>
                         </div> 
@@ -332,20 +345,34 @@
                             <div class="form-group form-float ">
                                 <div class="form-line focused">
                                     <label  ><font color="red">*</font> HORA FINAL</label>
-                                        <timepicker 
+                                    <timepicker 
                                         format="HH:mm"
                                         input-width="100%" 
-                                          :hour-range="[[5, 21]]"
+                                        :hour-range="[[5, 21]]"
                                         debug-mode
                                         auto-scroll
                                         placeholder="HH:mm"
                                         v-model="chooseHorario.horafinal">
                                     </timepicker>
-                                 </div>   
+                                </div>   
                                 <div class="col-red" v-html="formValidate.horafinal"></div>
                             </div>
                         </div> 
                     </div>  
+                    <div class="row">
+                        <div class="col-md-23 col-sm-12 col-xs-12 ">
+                            <div class="form-group form-float">
+                                <div class="form-line focused">
+                                    <label class="form-label">
+                                          URL VIDEOCONFERENCIA
+                                    </label>
+                                    <input type="text" v-model="chooseHorario.urlvideoconferencia" class="form-control"
+                                           :class="{'is-invalid': formValidate.urlvideoconferencia}" name="po">
+                                </div>
+                                <div class="col-red" v-html="formValidate.urlvideoconferencia"></div>
+                            </div>
+                        </div>   
+                    </div>
 
 
                 </div>
@@ -395,7 +422,7 @@
                             <div class="form-group form-float">
                                 <div class="form-line focused"  > 
                                     <label  class="form-label"><font color="red">*</font> TITULO</label>
-                                   
+
                                     <input type="text" class="form-control" :class="{'is-invalid': formValidate.nombreclase}" name="name" v-model="chooseHorario.nombreclase">
                                 </div>
                                 <div class="col-red" v-html="formValidate.nombreclase"> </div>
@@ -408,16 +435,16 @@
                             <div class="form-group form-float">
                                 <div class="form-line focused"  > 
                                     <label ><font color="red">*</font> HORA INICIAL</label>
-                                     <timepicker 
+                                    <timepicker 
                                         format="HH:mm"
                                         input-width="100%" 
-                                          :hour-range="[[5, 21]]"
+                                        :hour-range="[[5, 21]]"
                                         debug-mode
                                         auto-scroll
                                         placeholder="HH:mm"
                                         v-model="chooseHorario.horainicial">
                                     </timepicker>
-                                 </div>
+                                </div>
                                 <div class="col-red" v-html="formValidate.horainicial"></div>
                             </div>
                         </div> 
@@ -428,13 +455,13 @@
                                     <timepicker 
                                         format="HH:mm"
                                         input-width="100%" 
-                                          :hour-range="[[5, 21]]"
+                                        :hour-range="[[5, 21]]"
                                         debug-mode
                                         auto-scroll
                                         placeholder="HH:mm"
                                         v-model="chooseHorario.horafinal">
                                     </timepicker>
-                                 </div>   
+                                </div>   
                                 <div class="col-red" v-html="formValidate.horafinal"></div>
                             </div>
                         </div> 

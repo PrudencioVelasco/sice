@@ -84,9 +84,9 @@ class Phorario extends CI_Controller {
 
         $tabla .= '<table class="table table-hover table-striped"  > ';
         $tabla .= ' <thead class="bg-teal"> ';
-        $tabla .= '<td   >HORA</td>';
-        $tabla .= '<td   >LUNES</td>';
-        $tabla .= '<td  >MARTES</td>';
+        $tabla .= '<td>HORA</td>';
+        $tabla .= '<td>LUNES</td>';
+        $tabla .= '<td>MARTES</td>';
         $tabla .= '<td >MIERCOLES</td>';
         $tabla .= '<td  >JUEVES</td>';
         $tabla .= '<td  >VIERNES</td>';
@@ -101,17 +101,82 @@ class Phorario extends CI_Controller {
         foreach ($lunesAll as $row) {
             $tabla .= '<tr>';
             $tabla .= '<td  ><strong>' . $row->hora . '</strong></td>';
-            $tabla .= '<td >' . $row->lunes . '</td>';
-            $tabla .= '<td  >' . $row->martes . '</td>';
-            $tabla .= '<td >' . $row->miercoles . '</td>';
-            $tabla .= '<td  >' . $row->jueves . '</td>';
-            $tabla .= '<td >' . $row->viernes . '</td>';
+            $tabla .= '<td >' . $row->lunes . '<br>';
+            if (isset($row->lunesurl) && !empty($row->lunesurl)) {
+                $tabla .= '  <a target="_blank" href="' . $row->lunesurl . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> IMPARTIR CLASE</a>';
+            } else {
+//                $tabla .= ' <a  href="javascript:void(0)"  class="add_button_url btn btn-primary  btn-xs"
+//                                                                data-toggle="modal" data-target="#largeModalAdd"
+//                                                                data-idhorariodetalle="'.$row->lunesidhorariodetalle.'"  >
+//                                                                <i class="fa fa-plus" aria-hidden="true"></i>
+//                                                                Agregar</a>';
+            }
+            $tabla .= '</td>';
+            $tabla .= '<td  >' . $row->martes . '<br>';
+            if (isset($row->martesurl) && !empty($row->martesurl)) {
+                $tabla .= '  <a target="_blank" href="' . $row->martesurl . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> IMPARTIR CLASE</a>';
+            }
+            $tabla .= '</td>';
+            $tabla .= '<td >' . $row->miercoles . '<br>';
+            if (isset($row->miercolesurl) && !empty($row->miercolesurl)) {
+                $tabla .= '  <a target="_blank" href="' . $row->miercolesurl . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> IMPARTIR CLASE</a>';
+            }
+            $tabla .= '</td>';
+            $tabla .= '<td  >' . $row->jueves . '<br>';
+            if (isset($row->juevesurl) && !empty($row->juevesurl)) {
+                $tabla .= '  <a target="_blank" href="' . $row->juevesurl . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> IMPARTIR CLASE</a>';
+            }
+            $tabla .= '</td>';
+            $tabla .= '<td >' . $row->viernes . '<br>';
+            if (isset($row->viernessurl) && !empty($row->viernessurl)) {
+                $tabla .= '  <a target="_blank" href="' . $row->viernessurl . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> IMPARTIR CLASE</a>';
+            } else {
+                
+            }
+            $tabla .= '</td>';
 
             $tabla .= '</tr>';
         }
         $tabla .= '</table>';
 
         return $tabla;
+    }
+    public function addUrlHorario() {
+        Permission::grant(uri_string());
+        $config = array(
+            array(
+                'field' => 'url',
+                'label' => 'Unidad',
+                'rules' => 'trim|valid_url|required',
+                'errors' => array(
+                    'valid_url' => 'Formato no valido.',
+                     'required' => 'La URL es requerido',
+                ),
+            ),
+            array(
+                'field' => 'idhorariodetalle',
+                'label' => 'idhorariodetalle',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Horario detalle requerido.',
+                ),
+            ),
+        );
+        $this->form_validation->set_rules($config);
+        if ($this->form_validation->run() == false) {
+            $errors = validation_errors();
+            echo json_encode(['error' => $errors]);
+        } else {
+            $url = $this->input->post('url');
+            $idhorariodetalle = $this->input->post('idhorariodetalle');  
+            $data = array(
+                'urlvideoconferencia' => $url,   
+            );
+            $value = $this->horario->updateHorarioMateria($idhorariodetalle,$data);
+
+            echo json_encode(['success' => 'Ok']);
+        }
+        // echo json_encode($result);
     }
 
     public function generarHorarioPDF($idhorario = '') {

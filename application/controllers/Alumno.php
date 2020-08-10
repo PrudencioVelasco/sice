@@ -1701,7 +1701,7 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
  ';
 
 
-            if ($idniveleducativo == 1) {
+            if ($idniveleducativo == 1 || $idniveleducativo == 4) {
                 //PRIMARIA
 
                 $idplantel = $this->session->idplantel;
@@ -1741,7 +1741,7 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
                 $tbl .= '</tr>';
                 $tbl .= '</table>';
             }
-            if ($idniveleducativo == 2) {
+            if ($idniveleducativo == 2 || $idniveleducativo == 3 || $idniveleducativo == 5 ) {
                 //SECUNDARIA
                 $materias = $this->alumno->showAllMateriasPasadas($idhorario);
                 $datoshorario = $this->horario->showNivelGrupo($idhorario);
@@ -1885,6 +1885,11 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
                 //$tabla = $this->obtenerCalificacionPrimaria($idhorario,$idalumno);
                 $tabla = $this->obtenerCalificacionPrimaria($idhorario, $idalumno);
             }
+             if ($idniveleducativo == 4) {
+                //PREESCOLAR
+                //$tabla = $this->obtenerCalificacionPrimaria($idhorario,$idalumno);
+                $tabla = $this->obtenerCalificacionPrimaria($idhorario, $idalumno);
+            }
             if ($idniveleducativo == 2) {
                 //SECUNDARIA
                 $tabla = $this->obtenerCalificacionSecundaria($idhorario, $idalumno,$idperiodo);
@@ -1893,6 +1898,11 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
                 //PREPARATORIA
                    $tabla = $this->obtenerCalificacionSecundaria($idhorario, $idalumno,$idperiodo);
             }
+             if ($idniveleducativo == 5) {
+                //LICENCIATURA
+                   $tabla = $this->obtenerCalificacionSecundaria($idhorario, $idalumno,$idperiodo);
+            }
+                            
 
             //CODIGO PARA OBTENER LA CALIFICACION DEL NIVEL
             $oportunidades_examen = $this->alumno->showAllOportunidadesExamen($this->session->idplantel);

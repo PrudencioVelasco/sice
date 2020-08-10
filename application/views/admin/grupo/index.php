@@ -2,7 +2,7 @@
 <div class="right_col" role="main"> 
     <div class="">  
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-12 col-sm-12 col-xs-12 ">
                 <div class="x_panel">
                     <div class="x_title">
                         <h2><strong>ADMINISTRAR GRUPOS</strong></h2> 
@@ -13,28 +13,29 @@
                             <div class="container">
 
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-6  col-sm-12 col-xs-12 ">
                                         <button class="btn  btn-primary waves-effect waves-black" @click=" abrirAddModal()"><i class='fa fa-plus'></i> Agregar Grupo</button> 
                                         <a href="<?= base_url('/Grupo/alumnos') ?>"  class="btn btn-icons btn-info btn-sm waves-effect waves-black" ><i class="fa fa-users" aria-hidden="true"></i> Alumnos</a>
 
                                     </div>
-                                    <div class="col-md-6"></div>
+                                    <div class="col-md-6  col-sm-12 col-xs-12 "></div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-6  col-sm-12 col-xs-12 ">
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-6  col-sm-12 col-xs-12 ">
                                         <input placeholder="Buscar" type="search" class="form-control btn-round" :autofocus="'autofocus'"  v-model="search.text" @keyup="searchGrupo" name="search">
                                     </div>
                                 </div>
                                 <br>
                                 <div class="row">
-                                    <div class="col-md-12">
+                                    <div class="col-md-12 col-sm-12 col-xs-12 ">
                                         <table class="table table-hover table-striped">
                                             <thead class="bg-teal">
                                             <th class="text-white" v-column-sortable:nombrenivel>Nivel </th>
                                             <th class="text-white" v-column-sortable:nombregrupo>Grupo </th>
-                                            <th class="text-white" v-column-sortable:nombreespecialidad>Especialidad </th>  
+                                             <th class="text-white" v-column-sortable:nombreespecialidad>Especialidad </th>  
+                                            <th class="text-white" v-column-sortable:nombreturno>Turno </th>  
                                             <th class="text-center text-white"> </th>
                                             </thead>
                                             <tbody class="table-light">
@@ -42,6 +43,7 @@
                                                     <td>{{row.nombrenivel}}</td>
                                                     <td>{{row.nombregrupo}}</td>
                                                     <td>{{row.nombreespecialidad}}</td> 
+                                                     <td>{{row.nombreturno}}</td> 
                                                     <td align="right">
 
 

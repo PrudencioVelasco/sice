@@ -259,11 +259,31 @@ class Aalumno extends CI_Controller
             foreach ($lunesAll as $row) {
                 $tabla .= '<tr>';
                 $tabla .= '<td  ><strong>' . $row->hora . '</strong></td>';
-                $tabla .= '<td >' . $row->lunes . '</td>';
-                $tabla .= '<td  >' . $row->martes . '</td>';
-                $tabla .= '<td >' . $row->miercoles . '</td>';
-                $tabla .= '<td  >' . $row->jueves . '</td>';
-                $tabla .= '<td >' . $row->viernes . '</td>';
+                $tabla .= '<td >' . $row->lunes . '<br>';
+            if(isset($row->lunesurl) && !empty($row->lunesurl)){
+                 $tabla .= '  <a target="_blank" href="'.$row->lunesurl.'" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> ENTRAR A CLASE</a>';
+            }
+            $tabla .='</td>';
+                $tabla .= '<td  >' . $row->martes . '<br>';
+            if(isset($row->martesurl) && !empty($row->martesurl)){
+                 $tabla .= '  <a target="_blank" href="'.$row->martesurl.'" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> ENTRAR A CLASE</a>';
+            }
+            $tabla .='</td>';
+                $tabla .= '<td >' . $row->miercoles . '<br>';
+            if(isset($row->miercolesurl) && !empty($row->miercolesurl)){
+                 $tabla .= '  <a target="_blank" href="'.$row->miercolesurl.'" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> ENTRAR A CLASE</a>';
+            }
+            $tabla .='</td>';
+                $tabla .= '<td  >' . $row->jueves . '<br>';
+            if(isset($row->juevesurl) && !empty($row->juevesurl)){
+                 $tabla .= '  <a target="_blank" href="'.$row->juevesurl.'" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> ENTRAR A CLASE</a>';
+            }
+            $tabla .='</td>';
+                $tabla .= '<td >' . $row->viernes . '<br>';
+            if(isset($row->viernesurl) && !empty($row->viernesurl)){
+                 $tabla .= '  <a target="_blank" href="'.$row->viernesurl.'" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> ENTRAR A CLASE</a>';
+            }
+            $tabla .='</td>';
 
                 $tabla .= '</tr>';
             }
@@ -1220,7 +1240,9 @@ tblcalificacion  {border-collapse:collapse}
             }
         }
         //return number_format(($calificacion_periodo/$suma_periodo),2);
+        if($calificacion_periodo > 0 && $suma_periodo > 0){
         $calificacion_global =number_format(($calificacion_periodo/$suma_periodo),2);
+        }
                                 
          return $calificacion_global;
     }

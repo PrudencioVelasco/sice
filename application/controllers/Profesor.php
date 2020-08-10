@@ -169,16 +169,16 @@ class Profesor extends CI_Controller {
                 );
             } else {
                 $cedula = trim($this->input->post('cedula'));
-                $validar = $this->profesor->validarCedula($cedula, $this->session->idplantel);
+                $validar = $this->profesor->validarCedula($cedula,'', $this->session->idplantel);
                 if ($validar == FALSE) {
                     $password_encrypted = password_hash(trim($this->input->post('password')), PASSWORD_BCRYPT);
                     $data = array(
                         'idplantel' => $this->session->idplantel,
                         'cedula' => $cedula,
-                        'nombre' => strtoupper($this->input->post('nombre')),
-                        'apellidop' => strtoupper($this->input->post('apellidop')),
-                        'apellidom' => strtoupper($this->input->post('apellidom')),
-                        'profesion' => strtoupper($this->input->post('profesion')),
+                        'nombre' => mb_strtoupper($this->input->post('nombre')),
+                        'apellidop' => mb_strtoupper($this->input->post('apellidop')),
+                        'apellidom' => mb_strtoupper($this->input->post('apellidom')),
+                        'profesion' => mb_strtoupper($this->input->post('profesion')),
                         'correo' => $this->input->post('correo'),
                         'password' => $password_encrypted,
                         'foto' => '',
@@ -288,10 +288,10 @@ class Profesor extends CI_Controller {
                     $data = array(
                         'idplantel' => $this->session->idplantel,
                         'cedula' => $this->input->post('cedula'),
-                        'nombre' => strtoupper($this->input->post('nombre')),
-                        'apellidop' => strtoupper($this->input->post('apellidop')),
-                        'apellidom' => strtoupper($this->input->post('apellidom')),
-                        'profesion' => strtoupper($this->input->post('profesion')),
+                        'nombre' => mb_strtoupper($this->input->post('nombre')),
+                        'apellidop' => mb_strtoupper($this->input->post('apellidop')),
+                        'apellidom' => mb_strtoupper($this->input->post('apellidom')),
+                        'profesion' => mb_strtoupper($this->input->post('profesion')),
                         'correo' => $this->input->post('correo'),
                         'idusuario' => $this->session->user_id,
                         'fecharegistro' => date('Y-m-d H:i:s')

@@ -50,6 +50,7 @@ class Pprofesor extends CI_Controller {
         $result = $this->grupo->showAllGruposProfesor($idprofesor);
         $unidades = $this->grupo->unidades($this->session->idplantel);
         $detalle = $this->profesor->detalleProfesor($idprofesor);
+
         if ($detalle->idniveleducativo == 1) {
             $data = array(
                 'datos' => $result,
@@ -57,17 +58,17 @@ class Pprofesor extends CI_Controller {
                 'controller' => $this
             );
             $this->load->view('docente/header');
-            $this->load->view('docente/planeacion/index', $data);
+            $this->load->view('docente/planeacion/primaria/planificacion_primaria', $data);
             $this->load->view('docente/footer');
         } elseif ($detalle->idniveleducativo == 2) {
-                $data = array(
-            'datos' => $result,
-            'unidades' => $unidades,
-            'controller' => $this
-        );
-        $this->load->view('docente/header');
-        $this->load->view('docente/planeacion/planificacion_primaria', $data);
-        $this->load->view('docente/footer');
+            $data = array(
+                'datos' => $result,
+                'unidades' => $unidades,
+                'controller' => $this
+            );
+            $this->load->view('docente/header');
+            $this->load->view('docente/planeacion/prepa/index', $data);
+            $this->load->view('docente/footer');
         } elseif ($detalle->idniveleducativo == 3) {
             
         }

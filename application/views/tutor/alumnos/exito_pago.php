@@ -56,7 +56,7 @@
                         </div>
                         <div class="row">
                               <div class="col-md-12 col-sm-12 col-xs-12 " align="center">
-                                  <a href="<?php echo base_url().'Tutores/imprimir_recibo/'.$controller->encode($idalumno).'/'.$controller->encode($idestadocuenta).'/'.$controller->encode($tipo); ?>" class="btn btn-default waves-black"> <i class="fa fa-print" ></i> IMPRIMIR RECIBO</a>
+                                  <a target="_blank" href="<?php echo base_url().'Tutores/imprimir_recibo/'.$controller->encode($idalumno).'/'.$controller->encode($idestadocuenta).'/'.$controller->encode($tipo); ?>" class="btn btn-default waves-black"> <i class="fa fa-print" ></i> IMPRIMIR RECIBO</a>
                             </div>  
                         </div>
                     </div>

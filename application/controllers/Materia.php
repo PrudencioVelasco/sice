@@ -163,8 +163,8 @@ class Materia extends CI_Controller {
                         'idnivelestudio' => $idnivelestudio,
                         'idespecialidad' => $idespecialidad,
                         'idclasificacionmateria' => $idclasificacionmateria,
-                        'nombreclase' => strtoupper($nombreclase),
-                        'clave' => strtoupper($clave),
+                        'nombreclase' => mb_strtoupper($nombreclase),
+                        'clave' => mb_strtoupper($clave),
                         'credito' => $credito,
                         'idusuario' => $this->session->user_id,
                         'fecharegistro' => date('Y-m-d H:i:s')
@@ -320,8 +320,8 @@ class Materia extends CI_Controller {
                         'idnivelestudio' => $idnivelestudio,
                         'idespecialidad' => $idespecialidad,
                         'idclasificacionmateria' => $idclasificacionmateria,
-                        'nombreclase' => strtoupper($nombreclase),
-                        'clave' => strtoupper($clave),
+                        'nombreclase' => mb_strtoupper($nombreclase),
+                        'clave' => mb_strtoupper($clave),
                         'credito' => $credito,
                         'idusuario' => $this->session->user_id,
                         'fecharegistro' => date('Y-m-d H:i:s')

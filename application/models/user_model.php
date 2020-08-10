@@ -91,7 +91,7 @@ class User_model extends CI_Model
     {
         $this->db->select('r.*');    
         $this->db->from('rol r'); 
-        $this->db->where('r.id IN (13,14,15)'); 
+        $this->db->where('r.id NOT IN (10,11,12)'); 
         if(isset($idrol) && !empty($idrol)){
             if($idrol != 14){
              $this->db->where('r.id NOT IN (14)');    

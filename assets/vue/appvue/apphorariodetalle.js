@@ -45,6 +45,7 @@ var v = new Vue({
             idprofesormateria: '',
             horainicial: '',
             horafinal: '',
+            urlvideoconferencia: '',
             smserror: ''},
         chooseHorario: {},
         formValidate: [],
@@ -145,7 +146,7 @@ var v = new Vue({
                         type: 'success',
                         title: 'Exito!',
                         showConfirmButton: false,
-                        timer: 3000
+                        timer: 1500
                     });
 
                     v.clearAll();
@@ -169,7 +170,7 @@ var v = new Vue({
                         type: 'success',
                         title: 'Exito!',
                         showConfirmButton: false,
-                        timer: 3000
+                        timer: 1500
                     });
 
                     v.clearAll();
@@ -193,7 +194,7 @@ var v = new Vue({
                         type: 'success',
                         title: 'Exito!',
                         showConfirmButton: false,
-                        timer: 3000
+                        timer: 1500
                     });
 
                     v.clearAll();
@@ -218,7 +219,7 @@ var v = new Vue({
                         type: 'success',
                         title: 'Modificado!',
                         showConfirmButton: false,
-                        timer: 3000
+                        timer: 1500
                     });
                     v.clearAll();
                     v.clearMSG();
@@ -243,7 +244,7 @@ var v = new Vue({
                         type: 'success',
                         title: 'Modificado!',
                         showConfirmButton: false,
-                        timer: 3000
+                        timer: 1500
                     });
                     v.clearAll();
                     v.clearMSG();
@@ -268,7 +269,7 @@ var v = new Vue({
                         type: 'success',
                         title: 'Modificado!',
                         showConfirmButton: false,
-                        timer: 3000
+                        timer: 1500
                     });
                     v.clearAll();
                     v.clearMSG();
@@ -420,7 +421,7 @@ var v = new Vue({
         clearMSG() {
             setTimeout(function () {
                 v.successMSG = ''
-            }, 3000); // disappearing message success in 2 sec
+            }, 1500); // disappearing message success in 2 sec
         },
         clearAll() {
             $('#addMateria').modal('hide');
@@ -436,6 +437,7 @@ var v = new Vue({
                 idmateria: '',
                 horainicial: '',
                 horafinal: '',
+                 urlvideoconferencia: '',
                 smserror: ''};
             v.formValidate = false;
             v.addModal = false;

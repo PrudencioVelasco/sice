@@ -37,6 +37,18 @@ class Planificacion extends CI_Controller {
             echo json_encode($result);
         }
     }
+        public function showAllPrepa() {
+      
+        $idusuario = $this->session->user_id;
+        $query = $this->planificacion->showAllPrepa($idusuario);
+        //var_dump($query);
+        if ($query) {
+            $result['planificaciones'] = $this->planificacion->showAllPrepa($idusuario);
+        }
+        if (isset($result) && !empty($result)) {
+            echo json_encode($result);
+        }
+    }
 
         public function showAllAdmin() {
           $idplantel = $this->session->idplantel; 

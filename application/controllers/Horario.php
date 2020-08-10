@@ -323,6 +323,14 @@ class Horario extends CI_Controller {
                     'errors' => array(
                         'required' => 'Campo obligatorio.'
                     )
+                ),
+                array(
+                    'field' => 'urlvideoconferencia',
+                    'label' => 'URL Videoconferencia',
+                    'rules' => 'trim|valid_url',
+                    'errors' => array(
+                        'valid_url' => 'Formato de la URL invalido.'
+                    )
                 )
             );
 
@@ -333,7 +341,8 @@ class Horario extends CI_Controller {
                     'idmateria' => form_error('idmateria'),
                     'iddia' => form_error('iddia'),
                     'horainicial' => form_error('horainicial'),
-                    'horafinal' => form_error('horafinal')
+                    'horafinal' => form_error('horafinal'),
+                    'urlvideoconferencia' => form_error('urlvideoconferencia')
                 );
             } else {
 
@@ -342,7 +351,10 @@ class Horario extends CI_Controller {
                     'idmateria' => strtoupper($this->input->post('idmateria')),
                     'iddia' => strtoupper($this->input->post('iddia')),
                     'horainicial' => strtoupper($this->input->post('horainicial')),
-                    'horafinal' => $this->input->post('horafinal')
+                    'horafinal' => $this->input->post('horafinal'),
+                    'urlvideoconferencia' => $this->input->post('urlvideoconferencia'),
+                    'idusuario' => $this->session->user_id,
+                    'fecharegistro' => date('Y-m-d H:i:s')
                 );
                 $this->horario->addMateriaHorario($data);
             }
@@ -683,6 +695,14 @@ class Horario extends CI_Controller {
                     'errors' => array(
                         'required' => 'Campo obligatorio.'
                     )
+                ),
+                array(
+                    'field' => 'urlvideoconferencia',
+                    'label' => 'URL Videoconferencia',
+                    'rules' => 'trim|valid_url',
+                    'errors' => array(
+                        'valid_url' => 'Formato de la URL invalido.'
+                    )
                 )
             );
 
@@ -693,7 +713,8 @@ class Horario extends CI_Controller {
                     'idmateria' => form_error('idmateria'),
                     'iddia' => form_error('iddia'),
                     'horainicial' => form_error('horainicial'),
-                    'horafinal' => form_error('horafinal')
+                    'horafinal' => form_error('horafinal'),
+                    'urlvideoconferencia' => form_error('urlvideoconferencia')
                 );
             } else {
                 $id = $this->input->post('idhorariodetalle');
@@ -702,7 +723,10 @@ class Horario extends CI_Controller {
                     'idmateria' => strtoupper($this->input->post('idprofesormateria')),
                     'iddia' => strtoupper($this->input->post('iddia')),
                     'horainicial' => strtoupper($this->input->post('horainicial')),
-                    'horafinal' => $this->input->post('horafinal')
+                    'horafinal' => $this->input->post('horafinal'),
+                    'urlvideoconferencia' => $this->input->post('urlvideoconferencia'),
+                    'idusuario' => $this->session->user_id,
+                    'fecharegistro' => date('Y-m-d H:i:s')
                 );
                 $this->horario->updateHorarioMateria($id, $data);
                 $result['error'] = false;
@@ -824,7 +848,6 @@ class Horario extends CI_Controller {
         }
     }
 
-    
     public function deleteHorario() {
         if (Permission::grantValidar(uri_string()) == 1) {
             $idhorario = $this->input->get('idhorario');

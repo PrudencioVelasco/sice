@@ -33,6 +33,7 @@ class Profesor_model extends CI_Model {
       if (isset($idplantel) && !empty($idplantel)) {
         $this->db->where('m.idplantel',$idplantel); 
         }  
+       // $this->db->order_by('m.nombreclase ASC');
          $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();
@@ -40,7 +41,7 @@ class Profesor_model extends CI_Model {
             return false;
         }
     } 
-     public function validarCedula($cedula = '',$idprofesor, $idplantel = '') {
+     public function validarCedula($cedula = '',$idprofesor='', $idplantel = '') {
         $this->db->select('p.*');
         $this->db->from('tblprofesor p'); 
         $this->db->where('p.cedula',$cedula); 

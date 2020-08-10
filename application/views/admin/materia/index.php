@@ -4,7 +4,7 @@
         <div class=""> 
 
           <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-12  col-sm-12 col-xs-12">
               <div class="x_panel">
                 <div class="x_title">
                   <h2><strong>ADMINISTRAR MATERIAS/CLASES</strong></h2> 
@@ -22,20 +22,20 @@
                                         leave-active-class="animated fadeOutRight">
                                         <div class="notification is-success text-center px-5 top-middle" v-if="successMSG" @click="successMSG = false">{{successMSG}}</div>
                                     </transition>
-                                    <div class="col-md-12">
+                                    <div class="col-md-12  col-sm-12 col-xs-12">
 
                                         <div class="row">
-                                            <div class="col-md-6">
+                                            <div class="col-md-6  col-sm-12 col-xs-12">
                                                 <button class="btn  btn-primary waves-effect waves-black" @click="abrirAddModal()"><i class='fa fa-plus'></i> Agregar Materia</button> 
 
 
                                             </div>
-                                            <div class="col-md-6"></div>
+                                            <div class="col-md-6  col-sm-12 col-xs-12"></div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-md-6">
+                                            <div class="col-md-6  col-sm-12 col-xs-12">
                                             </div>
-                                            <div class="col-md-6">
+                                            <div class="col-md-6  col-sm-12 col-xs-12">
                                                 <input placeholder="Buscar" type="search" class="form-control btn-round" :autofocus="'autofocus'"   v-model="search.text" @keyup="searchMateria" name="search">
                                             </div>
                                         </div>

@@ -215,7 +215,7 @@ var v = new Vue({
             v.editModal = false;
             v.cargando = false;
             v.error = false; 
-
+              v.refresh();    
         },
         noResult() { 
             v.emptyResult = true;  // become true if the record is empty, print 'No Record Found'

@@ -6,7 +6,7 @@
 
     <div class="">  
         <div class="row">
-            <div class="col-md-12  col-sm-12 col-xs-12">
+            <div class="col-md-12">
                 <div class="x_panel">
                     <div class="x_title">
                         <h2><strong><i class="fa fa-slideshare"></i> ADMINISTRAR PLANIFICACIONES</strong></h2>
@@ -16,37 +16,43 @@
                     <div class="x_content">
 
                         <div class="row"> 
-                            <div id="appplanificacion"> 
+                            <div id="appplanificacion">
                                 <div class="row">
-                                    <div class="col-md-6  col-sm-12 col-xs-12">
+                                    <div class="col-md-12">
+                                        <button class="btn  btn-primary waves-effect waves-black" @click=" abrirAddModal()"><i class='fa fa-plus'></i> Agregar Planificación</button> 
+                                    </div> 
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
                                     </div>
-                                    <div class="col-md-6  col-sm-12 col-xs-12">
+                                    <div class="col-md-6">
                                         <input placeholder="Buscar" type="search" class="form-control btn-round" :autofocus="'autofocus'"  v-model="search.text" @keyup="searcPlanificacion" name="search">
                                     </div>
                                 </div>
                                 <br>
                                 <table class="table table-hover table-striped">
-                                    <thead class="bg-teal"> 
+                                    <thead class="bg-teal">
+                                    <th class="text-white" v-column-sortable:nombrenivel>NIVEL </th>
                                     <th class="text-white" v-column-sortable:nombregrupo>GRUPO </th>
                                     <th class="text-white" v-column-sortable:nombreclase>MATERIA </th>  
-                                    <th class="text-white" v-column-sortable:nombreprofesor>DOCENTE </th>  
-                                    <th class="text-white" v-column-sortable:bloque>BLOQUE </th>  
-                                    <th class="text-white" v-column-sortable:fechaejecucion>F. EJECUCIÓN </th>  
+                                   
                                     <th class="text-center text-white"> </th>
                                     </thead>
                                     <tbody class="table-light">
-                                        <tr v-for="row in planificaciones" class="table-default"> 
-                                            <td><strong>{{row.nombrenivel}} - {{row.nombregrupo}}</strong></td>
-                                            <td><strong>{{row.nombreclase}}</strong></td>
-                                            <td><strong>{{row.nombreprofesor}}</strong></td>
-                                            <td>{{row.bloque}}</td>
-                                            <td>{{row.fechaejecucion}}</td>
+                                        <tr v-for="row in planificaciones" class="table-default">
+                                            <td>{{row.nombrenivel}}</td>
+                                            <td>{{row.nombregrupo}}</td>
+                                            <td>{{row.nombreclase}}</td>
+                                            
                                             <td align="right">
 
 
                                                 <button type="button" class="btn btn-icons btn-info btn-sm waves-effect waves-black" @click=" abrirEditModal(); selectPlanificacion(row)" title="Modificar Datos"> <i class="fa fa-edit" aria-hidden="true"></i>
                                                     Editar
-                                                </button>   
+                                                </button>  
+                                                <button type="button" class="btn btn-icons btn-danger btn-sm waves-effect waves-black" @click="deletePlanificacion(row.idplanificacion)" title="Eliminar Datos"> <i class="fa fa-trash" aria-hidden="true"></i>
+                                                    Eliminar
+                                                </button>  
 
                                             </td>
                                         </tr>
@@ -102,6 +108,10 @@
     <div class="clearfix"></div>
     <div id="notif-group" class="tabbed_notifications"></div>
 </div>
-<script data-my_var_1="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/vue/appvue/administrador/catalogo/appplanificacion.js"></script> 
+  <script src="<?php echo base_url(); ?>/assets/editor/ckeditor5-build-classic/ckeditor.js" type="text/javascript"></script>
+  <script src="<?php echo base_url(); ?>/assets/editor/ckeditor5-vue/ckeditor.js" type="text/javascript"></script>
+    
+
+<script data-my_var_1="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/vue/appvue/docente/planificacion/appplanificacion_prepa.js"></script> 
 
 

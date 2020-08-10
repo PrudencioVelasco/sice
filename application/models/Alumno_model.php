@@ -313,9 +313,11 @@ FROM
     }
 
     public function showAllGrupos($idplantel = '') {
-        $this->db->select('g.idgrupo,n.nombrenivel,g.nombregrupo');
+        $this->db->select('g.idgrupo,n.nombrenivel,g.nombregrupo,t.nombreturno, e.nombreespecialidad');
         $this->db->from('tblgrupo g');
         $this->db->join('tblnivelestudio n', 'n.idnivelestudio = g.idnivelestudio');
+         $this->db->join('tblespecialidad e', 'e.idespecialidad = g.idespecialidad');
+        $this->db->join('tblturno t', 'g.idturno = t.idturno');
         if (isset($idplantel) && !empty($idplantel)) {
             $this->db->where('g.idplantel', $idplantel);
         }

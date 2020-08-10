@@ -5,8 +5,7 @@
                 <h4 class="modal-title" id="smallModalLabel">AGREGAR PROFESOR</h4>
             </div>
             <div class="modal-body">
-                <div style=" height: 200px;  padding-top:13px;  padding-right:15px; overflow-x: hidden; overflow-y: scroll;">
-                    <div class="row">
+                  <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12 ">
                             <div class="col-red" v-html="formValidate.msgerror"></div>
                         </div>
@@ -85,8 +84,7 @@
                         </div> 
                     </div>
 
-
-                </div>
+ 
             </div>
             <div class="modal-footer">
                 <div class="row">
@@ -116,8 +114,7 @@
                 <h4 class="modal-title" id="smallModalLabel">CAMBIAR CONTRASEÑA</h4>
             </div>
             <div class="modal-body">
-                <div style=" height: 100px; padding-right:15px; padding-top:13px; overflow-x: hidden; overflow-y: scroll;">
-                    <div class="row">
+                  <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12 ">
                             <div class="col-red" v-html="formValidate.msgerror"></div>
                         </div>
@@ -142,10 +139,7 @@
                                 <div class="col-red" v-html="formValidate.password2"></div>
                             </div>
                         </div> 
-                    </div>
-
-
-                </div>
+                    </div> 
             </div>
             <div class="modal-footer">
                 <div class="row">
@@ -175,8 +169,7 @@
                 <h4 class="modal-title" id="smallModalLabel">EDITAR PROFESOR</h4>
             </div>
             <div class="modal-body">
-                <div style=" height: 200px;overflow-x: hidden; padding-top:13px; padding-right:15px;  overflow-y: scroll;">
-                    <div class="row">
+               <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12 ">
                             <div class="col-red" v-html="formValidate.msgerror"></div>
                         </div>
@@ -244,11 +237,7 @@
                                 <div class="col-red" v-html="formValidate.correo"></div>
                             </div>
                         </div>  
-                    </div>
-
-
-
-                </div>
+                    </div> 
             </div>
             <div class="modal-footer">
                 <div class="row">

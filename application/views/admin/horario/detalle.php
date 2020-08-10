@@ -4,7 +4,7 @@
     <div class="">
 
       <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-12  col-sm-12 col-xs-12">
           <div class="x_panel">
             <div class="x_title">
               <h2><strong>ADMINISTRAR MATERIAS DEL HORARIO</strong></h2>
@@ -17,7 +17,7 @@
 
               <div id="appd">
                 <div class="row">
-                  <div class="col-md-12">
+                  <div class="col-md-12  col-sm-12 col-xs-12">
                     <?php if ($activo_horario == 1 && $activo_ciclo_escolar == 1) { ?>
                       <button class="btn btn-round btn-primary waves-effect waves-black" @click="modelAgregarMateria()"><i class='fa fa-plus'></i> Agregar Materia</button>
 
@@ -48,7 +48,8 @@
                               <li><a class="collapse-link " style="color: #000">
                                   <div v-if="row.opcion == 'NORMAL'">
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
-                                    <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small>
+                                     <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small><br/>
+                                      <small>{{row.urlvideoconferencia}}</small>
                                   </div>
                                   <div v-else>
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})
@@ -57,22 +58,22 @@
                               </li>
                               <?php if ($activo_horario == 1 && $activo_ciclo_escolar == 1) { ?>
                                 <li class="dropdown">
-                                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench" style="color: #1495ef;"></i></a>
                                   <ul class="dropdown-menu" role="menu">
-                                    <li v-if="row.opcion == 'NORMAL'"><a @click="modelEditMateria(); selectHorario(row)" href="#">Editar</a>
+                                      <li v-if="row.opcion == 'NORMAL'"><a @click="modelEditMateria(); selectHorario(row)" href="#"><i class="fa fa-pencil" style="color: #04b04d;"></i>  Editar</a>
                                     </li>
 
-                                    <li v-if="row.opcion == 'DESCANSO'"><a @click=" modelEditRecreo();  selectHorario(row)" href="#">Editar</a>
+                                    <li v-if="row.opcion == 'DESCANSO'"><a @click=" modelEditRecreo();  selectHorario(row)" href="#"><i class="fa fa-pencil" style="color: #04b04d;"></i>  Editar</a>
                                     </li>
-                                    <li v-if="row.opcion == 'SIN CLASES'"><a @click="modelEditHoraSinClase(); selectHorario(row)" href="#">Editar</a>
-                                    </li>
-
-                                    <li v-if="row.opcion == 'NORMAL'"><a href="#" @click="deleteHorario(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+                                    <li v-if="row.opcion == 'SIN CLASES'"><a @click="modelEditHoraSinClase(); selectHorario(row)" href="#"><i class="fa fa-pencil" style="color: #04b04d;"></i> Editar</a>
                                     </li>
 
-                                    <li v-if="row.opcion == 'DESCANSO'"><a href="#" @click="deleteReceso(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+                                    <li v-if="row.opcion == 'NORMAL'"><a href="#" @click="deleteHorario(row.idhorariodetalle); selectHorario(row);"><i class="fa fa-trash" style="color: red;"></i> Eliminar</a>
                                     </li>
-                                    <li v-if="row.opcion == 'SIN CLASES'"><a href="#" @click="deleteSinClases(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+
+                                    <li v-if="row.opcion == 'DESCANSO'"><a href="#" @click="deleteReceso(row.idhorariodetalle); selectHorario(row);"><i class="fa fa-trash" style="color: red;"></i> Eliminar</a>
+                                    </li>
+                                    <li v-if="row.opcion == 'SIN CLASES'"><a href="#" @click="deleteSinClases(row.idhorariodetalle); selectHorario(row);"><i class="fa fa-trash" style="color: red;"></i> Eliminar</a>
                                     </li>
                                   </ul>
                                 </li>
@@ -86,7 +87,8 @@
                               <li><a class="collapse-link " style="color: #000">
                                   <div v-if="row.opcion == 'NORMAL'">
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
-                                    <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small>
+                                    <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small><br/>
+                                      <small>{{row.urlvideoconferencia}}</small>
                                   </div>
                                   <div v-else>
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})
@@ -95,22 +97,22 @@
                               </li>
                               <?php if ($activo_horario == 1 && $activo_ciclo_escolar == 1) { ?>
                                 <li class="dropdown">
-                                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"  style="color: #1495ef;"></i></a>
                                   <ul class="dropdown-menu" role="menu">
-                                    <li v-if="row.opcion == 'NORMAL'"><a @click="modelEditMateria(); selectHorario(row)" href="#">Editar</a>
+                                    <li v-if="row.opcion == 'NORMAL'"><a @click="modelEditMateria(); selectHorario(row)" href="#"><i class="fa fa-pencil" style="color: #04b04d;"></i> Editar</a>
                                     </li>
 
-                                    <li v-if="row.opcion == 'DESCANSO'"><a @click=" modelEditRecreo(); selectHorario(row)" href="#">Editar</a>
+                                    <li v-if="row.opcion == 'DESCANSO'"><a @click=" modelEditRecreo(); selectHorario(row)" href="#"><i class="fa fa-pencil" style="color: #04b04d;"></i> Editar</a>
                                     </li>
-                                    <li v-if="row.opcion == 'SIN CLASES'"><a @click="modelEditHoraSinClase(); selectHorario(row)" href="#">Editar</a>
-                                    </li>
-
-                                    <li v-if="row.opcion == 'NORMAL'"><a href="#" @click="deleteHorario(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+                                    <li v-if="row.opcion == 'SIN CLASES'"><a @click="modelEditHoraSinClase(); selectHorario(row)" href="#"><i class="fa fa-pencil" style="color: #04b04d;"></i> Editar</a>
                                     </li>
 
-                                    <li v-if="row.opcion == 'DESCANSO'"><a href="#" @click="deleteReceso(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+                                    <li v-if="row.opcion == 'NORMAL'"><a href="#" @click="deleteHorario(row.idhorariodetalle); selectHorario(row);"><i class="fa fa-trash" style="color: red;"></i> Eliminar</a>
                                     </li>
-                                    <li v-if="row.opcion == 'SIN CLASES'"><a href="#" @click="deleteSinClases(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+
+                                    <li v-if="row.opcion == 'DESCANSO'"><a href="#" @click="deleteReceso(row.idhorariodetalle); selectHorario(row);"><i class="fa fa-trash" style="color: red;"></i> Eliminar</a>
+                                    </li>
+                                    <li v-if="row.opcion == 'SIN CLASES'"><a href="#" @click="deleteSinClases(row.idhorariodetalle); selectHorario(row);"><i class="fa fa-trash" style="color: red;"></i> Eliminar</a>
                                     </li>
                                   </ul>
                                 </li>
@@ -124,7 +126,8 @@
                               <li><a class="collapse-link " style="color: #000">
                                   <div v-if="row.opcion == 'NORMAL'">
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
-                                    <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small>
+                                    <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small><br/>
+                                      <small>{{row.urlvideoconferencia}}</small>
                                   </div>
                                   <div v-else>
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})
@@ -133,22 +136,22 @@
                               </li>
                               <?php if ($activo_horario == 1 && $activo_ciclo_escolar == 1) { ?>
                                 <li class="dropdown">
-                                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"  style="color: #1495ef;"></i></a>
                                   <ul class="dropdown-menu" role="menu">
-                                    <li v-if="row.opcion == 'NORMAL'"><a @click="modelEditMateria();  selectHorario(row)" href="#">Editar</a>
+                                    <li v-if="row.opcion == 'NORMAL'"><a @click="modelEditMateria();  selectHorario(row)" href="#"><i class="fa fa-pencil" style="color: #04b04d;"></i> Editar</a>
                                     </li>
 
-                                    <li v-if="row.opcion == 'DESCANSO'"><a @click="modelEditRecreo();  selectHorario(row)" href="#">Editar</a>
+                                    <li v-if="row.opcion == 'DESCANSO'"><a @click="modelEditRecreo();  selectHorario(row)" href="#"><i class="fa fa-pencil" style="color: #04b04d;"></i> Editar</a>
                                     </li>
-                                    <li v-if="row.opcion == 'SIN CLASES'"><a @click="modelEditHoraSinClase(); selectHorario(row)" href="#">Editar</a>
-                                    </li>
-
-                                    <li v-if="row.opcion == 'NORMAL'"><a href="#" @click="deleteHorario(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+                                    <li v-if="row.opcion == 'SIN CLASES'"><a @click="modelEditHoraSinClase(); selectHorario(row)" href="#"><i class="fa fa-pencil" style="color: #04b04d;"></i> Editar</a>
                                     </li>
 
-                                    <li v-if="row.opcion == 'DESCANSO'"><a href="#" @click="deleteReceso(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+                                    <li v-if="row.opcion == 'NORMAL'"><a href="#" @click="deleteHorario(row.idhorariodetalle); selectHorario(row);"><i class="fa fa-trash" style="color: red;"></i> Eliminar</a>
                                     </li>
-                                    <li v-if="row.opcion == 'SIN CLASES'"><a href="#" @click="deleteSinClases(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+
+                                    <li v-if="row.opcion == 'DESCANSO'"><a href="#" @click="deleteReceso(row.idhorariodetalle); selectHorario(row);"><i class="fa fa-trash" style="color: red;"></i> Eliminar</a>
+                                    </li>
+                                    <li v-if="row.opcion == 'SIN CLASES'"><a href="#" @click="deleteSinClases(row.idhorariodetalle); selectHorario(row);"><i class="fa fa-trash" style="color: red;"></i> Eliminar</a>
                                     </li>
                                   </ul>
                                 </li>
@@ -162,7 +165,8 @@
                               <li><a class="collapse-link " style="color: #000">
                                   <div v-if="row.opcion == 'NORMAL'">
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
-                                    <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small>
+                                    <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small><br/>
+                                      <small>{{row.urlvideoconferencia}}</small>
                                   </div>
                                   <div v-else>
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})
@@ -171,22 +175,22 @@
                               </li>
                               <?php if ($activo_horario == 1 && $activo_ciclo_escolar == 1) { ?>
                                 <li class="dropdown">
-                                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"  style="color: #1495ef;"></i></a>
                                   <ul class="dropdown-menu" role="menu">
-                                    <li v-if="row.opcion == 'NORMAL'"><a @click="modelEditMateria();  selectHorario(row)" href="#">Editar</a>
+                                    <li v-if="row.opcion == 'NORMAL'"><a @click="modelEditMateria();  selectHorario(row)" href="#"><i class="fa fa-pencil" style="color: #04b04d;"></i> Editar</a>
                                     </li>
 
-                                    <li v-if="row.opcion == 'DESCANSO'"><a @click="modelEditRecreo();  selectHorario(row)" href="#">Editar</a>
+                                    <li v-if="row.opcion == 'DESCANSO'"><a @click="modelEditRecreo();  selectHorario(row)" href="#"><i class="fa fa-pencil" style="color: #04b04d;"></i> Editar</a>
                                     </li>
-                                    <li v-if="row.opcion == 'SIN CLASES'"><a @click="modelEditHoraSinClase(); selectHorario(row)" href="#">Editar</a>
-                                    </li>
-
-                                    <li v-if="row.opcion == 'NORMAL'"><a href="#" @click="deleteHorario(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+                                    <li v-if="row.opcion == 'SIN CLASES'"><a @click="modelEditHoraSinClase(); selectHorario(row)" href="#"><i class="fa fa-pencil" style="color: #04b04d;"></i> Editar</a>
                                     </li>
 
-                                    <li v-if="row.opcion == 'DESCANSO'"><a href="#" @click="deleteReceso(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+                                    <li v-if="row.opcion == 'NORMAL'"><a href="#" @click="deleteHorario(row.idhorariodetalle); selectHorario(row);"><i class="fa fa-trash" style="color: red;"></i> Eliminar</a>
                                     </li>
-                                    <li v-if="row.opcion == 'SIN CLASES'"><a href="#" @click="deleteSinClases(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+
+                                    <li v-if="row.opcion == 'DESCANSO'"><a href="#" @click="deleteReceso(row.idhorariodetalle); selectHorario(row);"><i class="fa fa-trash" style="color: red;"></i> Eliminar</a>
+                                    </li>
+                                    <li v-if="row.opcion == 'SIN CLASES'"><a href="#" @click="deleteSinClases(row.idhorariodetalle); selectHorario(row);"><i class="fa fa-trash" style="color: red;"></i> Eliminar</a>
                                     </li>
                                   </ul>
                                 </li>
@@ -200,7 +204,8 @@
                               <li><a class="collapse-link " style="color: #000">
                                   <div v-if="row.opcion == 'NORMAL'">
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
-                                    <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small>
+                                    <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small><br/>
+                                      <small>{{row.urlvideoconferencia}}</small>
                                   </div>
                                   <div v-else>
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})
@@ -209,22 +214,22 @@
                               </li>
                               <?php if ($activo_horario == 1 && $activo_ciclo_escolar == 1) { ?>
                                 <li class="dropdown">
-                                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"  style="color: #1495ef;"></i></a>
                                   <ul class="dropdown-menu" role="menu">
-                                    <li v-if="row.opcion == 'NORMAL'"><a @click="modelEditMateria();  selectHorario(row)" href="#">Editar</a>
+                                      <li v-if="row.opcion == 'NORMAL'"><a @click="modelEditMateria();  selectHorario(row)" href="#"><i class="fa fa-pencil" style="color: #04b04d;"></i> Editar</a>
                                     </li>
 
-                                    <li v-if="row.opcion == 'DESCANSO'"><a @click=" modelEditRecreo(); selectHorario(row)" href="#">Editar</a>
+                                    <li v-if="row.opcion == 'DESCANSO'"><a @click=" modelEditRecreo(); selectHorario(row)" href="#"><i class="fa fa-pencil" style="color: #04b04d;"></i> Editar</a>
                                     </li>
-                                    <li v-if="row.opcion == 'SIN CLASES'"><a @click="modelEditHoraSinClase(); selectHorario(row)" href="#">Editar</a>
-                                    </li>
-
-                                    <li v-if="row.opcion == 'NORMAL'"><a href="#" @click="deleteHorario(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+                                    <li v-if="row.opcion == 'SIN CLASES'"><a @click="modelEditHoraSinClase(); selectHorario(row)" href="#"><i class="fa fa-pencil" style="color: #04b04d;"></i> Editar</a>
                                     </li>
 
-                                    <li v-if="row.opcion == 'DESCANSO'"><a href="#" @click="deleteReceso(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+                                    <li v-if="row.opcion == 'NORMAL'"><a href="#" @click="deleteHorario(row.idhorariodetalle); selectHorario(row);"><i class="fa fa-trash" style="color: red;"></i> Eliminar</a>
                                     </li>
-                                    <li v-if="row.opcion == 'SIN CLASES'"><a href="#" @click="deleteSinClases(row.idhorariodetalle); selectHorario(row);">Eliminar</a>
+
+                                    <li v-if="row.opcion == 'DESCANSO'"><a href="#" @click="deleteReceso(row.idhorariodetalle); selectHorario(row);"><i class="fa fa-trash" style="color: red;"></i> Eliminar</a>
+                                    </li>
+                                    <li v-if="row.opcion == 'SIN CLASES'"><a href="#" @click="deleteSinClases(row.idhorariodetalle); selectHorario(row);"><i class="fa fa-trash" style="color: red;"></i> Eliminar</a>
                                     </li>
                                   </ul>
                                 </li>
@@ -248,9 +253,7 @@
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- footer content -->
+           <!-- footer content -->
     <footer>
       <div class="copyright-info">
         <p class="pull-right">SICE - Sistema Integral para el Control Escolar</a>
@@ -259,12 +262,12 @@
       <div class="clearfix"></div>
     </footer>
     <!-- /footer content -->
+    </div>
+
+ 
 
   </div>
-  <!-- /page content -->
-  </div>
-
-  </div>
+ 
 
   <div id="custom_notifications" class="custom-notifications dsp_none">
     <ul class="list-unstyled notifications clearfix" data-tabbed_notifications="notif-group">

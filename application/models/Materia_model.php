@@ -23,7 +23,7 @@ class Materia_model extends CI_Model {
       if (isset($idplantel) && !empty($idplantel)) {
         $this->db->where('m.idplantel',$idplantel); 
         }   
-        $this->db->order_by('m.nombreclase DESC');
+        $this->db->order_by('m.clave DESC');
          $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();
