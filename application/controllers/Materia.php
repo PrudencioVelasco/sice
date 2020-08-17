@@ -133,6 +133,14 @@ class Materia extends CI_Controller {
                     'errors' => array(
                         'required' => 'Campo obligatorio.'
                     )
+                ),
+                 array(
+                    'field' => 'unidades',
+                    'label' => 'Total de unidades',
+                    'rules' => 'trim|is_natural',
+                    'errors' => array(
+                        'is_natural' => 'Solo número natural.'
+                    )
                 )
             );
 
@@ -145,6 +153,7 @@ class Materia extends CI_Controller {
                     'nombreclase' => form_error('nombreclase'),
                     'clave' => form_error('clave'),
                     'credito' => form_error('credito'),
+                     'unidades' => form_error('unidades'),
                     'idclasificacionmateria' => form_error('idclasificacionmateria')
                 );
             } else {
@@ -155,6 +164,7 @@ class Materia extends CI_Controller {
                 $nombreclase = trim($this->input->post('nombreclase'));
                 $credito = trim($this->input->post('credito'));
                 $clave = trim($this->input->post('clave'));
+                 $unidades = trim($this->input->post('unidades'));
                 $validar = $this->materia->validarAddMateria($idnivelestudio, $idespecialidad, $nombreclase, $this->session->idplantel, $clave);
                 if ($validar == FALSE) {
 
@@ -166,6 +176,7 @@ class Materia extends CI_Controller {
                         'nombreclase' => mb_strtoupper($nombreclase),
                         'clave' => mb_strtoupper($clave),
                         'credito' => $credito,
+                        'unidades'=> (isset($unidades) && !empty($unidades))? $unidades:0,
                         'idusuario' => $this->session->user_id,
                         'fecharegistro' => date('Y-m-d H:i:s')
                     );
@@ -290,6 +301,14 @@ class Materia extends CI_Controller {
                     'errors' => array(
                         'required' => 'Campo obligatorio.'
                     )
+                ),
+                 array(
+                    'field' => 'unidades',
+                    'label' => 'Total de unidades',
+                    'rules' => 'trim|is_natural',
+                    'errors' => array(
+                        'is_natural' => 'Solo número natural.'
+                    )
                 )
             );
 
@@ -302,6 +321,7 @@ class Materia extends CI_Controller {
                     'nombreclase' => form_error('nombreclase'),
                     'clave' => form_error('clave'),
                     'credito' => form_error('credito'),
+                    'unidades' => form_error('unidades'),
                     'idclasificacionmateria' => form_error('idclasificacionmateria')
                 );
             } else {
@@ -312,6 +332,7 @@ class Materia extends CI_Controller {
                 $idmateria = trim($this->input->post('idmateria'));
                 $clave = trim($this->input->post('clave'));
                 $credito = trim($this->input->post('credito'));
+                $unidades = trim($this->input->post('unidades'));
                 $idclasificacionmateria = trim($this->input->post('idclasificacionmateria'));
                 $validar = $this->materia->validarUpdateMateria($idmateria, $idnivelestudio, $idespecialidad, $nombreclase, $this->session->idplantel, $clave);
                 if ($validar == FALSE) {
@@ -323,6 +344,7 @@ class Materia extends CI_Controller {
                         'nombreclase' => mb_strtoupper($nombreclase),
                         'clave' => mb_strtoupper($clave),
                         'credito' => $credito,
+                         'unidades'=> (isset($unidades) && !empty($unidades))? $unidades:0,
                         'idusuario' => $this->session->user_id,
                         'fecharegistro' => date('Y-m-d H:i:s')
                     );

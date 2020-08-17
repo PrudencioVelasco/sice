@@ -161,7 +161,7 @@
                                     <li><a href="<?= base_url('/Alumno/inicio') ?>"><i class="fa fa-slideshare"></i>  Alumnos</a></li>
                                     <li><a href="<?= base_url('/Tutor/inicio') ?>"><i class="fa fa-users"></i>  Tutores</a></li>
                                     <li><a href="<?= base_url('/Profesor/inicio') ?>"><i class="fa fa-user"></i>  Profesor</a></li>
-                                    <li><a href="<?= base_url('/CicloEscolar/inicio') ?>"><i class="fa fa-bookmark-o"></i>  Ciclo Escolar</a></li>
+                                    <li><a href="<?= base_url('/CicloEscolar/inicio') ?>"><i class="fa fa-bookmark-o"></i>  Periodo Escolar</a></li>
                                     <li><a href="<?= base_url('/Grupo/inicio') ?>"><i class="fa fa-graduation-cap"></i>  Grupo</a></li>
                                     <li><a href="<?= base_url('/Horario/inicio') ?>"><i class="fa fa-clock-o"></i>  Horario</a></li>
                                     <li><a href="<?= base_url('/Promover/') ?>"><i class="fa fa-arrow-up"></i>  Promoción Alumno</a></li>

@@ -7,7 +7,7 @@
             <div class="col-md-12  col-sm-12 col-xs-12">
               <div class="x_panel">
                 <div class="x_title">
-                  <h2><strong>ADMINISTRAR CICLO ESCOLAR</strong></h2> 
+                  <h2><strong>ADMINISTRAR PERIODOS ESCOLARES</strong></h2> 
                   <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
@@ -22,7 +22,7 @@
 
                                         <div class="row">
                                             <div class="col-md-6  col-sm-12 col-xs-12">
-                                                <button class="btn  btn-primary waves-effect waves-black" @click="abrirAddModal()"><i class='fa fa-plus'></i> Agregar Ciclo Escolar</button> 
+                                                <button class="btn  btn-primary waves-effect waves-black" @click="abrirAddModal()"><i class='fa fa-plus'></i> Agregar Periodo Escolar</button> 
 
 
                                             </div>

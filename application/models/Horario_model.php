@@ -105,8 +105,11 @@ class Horario_model extends CI_Model {
         }
     }
         public function detalleHorario($idhorario = '') {
-        $this->db->select('h.idgrupo, h.idhorario');
+        $this->db->select('h.idgrupo, h.idhorario, g.nombregrupo,e.nombreespecialidad, n.nombrenivel');
         $this->db->from('tblhorario h'); 
+        $this->db->join('tblgrupo g', 'g.idgrupo = h.idgrupo');
+        $this->db->join('tblespecialidad e', 'e.idespecialidad = g.idespecialidad');
+        $this->db->join('tblnivelestudio n','n.idnivelestudio = g.idnivelestudio');
         $this->db->where('h.idhorario',$idhorario);
         $query = $this->db->get();
         if ($query->num_rows() > 0) {

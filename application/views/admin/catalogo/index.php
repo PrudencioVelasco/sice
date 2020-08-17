@@ -55,7 +55,7 @@
                                                     </div>
                                                     <div class="content">
                                                         <div class="text">
-                                                            <span class="titulocatalogo">MATERIAS</span>
+                                                            <span class="titulocatalogo">MATERIAS/CURSOS</span>
                                                         </div>
                                                         <div class="number"></div>
                                                     </div>

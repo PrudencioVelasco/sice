@@ -612,10 +612,14 @@ if(isset($lunesAll) && !empty($lunesAll)){
         <thead class="bg-teal">
       <th>#</th>
       <th>MATERIA</th>';
+        if(isset($unidades) && !empty($unidades)){
         foreach ($unidades as $block):
             $total_unidades += 1;
             $tabla .= '<th><strong>' . $block->nombreunidad . '</strong></th>';
         endforeach;
+        }else{
+              $tabla .= '<th><strong></strong></th>';
+        }
         $tabla .= '<th>C. FINAL</th>';
         $tabla .= '</thead>';
         $c = 1;

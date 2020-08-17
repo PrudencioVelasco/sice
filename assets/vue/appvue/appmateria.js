@@ -27,6 +27,7 @@ var v = new Vue({
             nombreclase: '',
             clave: '',
             credito: '',
+            unidades:'',
             smserror: ''},
         chooseMateria: {},
         formValidate: [],
@@ -214,6 +215,7 @@ var v = new Vue({
                 nombreclase: '',
                 clave: '',
                 credito: '',
+                unidades:'',
                 smserror: ''};
             v.formValidate = false;
             v.addModal = false;

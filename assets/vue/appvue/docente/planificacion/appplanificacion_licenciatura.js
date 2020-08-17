@@ -1,19 +1,13 @@
 
-var this_js_script = $('script[src*=appplanificacion_prepa]');
+var this_js_script = $('script[src*=appplanificacion_licenciatura]');
 var my_var_1 = this_js_script.attr('data-my_var_1');
 if (typeof my_var_1 === "undefined") {
     var my_var_1 = 'some_default_value';
 }
-Vue.config.devtools = true;
-Vue.use(CKEditor);
+Vue.config.devtools = true; 
 var vu = new Vue({
     el: '#appplanificacion',
-    data: {
-        editor: ClassicEditor,
-        editorData: '<p>Content of the editor.</p>',
-        editorConfig: {
-            // The configuration of the editor.
-        },
+    data: { 
         url: my_var_1,
         addModal: false,
         editModal: false,
@@ -27,27 +21,15 @@ var vu = new Vue({
             idperiodo: '',
             idprofesor: '',
             idgrupo: '',
-            obetivocurso: '',
-            valordelmes: '',
-            material: '',
-            bibliografia: '',
-            competenciaadesarrollar: '',
-            observacion: '',
+            fechainicio: '',
+            fechafin: '',
+            documento: '', 
             smserror: ''
-        },
-        detalleplanificacion: [],
-        dsemana: '',
-        dfecha: '',
-        dobjetivo: '',
-        dcontenido: '',
-        derror: '',
-        dexito: '',
-        dnumeroregistro: '',
+        }, 
         choosePlanificacion: {},
-        chooseActividad: {},
         formValidate: [],
         successMSG: '',
-
+        file: '',
         //pagination
         currentPage: 0,
         rowCountPage: 10,
@@ -66,15 +48,12 @@ var vu = new Vue({
         },
         abrirAddModal() {
             $("#addRegister").modal("show");
-        },
-        abrirAddDetalleModal() {
-            $("#addRegisterDetalle").modal("show");
-        },
+        }, 
         abrirEditModal() {
             $("#editRegister").modal("show");
         },
         showAll() {
-            axios.get(this.url + "Planificacion/showAllPrepa").then(function (response) {
+            axios.get(this.url + "Planificacion/showAllLicenciatura").then(function (response) {
                 if (response.data.planificaciones == null) {
                     vu.noResult()
                 } else {
@@ -90,7 +69,7 @@ var vu = new Vue({
         },
         searcPlanificacion() {
             var formData = vu.formData(vu.search);
-            axios.post(this.url + "Planificacion/searchPlanificacion", formData).then(function (response) {
+            axios.post(this.url + "Planificacion/searchPlaneacionLicenciatura", formData).then(function (response) {
                 if (response.data.planificaciones == null) {
                     vu.noResult()
                 } else {
@@ -99,45 +78,51 @@ var vu = new Vue({
                 }
             })
         },
+        onChangeFileUpload() {
+            this.file = this.$refs.filesubir.files[0];
+        },
+         onChangeFileUploadUpdate() {
+            this.file = this.$refs.fileupdate.files[0];
+        },
         addPlanificacion() {
             vu.cargando = true;
             vu.error = false;
-            if (vu.detalleplanificacion.length > 0) {
-                var formData = vu.formData(vu.newPlanificacion);
-                formData.append('actividades', JSON.stringify(vu.detalleplanificacion));
-                axios.post(this.url + "Planificacion/addPlanificacion", formData).then(function (response) {
-                    if (response.data.error) {
-                        vu.formValidate = response.data.msg;
-                        vu.error = true;
-                        vu.cargando = false;
-                    } else {
-                        swal({
-                            position: 'center',
-                            type: 'success',
-                            title: 'Registrado!',
-                            showConfirmButton: false,
-                            timer: 1500
-                        });
+            var formData = vu.formData(vu.newPlanificacion);
+            formData.append('file', this.file);
+            axios.post(this.url + "Planificacion/addPlanificacionLicenciatura", formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-dara'
+                }
+            }).then(function (response) {
+                if (response.data.error) {
+                    vu.formValidate = response.data.msg;
+                    vu.error = true;
+                    vu.cargando = false;
+                } else {
+                    swal({
+                        position: 'center',
+                        type: 'success',
+                        title: 'Registrado!',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
 
-                        vu.clearAll();
-                        vu.clearMSG();
-                    }
-                })
-            } else {
-                swal({
-                    position: 'center',
-                    type: 'info',
-                    title: 'Debe de agregar actividades en la planificacion!',
-                    showConfirmButton: false,
-                    timer: 2000
-                });
-            }
+                    vu.clearAll();
+                    vu.clearMSG();
+                }
+            })
+
         },
         updatePlanificacion() {
             vu.cargando = true;
             vu.error = false;
             var formData = vu.formData(vu.choosePlanificacion);
-            axios.post(this.url + "Planificacion/editPlanificacion", formData).then(function (response) {
+             formData.append('file', this.file);
+            axios.post(this.url + "Planificacion/updatePlanificacionLicenciatura",formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-dara'
+                }
+            }).then(function (response) {
                 if (response.data.error) {
                     vu.formValidate = response.data.msg;
                     vu.error = true;
@@ -155,12 +140,14 @@ var vu = new Vue({
                     vu.clearMSG();
 
                 }
-            })
+            }).catch((error) => {
+                        swal("Información", "Saturación de solicitudad, intente mas tarde.", "info")
+                    })
         },
         deletePlanificacion(id) {
             Swal.fire({
-                title: '¿Eliminar Planificación?',
-                text: "Realmente desea eliminar la Planificación.",
+                title: '¿Eliminar Planeación?',
+                text: "Realmente desea eliminar la Planeación.",
                 type: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -170,7 +157,7 @@ var vu = new Vue({
             }).then((result) => {
                 if (result.value) {
 
-                    axios.get(this.url + "Planificacion/deletePlanificacion", {
+                    axios.get(this.url + "Planificacion/deletePlaneacionLicenciatura", {
                         params: {
                             id: id
                         }
@@ -181,7 +168,7 @@ var vu = new Vue({
                                 type: 'success',
                                 title: 'Eliminado!',
                                 showConfirmButton: false,
-                                timer: 3000
+                                timer: 1500
                             });
                             vu.clearAll();
                             vu.clearMSG();
@@ -189,32 +176,11 @@ var vu = new Vue({
                             swal("Información", response.data.msg.msgerror, "info")
                         }
                     }).catch((error) => {
-                        swal("Información", "No se puede eliminar el Examen", "info")
+                        swal("Información", "No se pudo elimiar la Planeación, intente mas tarde.", "info")
                     })
                 }
             })
-        },
-        agregarActividad() {
-            vu.derror = '';
-            vu.dexito = '';
-            if (vu.dsemana != '' && vu.dfecha != '' && vu.dobjetivo != '' && vu.dcontenido != '') {
-                var detalle = {semana: vu.dsemana, fecha: vu.dfecha, objetivo: vu.dobjetivo, contenido: vu.dcontenido} //creamos la variable personas, con la variable nombre y apellidos
-                vu.detalleplanificacion.push(detalle);//añadimos el la variable persona al array
-                //Limpiamos los campos
-                vu.dsemana = "";
-                vu.dfecha = "";
-                vu.dobjetivo = "";
-                vu.dcontenido = "";
-                vu.derror = '';
-                vu.dexito = 'Agregado con extio!!, Puede agregar nueva actividad.';
-
-            } else {
-                vu.derror = "Todos los campos son obligatorios."
-            }
-        },
-        deleteItem(index) {
-            vu.detalleplanificacion.splice(index, 1);
-        },
+        },  
         formData(obj) {
             var formData = new FormData();
             for (var key in obj) {
@@ -236,25 +202,7 @@ var vu = new Vue({
 
         selectPlanificacion(planificacion) {
             vu.choosePlanificacion = planificacion;
-        },
-        selectActividad(numeroregistro, actividad) {
-            vu.dnumeroregistro = numeroregistro;
-            vu.chooseActividad = actividad;
-            $("#editRegisterDetalle").modal("show");
-        },
-        updateActividad() {
-            vu.detalleplanificacion.splice(vu.dnumeroregistro, 1);
-            var detalle = {semana: vu.chooseActividad.semana, fecha: vu.chooseActividad.fecha, objetivo: vu.chooseActividad.objetivo, contenido: vu.chooseActividad.contenido} //creamos la variable personas, con la variable nombre y apellidos
-            vu.detalleplanificacion.push(detalle);//añadimos el la variable persona al array
-            swal({
-                position: 'center',
-                type: 'success',
-                title: 'Modificado!',
-                showConfirmButton: false,
-                timer: 2000
-            });
-             $("#editRegisterDetalle").modal("hide");
-        },
+        },  
         clearMSG() {
             setTimeout(function () {
                 vu.successMSG = ''
@@ -271,17 +219,19 @@ var vu = new Vue({
             vu.error = false;
             $("#editRegister").modal("hide");
             $("#addRegister").modal("hide");
-
+           // vu.file = '';
+           // this.$refs.file.value = ''; 
+            //this.$refs.file.value=null;
+            //this.$refs.file.value = '';
+            $("#filesubir").val(null);
+             $("#fileupdate").val(null);
             vu.newPlanificacion = {
-                idperiodo: '',
+                 idperiodo: '',
                 idprofesor: '',
                 idgrupo: '',
-                obetivocurso: '',
-                valordelmes: '',
-                materia: '',
-                bibliografia: '',
-                competenciaadesarrollar: '',
-                observacion: '',
+                fechainicio: '',
+                fechafin: '',
+                documento: '',
                 smserror: ''
             };
             vu.formValidate = false;

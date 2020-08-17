@@ -62,10 +62,11 @@ class Horario extends CI_Controller {
         if ($this->horario->validarActivoCicloEscolar($id)) {
             $activo_ciclo_escolar = 1;
         }
-
+        $detalle_horario = $this->horario->detalleHorario($id);
         $data = array(
             'id' => $id,
             'activo_horario' => $activo_horario,
+            'detalle_horario'=>$detalle_horario,
             'activo_ciclo_escolar' => $activo_ciclo_escolar
         );
         $this->load->view('admin/header');

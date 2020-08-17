@@ -42,7 +42,7 @@
                                 <thead class="bg-teal"> 
                                     <tr>
                                         <th>#</th>
-                                        <th>MATERI</th>
+                                        <th>MATERIA</th>
                                         <th>TAREA</th> 
                                         <th>F. ENTREGA</th> 
                                     </tr>
@@ -83,7 +83,7 @@
                                                     setlocale(LC_ALL, 'es_ES');
                                                     $date = new Datetime($value->fechaentrega);
                                                     $fecha = strftime("%A, %d de %B", $date->getTimestamp());
-                                                    echo "<strong>" . $fecha . "</strong>";
+                                                    echo "<strong>" .utf8_encode($fecha) . "</strong>";
                                                     ?>
                                                 </td>
                                             </tr>

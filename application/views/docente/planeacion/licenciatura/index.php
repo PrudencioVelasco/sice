@@ -9,7 +9,7 @@
             <div class="col-md-12">
                 <div class="x_panel">
                     <div class="x_title">
-                        <h2><strong><i class="fa fa-slideshare"></i> ADMINISTRAR PLANIFICACIONES</strong></h2>
+                        <h2><strong><i class="fa fa-slideshare"></i> ADMINISTRAR PLANEACIONES</strong></h2>
 
                         <div class="clearfix"></div>
                     </div>
@@ -19,7 +19,7 @@
                             <div id="appplanificacion">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <button class="btn  btn-primary waves-effect waves-black" @click=" abrirAddModal()"><i class='fa fa-plus'></i> Agregar Planificación</button> 
+                                        <button class="btn  btn-primary waves-effect waves-black" @click=" abrirAddModal()"><i class='fa fa-plus'></i> Agregar Planeación</button> 
                                     </div> 
                                 </div>
                                 <div class="row">
@@ -32,25 +32,26 @@
                                 <br>
                                 <table class="table table-hover table-striped">
                                     <thead class="bg-teal">
-                                    <th class="text-white" v-column-sortable:nombrenivel>NIVEL </th>
-                                    <th class="text-white" v-column-sortable:nombregrupo>GRUPO </th>
+                                    <th class="text-white" v-column-sortable:nombrenivel>GRUPO </th> 
                                     <th class="text-white" v-column-sortable:nombreclase>MATERIA </th>  
-                                   
+                                     <th class="text-white" v-column-sortable:fechainicio>FECHA </th> 
+                                      <th class="text-white" v-column-sortable:documento>DOCUMENTO </th> 
+
                                     <th class="text-center text-white"> </th>
                                     </thead>
                                     <tbody class="table-light">
                                         <tr v-for="row in planificaciones" class="table-default">
-                                            <td>{{row.nombrenivel}}</td>
-                                            <td>{{row.nombregrupo}}</td>
+                                            <td>{{row.nombrenivel}} - {{row.nombregrupo}}</td>
                                             <td>{{row.nombreclase}}</td>
-                                            
+                                            <td>{{row.fechainicio}} al {{row.fechafin}}</td>
+                                            <td><a target='_blank' v-bind:href="'../../documentos/planeacion/licenciatura/' + row.documento">DESCARGAR</a></td>
                                             <td align="right">
 
 
                                                 <button type="button" class="btn btn-icons btn-info btn-sm waves-effect waves-black" @click=" abrirEditModal(); selectPlanificacion(row)" title="Modificar Datos"> <i class="fa fa-edit" aria-hidden="true"></i>
                                                     Editar
                                                 </button>  
-                                                <button type="button" class="btn btn-icons btn-danger btn-sm waves-effect waves-black" @click="deletePlanificacion(row.idplanificacion)" title="Eliminar Datos"> <i class="fa fa-trash" aria-hidden="true"></i>
+                                                <button type="button" class="btn btn-icons btn-danger btn-sm waves-effect waves-black" @click="deletePlanificacion(row.idplaneacion)" title="Eliminar Datos"> <i class="fa fa-trash" aria-hidden="true"></i>
                                                     Eliminar
                                                 </button>  
 
@@ -108,9 +109,7 @@
     <div class="clearfix"></div>
     <div id="notif-group" class="tabbed_notifications"></div>
 </div>
-  <script src="<?php echo base_url(); ?>/assets/editor/ckeditor5-build-classic/ckeditor.js" type="text/javascript"></script>
-  <script src="<?php echo base_url(); ?>/assets/editor/ckeditor5-vue/ckeditor.js" type="text/javascript"></script>
-    
+
 
 <script data-my_var_1="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/vue/appvue/docente/planificacion/appplanificacion_licenciatura.js"></script> 
 

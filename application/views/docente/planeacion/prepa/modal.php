@@ -49,8 +49,8 @@
                             <div class="form-group">
 
                                 <label > <font color="red" >*</font> MATERIAL</label> 
-                                <ckeditor :editor="editor" v-model="newPlanificacion.materia" :config="editorConfig"></ckeditor>
-                                <div class="col-red" v-html="formValidate.materia"></div>
+                                <ckeditor :editor="editor" v-model="newPlanificacion.material" :config="editorConfig"></ckeditor>
+                                <div class="col-red" v-html="formValidate.material"></div>
                             </div>
                         </div>  
                         <div class="col-md-6 col-sm-12 col-xs-12 ">
@@ -77,14 +77,14 @@
                             <button @click="abrirAddDetalleModal()" class="btn btn-info" ><i class="fa fa-plus-circle" ></i> AGREGAR ACTIVIDAD</button>
                         </div> 
                     </div> 
-                       <div class="row">
+                    <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12 ">
                             <table class=" table table-striped dt-responsive nowrap" cellspacing="0">
                                 <thead class="bg-teal">
                                 <th>Semana</th>
                                 <th>Fecha</th>
                                 <th>Objetivo</th>
-                                 <th>Contenido</th>
+                                <th>Contenido</th>
                                 <th></th>
                                 </thead>
                                 <tbody>
@@ -93,7 +93,10 @@
                                         <td >{{row.fecha}}</td>
                                         <td ><div v-html="row.objetivo"></div></td>
                                         <td > <div v-html="row.contenido"></div></td>
-                                        <td align="right"><button  @click="deleteItem(index)" class="btn btn-danger">Quitar</button></td>
+                                        <td align="right">
+                                            <button  @click="deleteItem(index)" class="btn btn-danger">Quitar</button>
+                                            <button @click="selectActividad(index,row)" class="btn btn-info" > <i class="fa fa-pencil" ></i> Editar</button>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -323,7 +326,7 @@
                 </div>
                 <br/>
                 <div class="row">
-                         <div class="col-md-8 col-sm-12 col-xs-12 ">
+                    <div class="col-md-8 col-sm-12 col-xs-12 ">
                         <div class="form-group form-float">
                             <div class="form-line">
                                 <label class="form-label">
@@ -338,10 +341,10 @@
                     <div class="col-md-4 col-sm-12 col-xs-12 ">
                         <div class="form-group"> 
                             <input type="date" class="form-control" v-model="dfecha" style="border-bottom: solid #ccc 1px;">
-                           
+
                         </div>
                     </div> 
-               
+
                 </div> 
 
                 <div class="row">
@@ -351,7 +354,7 @@
                             <label > <font color="red" >*</font> OBJETIVO</label>
 
                             <ckeditor :editor="editor" v-model="dobjetivo" :config="editorConfig"></ckeditor>
-                           
+
                         </div>
                     </div>  
                     <div class="col-md-6 col-sm-12 col-xs-12 ">
@@ -370,6 +373,75 @@
                     <div class="col-md-12 col-sm-12 col-xs-12 "  align="right"  >
                         <button class="btn btn-danger waves-effect waves-black" @click="cerrarVenta"><i class='fa fa-ban'></i> Cerrar</button>
                         <button class="btn btn-primary waves-effect waves-black" @click="agregarActividad"><i class='fa fa-plus'></i> Agregar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editRegisterDetalle"  role="dialog">
+    <div class="modal-dialog  modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #1498f4;color: #FFF;">
+                <h4 class="modal-title" id="smallModalLabel">EDITAR DETALLE DE PLANIFICACIÓN</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12 ">
+                        <label class="col-red" v-html="derror"></label>
+                        <label style="color:#0aca5b;" v-html="dexito"></label>
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <div class="col-md-8 col-sm-12 col-xs-12 ">
+                        <div class="form-group form-float">
+                            <div class="form-line">
+                                <label class="form-label">
+                                    <font color="red">*</font> SEMENA
+                                </label>
+                                <input type="text"  v-model="chooseActividad.semana" class="form-control"
+                                       :class="{'is-invalid': formValidate.dsemana}" name="po">
+                            </div>
+                            <div class="col-red" v-html="formValidate.dsemana"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-12 col-xs-12 ">
+                        <div class="form-group"> 
+                            <input type="date" class="form-control" v-model="chooseActividad.fecha" style="border-bottom: solid #ccc 1px;">
+
+                        </div>
+                    </div> 
+
+                </div> 
+
+                <div class="row">
+                    <div class="col-md-6 col-sm-12 col-xs-12 ">
+                        <div class="form-group">
+
+                            <label > <font color="red" >*</font> OBJETIVO</label>
+
+                            <ckeditor :editor="editor" v-model="chooseActividad.objetivo" :config="editorConfig"></ckeditor>
+
+                        </div>
+                    </div>  
+                    <div class="col-md-6 col-sm-12 col-xs-12 ">
+                        <div class="form-group">
+
+                            <label > <font color="red" >*</font> CONTENIDO</label> 
+                            <ckeditor :editor="editor" v-model="chooseActividad.contenido" :config="editorConfig"></ckeditor>
+                            <div class="col-red" v-html="formValidate.dcontenido"></div>
+                        </div>
+                    </div> 
+                </div>  
+
+            </div>
+            <div class="modal-footer">
+                <div class="row"> 
+                    <div class="col-md-12 col-sm-12 col-xs-12 "  align="right"  >
+                        <button class="btn btn-danger waves-effect waves-black" @click="cerrarVenta"><i class='fa fa-ban'></i> Cerrar</button>
+                        <button class="btn btn-primary waves-effect waves-black" @click="updateActividad"><i class='fa fa-pencil '></i> Modificar</button>
                     </div>
                 </div>
             </div>

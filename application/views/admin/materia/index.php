@@ -7,7 +7,7 @@
             <div class="col-md-12  col-sm-12 col-xs-12">
               <div class="x_panel">
                 <div class="x_title">
-                  <h2><strong>ADMINISTRAR MATERIAS/CLASES</strong></h2> 
+                  <h2><strong>ADMINISTRAR ASIGNATURAS/CURSOS</strong></h2> 
                   <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
@@ -26,7 +26,7 @@
 
                                         <div class="row">
                                             <div class="col-md-6  col-sm-12 col-xs-12">
-                                                <button class="btn  btn-primary waves-effect waves-black" @click="abrirAddModal()"><i class='fa fa-plus'></i> Agregar Materia</button> 
+                                                <button class="btn  btn-primary waves-effect waves-black" @click="abrirAddModal()"><i class='fa fa-plus'></i> Agregar</button> 
 
 
                                             </div>
@@ -43,7 +43,7 @@
                                            <table class="table table-hover table-striped">
                                             <thead class="bg-teal">
                                             <th class="text-white" v-column-sortable:clave>Clave </th>
-                                            <th class="text-white" v-column-sortable:nombreclase>Materia </th> <th class="text-white" v-column-sortable:credito>Credito </th>
+                                            <th class="text-white" v-column-sortable:nombreclase>Asignatura/Curso </th> <th class="text-white" v-column-sortable:credito>Credito </th>
                                             <th class="text-white" v-column-sortable:nombrenivel>Nivel </th>
                                           
                                              <th class="text-center text-white"> </th>

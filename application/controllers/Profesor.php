@@ -169,8 +169,10 @@ class Profesor extends CI_Controller {
                 );
             } else {
                 $cedula = trim($this->input->post('cedula'));
+                $correo = trim($this->input->post('correo'));
                 $validar = $this->profesor->validarCedula($cedula,'', $this->session->idplantel);
-                if ($validar == FALSE) {
+                 $validar_correo = $this->profesor->validarCorreo($correo, $this->session->idplantel);
+                if ($validar == FALSE && $validar_correo == FALSE) {
                     $password_encrypted = password_hash(trim($this->input->post('password')), PASSWORD_BCRYPT);
                     $data = array(
                         'idplantel' => $this->session->idplantel,
@@ -200,7 +202,7 @@ class Profesor extends CI_Controller {
                 } else {
                     $result['error'] = true;
                     $result['msg'] = array(
-                        'msgerror' => "La cëdula ya esta registrada."
+                        'msgerror' => "La cëdula o correo electronico ya esta registrada."
                     );
                 }
             }
@@ -283,8 +285,10 @@ class Profesor extends CI_Controller {
             } else {
                 $id = $this->input->post('idprofesor');
                 $cedula = trim($this->input->post('cedula'));
+                 $correo = trim($this->input->post('correo'));
                 $validar = $this->profesor->validarCedula($cedula, $id, $this->session->idplantel);
-                if ($validar == FALSE) {
+                  $validar_correo = $this->profesor->validarCorreoUpdate($correo, $id, $this->session->idplantel);
+                if ($validar == FALSE && $validar_correo == false) {
                     $data = array(
                         'idplantel' => $this->session->idplantel,
                         'cedula' => $this->input->post('cedula'),
@@ -300,7 +304,7 @@ class Profesor extends CI_Controller {
                 } else {
                     $result['error'] = true;
                     $result['msg'] = array(
-                        'msgerror' => "La cëdula ya esta registrada."
+                        'msgerror' => "La cëdula o correo electronico ya esta registrada."
                     );
                 }
             }

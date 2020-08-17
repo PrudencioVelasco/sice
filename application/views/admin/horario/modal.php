@@ -13,7 +13,7 @@
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12 ">
                             <div class="form-group">
-                                <label><font color="red">*</font> CICLO ESCOLAR</label>
+                                <label><font color="red">*</font> PERIODO ESCOLAR</label>
                                 <select style="border-bottom: solid #ebebeb 2px;" v-model="newHorario.idperiodo"  :class="{'is-invalid': formValidate.idperiodo}"class="form-control">
                                     <option value="" selected>-- SELECCIONAR --</option>      
                                     <option   v-for="option in periodos" v-bind:value="option.idperiodo">
@@ -76,7 +76,7 @@
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12 ">
                             <div class="form-group">
-                                <label><font color="red">*</font> CICLO ESCOLAR</label>
+                                <label><font color="red">*</font> PERIODO ESCOLAR</label>
                                 <select class="form-control" v-model="chooseHorario.idperiodo" >
                                     <option value="" >-- SELECCIONAR --</option>
                                     <option v-for="option in periodos"  :selected="option.idperiodo == chooseHorario.idperiodo ? 'selected' : ''" :value="option.idperiodo" >
@@ -103,7 +103,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                        <div class="col-md-12 col-sm-12 col-xs-12 ">
                             <div class="form-group">
                                 <label for="">* ESTATUS</label><br> 
                                 <div class="demo-radio-button" >  

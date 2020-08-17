@@ -153,7 +153,7 @@ class Examen extends CI_Controller {
                 $data = array(
                      'idplantel' => $idplantel,
                     'numero' => 1, 
-                    'nombreunidad' => strtoupper($nombreunidad),
+                    'nombreunidad' => strtoupper($nombreoportunidad),
                     'idusuario' => $this->session->user_id,
                     'fecharegistro' => date('Y-m-d H:i:s')
                 );

@@ -60,26 +60,12 @@ class Subir extends CI_Controller {
             $alumno_apellidop = $allDataInSheet[$i]["B"];
             $alumno_apellidom = $allDataInSheet[$i]["C"];
             $alumno_nombre = $allDataInSheet[$i]["D"];
-            $fechanacimiento = $allDataInSheet[$i]["E"];
-            $sexo = $allDataInSheet[$i]["F"];
-            $tutor_apellidop = $allDataInSheet[$i]["G"];
-            $tutor_apellidom = $allDataInSheet[$i]["H"];
-            $tutor_nombre = $allDataInSheet[$i]["I"];
-            $calle = $allDataInSheet[$i]["J"];
-            $colonia = $allDataInSheet[$i]["K"];
-            $cp = $allDataInSheet[$i]["L"];
-            $municipio = $allDataInSheet[$i]["M"];
-            $estado = $allDataInSheet[$i]["N"];
-            $email = $allDataInSheet[$i]["O"];
-            $telefono = $allDataInSheet[$i]["P"];
-            $tiposanguineo = $allDataInSheet[$i]["Q"];
-             $especialidad = $allDataInSheet[$i]["R"];
 
 
-            $direccion = $calle . ", " . $colonia . ", C.P. " . $cp . ", " . $municipio . ", " . $estado;
+            //$direccion = $calle . ", " . $colonia . ", C.P. " . $cp . ", " . $municipio . ", " . $estado;
             $data = array(
-                'idplantel' => 7,
-                'idespecialidad' => $especialidad,
+                'idplantel' => 4,
+                'idespecialidad' => 5,
                 'matricula' => trim($matricula),
                 'curp' => '',
                 'nombre' => strtoupper($alumno_nombre),
@@ -87,20 +73,20 @@ class Subir extends CI_Controller {
                 'apellidom' => strtoupper($alumno_apellidom),
                 'lugarnacimiento' => 'NO DEFINIDO',
                 'nacionalidad' => 'NO DEFINIDO',
-                'domicilio' => strtoupper($direccion),
-                'telefono' => strtoupper($telefono),
-                'telefonoemergencia' => strtoupper($telefono),
+                'domicilio' => 'NO DEFINIDO',
+                'telefono' => 0,
+                'telefonoemergencia' =>0,
                 'serviciomedico' => 'NO DEFINIDO',
-                'idtiposanguineo' => strtoupper($tiposanguineo),
+                'idtiposanguineo' =>1,
                 'alergiaopadecimiento' => 'NO DEFINIDO',
                 'peso' => 0.00,
                 'estatura' => 0.00,
                 'numfolio' => 'NO DEFINIDO',
                 'numacta' => 'NO DEFINIDO',
                 'numlibro' => 'NO DEFINIDO',
-                'fechanacimiento' => $fechanacimiento,
+                'fechanacimiento' => date('Y-m-d'),
                 'foto' => '',
-                'sexo' => $sexo,
+                'sexo' => 1,
                 'correo' => '',
                 'password' => password_hash('admin', PASSWORD_DEFAULT),
                 'idalumnoestatus' => 1,
@@ -121,57 +107,7 @@ class Subir extends CI_Controller {
                 'id_user' => $idusuario
             );
             $id_usuario_rol = $this->user->addUserRol($data_usuario_rol);
-            $validar = $this->alumno->buscarAlumno(trim($matricula));
-            //var_dump($validar);
-            //$idalumno = $validar[0]->idalumno;
-            $validar_add_padre = $this->tutor->validadAddTutor(7, trim($tutor_nombre), trim($tutor_apellidop), trim($tutor_apellidom));
-            //$validar_add_madre = $this->tutor->validadAddTutor(1,trim($madre_nombre),trim($madre_apellidop),trim($madre_apellidom));
-            if (!$validar_add_padre) {
-                $password_encrypted = password_hash(trim('admin'), PASSWORD_BCRYPT);
-                $data_tutor = array(
-                    'idplantel' => 7,
-                    'nombre' => strtoupper($tutor_nombre),
-                    'apellidop' => strtoupper($tutor_apellidop),
-                    'apellidom' => strtoupper($tutor_apellidom),
-                    'escolaridad' => 'NO DEFINIDO',
-                    'ocupacion' => 'NO DEFINIDO',
-                    'dondetrabaja' => 'NO DEFINIDO',
-                    'fnacimiento' => date('Y-m-d'),
-                    'direccion' => strtoupper($direccion),
-                    'telefono' => 0,
-                    'correo' => $email,
-                    'password' => $password_encrypted,
-                    'rfc' => '',
-                    'factura' => 0,
-                    'foto' => '',
-                    'idusuario' => $this->session->user_id,
-                    'fecharegistro' => date('Y-m-d H:i:s')
-                );
-                $idtutor_padre = $this->tutor->addTutor($data_tutor);
-                $datausuario_tutor = array(
-                    'idusuario' => $idtutor_padre,
-                    'idtipousuario' => 5,
-                    'fecharegistro' => date('Y-m-d H:i:s')
-                );
-                $idusuario_tutor = $this->user->addUser($datausuario_tutor);
-                $data_usuario_rol_tutor = array(
-                    'id_rol' => 11,
-                    'id_user' => $idusuario_tutor
-                );
-                $id_usuario_rol = $this->user->addUserRol($data_usuario_rol_tutor);
-                $data = array(
-                    'idtutor' => $idtutor_padre,
-                    'idalumno' => $idalumno
-                );
-                $this->tutor->addTutorAlumno($data);
-            } else {
-                $idtutor_padre = $validar_add_padre[0]->idtutor;
-                $data = array(
-                    'idtutor' => $idtutor_padre,
-                    'idalumno' => $idalumno
-                );
-                $this->tutor->addTutorAlumno($data);
-            }
+            
 
 //         if(!$validar_add_madre){
 //         $password_encrypted = password_hash(trim('admin'), PASSWORD_BCRYPT);

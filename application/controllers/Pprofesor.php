@@ -50,28 +50,50 @@ class Pprofesor extends CI_Controller {
         $result = $this->grupo->showAllGruposProfesor($idprofesor);
         $unidades = $this->grupo->unidades($this->session->idplantel);
         $detalle = $this->profesor->detalleProfesor($idprofesor);
-
-        if ($detalle->idniveleducativo == 1) {
-            $data = array(
-                'datos' => $result,
-                'unidades' => $unidades,
-                'controller' => $this
-            );
-            $this->load->view('docente/header');
-            $this->load->view('docente/planeacion/primaria/planificacion_primaria', $data);
-            $this->load->view('docente/footer');
-        } elseif ($detalle->idniveleducativo == 2) {
-            $data = array(
-                'datos' => $result,
-                'unidades' => $unidades,
-                'controller' => $this
-            );
-            $this->load->view('docente/header');
-            $this->load->view('docente/planeacion/prepa/index', $data);
-            $this->load->view('docente/footer');
-        } elseif ($detalle->idniveleducativo == 3) {
-            
-        }
+        /*
+          if ($detalle->idniveleducativo == 1) {
+          //PRIMARIA
+          $data = array(
+          'datos' => $result,
+          'unidades' => $unidades,
+          'controller' => $this
+          );
+          $this->load->view('docente/header');
+          $this->load->view('docente/planeacion/primaria/planificacion_primaria', $data);
+          $this->load->view('docente/footer');
+          } elseif ($detalle->idniveleducativo == 2) {
+          //SECUNDARIA
+          $data = array(
+          'datos' => $result,
+          'unidades' => $unidades,
+          'controller' => $this
+          );
+          $this->load->view('docente/header');
+          $this->load->view('docente/planeacion/licenciatura/index', $data);
+          $this->load->view('docente/footer');
+          } elseif ($detalle->idniveleducativo == 3) {
+          //PREPA
+          }elseif ($detalle->idniveleducativo == 4) {
+          //PREESCOLAR
+          }elseif ($detalle->idniveleducativo == 5) {
+          //LICENCIATURA
+          $data = array(
+          'datos' => $result,
+          'unidades' => $unidades,
+          'controller' => $this
+          );
+          $this->load->view('docente/header');
+          $this->load->view('docente/planeacion/licenciatura/index', $data);
+          $this->load->view('docente/footer');
+          } */
+        $data = array(
+            'datos' => $result,
+            'unidades' => $unidades,
+            'controller' => $this
+        );
+        $this->load->view('docente/header');
+        $this->load->view('docente/planeacion/licenciatura/index', $data);
+        $this->load->view('docente/footer');
     }
 
     public function saberDia($nombredia = '') {

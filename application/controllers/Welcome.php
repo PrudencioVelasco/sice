@@ -77,13 +77,21 @@ class Welcome extends CI_Controller {
         $result = $this->usuario->loginDocente($correo);
         if ($result) {
             if (password_verify($password, $result->password)) {
+                $idplantel = $result->idplantel;
+
+                $correo = $result->correo;
+
+                $escuelas = $this->usuario->listaPlantelDocente($correo);
+
                 $this->session->set_userdata([
                     'user_id' => $result->id,
                     'idprofesor' => $result->idprofesor,
                     'nombre' => $result->nombre,
                     'apellidop' => $result->apellidop,
                     'apellidom' => $result->apellidom,
-                    'idplantel' => $result->idplantel
+                    'idplantel' => $result->idplantel,
+                    'nivel_educativo' => $result->nombreniveleducativo,
+                    'planteles' => $escuelas
                 ]);
                 redirect('/Profesores');
             } else {
@@ -113,7 +121,7 @@ class Welcome extends CI_Controller {
                     'apellidom' => $result->apellidom,
                     'idplantel' => $result->idplantel
                 ]);
-                 $this->session->set_flashdata('bienvenida', 'Bienvenido(a) '.$result->nombre);
+                $this->session->set_flashdata('bienvenida', 'Bienvenido(a) ' . $result->nombre);
                 redirect('/Tutores');
             } else {
                 $this->session->set_flashdata('err2', 'Correo o Contraseña son incorrectos.');
@@ -206,11 +214,28 @@ class Welcome extends CI_Controller {
             'nivel_educativo' => $detalle_plantel->nombreniveleducativo,
             'planteles' => $this->session->planteles
         );
-
         $this->session->set_userdata($data_session);
         //$this->session->set_userdata('user', $data);
         $this->session->set_flashdata('informacion_exito', 'Usuario o Contraseña son incorrectos.');
         redirect('/Admin');
+    }
+
+    public function cambiarplantel($idplantel,$idprofesor) {
+        $detalle_plantel = $this->usuario->detallePlantel($idplantel);
+        $data_session = array(
+            'user_id' => $this->session->user_id,
+            'idprofesor' => $idprofesor,
+            'nombre' => $this->session->nombre,
+            'apellidop' => $this->session->apellidop,
+            'apellidom' => $this->session->apellidom,
+            'idplantel' => $this->session->idplantel,
+            'nivel_educativo' => $detalle_plantel->nombreniveleducativo,
+            'planteles' => $this->session->planteles
+        );
+        $this->session->set_userdata($data_session);
+        //$this->session->set_userdata('user', $data);
+        $this->session->set_flashdata('informacion_exito', 'Usuario o Contraseña son incorrectos.');
+        redirect('/Profesores');
     }
 
 }

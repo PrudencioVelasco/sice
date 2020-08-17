@@ -7,7 +7,7 @@
         <div class="col-md-12  col-sm-12 col-xs-12">
           <div class="x_panel">
             <div class="x_title">
-              <h2><strong>ADMINISTRAR MATERIAS DEL HORARIO</strong></h2>
+                <h2><strong>DETALLES DE HORARIO: <?php if(isset($detalle_horario) && !empty($detalle_horario)){ echo $detalle_horario->nombrenivel." - ".$detalle_horario->nombregrupo; } ?></strong></h2>
 
               <div class="clearfix"></div>
             </div>
@@ -19,7 +19,7 @@
                 <div class="row">
                   <div class="col-md-12  col-sm-12 col-xs-12">
                     <?php if ($activo_horario == 1 && $activo_ciclo_escolar == 1) { ?>
-                      <button class="btn btn-round btn-primary waves-effect waves-black" @click="modelAgregarMateria()"><i class='fa fa-plus'></i> Agregar Materia</button>
+                      <button class="btn btn-round btn-primary waves-effect waves-black" @click="modelAgregarMateria()"><i class='fa fa-plus'></i> Agregar Asignatura/Curso</button>
 
                       <button class="btn btn-round btn-primary waves-effect waves-black" @click="modelAgregarRecreo()"><i class='fa fa-plus'></i> Agregar Receso</button>
 

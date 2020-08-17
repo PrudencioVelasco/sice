@@ -44,7 +44,7 @@
                                                             LEER MAS... </a>
                                                     <?php
                                                     } else {
-                                                        echo $value->tarea;
+                                                        echo utf8_encode($value->tarea);
                                                     }
                                                     ?>
                                                 </td>

@@ -10,6 +10,14 @@
                           <p class="mb-0">Si requiere permiso solicitelo al administrador.</p>
                       </div>
                   <?php endif ?>
+                    <?php if (isset($_SESSION['informacion_exito'])): ?>
+                <div class="alert alert-success" role="alert">
+                    <h4 class="alert-heading">EXITO!</h4>
+                    <p>EL NIVEL FUE SELECCIONADO CON EXITO.</p>
+                    <hr>
+                    <p class="mb-0">Ya puede ver los registros para este nivel seleccionado..</p>
+                </div>
+            <?php endif ?>
               </div>  
           </div>  
         <br /> 

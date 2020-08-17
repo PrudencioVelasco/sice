@@ -86,14 +86,23 @@
                         <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
 
                             <div class="menu_section">
-                                <h3>Profesor</h3>
+                               <h3>
+                                    <?php
+                                    if ((isset($this->session->nivel_educativo) && !empty($this->session->nivel_educativo)) &&
+                                            (isset($this->session->idplantel) && !empty($this->session->idplantel) && $this->session->idplantel != 2)) {
+                                        echo $this->session->nivel_educativo;
+                                    } else {
+                                        echo 'Profesor';
+                                    }
+                                    ?>
+                                </h3>
                                 <ul class="nav side-menu">
                                     <li><a href="<?= base_url('/Profesores/') ?>"><i class="fa fa-home"></i> Inicio</a></li>
                                     <li><a href="<?= base_url('/Phorario/') ?>"><i class="fa fa-clock-o"></i> Horario</a>
                                     </li>
                                     <li><a href="<?= base_url('/Pgrupo/') ?>"><i class="fa fa-users"></i> Grupo</a></li>
                                     <li><a href="<?= base_url('/Pprofesor/planeacion') ?>"><i class="fa fa-slideshare"></i>
-                                            Planificación</a></li>
+                                            Planeación</a></li>
 
 
                                 </ul>
@@ -122,6 +131,15 @@
                                         <span class=" fa fa-angle-down"></span>
                                     </a>
                                     <ul class="dropdown-menu dropdown-usermenu animated fadeInDown pull-right">
+                                       <?php
+                                        if (isset($this->session->planteles) && !empty($this->session->planteles)) {
+                                            foreach ($this->session->planteles as $row) {
+                                                ?>
+                                                <li><a href="<?= base_url('/welcome/cambiarplantel/' . $row->idplantel.'/'.$row->idprofesor) ?>"><?php echo $row->nombreniveleducativo ?></a></li>
+                                                <?php
+                                            }
+                                        }
+                                        ?>
                                         <li><a href="<?= base_url('/welcome/logout') ?>"><i
                                                     class="fa fa-sign-out pull-right"></i> SALIR</a>
                                         </li>

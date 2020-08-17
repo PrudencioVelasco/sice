@@ -287,8 +287,9 @@ class Aalumno extends CI_Controller
 
                 $tabla .= '</tr>';
             }
-            }
+            }else{
              $tabla .= '<tr><td colspan="6" align="center"><label>Sin registros</label></td></tr>';
+            }
             $tabla .= '</table>';
 
             return $tabla;

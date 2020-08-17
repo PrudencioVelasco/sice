@@ -58,6 +58,37 @@ class Profesor_model extends CI_Model {
             return false;
         }
     } 
+      public function validarCorreo($correo = '', $idplantel = '') {
+        $this->db->select('p.*');
+        $this->db->from('tblprofesor p'); 
+        $this->db->where('p.correo',$correo);  
+       if (isset($idplantel) && !empty($idplantel)) {
+        $this->db->where('p.idplantel',$idplantel);  
+        }
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+          public function validarCorreoUpdate($correo = '',$idprofesor = '', $idplantel = '') {
+        $this->db->select('p.*');
+        $this->db->from('tblprofesor p'); 
+        $this->db->where('p.correo',$correo);  
+         if(isset($idprofesor) && !empty($idprofesor)){
+        $this->db->where('p.idprofesor !=',$idprofesor);  
+        }
+       if (isset($idplantel) && !empty($idplantel)) {
+        $this->db->where('p.idplantel',$idplantel);  
+        }
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
      public function validarMateriaProfesor($idprofesor = '',$idmateria) {
         $this->db->select('p.*');
         $this->db->from('tblprofesor_materia p');  

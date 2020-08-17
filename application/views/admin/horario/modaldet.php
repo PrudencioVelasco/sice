@@ -2,7 +2,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="defaultModalLabel">AGREGAR MATERIA</h4>
+                <h4 class="modal-title" id="defaultModalLabel">AGREGAR ASIGNATURA/CURSO</h4>
             </div>
             <div class="modal-body">
                 <div style="padding-top:13px; padding-right:15px;  ">
@@ -14,7 +14,7 @@
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12 ">
                             <div class="form-group">
-                                <label><font color="red">*</font> MATERIA</label>
+                                <label><font color="red">*</font> ASIGNATURA/CURSO</label>
                                 <select style="border-bottom: solid #ebebeb 2px;" v-model="newHorario.idmateria"  :class="{'is-invalid': formValidate.idmateria}"class="form-control">
                                     <option value="" selected>-- SELECCIONAR --</option>  
                                     <option   v-for="option in materias" v-bind:value="option.idprofesormateria">
@@ -281,7 +281,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="defaultModalLabel">EDITAR METERIA</h4>
+                <h4 class="modal-title" id="defaultModalLabel">EDITAR ASIGNATURA/CURSO</h4>
             </div>
             <div class="modal-body">
                 <div style=" height: 200px;overflow-x: hidden; overflow-y: scroll;">
@@ -293,7 +293,7 @@
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12 ">
                             <div class="form-group">
-                                <label><font color="red">*</font> MATERIA</label>
+                                <label><font color="red">*</font> ASIGNATURA/CURSO</label>
                                 <select style="border-bottom: solid #ebebeb 2px;" class="form-control" v-model="chooseHorario.idprofesormateria" >
                                     <option value="" >-- SELECCIONAR --</option>
                                     <option v-for="option in materias" :selected="option.idprofesormateria == chooseHorario.idprofesormateria ? 'selected' : ''"  :value="option.idprofesormateria">

@@ -36,7 +36,7 @@
                                         <table class="table table-hover table-striped">
                                             <thead class="bg-teal">
 
-                                            <th class="text-white" v-column-sortable:mesinicio>Ciclo Escolar </th>
+                                            <th class="text-white" v-column-sortable:mesinicio>Periodo Escolar </th>
                                             <th class="text-white" v-column-sortable:nombrenivel>Nivel </th>
                                             <th class="text-white" v-column-sortable:nombregrupo>Turno </th>
                                             <th class="text-white" v-column-sortable:nombreespecialidad>Especialidad </th>
@@ -62,8 +62,8 @@
                                                             Editar
                                                         </button>
 
-                                                        <a class="btn btn-info btn-sm waves-effect waves-black" v-bind:href="'detalle/'+ horario.idhorario" ><i class="fa fa-graduation-cap" aria-hidden="true"></i>
-                                                            Materias</a>
+                                                        <a class="btn btn-info btn-sm waves-effect waves-black" v-bind:href="'detalle/'+ horario.idhorario" ><i class="fa fa-book" aria-hidden="true"></i>
+                                                            Detalle</a>
 
                                                     </td>
                                                 </tr>
