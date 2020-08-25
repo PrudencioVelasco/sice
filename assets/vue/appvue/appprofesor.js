@@ -26,6 +26,8 @@ var v = new Vue({
             apellidop: '',
             apellidom: '',
             profesion: '',
+            urlvideoconferencia:'',
+            numeroanfitrion:'',
             correo: '',
             password: '',
             repitapassword: '',
@@ -225,6 +227,8 @@ var v = new Vue({
                 apellidom: '',
                 profesion: '',
                 correo: '',
+                  urlvideoconferencia:'',
+            numeroanfitrion:'',
                 password: '',
                 repitapassword: '',
                 smserror: ''};

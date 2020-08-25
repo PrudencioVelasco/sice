@@ -1,4 +1,4 @@
-var this_js_script = $("script[src*=app]");
+var this_js_script = $("script[src*=appalumno]");
 var my_var_1 = this_js_script.attr("data-my_var_1");
 if (typeof my_var_1 === "undefined") {
   var my_var_1 = "some_default_value";
@@ -7,7 +7,7 @@ if (typeof my_var_1 === "undefined") {
 Vue.config.devtools = true;
 var v = new Vue({
   el: "#app",
-  data: {
+  data: { 
     url: my_var_1,
     addModal: false,
     editModal: false,
@@ -83,14 +83,14 @@ var v = new Vue({
       this.alumnos.sort(sortFn);
     },
     showAll() {
-      axios.get(this.url + "Alumno/showAll").then(function (response) {
-        if (response.data.alumnos == null) {
-          v.noResult();
-        } else {
-          v.getData(response.data.alumnos);
-        }
-      });
-    },
+        axios.get(this.url + "Alumno/showAll").then(function (response) {
+                if (response.data.alumnos == null) {
+                    v.noResult()
+                } else {
+                    v.getData(response.data.alumnos);
+                }
+            })
+        }, 
     showAllEspecialidades() {
       axios
         .get(this.url + "Alumno/showAllEspecialidades/")
@@ -115,10 +115,10 @@ var v = new Vue({
       axios
         .post(this.url + "Alumno/searchAlumno", formData)
         .then(function (response) {
-          if (response.data.alumnos == null) {
-            v.noResult();
+          if (response.data.alumnos == '') {
+           this.alumnos = response.data.alumnos
           } else {
-            v.getData(response.data.alumnos);
+            (response) => (this.alumnos = response.data.alumnos)
           }
         });
     },

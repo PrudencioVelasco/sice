@@ -162,10 +162,13 @@ class Grupo_model extends CI_Model {
     }
 
     public function detalleClase($idhorariodetalle = '') {
-        $this->db->select('m.nombreclase,m.idmateria,pm.idprofesormateria');
+        $this->db->select('m.nombreclase,m.idmateria,pm.idprofesormateria,ne.nombrenivel, g.nombregrupo');
         $this->db->from('tblhorario_detalle hd');
         $this->db->join('tblprofesor_materia pm', 'hd.idmateria = pm.idprofesormateria');
         $this->db->join('tblmateria m', 'm.idmateria = pm.idmateria');
+        $this->db->join('tblhorario h','h.idhorario = hd.idhorario');
+        $this->db->join('tblgrupo g','g.idgrupo = h.idgrupo');
+        $this->db->join('tblnivelestudio ne','ne.idnivelestudio = g.idnivelestudio');
         $this->db->where('hd.idhorariodetalle', $idhorariodetalle);
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
@@ -503,7 +506,7 @@ ORDER BY nombrenivel ASC");
 
     public function alumnosGrupo($idhorario, $idprofesormateria = '', $idmateria) {
 
-        $sql = "SELECt
+        $sql = "SELECT
     idalumno,
     curp,
     nombre,

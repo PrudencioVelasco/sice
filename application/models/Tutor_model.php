@@ -87,6 +87,18 @@ class Tutor_model extends CI_Model {
             return false;
         }
     }
+   public function validadMatricula($matricula = '') {
+        $this->db->select('a.*');
+        $this->db->from('tblalumno a'); 
+        $this->db->where('a.matricula', $matricula);
+
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
 
     public function validadAddTutor($idplantel = '', $nombre = '', $apellidop = '', $apellidom = '') {
         $this->db->select('a.*');

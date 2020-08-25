@@ -21,7 +21,7 @@
                                                     <?php
                                                         if(isset($grupos) && !empty($grupos)){
                                                             foreach($grupos as $row){
-                                                                echo '<option value="'.$row->idgrupo.'">'.$row->nombrenivel.' '.$row->nombregrupo.'</option>';
+                                                                echo '<option value="'.$row->idgrupo.'">'.$row->nombrenivel.' '.$row->nombregrupo.' - '.$row->nombreturno.'</option>';
                                                             }
                                                         }
                                                     ?>
@@ -108,9 +108,9 @@
             window.location = "<?php echo site_url('Grupo/busqueda'); ?>/"+grupo+'/'+periodo+'/'+opcion;
           }else{
               swal({
-                        type: 'error',
-                        title: 'Oops...',
-                        html: 'Todos los campos son obligatorios.',
+                        type: 'info',
+                        title: 'Notificación',
+                        html: 'Seleccione todos los campos.',
                         customClass: 'swal-wide',
                         footer: ''
                     });

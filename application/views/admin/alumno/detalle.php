@@ -376,7 +376,7 @@
                                                 <div>
                                                     <ul>
                                                         <li>  CURP: <label for=""><?php echo $detalle->curp; ?></label> </li>
-                                                        <li><i class="fa fa-phone"></i> Núm Celular:  <label for=""><?php echo $detalle->telefono; ?></label></li>
+                                                        <li><i class="fa fa-phone"></i> Núm Celular:  <label for=""><?php echo $detalle->telefonocelular; ?></label></li>
                                                         <li><i class="fa fa-phone"></i> Núm Emergencia: <label for=""> <?php echo $detalle->telefonoemergencia; ?></label></li>
                                                         <li>L. Nacimiento: <label for=""><?php echo $detalle->lugarnacimiento; ?></label></li>
                                                         <li>Nacionalidad: <label for=""><?php echo $detalle->nacionalidad; ?></label> </li>

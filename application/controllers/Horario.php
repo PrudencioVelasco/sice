@@ -332,7 +332,15 @@ class Horario extends CI_Controller {
                     'errors' => array(
                         'valid_url' => 'Formato de la URL invalido.'
                     )
-                )
+                ),
+                  array(
+                    'field' => 'numeroanfitrion',
+                    'label' => 'Hora final',
+                    'rules' => 'trim|integer',
+                    'errors' => array( 
+                         'integer' => 'Debe de ser numero.'
+                    )
+                ),
             );
 
             $this->form_validation->set_rules($config);
@@ -343,10 +351,16 @@ class Horario extends CI_Controller {
                     'iddia' => form_error('iddia'),
                     'horainicial' => form_error('horainicial'),
                     'horafinal' => form_error('horafinal'),
-                    'urlvideoconferencia' => form_error('urlvideoconferencia')
+                    'urlvideoconferencia' => form_error('urlvideoconferencia'),
+                     'numeroanfitrion' => form_error('numeroanfitrion')
                 );
             } else {
-
+                $idhorario = $this->input->post('idhorario');
+                $detalle_horario = $this->horario->detalleHorario($idhorario);
+                $idperiodo = $detalle_horario->idperiodo;
+                $idmateria = $this->input->post('idmateria');
+                $validar = $this->horario->validadAgregarMateriaHorario($idperiodo,$idmateria,$this->input->post('horainicial'),$this->input->post('horafinal'),$this->input->post('iddia'));
+               if($validar == false){
                 $data = array(
                     'idhorario' => $this->input->post('idhorario'),
                     'idmateria' => strtoupper($this->input->post('idmateria')),
@@ -354,10 +368,18 @@ class Horario extends CI_Controller {
                     'horainicial' => strtoupper($this->input->post('horainicial')),
                     'horafinal' => $this->input->post('horafinal'),
                     'urlvideoconferencia' => $this->input->post('urlvideoconferencia'),
+                    'urlvideoconferenciagrabado' =>'',
+                     'numeroanfitrion' =>$this->input->post('numeroanfitrion'),
                     'idusuario' => $this->session->user_id,
                     'fecharegistro' => date('Y-m-d H:i:s')
                 );
                 $this->horario->addMateriaHorario($data);
+               }else{
+                   $result['error'] = true;
+                    $result['msg'] = array(
+                        'msgerror' => 'El docente ya esta impartiendo clases a la misma hora y dia en: '.$validar->nombrenivel.' '.$validar->nombregrupo
+                    ); 
+               }
             }
         } else {
             $result['error'] = true;
@@ -704,6 +726,13 @@ class Horario extends CI_Controller {
                     'errors' => array(
                         'valid_url' => 'Formato de la URL invalido.'
                     )
+                ), array(
+                    'field' => 'numeroanfitrion',
+                    'label' => 'Numero anfitrion',
+                    'rules' => 'trim|integer',
+                    'errors' => array( 
+                         'integer' => 'Debe de ser numero.'
+                    )
                 )
             );
 
@@ -715,7 +744,8 @@ class Horario extends CI_Controller {
                     'iddia' => form_error('iddia'),
                     'horainicial' => form_error('horainicial'),
                     'horafinal' => form_error('horafinal'),
-                    'urlvideoconferencia' => form_error('urlvideoconferencia')
+                    'urlvideoconferencia' => form_error('urlvideoconferencia'),
+                     'numeroanfitrion' => form_error('numeroanfitrion')
                 );
             } else {
                 $id = $this->input->post('idhorariodetalle');
@@ -725,7 +755,8 @@ class Horario extends CI_Controller {
                     'iddia' => strtoupper($this->input->post('iddia')),
                     'horainicial' => strtoupper($this->input->post('horainicial')),
                     'horafinal' => $this->input->post('horafinal'),
-                    'urlvideoconferencia' => $this->input->post('urlvideoconferencia'),
+                    'urlvideoconferencia' => $this->input->post('urlvideoconferencia'), 
+                      'numeroanfitrion' =>$this->input->post('numeroanfitrion'),
                     'idusuario' => $this->session->user_id,
                     'fecharegistro' => date('Y-m-d H:i:s')
                 );

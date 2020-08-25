@@ -47,7 +47,7 @@
                                                 <select name="tiporeporte"  style=" border-bottom: solid #ccc 2px;" id="" required class="form-control">
                                                     <option value="">-- TIPO DE REPORTE --</option>
                                                     <option value="1">LISTA DE ALUMNOS</option>
-                                                    <option value="2">CALIFICACION FINAL</option> 
+<!--                                                    <option value="2">CALIFICACION FINAL</option> -->
                                                 </select>
 
                                             </div>

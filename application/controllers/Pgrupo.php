@@ -15,6 +15,7 @@ class pGrupo extends CI_Controller {
         $this->load->library('permission');
         $this->load->library('session');
         $this->load->model('grupo_model', 'grupo');
+        $this->load->model('tarea_model', 'tarea');
         $this->load->model('mensaje_model', 'mensaje');
         $this->load->library('encryption');
         $this->load->helper('numeroatexto_helper');
@@ -508,6 +509,77 @@ class pGrupo extends CI_Controller {
             $this->load->view('docente/footer');
         }
     }
+   public function tareav2($idhorario = '', $idhorariodetalle) {
+          Permission::grant(uri_string());
+        $idhorario = $this->decode($idhorario);
+        $idhorariodetalle = $this->decode($idhorariodetalle);
+        if ((isset($idhorario) && !empty($idhorario)) && (isset($idhorariodetalle) && !empty($idhorariodetalle))) {
+            $detalle = $this->grupo->detalleClase($idhorariodetalle);
+           
+            $data = array(         
+                'idhorario' => $idhorario,
+                'idhorariodetalle' => $idhorariodetalle,
+                'tareas' => $this->grupo->allTarea($idhorariodetalle),
+                'controller' => $this,
+                'detalle_grupo'=>$detalle
+            );
+
+            $this->load->view('docente/header');
+            $this->load->view('docente/grupo/tarea/index', $data);
+            $this->load->view('docente/footer');
+        } else {
+            $data = array(
+                'heading' => 'Error',
+                'message' => 'Error intente mas tarde.',
+            );
+           $this->load->view('docente/header');
+            $this->load->view('docente/error/general', $data);
+            $this->load->view('docente/footer');
+        }
+                                    
+   }
+   public function revisar($idtarea) {
+        if (isset($idtarea) && !empty($idtarea)) {
+            $idusuario = $this->session->user_id;
+            $validar_tarea = $this->tarea->validarTarea($idtarea, $idusuario);
+            if ($validar_tarea) {
+                $detalle_tarea = $this->tarea->detalleTarea($idtarea);
+
+                $idhorariodetalle = $detalle_tarea[0]->idhorariodetalle;
+                $idhorario = $detalle_tarea[0]->idhorario;
+                $detalle = $this->grupo->detalleClase($idhorariodetalle);
+
+                $idmateria = $detalle[0]->idmateria;
+                $idprofesormateria = $detalle[0]->idprofesormateria;
+                $data = array(
+                    'idtarea' => $idtarea,
+                    'detalle_tarea' => $detalle_tarea,
+                    'idmateria' => $idmateria,
+                    'idprofesormateria' => $idprofesormateria,
+                    'idhorario' => $idhorario
+                );
+                $this->load->view('docente/header');
+                $this->load->view('docente/grupo/tarea/detalle', $data);
+                $this->load->view('docente/footer');
+            } else {
+                $data = array(
+                    'heading' => 'Notificación',
+                    'message' => 'El registro de la tarea no es de usted.',
+                );
+                $this->load->view('docente/header');
+                $this->load->view('docente/error/general', $data);
+                $this->load->view('docente/footer');
+            }
+        } else {
+            $data = array(
+                'heading' => 'Error',
+                'message' => 'No de pasaron los parametros correctos.',
+            );
+            $this->load->view('docente/header');
+            $this->load->view('docente/error/general', $data);
+            $this->load->view('docente/footer');
+        }
+    }
 
     public function tarea($idhorario = '', $idhorariodetalle) {
         Permission::grant(uri_string());
@@ -744,8 +816,14 @@ class pGrupo extends CI_Controller {
             $idhorariodetalle = $this->input->post('idhorariodetalle');
             $tarea = $this->input->post('tarea');
             $fechaentrega = $this->input->post('fechaentrega');
-
-            $data = array(
+            $horaentrega = $this->input->post('horaentrega');
+       $permitidos = array('jpg','JPG','PNG','jepg','JEGP');
+       $nombre_documento = $_FILES['documento']['name'];
+       $ext = pathinfo($nombre_documento,PATHINFO_EXTENSION);
+       if(!in_array($ext, $permitidos)){
+             echo json_encode(['error' => "El tipo de archivo no es permitido"]);
+       }
+           /* $data = array(
                 'idhorario' => $idhorario,
                 'idhorariodetalle' => $idhorariodetalle,
                 'tarea' => $tarea,
@@ -757,9 +835,9 @@ class pGrupo extends CI_Controller {
             );
             $value = $this->grupo->addTarea($data);
 
-            echo json_encode(['success' => 'Ok']);
+            echo json_encode(['success' => 'Ok']);*/
         }
-        // echo json_encode($result);
+       // echo json_encode($result);
     }
 
     public function addMensaje() {
@@ -1339,8 +1417,8 @@ class pGrupo extends CI_Controller {
         }
 
         if ($tiporeporte == 1) {
-              $alumnos = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria);
-
+            $alumnos = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria);
+            
             $this->load->library('excel');
             $this->excel->setActiveSheetIndex(0);
             $this->excel->getActiveSheet()->setTitle('Listado de Alumnos');
@@ -1363,6 +1441,7 @@ class pGrupo extends CI_Controller {
             $this->excel->getActiveSheet()->setCellValue("C{$contador}", 'NOMBRE');
             $this->excel->getActiveSheet()->setCellValue("D{$contador}", 'CALIFICACION');
             //Definimos la data del cuerpo.
+            if(isset($alumnos) && !empty($alumnos)){
             foreach ($alumnos as $row) {
                 //Incrementamos una fila más, para ir a la siguiente.
                 $contador++;
@@ -1373,6 +1452,7 @@ class pGrupo extends CI_Controller {
                 $this->excel->getActiveSheet()->setCellValue("C{$contador}", $row->apellidop . " " . $row->apellidom . " " . $row->nombre);
                 $datalle_calificacion = $this->grupo->calificacionPorMateria($row->idalumno, $idprofesormateria, $idhorario);
                                     
+            }
             }
             //Le ponemos un nombre al archivo que se va a generar.
             $archivo = "Lista de Alumnos {$idperiodo}.xls";

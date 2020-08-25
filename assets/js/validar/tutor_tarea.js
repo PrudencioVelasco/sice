@@ -20,23 +20,35 @@ $(document).ready(function () {
 
         $('#btnguardar').prop("disabled", true);
         $('#btnguardar').html(
-            `<span class="fa fa-spinner spinner-border-sm" role="status" aria-hidden="true"></span> PROCESANDO...`
-        );
+                `<span class="fa fa-spinner spinner-border-sm" role="status" aria-hidden="true"></span> PROCESANDO...`
+                );
 
         for (instance in CKEDITOR.instances) {
             CKEDITOR.instances[instance].updateElement();
         }
+        var file_data = $('#documento').prop('files')[0];
+        var form_data = new FormData();
+        form_data.append('documento',file_data); 
+         form_data.append('fechaentrega',$('#fechaentrega')); 
+          form_data.append('horaentrega',$('#horaentrega')); 
+           form_data.append('tarea',$('#tarea')); 
+        
         $.ajax({
             type: "POST",
-            url: my_var_1 +"Pgrupo/addTarea",
-            data: $('#frmtarea').serialize(),
+            //dataType:'text',
+            //cache:false,
+            //contentType:false,
+            async:true,
+            processData:false,
+            url: my_var_1 + "Pgrupo/addTarea",
+            data: form_data,
             success: function (data) {
                 $('#btnguardar').prop("disabled", false);
                 $('#btnguardar').html(
-                    `<i class='fa fa-floppy-o'></i> GUARDAR`
-                );
-                var val = $.parseJSON(data); 
-                if ((val.success === "Ok")) { 
+                        `<i class='fa fa-floppy-o'></i> GUARDAR`
+                        );
+                var val = $.parseJSON(data);
+                if ((val.success === "Ok")) {
                     swal({
                         position: 'center',
                         type: 'success',
@@ -54,7 +66,7 @@ $(document).ready(function () {
                         html: val.error,
                         customClass: 'swal-wide',
                         footer: ''
-                    }); 
+                    });
                 }
 
             }
@@ -64,22 +76,22 @@ $(document).ready(function () {
     $("#btnmodificar").click(function () {
         $('#btnmodificar').prop("disabled", true);
         $('#btnmodificar').html(
-            `<span class="fa fa-spinner spinner-border-sm" role="status" aria-hidden="true"></span> PROCESANDO...`
-        );
+                `<span class="fa fa-spinner spinner-border-sm" role="status" aria-hidden="true"></span> PROCESANDO...`
+                );
         for (instance in CKEDITOR.instances) {
             CKEDITOR.instances[instance].updateElement();
         }
         $.ajax({
             type: "POST",
-            url: my_var_1 +"Pgrupo/updateTarea",
+            url: my_var_1 + "Pgrupo/updateTarea",
             data: $('#frmmodificartarea').serialize(),
             success: function (data) {
                 $('#btnmodificar').prop("disabled", false);
                 $('#btnmodificar').html(
-                    `<i class="fa fa-pencil"></i> MODIFICAR`
-                );
-                var val = $.parseJSON(data); 
-                if ((val.success === "Ok")) { 
+                        `<i class="fa fa-pencil"></i> MODIFICAR`
+                        );
+                var val = $.parseJSON(data);
+                if ((val.success === "Ok")) {
                     swal({
                         position: 'center',
                         type: 'success',
@@ -97,7 +109,7 @@ $(document).ready(function () {
                         html: val.error,
                         customClass: 'swal-wide',
                         footer: ''
-                    }); 
+                    });
                 }
 
             }

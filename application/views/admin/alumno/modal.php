@@ -76,7 +76,7 @@
                             <div class="form-group  form-float">
                                 <div class="form-line">
                                     <label class="form-label">
-                                        <font color="red">*</font> CURP
+                                          <font color="red">*</font> CURP
                                     </label>
                                     <input type="text" v-model="newAlumno.curp" class="form-control"
                                         :class="{'is-invalid': formValidate.curp}" name="po">
@@ -89,7 +89,7 @@
                             <div class="form-group form-float">
                                 <div class="form-line">
                                     <label class="form-label">
-                                        <font color="red">*</font> LUGAR DE NACIMIENTO
+                                         LUGAR DE NACIMIENTO
                                     </label>
                                     <input type="text" v-model="newAlumno.lugarnacimiento" class="form-control"
                                         :class="{'is-invalid': formValidate.lugarnacimiento}" name="po">
@@ -118,7 +118,7 @@
                             <div class="form-group form-float">
                                 <div class="form-line">
                                     <label class="form-label">
-                                        <font color="red">*</font> SERVICIO MEDICO
+                                        SERVICIO MEDICO
                                     </label>
                                     <input type="text" v-model="newAlumno.serviciomedico" class="form-control"
                                         :class="{'is-invalid': formValidate.serviciomedico}" name="po">
@@ -133,7 +133,7 @@
                         <div class="col-md-6 col-sm-12 col-xs-12 ">
                             <div class="form-group form-float">
                                 <div class="form-line">
-                                    <label class="form-label"> TELEFONO</label>
+                                    <label class="form-label"><font color="red">*</font> TELEFONO CELULAR</label>
                                     <input type="text" v-model="newAlumno.telefono" class="form-control"
                                         :class="{'is-invalid': formValidate.telefono}" name="po">
 
@@ -146,7 +146,7 @@
                         <div class="col-md-6 col-sm-12 col-xs-12 ">
                             <div class="form-group  form-float">
                                 <div class="form-line">
-                                    <label class="form-label"> TELEFONO DE EMERGENCIA</label>
+                                    <label class="form-label"><font color="red">*</font> TELEFONO DE EMERGENCIA</label>
                                     <input type="text" v-model="newAlumno.telefonoemergencia" class="form-control"
                                         :class="{'is-invalid': formValidate.telefonoemergencia}" name="po">
 
@@ -177,7 +177,7 @@
                             <div class="form-group  form-float">
                                 <div class="form-line">
                                     <label class="form-label">
-                                        <font color="red">*</font> ALERGIA O PADECIMIENTO
+                                         ALERGIA O PADECIMIENTO
                                     </label>
                                     <input type="text" v-model="newAlumno.alergiaopadecimiento" class="form-control"
                                         :class="{'is-invalid': formValidate.alergiaopadecimiento}" name="po">
@@ -193,7 +193,7 @@
                             <div class="form-group form-float">
                                 <div class="form-line">
                                     <label class="form-label">
-                                        <font color="red">*</font> PESO
+                                          PESO
                                     </label>
                                     <input type="text" v-model="newAlumno.peso" class="form-control"
                                         :class="{'is-invalid': formValidate.peso}" name="po">
@@ -206,7 +206,7 @@
                             <div class="form-group  form-float">
                                 <div class="form-line">
                                     <label class="form-label">
-                                        <font color="red">*</font> ESTATURA
+                                         ESTATURA
                                     </label>
                                     <input type="text" v-model="newAlumno.estatura" class="form-control"
                                         :class="{'is-invalid': formValidate.estatura}" name="po">
@@ -315,7 +315,7 @@
                             <div class="form-group form-float">
                                 <div class="form-line">
                                     <label class="form-label">
-                                        <font color="red">*</font> CONTRASEÑA
+                                         CONTRASEÑA
                                     </label>
                                     <input type="password" v-model="newAlumno.password" class="form-control"
                                         :class="{'is-invalid': formValidate.password}" name="po">
@@ -442,7 +442,7 @@
                             <div class="form-group form-float">
                                 <div class="form-line focused">
                                     <label class="form-label">
-                                        <font color="red">*</font> CURP
+                                          <font color="red">*</font> CURP
                                     </label>
                                     <input type="text" v-model="chooseAlumno.curp" class="form-control"
                                         :class="{'is-invalid': formValidate.curp}" name="po">
@@ -455,7 +455,7 @@
                             <div class="form-group form-float">
                                 <div class="form-line focused">
                                     <label class="form-label">
-                                        <font color="red">*</font> LUGAR DE NACIMIENTO
+                                         LUGAR DE NACIMIENTO
                                     </label>
                                     <input type="text" v-model="chooseAlumno.lugarnacimiento" class="form-control"
                                         :class="{'is-invalid': formValidate.lugarnacimiento}" name="po">
@@ -484,7 +484,7 @@
                             <div class="form-group form-float">
                                 <div class="form-line focused">
                                     <label class="form-label">
-                                        <font color="red">*</font> SERVICIO MEDICO
+                                        SERVICIO MEDICO
                                     </label>
                                     <input type="text" v-model="chooseAlumno.serviciomedico" class="form-control"
                                         :class="{'is-invalid': formValidate.serviciomedico}" name="po">
@@ -499,7 +499,7 @@
                         <div class="col-md-6 col-sm-12 col-xs-12 ">
                             <div class="form-group form-float">
                                 <div class="form-line focused">
-                                    <label class="form-label"> TELEFONO</label>
+                                    <label class="form-label"> <font color="red">*</font> TELEFONO CELULAR</label>
                                     <input type="text" v-model="chooseAlumno.telefono" class="form-control"
                                         :class="{'is-invalid': formValidate.telefono}" name="po">
                                 </div>
@@ -511,7 +511,7 @@
                         <div class="col-md-6 col-sm-12 col-xs-12 ">
                             <div class="form-group form-float">
                                 <div class="form-line focused">
-                                    <label class="form-label"> TELEFONO DE EMERGENCIA</label>
+                                    <label class="form-label"><font color="red">*</font> TELEFONO DE EMERGENCIA</label>
                                     <input type="text" v-model="chooseAlumno.telefonoemergencia" class="form-control"
                                         :class="{'is-invalid': formValidate.telefonoemergencia}" name="po">
                                 </div>
@@ -542,7 +542,7 @@
                             <div class="form-group form-float">
                                 <div class="form-line focused">
                                     <label class="form-label">
-                                        <font color="red">*</font> ALERGIA O PADECIMIENTO
+                                         ALERGIA O PADECIMIENTO
                                     </label>
                                     <input type="text" v-model="chooseAlumno.alergiaopadecimiento" class="form-control"
                                         :class="{'is-invalid': formValidate.alergiaopadecimiento}" name="po">
@@ -558,7 +558,7 @@
                             <div class="form-group form-float">
                                 <div class="form-line focused">
                                     <label class="form-label">
-                                        <font color="red">*</font> PESO
+                                         PESO
                                     </label>
                                     <input type="text" v-model="chooseAlumno.peso" class="form-control"
                                         :class="{'is-invalid': formValidate.peso}" name="po">
@@ -571,7 +571,7 @@
                             <div class="form-group form-float">
                                 <div class="form-line focused">
                                     <label class="form-label">
-                                        <font color="red">*</font> ESTATURA
+                                        ESTATURA
                                     </label>
                                     <input type="text" v-model="chooseAlumno.estatura" class="form-control"
                                         :class="{'is-invalid': formValidate.estatura}" name="po">

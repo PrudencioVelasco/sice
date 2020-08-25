@@ -25,7 +25,7 @@
                                     <div class="modal-header">
                                         <h4 class="modal-title" id="largeModalLabel">REGISTRAR TAREA</h4>
                                     </div>
-                                    <form id="frmtarea" >
+                                    <form id="frmtarea" enctype="multipart/form-data" method="post" >
                                         <div class="modal-body">
                                             <div class="row">
                                                 <div class="col-md-12 col-sm-12 col-xs-12 ">
@@ -34,10 +34,22 @@
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="col-md-12 col-sm-12 col-xs-12 ">
+                                                <div class="col-md-3 col-sm-12 col-xs-12 ">
                                                     <div class="form-group">
                                                         <label><font color="red">*</font> Fecha de entrega</label>
-                                                        <input type="date"  style="border-bottom:solid #ccc 1px;"  name="fechaentrega" required="" class="form-control">
+                                                        <input type="date"  style="border-bottom:solid #ccc 1px;" id="fechaentrega" name="fechaentrega" required="" class="form-control">
+                                                    </div>
+                                                </div>
+                                                 <div class="col-md-3 col-sm-12 col-xs-12 ">
+                                                    <div class="form-group">
+                                                        <label><font color="red">*</font> Hora termino de entrega</label>
+                                                        <input type="time"  style="border-bottom:solid #ccc 1px;" id="horaentrega"  name="horaentrega" required="" class="form-control">
+                                                    </div>
+                                                </div>
+                                                 <div class="col-md-6 col-sm-12 col-xs-12 ">
+                                                    <div class="form-group">
+                                                        <label>Documento</label>
+                                                        <input type="file"  style="border-bottom:solid #ccc 1px;" id="documento"  name="documento" required="" class="form-control">
                                                     </div>
                                                 </div>
                                             </div>
@@ -45,7 +57,7 @@
                                                 <div class="col-md-12 col-sm-12 col-xs-12 ">
                                                     <div class="form-group">
                                                         <label><font color="red">*</font> Redactar Tarea</label>
-                                                        <textarea id="ckeditor"   name="tarea"  required="">
+                                                        <textarea id="ckeditor" id="tarea"   name="tarea"  required="">
                                 
                                                         </textarea> 
                                                     </div>

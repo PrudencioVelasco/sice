@@ -43,6 +43,18 @@
                     ';
                         }
                         ?> 
+                         <?php
+                            
+                            if (isset($this->session->idplantel) && ($this->session->idplantel == 1 || $this->session->idplantel == 3 || $this->session->idplantel == 5)) {
+                                ?>
+                        <div class="alert alert-info alert-dismissible fade in" role="alert">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
+                                </button>
+                                <strong>Información!</strong> Antes de iniciar una clase es necesario que descargue e instale ZOOM, lo puede descargar desde aqui <a  target="_blank"  href="https://zoom.us/download">Descargar</a>
+                            </div>
+                                    <?php
+                            }
+                            ?>
                         <div class="row" > 
                             <div class="col-md-12 col-sm-12 col-xs-12 " align="center">
                                 <?php

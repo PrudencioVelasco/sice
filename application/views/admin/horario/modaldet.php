@@ -77,18 +77,30 @@
                         </div> 
                     </div>  
                     <div class="row">
-                        <div class="col-md-23 col-sm-12 col-xs-12 ">
+                        <div class="col-md-8 col-sm-12 col-xs-12 ">
                             <div class="form-group form-float">
                                 <div class="form-line">
                                     <label class="form-label">
-                                         URL VIDEOCONFERENCIA
+                                        URL VIDEOCONFERENCIA
                                     </label>
                                     <input type="text" v-model="newHorario.urlvideoconferencia" class="form-control"
                                            :class="{'is-invalid': formValidate.urlvideoconferencia}" name="po">
                                 </div>
                                 <div class="col-red" v-html="formValidate.urlvideoconferencia"></div>
                             </div>
-                        </div>   
+                        </div> 
+                          <div class="col-md-4 col-sm-12 col-xs-12 ">
+                            <div class="form-group form-float">
+                                <div class="form-line">
+                                    <label class="form-label">
+                                        NÚMERO ANFITRION
+                                    </label>
+                                    <input type="text" v-model="newHorario.numeroanfitrion" class="form-control"
+                                           :class="{'is-invalid': formValidate.numeroanfitrion}" name="po">
+                                </div>
+                                <div class="col-red" v-html="formValidate.numeroanfitrion"></div>
+                            </div>
+                        </div> 
                     </div>
 
                 </div>
@@ -117,10 +129,10 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="defaultModalLabel">AGREGAR HORA SIN CLASES</h4>
+                <h4 class="modal-title" id="defaultModalLabel">AGREGAR RECESO POR DIA</h4>
             </div>
             <div class="modal-body">
-                <div style=" padding-top:13px; padding-right:15px; height: 200px; overflow-x: hidden; overflow-y: scroll;">
+                <div style=" padding-top:13px; padding-right:15px;">
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12 ">
                             <div class="col-red" v-html="formValidate.msgerror"></div>
@@ -143,20 +155,37 @@
                     </div>
                     <div class="row">
                         <div class="col-md-6 col-sm-12 col-xs-12 ">
-                            <div class="form-group form-float ">
+                            <div class="form-group  form-float">
                                 <div class="form-line">
-                                    <label class="form-label"><font color="red">*</font> HORA INICIAL</label>
-                                    <input type="text" v-model="newHorario.horainicial" class="form-control"  :class="{'is-invalid': formValidate.horainicial}" name="po"> 
-                                </div>     
+
+                                    <label ><font color="red">*</font> HORA INICIAL</label>
+                                    <timepicker 
+                                        format="HH:mm"
+                                        input-width="100%" 
+                                        :hour-range="[[5, 21]]"
+                                        debug-mode
+                                        auto-scroll
+                                        placeholder="HH:mm"
+                                        v-model="newHorario.horainicial">
+                                    </timepicker>
+                                </div>       
                                 <div class="col-red" v-html="formValidate.horainicial"></div>
                             </div>
                         </div> 
                         <div class="col-md-6 col-sm-12 col-xs-12 ">
-                            <div class="form-group form-float ">
+                            <div class="form-group  form-float">
                                 <div class="form-line">
-                                    <label class="form-label"><font color="red">*</font> HORA FINAL</label>
-                                    <input type="text" v-model="newHorario.horafinal" class="form-control"  :class="{'is-invalid': formValidate.horafinal}" name="po"> 
-                                </div>      
+                                    <label ><font color="red">*</font> HORA TERMINO</label>
+                                    <timepicker 
+                                        format="HH:mm"
+                                        input-width="100%" 
+                                        :hour-range="[[5, 21]]"
+                                        debug-mode
+                                        auto-scroll
+                                        placeholder="HH:mm"
+                                        v-model="newHorario.horafinal">
+                                    </timepicker>
+                                </div>     
                                 <div class="col-red" v-html="formValidate.horafinal"></div>
                             </div>
                         </div> 
@@ -284,7 +313,7 @@
                 <h4 class="modal-title" id="defaultModalLabel">EDITAR ASIGNATURA/CURSO</h4>
             </div>
             <div class="modal-body">
-                <div style=" height: 200px;overflow-x: hidden; overflow-y: scroll;">
+                <div style=" padding-top:13px; padding-right:15px;">
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12 ">
                             <div class="col-red" v-html="formValidate.msgerror"></div>
@@ -360,18 +389,30 @@
                         </div> 
                     </div>  
                     <div class="row">
-                        <div class="col-md-23 col-sm-12 col-xs-12 ">
+                        <div class="col-md-8 col-sm-12 col-xs-12 ">
                             <div class="form-group form-float">
                                 <div class="form-line focused">
                                     <label class="form-label">
-                                          URL VIDEOCONFERENCIA
+                                        URL VIDEOCONFERENCIA
                                     </label>
                                     <input type="text" v-model="chooseHorario.urlvideoconferencia" class="form-control"
                                            :class="{'is-invalid': formValidate.urlvideoconferencia}" name="po">
                                 </div>
                                 <div class="col-red" v-html="formValidate.urlvideoconferencia"></div>
                             </div>
-                        </div>   
+                        </div>  
+                         <div class="col-md-4 col-sm-12 col-xs-12 ">
+                            <div class="form-group form-float">
+                                <div class="form-line focused">
+                                    <label class="form-label">
+                                        NÚMERO ANFITRION
+                                    </label>
+                                    <input type="text" v-model="chooseHorario.numeroanfitrion" class="form-control"
+                                           :class="{'is-invalid': formValidate.numeroanfitrion}" name="po">
+                                </div>
+                                <div class="col-red" v-html="formValidate.numeroanfitrion"></div>
+                            </div>
+                        </div>  
                     </div>
 
 
@@ -405,7 +446,7 @@
                 <h4 class="modal-title" id="defaultModalLabel">EDITAR RECESO</h4>
             </div>
             <div class="modal-body">
-                <div style=" padding-top:13px; padding-right:15px;  height: 200px;overflow-x: hidden; overflow-y: scroll;">
+                <div style=" padding-top:13px; padding-right:15px; ">
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12 ">
                             <div class="col-red" v-html="formValidate.msgerror"></div>
@@ -496,23 +537,22 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="defaultModalLabel">EDITAR HORA SIN CLASES</h4>
+                <h4 class="modal-title" id="defaultModalLabel">EDITAR RECESO POR DIA</h4>
             </div>
             <div class="modal-body">
-                <div style=" padding-top:13px; padding-right:15px; height: 200px; overflow-x: hidden; overflow-y: scroll;">
+                <div style=" padding-top:13px; padding-right:15px; ">
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12 ">
                             <div class="col-red" v-html="formValidate.msgerror"></div>
                         </div>
-                    </div>
-
+                    </div>  
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12 ">
                             <div class="form-group">
                                 <label><font color="red">*</font> DIA</label>
-                                <select style="border-bottom: solid #ebebeb 2px;" v-model="chooseHorario.iddia"  :class="{'is-invalid': formValidate.iddia}"class="form-control">
-                                    <option value="" >-- SELECCIONAR --</option>   
-                                    <option   v-for="option in dias" :selected="option.iddia == chooseHorario.iddia ? 'selected' : ''"  v-bind:value="option.iddia">
+                                <select style="border-bottom: solid #ebebeb 2px;" class="form-control" v-model="chooseHorario.iddia" >
+                                    <option value="" >-- SELECCIONAR --</option>
+                                    <option v-for="option in dias"  :selected="option.iddia == chooseHorario.iddia ? 'selected' : ''" :value="option.iddia" >
                                         {{ option.nombredia }}
                                     </option>
                                 </select>
@@ -520,27 +560,43 @@
                             </div>
                         </div>  
                     </div>
+
                     <div class="row">
                         <div class="col-md-6 col-sm-12 col-xs-12 ">
-                            <div class="form-group form-float">
-                                <div class="form-line focused"  > 
-                                    <label  class="form-label"><font color="red">*</font> HORA INICIAL</label>
-                                    <input type="text" v-model="chooseHorario.horainicial" class="form-control"  :class="{'is-invalid': formValidate.horainicial}" name="po"> 
-                                </div>      
+                            <div class="form-group form-float ">
+                                <div class="form-line focused">
+                                    <label ><font color="red">*</font> HORA INICIAL</label>
+                                    <timepicker 
+                                        format="HH:mm"
+                                        input-width="100%" 
+                                        :hour-range="[[5, 21]]"
+                                        debug-mode
+                                        auto-scroll
+                                        placeholder="HH:mm"
+                                        v-model="chooseHorario.horainicial">
+                                    </timepicker>
+                                </div>
                                 <div class="col-red" v-html="formValidate.horainicial"></div>
                             </div>
                         </div> 
                         <div class="col-md-6 col-sm-12 col-xs-12 ">
-                            <div class="form-group form-float">
-                                <div class="form-line focused"  > 
-                                    <label  class="form-label"><font color="red">*</font> HORA FINAL</label>
-                                    <input type="text" v-model="chooseHorario.horafinal" class="form-control"  :class="{'is-invalid': formValidate.horafinal}" name="po"> 
-                                </div>      
+                            <div class="form-group form-float ">
+                                <div class="form-line focused">
+                                    <label  ><font color="red">*</font> HORA FINAL</label>
+                                    <timepicker 
+                                        format="HH:mm"
+                                        input-width="100%" 
+                                        :hour-range="[[5, 21]]"
+                                        debug-mode
+                                        auto-scroll
+                                        placeholder="HH:mm"
+                                        v-model="chooseHorario.horafinal">
+                                    </timepicker>
+                                </div>   
                                 <div class="col-red" v-html="formValidate.horafinal"></div>
                             </div>
                         </div> 
-                    </div>  
-
+                    </div> 
 
                 </div>
             </div>

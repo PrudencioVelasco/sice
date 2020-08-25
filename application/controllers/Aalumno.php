@@ -255,6 +255,7 @@ class Aalumno extends CI_Controller
             $reprobadas = implode(",", $array_materias_reprobadas);
 
             $lunesAll = $this->horario->showAllDiaHorarioSinDua($idhorario, $reprobadas);
+                                    
             if(isset($lunesAll) && !empty($lunesAll)){
             foreach ($lunesAll as $row) {
                 $tabla .= '<tr>';
@@ -263,26 +264,41 @@ class Aalumno extends CI_Controller
             if(isset($row->lunesurl) && !empty($row->lunesurl)){
                  $tabla .= '  <a target="_blank" href="'.$row->lunesurl.'" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> ENTRAR A CLASE</a>';
             }
+              if (isset($row->lunesurlgrabado) && !empty($row->lunesurlgrabado)) {
+                   $tabla .= '  <a target="_blank" href="'.$row->lunesurlgrabado.'" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> CLASE GRABADA</a>';
+              }
             $tabla .='</td>';
                 $tabla .= '<td  >' . $row->martes . '<br>';
             if(isset($row->martesurl) && !empty($row->martesurl)){
                  $tabla .= '  <a target="_blank" href="'.$row->martesurl.'" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> ENTRAR A CLASE</a>';
             }
+             if (isset($row->martesurlgrabado) && !empty($row->martesurlgrabado)) {
+                   $tabla .= '  <a target="_blank" href="'.$row->martesurlgrabado.'" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> CLASE GRABADA</a>';
+              }
             $tabla .='</td>';
                 $tabla .= '<td >' . $row->miercoles . '<br>';
             if(isset($row->miercolesurl) && !empty($row->miercolesurl)){
                  $tabla .= '  <a target="_blank" href="'.$row->miercolesurl.'" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> ENTRAR A CLASE</a>';
             }
+             if (isset($row->miercolesurlgrabado) && !empty($row->miercolesurlgrabado)) {
+                   $tabla .= '  <a target="_blank" href="'.$row->miercolesurlgrabado.'" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> CLASE GRABADA</a>';
+              }
             $tabla .='</td>';
                 $tabla .= '<td  >' . $row->jueves . '<br>';
             if(isset($row->juevesurl) && !empty($row->juevesurl)){
                  $tabla .= '  <a target="_blank" href="'.$row->juevesurl.'" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> ENTRAR A CLASE</a>';
             }
+             if (isset($row->juevesurlgrabado) && !empty($row->juevesurlgrabado)) {
+                   $tabla .= '  <a target="_blank" href="'.$row->juevesurlgrabado.'" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> CLASE GRABADA</a>';
+              }
             $tabla .='</td>';
                 $tabla .= '<td >' . $row->viernes . '<br>';
             if(isset($row->viernesurl) && !empty($row->viernesurl)){
                  $tabla .= '  <a target="_blank" href="'.$row->viernesurl.'" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> ENTRAR A CLASE</a>';
             }
+             if (isset($row->viernesurlgrabado) && !empty($row->viernesurlgrabado)) {
+                   $tabla .= '  <a target="_blank" href="'.$row->viernesurlgrabado.'" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> CLASE GRABADA</a>';
+              }
             $tabla .='</td>';
 
                 $tabla .= '</tr>';

@@ -66,13 +66,21 @@ class User_model extends CI_Model {
     }
 
     public function showAllPlanteles($idrol = '', $idplantel = '') {
-        $this->db->select('p.*, n.nombreniveleducativo');
-        $this->db->from('tblplantel p');
-        $this->db->join('tblniveleducativo n', 'p.idniveleducativo = n.idniveleducativo');
+        $sql ="SELECT  p.*, n.nombreniveleducativo,   CASE
+        WHEN p.idplantel = 7 THEN 'PRIMARIA'
+         WHEN p.idplantel = 8 THEN 'PREESCOLAR'
+        ELSE ''
+    END AS opcionivel "
+                . "FROM tblplantel p INNER JOIN tblniveleducativo n ON p.idniveleducativo = n.idniveleducativo";
+       
+        //$this->db->select('p.*, n.nombreniveleducativo');
+        //$this->db->from('tblplantel p');
+        //$this->db->join('tblniveleducativo n', 'p.idniveleducativo = n.idniveleducativo');
         if (!empty($idrol) && $idrol != 14) {
-            $this->db->where('p.idplantel', $idplantel);
+             $sql .= " WHERE p.idplantel = $idplantel";
+            //$this->db->where('p.idplantel', $idplantel);
         }
-        $query = $this->db->get();
+         $query = $this->db->query($sql);
         if ($query->num_rows() > 0) {
             return $query->result();
         } else {
@@ -201,7 +209,7 @@ class User_model extends CI_Model {
         $this->db->where('u.idtipousuario', 1);
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
-            return $query->first_row();
+           return $query->result();
         } else {
             return false;
         }

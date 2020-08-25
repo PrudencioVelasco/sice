@@ -97,41 +97,143 @@ class Phorario extends CI_Controller {
 
         $lunesAll = $this->horario->showHorarioProfesor($this->session->idprofesor);
 
-
+       
         foreach ($lunesAll as $row) {
             $tabla .= '<tr>';
             $tabla .= '<td  ><strong>' . $row->hora . '</strong></td>';
             $tabla .= '<td >' . $row->lunes . '<br>';
             if (isset($row->lunesurl) && !empty($row->lunesurl)) {
                 $tabla .= '  <a target="_blank" href="' . $row->lunesurl . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> IMPARTIR CLASE</a>';
-            } else {
-//                $tabla .= ' <a  href="javascript:void(0)"  class="add_button_url btn btn-primary  btn-xs"
-//                                                                data-toggle="modal" data-target="#largeModalAdd"
-//                                                                data-idhorariodetalle="'.$row->lunesidhorariodetalle.'"  >
-//                                                                <i class="fa fa-plus" aria-hidden="true"></i>
-//                                                                Agregar</a>';
+            }
+             if (isset($row->lunesnumeroanfitrion) && !empty($row->lunesnumeroanfitrion)) {
+                $tabla .= '<br>Número anfitrion: '.$row->lunesnumeroanfitrion.'<br>';
+            }
+            if ((isset($row->lunesurlgrabado) && !empty($row->lunesurlgrabado))) {
+                $tabla .= '<label><a  target="_blank" href=" ' . $row->lunesurlgrabado . '"><i class="fa fa-external-link"></i> Video grabado<a/></label>';
+                $tabla .= ' <a  href="javascript:void(0)"  class="delete_button_url"
+                                                                data-toggle="modal" data-target="#largeModalDelete"
+                                                                data-idhorariodetalle="' . $row->lunesidhorariodetalle . '"  >
+                                                                 <i class="fa fa-trash" style="color:red;"></i> </a>';
+                $tabla .= ' <a  href="javascript:void(0)"  class="edit_button_url"
+                                                                data-toggle="modal" data-target="#largeModalEdit"
+                                                                data-idhorariodetalle="' . $row->lunesidhorariodetalle . '"
+                                                                data-urlvideo="' . $row->lunesurlgrabado . '">
+                                                                 <i class="fa fa-pencil-square-o" style="color:blue;" ></i> </a>';
+            }
+            if (isset($row->lunes) && !empty($row->lunes) && (isset($row->lunesurlgrabado) && empty($row->lunesurlgrabado))) {
+
+                $tabla .= '<label> <a  href="javascript:void(0)"  class="add_button_url"
+                                                                data-toggle="modal" data-target="#largeModalAdd"
+                                                                data-idhorariodetalle="' . $row->lunesidhorariodetalle . '"  >
+                                                                 Agregar video grabado</a></label>';
             }
             $tabla .= '</td>';
             $tabla .= '<td  >' . $row->martes . '<br>';
             if (isset($row->martesurl) && !empty($row->martesurl)) {
                 $tabla .= '  <a target="_blank" href="' . $row->martesurl . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> IMPARTIR CLASE</a>';
             }
+              if (isset($row->martesnumeroanfitrion) && !empty($row->martesnumeroanfitrion)) {
+                $tabla .= '<br>Número anfitrion: '.$row->martesnumeroanfitrion.'<br>';
+            }
+            if ((isset($row->martesurlgrabado) && !empty($row->martesurlgrabado))) {
+                $tabla .= '<label><a  target="_blank" href=" ' . $row->martesurlgrabado . '"><i class="fa fa-external-link"></i> Video grabado<a/></label>';
+                $tabla .= ' <a  href="javascript:void(0)"  class="delete_button_url"
+                                                                data-toggle="modal" data-target="#largeModalDelete"
+                                                                data-idhorariodetalle="' . $row->martesidhorariodetalle . '"  >
+                                                                 <i class="fa fa-trash" style="color:red;"></i> </a>';
+                $tabla .= ' <a  href="javascript:void(0)"  class="edit_button_url"
+                                                                data-toggle="modal" data-target="#largeModalEdit"
+                                                                data-idhorariodetalle="' . $row->martesidhorariodetalle . '"
+                                                                data-urlvideo="' . $row->martesurlgrabado . '">
+                                                                 <i class="fa fa-pencil-square-o" style="color:blue;" ></i> </a>';
+            }
+            if (isset($row->martes) && !empty($row->martes) && (isset($row->martesurlgrabado) && empty($row->martesurlgrabado))) {
+
+                $tabla .= '<label> <a  href="javascript:void(0)"  class="add_button_url"
+                                                                data-toggle="modal" data-target="#largeModalAdd"
+                                                                data-idhorariodetalle="' . $row->martesidhorariodetalle . '"  >
+                                                                 Agregar video grabado</a></label>';
+            }
             $tabla .= '</td>';
             $tabla .= '<td >' . $row->miercoles . '<br>';
             if (isset($row->miercolesurl) && !empty($row->miercolesurl)) {
                 $tabla .= '  <a target="_blank" href="' . $row->miercolesurl . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> IMPARTIR CLASE</a>';
+            }
+              if (isset($row->miercolesnumeroanfitrion) && !empty($row->miercolesnumeroanfitrion)) {
+                $tabla .= '<br>Número anfitrion: '.$row->miercolesnumeroanfitrion.'<br>';
+            }
+            if ((isset($row->miersolesurlgrabado) && !empty($row->miersolesurlgrabado))) {
+                $tabla .= '<label><a  target="_blank" href=" ' . $row->miersolesurlgrabado . '"><i class="fa fa-external-link"></i> Video grabado<a/></label>';
+                $tabla .= ' <a  href="javascript:void(0)"  class="delete_button_url"
+                                                                data-toggle="modal" data-target="#largeModalDelete"
+                                                                data-idhorariodetalle="' . $row->miercolesidhorariodetalle . '"  >
+                                                                 <i class="fa fa-trash" style="color:red;"></i> </a>';
+                $tabla .= ' <a  href="javascript:void(0)"  class="edit_button_url"
+                                                                data-toggle="modal" data-target="#largeModalEdit"
+                                                                data-idhorariodetalle="' . $row->miercolesidhorariodetalle . '"
+                                                                data-urlvideo="' . $row->miercolesurlgrabado . '">
+                                                                 <i class="fa fa-pencil-square-o" style="color:blue;" ></i> </a>';
+            }
+            if (isset($row->miercoles) && !empty($row->miercoles) && (isset($row->miercolesurlgrabado) && empty($row->miercolesurlgrabado))) {
+
+                $tabla .= '<label> <a  href="javascript:void(0)"  class="add_button_url"
+                                                                data-toggle="modal" data-target="#largeModalAdd"
+                                                                data-idhorariodetalle="' . $row->miercolesidhorariodetalle . '"  >
+                                                                 Agregar video grabado</a></label>';
             }
             $tabla .= '</td>';
             $tabla .= '<td  >' . $row->jueves . '<br>';
             if (isset($row->juevesurl) && !empty($row->juevesurl)) {
                 $tabla .= '  <a target="_blank" href="' . $row->juevesurl . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> IMPARTIR CLASE</a>';
             }
+              if (isset($row->juevesnumeroanfitrion) && !empty($row->juevesnumeroanfitrion)) {
+                $tabla .= '<br>Número anfitrion: '.$row->juevesnumeroanfitrion.'<br>';
+            }
+            if ((isset($row->juevesurlgrabado) && !empty($row->juevesurlgrabado))) {
+                $tabla .= '<label><a  target="_blank" href=" ' . $row->juevesurlgrabado . '"><i class="fa fa-external-link"></i> Video grabado<a/></label>';
+                $tabla .= ' <a  href="javascript:void(0)"  class="delete_button_url"
+                                                                data-toggle="modal" data-target="#largeModalDelete"
+                                                                data-idhorariodetalle="' . $row->juevesidhorariodetalle . '"  >
+                                                                 <i class="fa fa-trash" style="color:red;"></i> </a>';
+                $tabla .= ' <a  href="javascript:void(0)"  class="edit_button_url"
+                                                                data-toggle="modal" data-target="#largeModalEdit"
+                                                                data-idhorariodetalle="' . $row->juevesidhorariodetalle . '"
+                                                                data-urlvideo="' . $row->juevesurlgrabado . '">
+                                                                 <i class="fa fa-pencil-square-o" style="color:blue;" ></i> </a>';
+            }
+            if (isset($row->jueves) && !empty($row->jueves) && (isset($row->juevesurlgrabado) && empty($row->juevesurlgrabado))) {
+
+                $tabla .= '<label> <a  href="javascript:void(0)"  class="add_button_url"
+                                                                data-toggle="modal" data-target="#largeModalAdd"
+                                                                data-idhorariodetalle="' . $row->juevesidhorariodetalle . '"  >
+                                                                 Agregar video grabado</a></label>';
+            }
             $tabla .= '</td>';
             $tabla .= '<td >' . $row->viernes . '<br>';
-            if (isset($row->viernessurl) && !empty($row->viernessurl)) {
-                $tabla .= '  <a target="_blank" href="' . $row->viernessurl . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> IMPARTIR CLASE</a>';
-            } else {
-                
+            if (isset($row->viernesurl) && !empty($row->viernesurl)) {
+                $tabla .= '  <a target="_blank" href="' . $row->viernesurl . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> IMPARTIR CLASE</a>';
+            }
+              if (isset($row->viernesnumeroanfitrion) && !empty($row->viernesnumeroanfitrion)) {
+                $tabla .= '<br>Número anfitrion: '.$row->viernesnumeroanfitrion.'<br>';
+            }
+            if ((isset($row->viernesurlgrabado) && !empty($row->viernesurlgrabado))) {
+                $tabla .= '<label><a  target="_blank" href=" ' . $row->viernesurlgrabado . '"><i class="fa fa-external-link"></i> Video grabado<a/></label>';
+                $tabla .= ' <a  href="javascript:void(0)"  class="delete_button_url"
+                                                                data-toggle="modal" data-target="#largeModalDelete"
+                                                                data-idhorariodetalle="' . $row->viernesidhorariodetalle . '"  >
+                                                                 <i class="fa fa-trash" style="color:red;"></i> </a>';
+                $tabla .= ' <a  href="javascript:void(0)"  class="edit_button_url"
+                                                                data-toggle="modal" data-target="#largeModalEdit"
+                                                                data-idhorariodetalle="' . $row->viernesidhorariodetalle . '"
+                                                                data-urlvideo="' . $row->viernesurlgrabado . '">
+                                                                 <i class="fa fa-pencil-square-o" style="color:blue;" ></i> </a>';
+            }
+            if (isset($row->viernes) && !empty($row->viernes) && (isset($row->viernesurlgrabado) && empty($row->viernesurlgrabado))) {
+
+                $tabla .= '<label> <a  href="javascript:void(0)"  class="add_button_url"
+                                                                data-toggle="modal" data-target="#largeModalAdd"
+                                                                data-idhorariodetalle="' . $row->viernesidhorariodetalle . '"  >
+                                                                 Agregar video grabado</a></label>';
             }
             $tabla .= '</td>';
 
@@ -141,7 +243,8 @@ class Phorario extends CI_Controller {
 
         return $tabla;
     }
-    public function addUrlHorario() {
+
+    public function addUrlVideoGrabadoHorario() {
         Permission::grant(uri_string());
         $config = array(
             array(
@@ -150,7 +253,7 @@ class Phorario extends CI_Controller {
                 'rules' => 'trim|valid_url|required',
                 'errors' => array(
                     'valid_url' => 'Formato no valido.',
-                     'required' => 'La URL es requerido',
+                    'required' => 'La URL es requerido',
                 ),
             ),
             array(
@@ -168,11 +271,76 @@ class Phorario extends CI_Controller {
             echo json_encode(['error' => $errors]);
         } else {
             $url = $this->input->post('url');
-            $idhorariodetalle = $this->input->post('idhorariodetalle');  
+            $idhorariodetalle = $this->input->post('idhorariodetalle');
             $data = array(
-                'urlvideoconferencia' => $url,   
+                'urlvideoconferenciagrabado' => $url,
             );
-            $value = $this->horario->updateHorarioMateria($idhorariodetalle,$data);
+            $value = $this->horario->updateHorarioMateria($idhorariodetalle, $data);
+
+            echo json_encode(['success' => 'Ok']);
+        }
+        // echo json_encode($result);
+    }
+        public function updateUrlVideoGrabadoHorario() {
+        Permission::grant(uri_string());
+        $config = array(
+            array(
+                'field' => 'url',
+                'label' => 'Unidad',
+                'rules' => 'trim|valid_url|required',
+                'errors' => array(
+                    'valid_url' => 'Formato no valido.',
+                    'required' => 'La URL es requerido',
+                ),
+            ),
+            array(
+                'field' => 'idhorariodetalle',
+                'label' => 'idhorariodetalle',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Horario detalle requerido.',
+                ),
+            ),
+        );
+        $this->form_validation->set_rules($config);
+        if ($this->form_validation->run() == false) {
+            $errors = validation_errors();
+            echo json_encode(['error' => $errors]);
+        } else {
+            $url = $this->input->post('url');
+            $idhorariodetalle = $this->input->post('idhorariodetalle');
+            $data = array(
+                'urlvideoconferenciagrabado' => $url,
+            );
+            $value = $this->horario->updateHorarioMateria($idhorariodetalle, $data);
+
+            echo json_encode(['success' => 'Ok']);
+        }
+        // echo json_encode($result);
+    }
+      public function deleteUrlVideoGrabadoHorario() {
+        Permission::grant(uri_string());
+        $config = array(
+            array(
+                'field' => 'idhorariodetalle',
+                'label' => 'idhorariodetalle',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Horario detalle requerido.',
+                ),
+            ),
+        );
+        $this->form_validation->set_rules($config);
+        if ($this->form_validation->run() == false) {
+            $errors = validation_errors();
+            echo json_encode(['error' => $errors]);
+        } else {
+           // $url = $this->input->post('url');
+            $idhorariodetalle = $this->input->post('idhorariodetalle');
+            $data = array(
+                'urlvideoconferenciagrabado' => '',
+            );
+            $value = $this->horario->updateHorarioMateria($idhorariodetalle, $data);
 
             echo json_encode(['success' => 'Ok']);
         }

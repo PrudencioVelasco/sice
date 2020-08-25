@@ -90,7 +90,13 @@
                                     <?php
                                     if ((isset($this->session->nivel_educativo) && !empty($this->session->nivel_educativo)) &&
                                             (isset($this->session->idplantel) && !empty($this->session->idplantel) && $this->session->idplantel != 2)) {
-                                        echo $this->session->nivel_educativo;
+                                        if ($this->session->idplantel == 7) {
+                                            echo $this->session->nivel_educativo . " PRIMARIA";
+                                        } elseif ($this->session->idplantel == 8) {
+                                            echo $this->session->nivel_educativo . " PREESCOLAR";
+                                        } else {
+                                            echo $this->session->nivel_educativo;
+                                        }
                                     } else {
                                         echo 'Profesor';
                                     }
@@ -134,9 +140,17 @@
                                        <?php
                                         if (isset($this->session->planteles) && !empty($this->session->planteles)) {
                                             foreach ($this->session->planteles as $row) {
-                                                ?>
+                                            	   if($row->idplantel == 7){ ?>
+                                                   <li><a href="<?= base_url('/welcome/cambiarplantel/' . $row->idplantel.'/'.$row->idprofesor) ?>">LICENCIATURA PRIMARIA</a></li>  
+                                               <?php 
+                                               
+                                                } else if($row->idplantel == 8){  ?>
+                                                   <li><a href="<?= base_url('/welcome/cambiarplantel/' . $row->idplantel.'/'.$row->idprofesor) ?>">LICENCIATURA PREESCOLAR</a></li>  
+                                               <?php 
+                                                }else { ?>
                                                 <li><a href="<?= base_url('/welcome/cambiarplantel/' . $row->idplantel.'/'.$row->idprofesor) ?>"><?php echo $row->nombreniveleducativo ?></a></li>
                                                 <?php
+                                                } 
                                             }
                                         }
                                         ?>

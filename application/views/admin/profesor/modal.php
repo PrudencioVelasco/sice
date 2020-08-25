@@ -84,6 +84,26 @@
                             </div>
                         </div> 
                     </div>
+                      <div class="row">
+                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                            <div class="form-group form-float">
+                                <div class="form-line"  >
+                                    <label  class="form-label"><font color="red">*</font> LIGA CLASES</label>
+                                    <input type="text" v-model="newProfesor.urlvideoconferencia" class="form-control"  :class="{'is-invalid': formValidate.urlvideoconferencia}" name="po"> 
+                                </div>     
+                                <div class="col-red" v-html="formValidate.urlvideoconferencia"></div>
+                            </div>
+                        </div> 
+                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                            <div class="form-group form-float">
+                                <div class="form-line"  >
+                                    <label  class="form-label"> NUMERO ANFITRION</label>
+                                    <input type="text" v-model="newProfesor.numeroanfitrion" class="form-control"  :class="{'is-invalid': formValidate.numeroanfitrion}" name="po"> 
+                                </div>      
+                                <div class="col-red" v-html="formValidate.numeroanfitrion"></div>
+                            </div>
+                        </div> 
+                    </div>
 
  
             </div>
@@ -239,7 +259,27 @@
                                 <div class="col-red" v-html="formValidate.correo"></div>
                             </div>
                         </div>  
-                    </div> 
+                    </div>
+                       <div class="row">
+                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                            <div class="form-group form-float">
+                                <div class="form-line focused"  >
+                                    <label  class="form-label"><font color="red">*</font> LIGA CLASES</label>
+                                    <input type="text" v-model="chooseProfesor.urlvideoconferencia" class="form-control"  :class="{'is-invalid': formValidate.urlvideoconferencia}" name="po"> 
+                                </div>     
+                                <div class="col-red" v-html="formValidate.urlvideoconferencia"></div>
+                            </div>
+                        </div> 
+                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                            <div class="form-group form-float">
+                                <div class="form-line focused"  >
+                                    <label  class="form-label"> NUMERO ANFITRION</label>
+                                    <input type="text" v-model="chooseProfesor.numeroanfitrion" class="form-control"  :class="{'is-invalid': formValidate.numeroanfitrion}" name="po"> 
+                                </div>      
+                                <div class="col-red" v-html="formValidate.numeroanfitrion"></div>
+                            </div>
+                        </div> 
+                    </div>
             </div>
             <div class="modal-footer">
                 <div class="row">

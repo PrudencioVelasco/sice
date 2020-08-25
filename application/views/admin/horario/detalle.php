@@ -7,7 +7,7 @@
         <div class="col-md-12  col-sm-12 col-xs-12">
           <div class="x_panel">
             <div class="x_title">
-                <h2><strong>DETALLES DE HORARIO: <?php if(isset($detalle_horario) && !empty($detalle_horario)){ echo $detalle_horario->nombrenivel." - ".$detalle_horario->nombregrupo; } ?></strong></h2>
+                <h2><strong>DETALLES DEL HORARIO: <?php if(isset($detalle_horario) && !empty($detalle_horario)){ echo $detalle_horario->nombrenivel." - ".$detalle_horario->nombregrupo; } ?></strong></h2>
 
               <div class="clearfix"></div>
             </div>
@@ -23,7 +23,7 @@
 
                       <button class="btn btn-round btn-primary waves-effect waves-black" @click="modelAgregarRecreo()"><i class='fa fa-plus'></i> Agregar Receso</button>
 
-                      <!--<button class="btn btn-round btn-primary waves-effect waves-black" @click="modelAgregarHoraSinClase()"><i class='fa fa-plus'></i> Agregar Hora sin Clases</button> -->
+                      <button class="btn btn-round btn-primary waves-effect waves-black" @click="modelAgregarHoraSinClase()"><i class='fa fa-plus'></i> Agregar Receso por Dia</button>
                     <?php } ?>
                     <a target="_blank" class="btn btn-round btn-info waves-effect waves-black" href="<?php echo base_url(); ?>Horario/descargar/<?php echo $id ?>" class="btn btn-primary"><i class="fa fa-print"></i> IMPRIMIR HORARIO</a>
                   </div>
@@ -45,16 +45,18 @@
                         <td>
                           <div v-for="row in lunes">
                             <ul class="nav navbar-right panel_toolbox" style="border: 2px solid #ccc; border-radius: 4px; margin-bottom: 4px">
-                              <li><a class="collapse-link " style="color: #000">
+                                <li style="padding: 0 0 0 10px;"><a class="collapse-link " style="color: #000; text-decoration: none; ">
                                   <div v-if="row.opcion == 'NORMAL'">
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
                                      <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small><br/>
-                                      <small>{{row.urlvideoconferencia}}</small>
+                                    
+                                     <small v-if="row.urlvideoconferencia" ><a target='_blank' v-bind:href="row.urlvideoconferencia"> <i class="fa fa-external-link"></i> {{row.urlvideoconferencia}}</a></small>
                                   </div>
                                   <div v-else>
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})
                                   </div>
                                 </a>
+                                  
                               </li>
                               <?php if ($activo_horario == 1 && $activo_ciclo_escolar == 1) { ?>
                                 <li class="dropdown">
@@ -84,11 +86,11 @@
                         <td>
                           <div v-for="row in martes">
                             <ul class="nav navbar-right panel_toolbox" style="border: 2px solid #ccc; border-radius: 4px; margin-bottom: 4px">
-                              <li><a class="collapse-link " style="color: #000">
+                              <li  style="padding: 0 0 0 10px;"><a class="collapse-link " style="color: #000;  text-decoration: none;">
                                   <div v-if="row.opcion == 'NORMAL'">
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
                                     <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small><br/>
-                                      <small>{{row.urlvideoconferencia}}</small>
+                                     <small v-if="row.urlvideoconferencia" ><a target='_blank' v-bind:href="row.urlvideoconferencia"> <i class="fa fa-external-link"></i> {{row.urlvideoconferencia}}</a></small>
                                   </div>
                                   <div v-else>
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})
@@ -123,11 +125,11 @@
                         <td>
                           <div v-for="row in miercoles">
                             <ul class="nav navbar-right panel_toolbox" style="border: 2px solid #ccc; border-radius: 4px; margin-bottom: 4px">
-                              <li><a class="collapse-link " style="color: #000">
+                              <li  style="padding: 0 0 0 10px;"><a class="collapse-link " style="color: #000;  text-decoration: none;">
                                   <div v-if="row.opcion == 'NORMAL'">
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
                                     <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small><br/>
-                                      <small>{{row.urlvideoconferencia}}</small>
+                                     <small  v-if="row.urlvideoconferencia" ><a target='_blank' v-bind:href="row.urlvideoconferencia"> <i class="fa fa-external-link"></i> {{row.urlvideoconferencia}}</a></small>
                                   </div>
                                   <div v-else>
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})
@@ -162,11 +164,11 @@
                         <td>
                           <div v-for="row in jueves">
                             <ul class="nav navbar-right panel_toolbox" style="border: 2px solid #ccc; border-radius: 4px; margin-bottom: 4px">
-                              <li><a class="collapse-link " style="color: #000">
+                              <li  style="padding: 0 0 0 10px;"><a class="collapse-link " style="color: #000;  text-decoration: none;">
                                   <div v-if="row.opcion == 'NORMAL'">
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
                                     <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small><br/>
-                                      <small>{{row.urlvideoconferencia}}</small>
+                                     <small v-if="row.urlvideoconferencia" ><a target='_blank' v-bind:href="row.urlvideoconferencia"> <i class="fa fa-external-link"></i> {{row.urlvideoconferencia}}</a></small>
                                   </div>
                                   <div v-else>
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})
@@ -201,11 +203,11 @@
                         <td>
                           <div v-for="row in viernes">
                             <ul class="nav navbar-right panel_toolbox" style="border: 2px solid #ccc; border-radius: 4px; margin-bottom: 4px">
-                              <li><a class="collapse-link " style="color: #000">
+                              <li  style="padding: 0 0 0 10px;"><a class="collapse-link " style="color: #000; text-decoration: none;">
                                   <div v-if="row.opcion == 'NORMAL'">
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
                                     <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small><br/>
-                                      <small>{{row.urlvideoconferencia}}</small>
+                                       <smalL v-if="row.urlvideoconferencia"><a target='_blank' v-bind:href="row.urlvideoconferencia"> <i class="fa fa-external-link"></i> {{row.urlvideoconferencia}}</a></small>
                                   </div>
                                   <div v-else>
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})

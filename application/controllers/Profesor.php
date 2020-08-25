@@ -153,6 +153,22 @@ class Profesor extends CI_Controller {
                     'errors' => array(
                         'required' => 'Campo obligatorio.'
                     )
+                ),
+                 array(
+                    'field' => 'urlvideoconferencia',
+                    'label' => 'URL Videoconferencia',
+                    'rules' => 'trim|valid_url',
+                    'errors' => array(
+                        'valid_url' => 'Formato de la URL invalido.'
+                    )
+                ),
+                  array(
+                    'field' => 'numeroanfitrion',
+                    'label' => 'Hora final',
+                    'rules' => 'trim|integer',
+                    'errors' => array( 
+                         'integer' => 'Debe de ser numero.'
+                    )
                 )
             );
 
@@ -165,7 +181,9 @@ class Profesor extends CI_Controller {
                     'cedula' => form_error('cedula'),
                     'correo' => form_error('correo'),
                     'password' => form_error('password'),
-                    'profesion' => form_error('profesion')
+                    'profesion' => form_error('profesion'),
+                      'urlvideoconferencia' => form_error('urlvideoconferencia'),
+                     'numeroanfitrion' => form_error('numeroanfitrion')
                 );
             } else {
                 $cedula = trim($this->input->post('cedula'));
@@ -184,6 +202,8 @@ class Profesor extends CI_Controller {
                         'correo' => $this->input->post('correo'),
                         'password' => $password_encrypted,
                         'foto' => '',
+                        'urlvideoconferencia' => $this->input->post('urlvideoconferencia'),
+                        'numeroanfitrion' => $this->input->post('numeroanfitrion'),
                         'idusuario' => $this->session->user_id,
                         'fecharegistro' => date('Y-m-d H:i:s')
                     );
@@ -268,6 +288,22 @@ class Profesor extends CI_Controller {
                     'errors' => array(
                         'required' => 'Campo obligatorio.'
                     )
+                ),
+                 array(
+                    'field' => 'urlvideoconferencia',
+                    'label' => 'URL Videoconferencia',
+                    'rules' => 'trim|valid_url',
+                    'errors' => array(
+                        'valid_url' => 'Formato de la URL invalido.'
+                    )
+                ),
+                  array(
+                    'field' => 'numeroanfitrion',
+                    'label' => 'Hora final',
+                    'rules' => 'trim|integer',
+                    'errors' => array( 
+                         'integer' => 'Debe de ser numero.'
+                    )
                 )
             );
 
@@ -280,7 +316,9 @@ class Profesor extends CI_Controller {
                     'cedula' => form_error('cedula'),
                     'correo' => form_error('correo'),
                     'password' => form_error('password'),
-                    'profesion' => form_error('profesion')
+                    'profesion' => form_error('profesion'),
+                      'urlvideoconferencia' => form_error('urlvideoconferencia'),
+                     'numeroanfitrion' => form_error('numeroanfitrion')
                 );
             } else {
                 $id = $this->input->post('idprofesor');
@@ -297,6 +335,8 @@ class Profesor extends CI_Controller {
                         'apellidom' => mb_strtoupper($this->input->post('apellidom')),
                         'profesion' => mb_strtoupper($this->input->post('profesion')),
                         'correo' => $this->input->post('correo'),
+                          'urlvideoconferencia' => $this->input->post('urlvideoconferencia'),
+                        'numeroanfitrion' => $this->input->post('numeroanfitrion'),
                         'idusuario' => $this->session->user_id,
                         'fecharegistro' => date('Y-m-d H:i:s')
                     );

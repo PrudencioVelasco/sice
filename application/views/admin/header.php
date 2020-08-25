@@ -150,7 +150,14 @@
                                     <?php
                                     if ((isset($this->session->nivel_educativo) && !empty($this->session->nivel_educativo)) &&
                                             (isset($this->session->idplantel) && !empty($this->session->idplantel) && $this->session->idplantel != 2)) {
-                                        echo $this->session->nivel_educativo;
+
+                                        if ($this->session->idplantel == 7) {
+                                            echo $this->session->nivel_educativo . " PRIMARIA";
+                                        } elseif ($this->session->idplantel == 8) {
+                                            echo $this->session->nivel_educativo . " PREESCOLAR";
+                                        } else {
+                                            echo $this->session->nivel_educativo;
+                                        }
                                     } else {
                                         echo 'General';
                                     }
@@ -197,11 +204,40 @@
                                     </a>
                                     <ul  class="dropdown-menu dropdown-usermenu animated fadeInDown pull-right"> 
                                         <?php
+                                       
                                         if (isset($this->session->planteles) && !empty($this->session->planteles)) {
                                             foreach ($this->session->planteles as $row) {
-                                                ?>
+                                                if ($this->session->user_id == 2230) {
+                                                        if($row->idplantel == 7){ ?>
+                                                       <li><a href="<?= base_url('/welcome/plantel/' . $row->idplantel) ?>">LICENCIATURA PRIMARIA</a></li>  
+                                                   <?php 
+                                                   
+                                                    } else if($row->idplantel == 8){  ?>
+                                                       <li><a href="<?= base_url('/welcome/plantel/' . $row->idplantel) ?>">LICENCIATURA PREESCOLAR</a></li>  
+                                                   <?php 
+                                                    }
+                                                }else if($this->session->user_id == 2625){
+                                                      if($row->idplantel == 7){ ?>
+                                                       <li><a href="<?= base_url('/welcome/plantel/' . $row->idplantel) ?>">LICENCIATURA PRIMARIA</a></li>  
+                                                   <?php 
+                                                   
+                                                    } else if($row->idplantel == 8){  ?>
+                                                       <li><a href="<?= base_url('/welcome/plantel/' . $row->idplantel) ?>">LICENCIATURA PREESCOLAR</a></li>  
+                                                   <?php 
+                                                    }
+                                                }else{
+                                                if($row->idplantel == 7){ ?>
+                                                   <li><a href="<?= base_url('/welcome/plantel/' . $row->idplantel) ?>">LICENCIATURA PRIMARIA</a></li>  
+                                               <?php 
+                                               
+                                                } else if($row->idplantel == 8){  ?>
+                                                   <li><a href="<?= base_url('/welcome/plantel/' . $row->idplantel) ?>">LICENCIATURA PREESCOLAR</a></li>  
+                                               <?php 
+                                                }else { ?>
                                                 <li><a href="<?= base_url('/welcome/plantel/' . $row->idplantel) ?>"><?php echo $row->nombreniveleducativo ?></a></li>
                                                 <?php
+                                                }
+                                                }
                                             }
                                         }
                                         ?>

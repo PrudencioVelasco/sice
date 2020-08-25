@@ -46,6 +46,7 @@ var v = new Vue({
             horainicial: '',
             horafinal: '',
             urlvideoconferencia: '',
+            numeroanfitrion:'',
             smserror: ''},
         chooseHorario: {},
         formValidate: [],
@@ -438,6 +439,7 @@ var v = new Vue({
                 horainicial: '',
                 horafinal: '',
                  urlvideoconferencia: '',
+                  numeroanfitrion:'',
                 smserror: ''};
             v.formValidate = false;
             v.addModal = false;

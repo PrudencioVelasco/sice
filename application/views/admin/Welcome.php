@@ -76,25 +76,28 @@ class Welcome extends CI_Controller {
 
         $result = $this->usuario->loginDocente($correo);
         if ($result) {
-            foreach ($result as $value) { 
-                if (password_verify($password, $value->password)) {  
-                    $correo = $value->correo;
-                    $escuelas = $this->usuario->listaPlantelDocente($correo);
-                    $this->session->set_userdata([
-                        'user_id' => $value->id,
-                        'idprofesor' => $value->idprofesor,
-                        'nombre' => $value->nombre,
-                        'apellidop' => $value->apellidop,
-                        'apellidom' => $value->apellidom,
-                        'idplantel' => $value->idplantel,
-                        'nivel_educativo' => $value->nombreniveleducativo,
-                        'planteles' => $escuelas
-                    ]);
-                    redirect('/Profesores');
-                }
+            if (password_verify($password, $result->password)) {
+                $idplantel = $result->idplantel;
+
+                $correo = $result->correo;
+
+                $escuelas = $this->usuario->listaPlantelDocente($correo);
+
+                $this->session->set_userdata([
+                    'user_id' => $result->id,
+                    'idprofesor' => $result->idprofesor,
+                    'nombre' => $result->nombre,
+                    'apellidop' => $result->apellidop,
+                    'apellidom' => $result->apellidom,
+                    'idplantel' => $result->idplantel,
+                    'nivel_educativo' => $result->nombreniveleducativo,
+                    'planteles' => $escuelas
+                ]);
+                redirect('/Profesores');
+            } else {
+                $this->session->set_flashdata('err2', 'Correo o Contraseña son incorrectos.');
+                redirect('/');
             }
-            $this->session->set_flashdata('err2', 'Correo o Contraseña son incorrectos.');
-            redirect('/'); 
         } else {
             $this->session->set_flashdata('err2', 'Correo o Contraseña son incorrectos.');
             redirect('/');

@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "ftpsice",
+  "private_key_id": "ad90ed874ff813c47003d04a20cfa3e296f0f225",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDi4o5OjKstcxh2\nzlQUml+++3vKr4BGlGP4OU6MRYVfqGMuXIqPiSlgo2JubqLzWZzFrr2OuIhKaYfX\nCdPB9hP9IHR6afWccW3AE3IjrM/GUThMldiOp7QBYzi21RdJDCihqWLkqxaGqZR/\n69GpT0MapBfso/5t16JxqzDLArEpfLCB1ECz1QZzFhmmE0GLLLbbP7FUacuxi3nU\nYVzddGm65ZJK+1Y6Acy7CBjoKwo9nXJnflbRcTgpwJSkTf+9aKI1FAdYEXSFJ+F4\nFmwbdZ61yTCFmQCsT5EDv2Th3d9UsuWqNGuplMVJ0p0nxlPXb/WNY/SdD01IIIa9\nC2di5ONbAgMBAAECggEAB70gbvB1tgnD61rThl0MEqwxnLLYxk+Gp9ocGyih5dFw\ntJufWZ8Arwb+T5BQn8oxwpJm3uxPaVV3YWi4kYLSLypISXhoUlI8zbY8FtFQVocW\nkpIrb/jkTGnRYHcdBSiNSgUBVlzWBSOEaQN8GXFBLGtmVNdKClOoM9uSz1HgIagf\n1jjs8DMZ/A8CfuqbAFO5HuaMUoIBARFri+1BGfn6l9zwGppWJj+/lXqNnKWX7Wrr\nOFOAiQx9ue5/Bq8X0k1p7eEq7PrmOARQPEAUWHoKOJkuTF20x8YDzkuEqCJZMDZO\nawjlGowd+BqHqmWlmXYXH/QSCovq8VB8kSLg99nyEQKBgQD88tuld6tI1H9J2RiS\n7F5GBS4iKB3YIJMFm+4SbWrsXumZ5G384wFF9qMAQJZ7Z8U3XQlsvHtReH9e0eOs\nLofNTfWDR+9IwA0vo2WJz5eAM1iMt11t1Xeey6WFY0hLswPi/6ojMUx8eieRzYup\n/e3d2zlIQoWI1CnXV7Ni7ZM2KwKBgQDlnzWgv+CUHNFe2LF/5Z5cRzWM/Z+nC4Rk\nd0TjI2gaFLkPzye9U417ul8N8WqxHTjLbKInS0xGrTVRTJb4VaxcVDpcS1+0F4Yz\nkEkcNLp0dGwfKlBWCxuc50GftSjW/RxMxFxYGI4o4qWhiWBPQ3T7k3CaGXtgicm+\nIS8vVtwfkQKBgQDfbx66IOT6JkpxzwS383aq3zSLE2iZWtzDnaNEP8atGIG8YF0P\nfu3HAT+mn2bNhzJb3yDOHgfIRWotNbWoiEmI/o4Z8tbZKlv7cpfkjazDn5deZTJw\nLJnHeReypapcw7pxL2j4QTnQ0o5Van0uIZGV4WnN/IS8Ar0a7OsWPclFlQKBgBRA\nWmZ3BcOKVxzaV61D/xd8YEizBaWh6mdB7Z1qvf+u3DN8vbCA8fV7lm6QYCyGuz+V\nsSduCKgjFpS5AIeeZrkt5IfHTgWAHaHmk8wdCmTC79Y/0R4FlMXdz3fabmOnpxtO\nJibO45rPgnQgvZHADU0yz7eHj84P2O8f1h2Ct59BAoGBAJzDVexm8l1NSioVr2OD\nx7yfaAYYPrboxQ3PkcRvujfl4qdXMO1cTpVy5I2AKRJq3MI8+A1gCGUYDeOGG7B1\n42JGf7tnev3LmcSSV/OPFo4vabSCtQnJvRW/RoYFeW5Afnspty++6fwTWPcvqjnM\nfAIZUFu1IXqc9hNT7F738yhi\n-----END PRIVATE KEY-----\n",
+  "client_email": "ftpmorelos@ftpsice.iam.gserviceaccount.com",
+  "client_id": "115502608086179113991",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/ftpmorelos%40ftpsice.iam.gserviceaccount.com"
+}

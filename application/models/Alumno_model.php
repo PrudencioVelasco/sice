@@ -1087,7 +1087,9 @@ GROUP BY hd.idmateria) tabla");
          p.direccion, 
          p.telefono,
          ts.tiposanguineo,
-         p.idniveleducativo
+         p.idniveleducativo,
+         t.telefono as telefonocelular,
+         t.telefonoemergencia
          ');
         $this->db->from('tblalumno t');
         $this->db->join('tblespecialidad e', 'e.idespecialidad = t.idespecialidad');

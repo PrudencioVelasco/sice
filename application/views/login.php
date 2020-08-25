@@ -87,7 +87,7 @@
 
                                 <div class="card">
                                     <article class="card-body"> 
-                                        <h3 align="center"><strong>SICE</strong></h3>
+                                        <h3 align="center" class="txtinstituto"><strong>INSTITUTO MORELOS</strong></h3>
                                         <div style="display: block;">
                                             <button  class="btn btn-primary btnalumno" style="border: solid #ccc 1px;" >ALUMNO</a>
                                                 <button  class="btn btn-default btndocente" style="border: solid #ccc 1px">DOCENTE</a>
@@ -102,7 +102,8 @@
                                                             </div> <!-- form-group// -->
                                                             <div class="form-group">
                                                                 <label>Contraseña</label>
-                                                                <input class="form-control" name="password" placeholder="******" type="password">
+                                                                <input class="form-control" name="password"  id="password_alumno" placeholder="******" type="password">
+                                                                  <input type="checkbox"onclick="alumno()" /> <small>Mostrar/Ocultar contraseña</small>
                                                             </div> <!-- form-group// -->   
                                                             <div class="form-group">
                                                                 <button type="submit" class="btn btn-primary btn-block"> Entrar  </button>
@@ -118,7 +119,8 @@
                                                             <div class="form-group">
                                                                 <a class="float-right" href="#">Recuperar?</a>
                                                                 <label>Contraseña</label>
-                                                                <input class="form-control" placeholder="******" name="password" type="password">
+                                                                <input class="form-control" placeholder="******" id="password_docente" name="password" type="password">
+                                                                <input type="checkbox"onclick="docente()" /> <small>Mostrar/Ocultar contraseña</small>
                                                             </div> <!-- form-group// -->   
                                                             <div class="form-group">
                                                                 <button type="submit" class="btn btn-primary btn-block"> Entrar  </button>
@@ -134,7 +136,8 @@
                                                             <div class="form-group">
                                                                 <a class="float-right" href="#">Recuperar?</a>
                                                                 <label>Contraseña</label>
-                                                                <input class="form-control"  name="password" placeholder="******" type="password">
+                                                                <input class="form-control"  name="password"  id="password_tutor" placeholder="******" type="password">
+                                                                  <input type="checkbox"onclick="tutor()" /> <small>Mostrar/Ocultar contraseña</small>
                                                             </div> <!-- form-group// -->   
                                                             <div class="form-group">
                                                                 <button type="submit" class="btn btn-primary btn-block"> Entrar  </button>
@@ -152,6 +155,32 @@
                                                     </div> 
                                                     </div> 
                                                     </div>
+         <script>
+   function alumno() {
+  var x = document.getElementById("password_alumno");
+  if (x.type === "password") {
+    x.type = "text";
+  } else {
+    x.type = "password";
+  }
+} 
+   function docente() {
+  var x = document.getElementById("password_docente");
+  if (x.type === "password") {
+    x.type = "text";
+  } else {
+    x.type = "password";
+  }
+} 
+   function tutor() {
+  var x = document.getElementById("password_tutor");
+  if (x.type === "password") {
+    x.type = "text";
+  } else {
+    x.type = "password";
+  }
+} 
+    </script>
                                                     <script type="text/javascript">
 
                                                         $(document).on("click", '.btnalumno', function (e) {
