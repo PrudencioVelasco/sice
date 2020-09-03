@@ -41,9 +41,10 @@
         <script src="<?php echo base_url(); ?>/assets/vue/vue-column-sortable.js"></script>
 
 
-        <!-- SweetAlert -->
+         <!-- SweetAlert -->
         <script src="<?php echo base_url(); ?>/assets/js/sweetalert2/dist/sweetalert2.min.js"></script>
         <link rel="stylesheet" href="<?php echo base_url(); ?>/assets/js/sweetalert2/dist/sweetalert2.min.css">
+        
         <link href="<?php echo base_url(); ?>/assets/css/estilomodal.css" rel="stylesheet" type="text/css" />
  
 
@@ -119,6 +120,9 @@
                                         <span class=" fa fa-angle-down"></span>
                                     </a>
                                     <ul class="dropdown-menu dropdown-usermenu animated fadeInDown pull-right">
+                                            <li><a href="<?= base_url('/perfil/alumno') ?>"><i
+                                                class="fa fa-cog pull-right"></i> PERFIL</a>
+                                    </li>
                                         <li><a href="<?= base_url('/welcome/logout') ?>"><i class="fa fa-sign-out pull-right"></i> SALIR</a>
                                         </li>
                                     </ul>

@@ -60,14 +60,21 @@
                                                                            title="Mensajes"> <i style="color: #dd3115;"
                                                                                              class="fa fa-envelope"></i>
                                                                             Mensajes</a></li>
-                                                                    <li><a href="<?php echo site_url('Tutores/tareas/' . $controller->encode($value->idalumno) . '/' . $controller->encode($value->idnivelestudio) . '/' . $controller->encode($value->idperiodo)) ?>"
+                                                                     <?php if((isset($this->session->idniveleducativo) && !empty($this->session->idniveleducativo)) && ($this->session->idniveleducativo == 1)){ ?>
+                                                                    <li><a href="<?php echo site_url('Tutores/tareasv2/' . $controller->encode($value->idalumno) . '/' . $controller->encode($value->idnivelestudio) . '/' . $controller->encode($value->idperiodo)) ?>"
                                                                            title="Tareas"><i style="color: #000;"
                                                                                           class="fa fa-book"></i>
                                                                             Tarea</a></li>
-                                                                    <li><a href="<?php echo site_url('Tutores/pagos/' . $controller->encode($value->idalumno) . '/' . $controller->encode($value->idnivelestudio) . '/' . $controller->encode($value->idperiodo)) ?>"
+                                                                     <?php } else {?>
+                                                                             <li><a href="<?php echo site_url('Tutores/tareas/' . $controller->encode($value->idalumno) . '/' . $controller->encode($value->idnivelestudio) . '/' . $controller->encode($value->idperiodo)) ?>"
+                                                                           title="Tareas"><i style="color: #000;"
+                                                                                          class="fa fa-book"></i>
+                                                                            Tarea</a></li>
+                                                                     <?php } ?>
+<!--                                                                    <li><a href="<?php //echo site_url('Tutores/pagos/' . $controller->encode($value->idalumno) . '/' . $controller->encode($value->idnivelestudio) . '/' . $controller->encode($value->idperiodo)) ?>"
                                                                            title="Pagos"><i class="fa fa-paypal "
                                                                                          style="color:#215adc;"></i>
-                                                                            Pagos</a></li>
+                                                                            Pagos</a></li>-->
                                                                 </ul>
                                                             </div>
                                                         </div>

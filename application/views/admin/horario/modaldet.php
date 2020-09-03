@@ -162,7 +162,7 @@
                                     <timepicker 
                                         format="HH:mm"
                                         input-width="100%" 
-                                        :hour-range="[[5, 21]]"
+                                        :hour-range="[[5, 23]]"
                                         debug-mode
                                         auto-scroll
                                         placeholder="HH:mm"
@@ -179,7 +179,7 @@
                                     <timepicker 
                                         format="HH:mm"
                                         input-width="100%" 
-                                        :hour-range="[[5, 21]]"
+                                        :hour-range="[[5, 23]]"
                                         debug-mode
                                         auto-scroll
                                         placeholder="HH:mm"
@@ -360,7 +360,7 @@
                                     <timepicker 
                                         format="HH:mm"
                                         input-width="100%" 
-                                        :hour-range="[[5, 21]]"
+                                        :hour-range="[[5, 23]]"
                                         debug-mode
                                         auto-scroll
                                         placeholder="HH:mm"
@@ -377,7 +377,7 @@
                                     <timepicker 
                                         format="HH:mm"
                                         input-width="100%" 
-                                        :hour-range="[[5, 21]]"
+                                        :hour-range="[[5, 23]]"
                                         debug-mode
                                         auto-scroll
                                         placeholder="HH:mm"

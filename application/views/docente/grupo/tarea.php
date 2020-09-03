@@ -25,7 +25,7 @@
                                     <div class="modal-header">
                                         <h4 class="modal-title" id="largeModalLabel">REGISTRAR TAREA</h4>
                                     </div>
-                                    <form id="frmtarea" enctype="multipart/form-data" method="post" >
+                                    <form id="frmtarea"  >
                                         <div class="modal-body">
                                             <div class="row">
                                                 <div class="col-md-12 col-sm-12 col-xs-12 ">
@@ -34,24 +34,12 @@
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="col-md-3 col-sm-12 col-xs-12 ">
+                                                <div class="col-md-6 col-sm-12 col-xs-12 ">
                                                     <div class="form-group">
                                                         <label><font color="red">*</font> Fecha de entrega</label>
                                                         <input type="date"  style="border-bottom:solid #ccc 1px;" id="fechaentrega" name="fechaentrega" required="" class="form-control">
                                                     </div>
-                                                </div>
-                                                 <div class="col-md-3 col-sm-12 col-xs-12 ">
-                                                    <div class="form-group">
-                                                        <label><font color="red">*</font> Hora termino de entrega</label>
-                                                        <input type="time"  style="border-bottom:solid #ccc 1px;" id="horaentrega"  name="horaentrega" required="" class="form-control">
-                                                    </div>
-                                                </div>
-                                                 <div class="col-md-6 col-sm-12 col-xs-12 ">
-                                                    <div class="form-group">
-                                                        <label>Documento</label>
-                                                        <input type="file"  style="border-bottom:solid #ccc 1px;" id="documento"  name="documento" required="" class="form-control">
-                                                    </div>
-                                                </div>
+                                                </div> 
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-12 col-sm-12 col-xs-12 ">

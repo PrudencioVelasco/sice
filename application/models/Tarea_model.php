@@ -13,12 +13,15 @@ class Tarea_model extends CI_Model {
         $this->db->close();
     }
 
-    public function showAll($idusuario = '') {
-        $this->db->select("t.idtarea, t.titulo, t.tarea,t.horaentrega as horaentregareal, DATE_FORMAT(t.horaentrega,'%h:%i %p') as horaentrega, DATE_FORMAT(t.fechaentrega,'%d/%m/%Y') as fechaentrega,t.fechaentrega as fechaentregareal");
+    public function showAll($idusuario = '',$idhorariodetalle = '') {
+        $this->db->select("t.idtarea, t.titulo, t.tarea,t.horaentrega as horaentregareal, DATE_FORMAT(t.horaentrega,'%h:%i %p') as horaentrega, DATE_FORMAT(t.fechaentrega,'%d/%m/%Y') as fechaentrega, t.iddocumento,t.fechaentrega as fechaentregareal");
         $this->db->from('tbltareav2 t');
         $this->db->where('t.eliminado', 0);
         if (isset($idusuario) && !empty($idusuario)) {
             $this->db->where('t.idusuario', $idusuario);
+        }
+          if (isset($idhorariodetalle) && !empty($idhorariodetalle)) {
+            $this->db->where('t.idhorariodetalle', $idhorariodetalle);
         }
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
@@ -56,11 +59,11 @@ class Tarea_model extends CI_Model {
             return false;
         }
     }
-
-    public function detalleTarea($idtarea) {
-        $this->db->select("t.idtarea,t.idhorariodetalle,t.idhorario, t.titulo, t.tarea,t.horaentrega, DATE_FORMAT(t.fechaentrega,'%d/%m/%Y') as fechaentrega,t.fechaentrega as fechaentregareal");
+    public function validarTareaAlumno($idtarea, $idhorario) {
+        $this->db->select("t.idtarea, t.titulo, t.tarea,t.horaentrega, DATE_FORMAT(t.fechaentrega,'%d/%m/%Y') as fechaentrega,t.fechaentrega as fechaentregareal");
         $this->db->from('tbltareav2 t');
         $this->db->where('t.eliminado', 0);
+        $this->db->where('t.idhorario', $idhorario);
         $this->db->where('t.idtarea', $idtarea);
 
         $query = $this->db->get();
@@ -71,8 +74,53 @@ class Tarea_model extends CI_Model {
         }
     }
 
+    public function detalleTarea($idtarea) {
+        $this->db->select("t.idtarea,t.idhorariodetalle,t.idhorario, t.titulo, t.tarea,t.horaentrega, DATE_FORMAT(t.fechaentrega,'%d/%m/%Y') as fechaentrega,t.fechaentrega as fechaentregareal, t.nombredocumento, t.iddocumento");
+        $this->db->from('tbltareav2 t');
+        $this->db->where('t.eliminado', 0);
+        $this->db->where('t.idtarea', $idtarea); 
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+        public function detalleTareaAlumno($idtarea) {
+        $this->db->select("t.idtarea,t.idhorariodetalle,t.idhorario, STR_TO_DATE (CONCAT(DATE(t.fechaentrega),' ',t.horaentrega), '%Y-%m-%d %H:%i:%s') fechaantes, t.titulo, t.tarea,t.horaentrega, DATE_FORMAT(t.fechaentrega,'%d/%m/%Y') as fechaentrega,t.fechaentrega as fechaentregareal, t.nombredocumento, t.iddocumento");
+        $this->db->from('tbltareav2 t');
+        $this->db->where('t.eliminado', 0);
+        $this->db->where('t.idtarea', $idtarea); 
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+             return $query->first_row();
+        } else {
+            return false;
+        }
+    }
+    public function detalleRespuestaTareaAlumno($idtarea,$idalumno) {
+         $this->db->select("dt.mensaje,dt.nombrearchivo,et.idestatustarea, dt.iddocumento, dt.fecharegistro, et.nombreestatus");
+        $this->db->from('tbltareav2 t');
+        $this->db->join('tbldetalle_tarea dt','dt.idtarea = t.idtarea');
+        $this->db->join('tblestatustarea et','et.idestatustarea = dt.idestatustarea');
+        $this->db->where('t.eliminado', 0);
+        $this->db->where('t.idtarea', $idtarea); 
+        $this->db->where('dt.idalumno', $idalumno); 
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+             return $query->first_row();
+        } else {
+            return false;
+        }
+    }
+
     public function addTarea($data) {
         $this->db->insert('tbltareav2', $data);
+        $insert_id = $this->db->insert_id();
+        return $insert_id;
+    }
+     public function addDetalleTarea($data) {
+        $this->db->insert('tbldetalle_tarea', $data);
         $insert_id = $this->db->insert_id();
         return $insert_id;
     }
@@ -316,7 +364,7 @@ WHERE
         }
     }
 
-    public function searchTareas($match, $idusuario = '') {
+    public function searchTareas($match, $idusuario = '',$idhorariodetalle = '') {
         $field = 't.titulo,' . "' '" . ',t.fechaentrega';
 
         $this->db->select("t.idtarea, t.titulo, t.tarea,t.horaentrega as horaentregareal, DATE_FORMAT(t.horaentrega,'%h:%i %p') as horaentrega, DATE_FORMAT(t.fechaentrega,'%d/%m/%Y') as fechaentrega,t.fechaentrega as fechaentregareal");
@@ -324,6 +372,9 @@ WHERE
         $this->db->where('t.eliminado', 0);
         if (isset($idusuario) && !empty($idusuario)) {
             $this->db->where('t.idusuario', $idusuario);
+        }
+          if (isset($idhorariodetalle) && !empty($idhorariodetalle)) {
+            $this->db->where('t.idhorariodetalle', $idhorariodetalle);
         }
         $this->db->like('concat(' . $field . ')', $match);
         $query = $this->db->get();
@@ -333,5 +384,84 @@ WHERE
             return false;
         }
     }
+
+    public function showTareasAlumnoMateria($idhorario,$idalumno) {
+        $sql = 'SELECT 
+    t.idnotificacionalumno,
+    t.idnotificaciontutor,
+    hd.idhorariodetalle,
+    hd.idhorario,
+    hd.horainicial,
+    hd.horafinal,
+    m.nombreclase,
+    p.nombre,
+    p.apellidop,
+    p.apellidom,
+    t.idtarea,
+    t.titulo,
+    DATE_FORMAT( t.fechaentrega,"%d/%m/%Y") AS fechaentrega,
+    DATE_FORMAT( t.horaentrega, "%H:%i") AS horaentrega,
+     (SELECT te.nombreestatus  FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE   dt.idtarea = t.idtarea AND dt.idalumno = '.$idalumno.') AS estatus,
+      (SELECT te.idestatustarea  FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE   dt.idtarea = t.idtarea AND dt.idalumno = '.$idalumno.') AS idestatustarea
+FROM
+    tblhorario_detalle hd
+      INNER  JOIN
+    tblprofesor_materia pm ON hd.idmateria = pm.idprofesormateria
+       INNER JOIN
+    tblmateria m ON m.idmateria = pm.idmateria
+       INNER JOIN
+    tblprofesor p ON p.idprofesor = pm.idprofesor
+       INNER  JOIN
+    tbltareav2 t ON t.idhorariodetalle = hd.idhorariodetalle
+WHERE
+    hd.idhorario = "'.$idhorario.'" AND t.eliminado = 0';
+       $query = $this->db->query($sql);
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+        public function searchTareasAlumnoMateria($match,$idhorario,$idalumno) {
+        $sql = "SELECT titulo,nombreclase,idtarea,fechaentrega,horaentrega,estatus,idestatustarea FROM (SELECT 
+    t.idnotificacionalumno,
+    t.idnotificaciontutor,
+    hd.idhorariodetalle,
+    hd.idhorario,
+    hd.horainicial,
+    hd.horafinal,
+    m.nombreclase,
+    p.nombre,
+    p.apellidop,
+    p.apellidom,
+    t.idtarea,
+    t.titulo,
+    DATE_FORMAT( t.fechaentrega,'%d/%m/%Y') AS fechaentrega,
+    DATE_FORMAT( t.horaentrega, '%H:%i') AS horaentrega,
+     (SELECT te.nombreestatus  FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE   dt.idtarea = t.idtarea AND dt.idalumno = $idalumno) AS estatus,
+      (SELECT te.idestatustarea  FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE   dt.idtarea = t.idtarea AND dt.idalumno = $idalumno) AS idestatustarea
+FROM
+    tblhorario_detalle hd
+      INNER  JOIN
+    tblprofesor_materia pm ON hd.idmateria = pm.idprofesormateria
+       INNER JOIN
+    tblmateria m ON m.idmateria = pm.idmateria
+       INNER JOIN
+    tblprofesor p ON p.idprofesor = pm.idprofesor
+       INNER  JOIN
+    tbltareav2 t ON t.idhorariodetalle = hd.idhorariodetalle
+WHERE
+    hd.idhorario = $idhorario AND t.eliminado = 0) tabla";
+        if(isset($match) && !empty($match)){
+      $sql .="  WHERE   concat( nombreclase,' ',titulo,' ',fechaentrega,' ',estatus) LIKE '%$match%'";
+            }
+       $query = $this->db->query($sql);
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+   
 
 }

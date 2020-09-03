@@ -157,7 +157,7 @@ class User_model extends CI_Model {
     }
         public function listaPlantelDocente($correo) {
         # code...
-         $this->db->select('pla.idplantel, pla.clave, ne.nombreniveleducativo, p.idprofesor');
+         $this->db->select('pla.idplantel, pla.clave, ne.idniveleducativo, ne.nombreniveleducativo, p.idprofesor');
         $this->db->from('tblprofesor p');
         $this->db->join('tblplantel pla', 'p.idplantel = pla.idplantel');
         $this->db->join('tblniveleducativo ne', 'ne.idniveleducativo = pla.idniveleducativo');
@@ -170,12 +170,27 @@ class User_model extends CI_Model {
             return false;
         }
     }
+            public function listaPlantelTutor($correo) {
+        # code...
+         $this->db->select('pla.idplantel, pla.clave, ne.idniveleducativo, ne.nombreniveleducativo, t.idtutor');
+        $this->db->from('tbltutor t');
+        $this->db->join('tblplantel pla', 't.idplantel = pla.idplantel');
+        $this->db->join('tblniveleducativo ne', 'ne.idniveleducativo = pla.idniveleducativo'); 
+        $this->db->where('t.correo', $correo); 
+        $query = $this->db->get(); 
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
 
     public function loginAlumno($matricula) {
-        $this->db->select('u.id,a.password, a.nombre, a.apellidop, a.apellidom, a.idalumno, a.matricula, pla.idplantel');
+        $this->db->select('u.id,a.password, a.nombre, a.apellidop, a.apellidom, a.idalumno, a.matricula, pla.idplantel, ne.idniveleducativo, ne.nombreniveleducativo');
         $this->db->from('tblalumno a');
         $this->db->join('users u', 'u.idusuario = a.idalumno');
         $this->db->join('tblplantel pla', 'a.idplantel = pla.idplantel');
+        $this->db->join('tblniveleducativo ne','ne.idniveleducativo = pla.idniveleducativo');
         $this->db->where('a.matricula', $matricula);
         $this->db->where('u.idtipousuario', 3);
         $query = $this->db->get();
@@ -187,7 +202,7 @@ class User_model extends CI_Model {
     }
 
     public function detallePlantel($idplantel) {
-        $this->db->select('ne.nombreniveleducativo, pla.nombreplantel, pla.clave');
+        $this->db->select('ne.nombreniveleducativo, ne.idniveleducativo, pla.nombreplantel, pla.clave');
         $this->db->from('tblniveleducativo ne');
         $this->db->join('tblplantel pla', 'pla.idniveleducativo = ne.idniveleducativo');
         $this->db->where('pla.idplantel', $idplantel);
@@ -200,7 +215,7 @@ class User_model extends CI_Model {
     }
 
     public function loginDocente($correo) {
-        $this->db->select('ne.nombreniveleducativo,u.id, p.nombre, p.apellidop, p.apellidom, p.idprofesor,p.correo, pla.idplantel, p.password');
+        $this->db->select('ne.nombreniveleducativo, ne.idniveleducativo, u.id, p.nombre, p.apellidop, p.apellidom, p.idprofesor,p.correo, pla.idplantel, p.password');
         $this->db->from('tblprofesor p');
         $this->db->join('users u', 'u.idusuario = p.idprofesor');
         $this->db->join('tblplantel pla', 'p.idplantel = pla.idplantel');
@@ -216,15 +231,16 @@ class User_model extends CI_Model {
     }
 
     public function loginTutor($correo) {
-        $this->db->select('u.id, t.idtutor, t.nombre, t.apellidop, t.apellidom,pla.idplantel, t.password');
+        $this->db->select('ne.nombreniveleducativo, ne.idniveleducativo,u.id, t.idtutor, t.nombre, t.apellidop, t.apellidom,pla.idplantel, t.password');
         $this->db->from('tbltutor t');
         $this->db->join('users u', 'u.idusuario = t.idtutor');
         $this->db->join('tblplantel pla', 't.idplantel = pla.idplantel');
+         $this->db->join('tblniveleducativo ne', 'ne.idniveleducativo = pla.idniveleducativo');
         $this->db->where('t.correo', $correo);
         $this->db->where('u.idtipousuario', 5);
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
-            return $query->first_row();
+            return $query->result();
         } else {
             return false;
         }
@@ -247,6 +263,18 @@ class User_model extends CI_Model {
         }
     }
 
+    public function datosAlumno($idalumno) { 
+        $this->db->select("a.idalumno, a.foto, a.matricula, a.curp, a.nombre, a.apellidop, a.apellidom, a.sexo,a.correo, a.telefono,
+                           DATE_FORMAT(a.fechanacimiento,'%d/%m/%Y') as fechanacimiento ,a.telefonoemergencia, a.domicilio, a.password  ");
+        $this->db->from('tblalumno a');
+        $this->db->where('a.idalumno', $idalumno);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
     public function datosTutor($idtutor) {
         # code...
         $this->db->select("t.idtutor, t.foto, t.nombre, t.apellidop, t.apellidom, t.escolaridad,t.ocupacion, t.dondetrabaja,
@@ -262,9 +290,10 @@ class User_model extends CI_Model {
     }
 
     public function showAllAlumnosTutor($idtutor = '') {
-        $this->db->select('a.*');
+        $this->db->select('a.*, ts.tiposanguineo');
         $this->db->from('tbltutoralumno ta');
         $this->db->join('tblalumno a', 'a.idalumno = ta.idalumno');
+         $this->db->join('tbltiposanguineo ts', 'ts.idtiposanguineo = a.idtiposanguineo');
         $this->db->where('ta.idtutor', $idtutor);
         $this->db->order_by('a.apellidop ASC');
         $query = $this->db->get();
@@ -278,6 +307,15 @@ class User_model extends CI_Model {
     public function updatePersonal($id, $field) {
         $this->db->where('idpersonal', $id);
         $this->db->update('tblpersonal', $field);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+        public function updateAlumno($id, $field) {
+        $this->db->where('idalumno', $id);
+        $this->db->update('tblalumno', $field);
         if ($this->db->affected_rows() > 0) {
             return true;
         } else {
@@ -327,9 +365,10 @@ class User_model extends CI_Model {
             'a.apellidop',
             'a.apellidom',
         );
-        $this->db->select('a.*');
+        $this->db->select('a.*,ts.tiposanguineo');
         $this->db->from('tbltutoralumno ta');
         $this->db->join('tblalumno a', 'a.idalumno = ta.idalumno');
+         $this->db->join('tbltiposanguineo ts', 'ts.idtiposanguineo = a.idtiposanguineo');
         $this->db->where('ta.idtutor', $idtutor);
         $this->db->like('concat(' . implode(',', $field) . ')', $match);
         $this->db->order_by('a.apellidop ASC');

@@ -19,7 +19,7 @@ class Planificacion extends CI_Controller {
         $this->load->model('Grupo_model', 'grupo');
         $this->load->library('permission');
         $this->load->library('session');
-        $this->path = $_SERVER['DOCUMENT_ROOT'].'/sice/documentos/planeacion/licenciatura/';
+        $this->path = $_SERVER['DOCUMENT_ROOT'].'/documentos/planeacion/licenciatura/';
     }
 
     function administrar() {

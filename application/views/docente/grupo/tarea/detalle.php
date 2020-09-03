@@ -1,6 +1,26 @@
 <!-- page content -->
 <style>
-    .ck-content { height:150px; }.
+    .ck-content { height:150px; }
+</style>
+<style>
+#axiosForm{  /* Components Root Element ID */
+    position: relative;
+}
+.loader{  /* Loader Div Class */
+    position: absolute;
+    top:0px;
+    right:0px;
+    width:100%;
+    height:100%;
+    background-color:#eceaea;
+    background-image: url('assets/ajax-loader.gif');
+    background-size: 50px;
+    background-repeat:no-repeat;
+    background-position:center;
+    z-index:10000000;
+    opacity: 0.4;
+    filter: alpha(opacity=40);
+}
 </style>
 <div class="right_col" role="main">
 
@@ -20,7 +40,8 @@
                     <div class="x_content">
 
                         <div class="row"> 
-                            <div id="appplanificacion"> 
+                            <div id="appplanificacion">  
+                                
                                 <div class="row">
                                     <div class="col-md-6">
                                     </div>
@@ -29,6 +50,9 @@
                                     </div>
                                 </div>
                                 <br>
+                                
+
+                            
                                 <table class="table table-hover table-striped">
                                     <thead class="bg-teal">
                                     <th class="text-white" v-column-sortable:apellidop>ALUMNO(A) </th>
@@ -38,11 +62,14 @@
                                     <th class="text-center text-white"> </th>
                                     </thead>
                                     <tbody class="table-light">
+                                      
                                         <tr v-for="row in alumnostareas" class="table-default">
+                      
                                             <td><strong>{{row.apellidop}} {{row.apellidom}} {{row.nombre}}</strong></td>
                                             <td>
-                                               <span v-if="row.idestatustarea && row.idestatustarea == 1" class="label bg-green">{{row.estatustarea}}</span>
-                                               <span v-else  class="label bg-blue">{{row.estatustarea}}</span>
+                                                <span v-if="row.idestatustarea && row.idestatustarea == 1" class="label bg-green">{{row.estatustarea}}</span>
+                                                <span v-if="row.idestatustarea && row.idestatustarea != 1"  class="label bg-blue">{{row.estatustarea}}</span>
+                                                <span v-if="row.idestatustarea	 == null"  class="label bg-grey">NO ENVIADO</span>
                                             </td>
                                             <td>{{row.fecharegistro}}</td>
 
@@ -52,6 +79,12 @@
                                                 <button  v-if="row.idestatustarea" type="button" class="btn btn-icons btn-default btn-sm waves-effect waves-black" @click=" abrirEditModal(); selectAlumnosTareas(row)" title="Modificar Datos"> <i class="fa fa-edit" aria-hidden="true"></i>
                                                     Detalle
                                                 </button>  
+                                            </td>
+                                        </tr>
+                                          <tr v-if="loading">
+                                            <td colspan="4" align="center"> 
+                                               
+                                                <label > <i style="color:#2ca2f9;" class="fa fa-spinner fa-pulse fa-3x fa-fw"></i> Cargando registros...</label>
                                             </td>
                                         </tr>
                                         <tr v-if="emptyResult">
@@ -73,7 +106,7 @@
                                     </tr>
                                     </tfoot>
                                 </table>
-<?php include 'modal_detalle.php'; ?>
+                                <?php include 'modal_detalle.php'; ?>
                             </div>
 
                         </div>
@@ -106,6 +139,6 @@
     <div class="clearfix"></div>
     <div id="notif-group" class="tabbed_notifications"></div>
 </div>
- 
+
 <script data-my_var_1="<?php echo base_url() ?>" data-my_var_2="<?php echo $idtarea; ?>"  data-my_var_3="<?php echo $idhorario; ?>"  data-my_var_4="<?php echo $idmateria; ?>"  data-my_var_5="<?php echo $idprofesormateria; ?>"  src="<?php echo base_url(); ?>/assets/vue/appvue/docente/tarea/apptarea_detalle.js"></script> 
 

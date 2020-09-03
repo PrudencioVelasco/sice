@@ -39,6 +39,9 @@ var vu = new Vue({
         estatustarea:[],
         search: {text: ''},
         emptyResult: false,
+          success: false,
+            
+            loading: false,
         newTarea: {
             titulo: '',
             tarea: '',
@@ -76,6 +79,7 @@ var vu = new Vue({
             $("#editRegister").modal("show");
         },
         showAll() {
+            this.loading = true;
             axios.get(this.url + "Tarea/showAllAlumnosTarea", {
               params: {
                 id: this.idtarea,
@@ -84,13 +88,24 @@ var vu = new Vue({
                    idprofesormateria: this.idprofesormateria
               },
             }).then(function (response) {
+                 this.loading =  false;
                 if (response.data.alumnostareas == null) {
                     vu.noResult()
                 } else {
                     vu.getData(response.data.alumnostareas);
                 }
-            })
+            }).catch((error) => {
+                        vu.error = true;
+                         vu.loading =  false;
+                        console.log(error)
+                    }).finally(() => {
+                        vu.loading =  false
+                    });
         }, 
+         reset(){
+               this.success = false;
+                this.error = false;
+         },
            showAllEstatusTarea() {
             axios.get(this.url + "Tarea/showAllEstatusTarea/")
                     .then(

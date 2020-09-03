@@ -26,7 +26,7 @@
          //PRIMARIA
          if($idnivel == 1){ 
              if($total_reprovado > $reprobado_permitido){
-                $mensaje = false;
+                 $mensaje = true;
             }elseif($calificacion_optenida >= $calificacion_minima){
                 if($total_reprovado > 0){
                     $mensaje = true;
@@ -39,7 +39,7 @@
          }
          if($idnivel == 2){ 
              if($total_reprovado > $reprobado_permitido){
-                $mensaje = false;
+                 $mensaje = true;
             }elseif($calificacion_optenida >= $calificacion_minima){
                 if($total_reprovado > 0){
                     $mensaje = true;
@@ -52,7 +52,7 @@
          }
           if($idnivel == 3){ 
              if($total_reprovado > $reprobado_permitido){
-                $mensaje = false;
+                 $mensaje = true;
             }elseif($calificacion_optenida >= $calificacion_minima){
                 if($total_reprovado > 0){
                     $mensaje = true;
@@ -65,7 +65,7 @@
          }
           if($idnivel == 4){ 
              if($total_reprovado > $reprobado_permitido){
-                $mensaje = false;
+                 $mensaje = true;
             }elseif($calificacion_optenida >= $calificacion_minima){
                 if($total_reprovado > 0){
                     $mensaje = true;
@@ -78,7 +78,7 @@
          }
           if($idnivel == 5){ 
              if($total_reprovado > $reprobado_permitido){
-                $mensaje = false;
+                 $mensaje = true;
             }elseif($calificacion_optenida >= $calificacion_minima){
                 if($total_reprovado > 0){
                     $mensaje = true;
@@ -91,7 +91,7 @@
          }
           if($idnivel == 6){ 
              if($total_reprovado > $reprobado_permitido){
-                $mensaje = false;
+                 $mensaje = true;
             }elseif($calificacion_optenida >= $calificacion_minima){
                 if($total_reprovado > 0){
                     $mensaje = true;
@@ -109,66 +109,85 @@
            if ($idnivel == 1) {
             if ($total_reprovado > $reprobado_permitido) {
                 $mensaje = true;
-            } elseif ($calificacion_optenida >= $calificacion_minima) {
+            } 
+            elseif($calificacion_optenida >= $calificacion_minima){
+                if($total_reprovado > 0){
+                    $mensaje = true;
+                }else{
+                    $mensaje = false;
+                }
+                
+            }
+            /*elseif ($calificacion_optenida >= $calificacion_minima) {
 
                 $mensaje = false;
             } else {
                 $mensaje = false;
-            }
+            }*/
         }
         if($idnivel == 2){ 
             if ($total_reprovado > $reprobado_permitido) {
                 $mensaje = true;
-            } elseif ($calificacion_optenida >= $calificacion_minima) {
-
-                $mensaje = false;
-            } else {
-                $mensaje = false;
+            } elseif($calificacion_optenida >= $calificacion_minima){
+                if($total_reprovado > 0){
+                    $mensaje = true;
+                }else{
+                    $mensaje = false;
+                }
+                
             }
 
          }
           if($idnivel == 3){ 
           if ($total_reprovado > $reprobado_permitido) {
                 $mensaje = true;
-            } elseif ($calificacion_optenida >= $calificacion_minima) {
-
-                $mensaje = false;
-            } else {
-                $mensaje = false;
-            }
+          } elseif($calificacion_optenida >= $calificacion_minima){
+              if($total_reprovado > 0){
+                  $mensaje = true;
+              }else{
+                  $mensaje = false;
+              }
+              
+          }
 
          }
           if($idnivel == 4){ 
           if ($total_reprovado > $reprobado_permitido) {
                 $mensaje = true;
-            } elseif ($calificacion_optenida >= $calificacion_minima) {
-
-                $mensaje = false;
-            } else {
-                $mensaje = false;
-            }
+          } elseif($calificacion_optenida >= $calificacion_minima){
+              if($total_reprovado > 0){
+                  $mensaje = true;
+              }else{
+                  $mensaje = false;
+              }
+              
+          }
 
          }
           if($idnivel == 5){ 
            if ($total_reprovado > $reprobado_permitido) {
                 $mensaje = true;
-            } elseif ($calificacion_optenida >= $calificacion_minima) {
-
-                $mensaje = false;
-            } else {
-                $mensaje = false;
-            }
+           } elseif($calificacion_optenida >= $calificacion_minima){
+               if($total_reprovado > 0){
+                   $mensaje = true;
+               }else{
+                   $mensaje = false;
+               }
+               
+           }
 
          }
           if($idnivel == 6){ 
            if ($total_reprovado > $reprobado_permitido) {
                 $mensaje = true;
-            } elseif ($calificacion_optenida >= $calificacion_minima) {
-
-                $mensaje = false;
-            } else {
-                $mensaje = false;
-            }
+           } elseif($calificacion_optenida >= $calificacion_minima){
+               if($total_reprovado > 0){
+                   $mensaje = true;
+               }else{
+                   $mensaje = false;
+               }
+               
+           }
 
          }
 
@@ -177,7 +196,7 @@
         //PREPARATORIA
            if($idnivel == 1){ 
              if($total_reprovado > $reprobado_permitido){
-                $mensaje = false;
+                 $mensaje = true;
             }elseif($calificacion_optenida >= $calificacion_minima){
                 if($total_reprovado > 0){
                     $mensaje = true;
@@ -190,7 +209,7 @@
          }
          if($idnivel == 2){ 
              if($total_reprovado > $reprobado_permitido){
-                $mensaje = false;
+                 $mensaje = true;
             }elseif($calificacion_optenida >= $calificacion_minima){
                 if($total_reprovado > 0){
                     $mensaje = true;
@@ -203,7 +222,7 @@
          }
           if($idnivel == 3){ 
              if($total_reprovado > $reprobado_permitido){
-                $mensaje = false;
+                 $mensaje = true;
             }elseif($calificacion_optenida >= $calificacion_minima){
                 if($total_reprovado > 0){
                     $mensaje = true;
@@ -254,6 +273,115 @@
 
          }
      }
+     
+     if($niveleducativo == 5){
+         //LICENCIATURA
+         if($idnivel == 1){
+             if($total_reprovado > $reprobado_permitido){
+                 $mensaje = true;
+             }elseif($calificacion_optenida >= $calificacion_minima){
+                 if($total_reprovado > 0){
+                     $mensaje = true;
+                 }else{
+                     $mensaje = false;
+                 }
+                 
+             }
+             
+         }
+         if($idnivel == 2){
+             if($total_reprovado > $reprobado_permitido){
+                 $mensaje = true;
+             }elseif($calificacion_optenida >= $calificacion_minima){
+                 if($total_reprovado > 0){
+                     $mensaje = true;
+                 }else{
+                     $mensaje = false;
+                 }
+                 
+             }
+             
+         }
+         if($idnivel == 3){
+             if($total_reprovado > $reprobado_permitido){
+                 $mensaje = true;
+             }elseif($calificacion_optenida >= $calificacion_minima){
+                 if($total_reprovado > 0){
+                     $mensaje = true;
+                 }else{
+                     $mensaje = false;
+                 }
+                 
+             }
+             
+         }
+         if($idnivel == 4){
+             if($total_reprovado > $reprobado_permitido){
+                 $mensaje = true;
+             }elseif($calificacion_optenida >= $calificacion_minima){
+                 if($total_reprovado > 0){
+                     $mensaje = true;
+                 }else{
+                     $mensaje = false;
+                 }
+                 
+             }
+             
+         }
+         if($idnivel == 5){
+             if($total_reprovado > $reprobado_permitido){
+                 $mensaje = true;
+             }elseif($calificacion_optenida >= $calificacion_minima){
+                 if($total_reprovado > 0){
+                     $mensaje = true;
+                 }else{
+                     $mensaje = false;
+                 }
+                 
+             }
+             
+         }
+         if($idnivel == 6){
+             if($total_reprovado > $reprobado_permitido){
+                 $mensaje = true;
+             }elseif($calificacion_optenida >= $calificacion_minima){
+                 if($total_reprovado > 0){
+                     $mensaje = true;
+                 }else{
+                     $mensaje = false;
+                 }
+                 
+             }
+             
+         }
+         if($idnivel == 7){
+             if($total_reprovado > $reprobado_permitido){
+                 $mensaje = true;
+             }elseif($calificacion_optenida >= $calificacion_minima){
+                 if($total_reprovado > 0){
+                     $mensaje = true;
+                 }else{
+                     $mensaje = false;
+                 }
+                 
+             }
+             
+         }
+         if($idnivel == 8){
+             if($total_reprovado > $reprobado_permitido){
+                 $mensaje = true;
+             }elseif($calificacion_optenida >= $calificacion_minima){
+                 if($total_reprovado > 0){
+                     $mensaje = true;
+                 }else{
+                     $mensaje = false;
+                 }
+                 
+             }
+             
+         }
+     }
+     
      return $mensaje;
  }
    function calcularReprovado($idnivel,$niveleducativo,$total_materia,$total_aprovado,$total_reprovado,$reprobado_permitido,$calificacion_optenida,$calificacion_minima)
@@ -521,6 +649,120 @@
 
          }
      }
+     if($niveleducativo == 5){
+         //PREPARATORIA
+         if($idnivel == 1){
+             //PRIMER  SEMESTRE
+             if($total_reprovado > $reprobado_permitido){
+                 $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
+             }elseif($calificacion_optenida >= $calificacion_minima){
+                 if($total_reprovado > 0){
+                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
+                 }else{
+                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
+                 }
+                 
+             }
+         }
+         if($idnivel == 2){
+             //SEGUNDO SEMESTRE
+             if($total_reprovado > $reprobado_permitido){
+                 $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
+             }elseif($calificacion_optenida >= $calificacion_minima){
+                 if($total_reprovado > 0){
+                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
+                 }else{
+                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
+                 }
+                 
+             }
+             
+         }
+         if($idnivel == 3){
+             //TERCER SEMESTRE
+             if($total_reprovado > $reprobado_permitido){
+                 $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
+             }elseif($calificacion_optenida >= $calificacion_minima){
+                 if($total_reprovado > 0){
+                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
+                 }else{
+                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
+                 }
+                 
+             }
+             
+         }
+         if($idnivel == 4){
+             //CUARTO SEMESTRE
+             if($total_reprovado > $reprobado_permitido){
+                 $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
+             }elseif($calificacion_optenida >= $calificacion_minima){
+                 if($total_reprovado > 0){
+                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
+                 }else{
+                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
+                 }
+                 
+             }
+             
+         }
+         if($idnivel == 5){
+             //QUINTO SEMESTRE
+             if($total_reprovado > $reprobado_permitido){
+                 $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
+             }elseif($calificacion_optenida >= $calificacion_minima){
+                 if($total_reprovado > 0){
+                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
+                 }else{
+                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
+                 }
+                 
+             }
+             
+         }
+         if($idnivel == 6){
+             //SEXO SEMESTRE
+             if($total_reprovado > $reprobado_permitido){
+                 $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
+             }elseif($calificacion_optenida >= $calificacion_minima){
+                 if($total_reprovado > 0){
+                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
+                 }else{
+                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
+                 }
+                 
+             }
+             
+         }
+         if($idnivel == 7){
+             //SEPTIMO SEMESTRE
+             if($total_reprovado > $reprobado_permitido){
+                 $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
+             }elseif($calificacion_optenida >= $calificacion_minima){
+                 if($total_reprovado > 0){
+                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
+                 }else{
+                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
+                 }
+                 
+             }
+             
+         }
+         if($idnivel == 8){
+             //OCTAVO SEMESTRE
+             if($total_reprovado > $reprobado_permitido){
+                 $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
+             }elseif($calificacion_optenida >= $calificacion_minima){
+                 if($total_reprovado > 0){
+                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
+                 }else{
+                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
+                 }
+                 
+             }
+             
+         }
+     }
      return $mensaje;
  }
  function validar_calificacion($calificacion,$calificacion_aprovatoria)
@@ -536,9 +778,9 @@ function obtenerPorcentaje($cantidad, $total) {
     $porcentaje = round($porcentaje, 0);  // Quitar los decimales
     return $porcentaje;
 }
-function dias_pasados($fecha_inicio,$fecha_fin){
-    $dias=(strtotime($fecha_inicio)-strtotime($fecha_fin));
-    $dias =abs($dias);
+function dias_pasados($fecha_inicial, $fecha_fin) {
+    $dias = (strtotime($fecha_fin) - strtotime($fecha_inicial)) / 86400;
+    $dias = abs($dias);
     $dias = floor($dias);
     return $dias;
 }

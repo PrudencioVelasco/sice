@@ -35,7 +35,7 @@
                                     <th class="text-white" v-column-sortable:titulo>TITULO </th>
                                     <th class="text-white" v-column-sortable:fechaentrega>FECHA </th>
                                     <th class="text-white" v-column-sortable:horaentrega>HORA </th>  
-
+                                    <th class="text-white">DOCUMENTO </th>  
                                     <th class="text-center text-white"> </th>
                                     </thead>
                                     <tbody class="table-light">
@@ -43,6 +43,11 @@
                                             <td>{{row.titulo}}</td>
                                             <td>{{row.fechaentrega}}</td>
                                             <td>{{row.horaentrega}}</td>
+                                            <td>
+                                                <div>
+                                                     <a v-if="row.iddocumento" v-bind:href="'https://drive.google.com/uc?export=download&id='+ row.iddocumento" target="_blank"><i class="fa fa-cloud-download"></i> DOCUMENTO</a>
+                                                </div>
+                                            </td>
 
                                             <td align="right">
 

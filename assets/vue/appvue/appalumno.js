@@ -111,16 +111,16 @@ var v = new Vue({
         );
     },
     searchAlumno() {
-      var formData = v.formData(v.search);
-      axios
-        .post(this.url + "Alumno/searchAlumno", formData)
-        .then(function (response) {
-          if (response.data.alumnos == '') {
-           this.alumnos = response.data.alumnos
-          } else {
-            (response) => (this.alumnos = response.data.alumnos)
-          }
-        });
+      var formData = v.formData(v.search); 
+        
+        axios.post(this.url + "Alumno/searchAlumno", formData).then(function (response) {
+                if (response.data.alumnos == null) {
+                    v.noResult()
+                } else {
+                    v.getData(response.data.alumnos);
+
+                }
+            })
     },
     addAlumno() {
       v.error = false;
@@ -247,24 +247,21 @@ var v = new Vue({
       }
       return formData;
     },
-    getData(alumnos) {
-      v.emptyResult = false; // become false if has a record
-      v.totalAlumnos = alumnos.length; //get total of user
-      v.alumnos = alumnos.slice(
-        v.currentPage * v.rowCountPage,
-        v.currentPage * v.rowCountPage + v.rowCountPage
-      ); //slice the result for pagination
+     getData(alumnos) {
+            v.emptyResult = false; // become false if has a record
+            v.totalAlumnos = alumnos.length //get total of user
+            v.alumnos = alumnos.slice(v.currentPage * v.rowCountPage, (v.currentPage * v.rowCountPage) + v.rowCountPage); //slice the result for pagination
 
-      // if the record is empty, go back a page
-      if (v.alumnos.length == 0 && v.currentPage > 0) {
-        v.pageUpdate(v.currentPage - 1);
-        v.clearAll();
-      }
-    },
+            // if the record is empty, go back a page
+            if (v.alumnos.length == 0 && v.currentPage > 0) {
+                v.pageUpdate(v.currentPage - 1)
+                v.clearAll();
+            }
+        },
 
     selectAlumno(alumno) {
       v.chooseAlumno = alumno;
-      console.log(alumno);
+      
     },
     clearMSG() {
       setTimeout(function () {

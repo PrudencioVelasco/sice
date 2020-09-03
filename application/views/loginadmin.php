@@ -59,16 +59,14 @@
                         swal({
                             type: 'error',
                             title: 'Oops...',
-                            text: '<?= $this->session->userdata('
-                            err '); ?>',
+                            text: 'Usuario o contraseña son incorrectos',
                             footer: ''
                         });
                         </script>
                         <?php endif ?>
                     </div>
                     <form method="POST" action="<?= base_url('welcome/admin') ?>">
-                        <input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>">
-                        <h1><strong>S I C E</strong></h1>
+                         <h1><strong>S I C E</strong></h1>
                         <div>
 
                             <input type="text" class="form-control" name="usuario" placeholder="Usuario" required="" />

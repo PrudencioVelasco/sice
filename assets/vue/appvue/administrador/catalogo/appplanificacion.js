@@ -126,7 +126,7 @@ var vu = new Vue({
         },
         getData(planificaciones) {
             vu.emptyResult = false; // become false if has a record
-            vu.totalOportunidades = planificaciones.length; //get total of user
+            vu.totalPlanificaciones = planificaciones.length; //get total of user
             vu.planificaciones = planificaciones.slice(vu.currentPage * vu.rowCountPage, (vu.currentPage * vu.rowCountPage) + vu.rowCountPage); //slice the result for pagination
 
             // if the record is empty, go back a page
@@ -176,8 +176,8 @@ var vu = new Vue({
         },
         noResult() {
             vu.emptyResult = true;  // become true if the record is empty, print 'No Record Found'
-            vu.oportunidades = null;
-            vu.totalOportunidades = 0; //remove current page if is empty 
+            vu.planificaciones = null;
+            vu.totalPlanificaciones = 0; //remove current page if is empty 
         },
 
         pageUpdate(pageNumber) {
@@ -185,7 +185,7 @@ var vu = new Vue({
             vu.refresh();
         },
         refresh() {
-            vu.search.text ? vu.searchOportunidad() : vu.showAll(); //for preventing
+            vu.search.text ? vu.searcPlanificacion() : vu.showAll(); //for preventing
 
         }
     }

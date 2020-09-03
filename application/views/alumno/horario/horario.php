@@ -52,6 +52,11 @@
                                 </button>
                                 <strong>Información!</strong> Antes de iniciar una clase es necesario que descargue e instale ZOOM, lo puede descargar desde aqui <a  target="_blank"  href="https://zoom.us/download">Descargar</a>
                             </div>
+                         <div class="alert alert-info alert-dismissible fade in" role="alert">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
+                                </button>
+                                <strong>Información!</strong> Puede de entrar a clases 10 minutos antes o mas tardar 30 minutos despues de haber iniciado. 
+                            </div>
                                     <?php
                             }
                             ?>
@@ -93,4 +98,33 @@
     <div class="clearfix"></div>
     <div id="notif-group" class="tabbed_notifications"></div>
 </div>
-<script data-my_var_1="<?php echo base_url() ?>" data-my_var_2="<?php echo $idhorario; ?>" src="<?php echo base_url(); ?>/assets/vue/appvue/apphorariodetalle.js"></script> 
+<script language="Javascript">
+// Recibe ID 
+function cambiar_estado(idhorariodetalle,base) {
+    
+   $.ajax({
+            type: "POST",
+            url: base+"/Aalumno/verificarhora",
+            data: "idhorariodetalle=" + idhorariodetalle,
+            success: function (data) {
+                var val = JSON.parse(data);
+              if(val.opcion == 1){
+                  let a = document.createElement('a');
+                  a.target = '_blank';
+                  a.href = val.url;
+                  a.click();
+              }else {
+                   swal({
+                        type: 'info',
+                        title: 'Notificación',
+                        html: val.mensaje,
+                        customClass: 'swal-wide',
+                        footer: ''
+                    }); 
+                       
+              } 
+            }
+        }) 
+} 
+</script>
+</script>

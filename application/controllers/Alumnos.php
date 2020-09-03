@@ -29,32 +29,58 @@ class Alumnos extends CI_Controller {
         $idplantel = $this->session->idplantel;
         $grupo = $this->alumno->obtenerGrupo($idalumno);
         $tareas = "";
-        $tareasv2 = "";
+        $idhorario = "";
         $mensajes = "";
         if ($grupo != false) {
             $idhorario = $grupo->idhorario;
             $fecha = date('Y-m-d', strtotime(date('Y-m-d') . "-4 days"));
-            $tareas = $this->alumno->showTareaAlumnoMateria($idhorario, $fecha);
-            //$tareasv2 = $this->tarea->showTareaAlumnoMateria($idhorario, $fecha);
+            $tareas = $this->alumno->showTareaAlumnoMateria($idhorario, $fecha); 
             $mensajes = $this->mensaje->showAllMensajeAlumno($idhorario);
         }
 
         //var_dump($mensajes);
         $data = array(
-            'tareas' => $tareas,
-            'tareasv2' => $tareasv2,
+            'tareas' => $tareas, 
             'mensajes' => $mensajes,
-            'controller' => $this
+            'idhorario'=>$idhorario,
+            'controller' => $this,
+            'idalumno'=>$idalumno
         );
         // var_dump($tareas);
 
         $this->load->view('alumno/header');
-        if($idplantel == 1){
-        $this->load->view('alumno/tareas', $data);
+       if($this->session->idniveleducativo == 1){
+        $this->load->view('alumno/tarea/index', $data);
         }else{
              $this->load->view('alumno/index', $data);
         }
         $this->load->view('alumno/footer');
+    }
+    public function detalletarea($idtarea, $idhorario) {
+        $idhorario = $this->decode($idhorario);
+        if ((isset($idtarea) && !empty($idtarea)) && (isset($idhorario) && !empty($idhorario))) {
+            $validar_tarea = $this->tarea->validarTareaAlumno($idtarea, $idhorario);
+            if ($validar_tarea) {
+                $data = array(
+                    'idtarea' => $idtarea
+                );
+                $this->load->view('alumno/header');
+                $this->load->view('alumno/tarea/detalle', $data);
+                $this->load->view('alumno/footer');
+            } else {
+                $data = array(
+                    'heading' => 'ERROR',
+                    'message' => 'Ocurrio un error, intente mas tarde.',
+                );
+                $this->load->view('errors/html/error_general', $data);
+            }
+        } else {
+            $data = array(
+                'heading' => 'ERROR',
+                'message' => 'Ocurrio un error, intente mas tarde.',
+            );
+            $this->load->view('errors/html/error_general', $data);
+        }
     }
 
     function encode($string) {

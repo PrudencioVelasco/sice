@@ -106,7 +106,22 @@
                     <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
 
                         <div class="menu_section">
-                            <h3>General</h3>
+                            <h3>   
+                                <?php
+                                    if ((isset($this->session->nivel_educativo) && !empty($this->session->nivel_educativo)) &&
+                                            (isset($this->session->idplantel) && !empty($this->session->idplantel) && $this->session->idplantel != 2)) {
+                                        if ($this->session->idplantel == 7) {
+                                            echo $this->session->nivel_educativo . " PRIMARIA";
+                                        } elseif ($this->session->idplantel == 8) {
+                                            echo $this->session->nivel_educativo . " PREESCOLAR";
+                                        } else {
+                                            echo $this->session->nivel_educativo;
+                                        }
+                                    } else {
+                                        echo 'Profesor';
+                                    }
+                                    ?>
+                            </h3>
                             <ul class="nav side-menu">
                                 <li><a href="<?= base_url('/Tutores/') ?>"><i class="fa fa-home"></i> Inicio</a></li>
                                 <li><a href="<?= base_url('/Tutores/alumnos') ?>"><i class="fa fa-users"></i> Hijos</a>
@@ -141,7 +156,26 @@
                                     <span class=" fa fa-angle-down"></span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-usermenu animated fadeInDown pull-right">
-
+                                     <?php
+                                        if (isset($this->session->planteles) && !empty($this->session->planteles)) {
+                                            foreach ($this->session->planteles as $row) {
+                                            	   if($row->idplantel == 7){ ?>
+                                                   <li><a href="<?= base_url('/welcome/cambiarplantelTutor/' . $row->idplantel.'/'.$row->idtutor) ?>">LICENCIATURA PRIMARIA</a></li>  
+                                               <?php 
+                                               
+                                                } else if($row->idplantel == 8){  ?>
+                                                   <li><a href="<?= base_url('/welcome/cambiarplantelTutor/' . $row->idplantel.'/'.$row->idtutor) ?>">LICENCIATURA PREESCOLAR</a></li>  
+                                               <?php 
+                                                }else { ?>
+                                                <li><a href="<?= base_url('/welcome/cambiarplantelTutor/' . $row->idplantel.'/'.$row->idtutor) ?>"><?php echo $row->nombreniveleducativo ?></a></li>
+                                                <?php
+                                                } 
+                                            }
+                                        }
+                                        ?>
+                                                 <li><a href="<?= base_url('/perfil/tutor') ?>"><i
+                                                class="fa fa-cog pull-right"></i> PERFIL</a>
+                                    </li>
                                     <li><a href="<?= base_url('/welcome/logout') ?>"><i
                                                 class="fa fa-sign-out pull-right"></i> SALIR</a>
                                     </li>

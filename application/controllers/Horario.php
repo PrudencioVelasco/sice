@@ -78,6 +78,7 @@ class Horario extends CI_Controller {
         //$idhorario = $this->decode($idhorario);
         //if((isset($idhorario) && !empty($idhorario))){
         $detalle_logo = $this->alumno->logo($this->session->idplantel);
+        $detalle_horario = $this->horario->detalleHorario($idhorario);
         $logo = base_url() . '/assets/images/escuelas/' . $detalle_logo[0]->logoplantel;
         $logo2 = base_url() . '/assets/images/escuelas/' . $detalle_logo[0]->logosegundo;
 
@@ -91,11 +92,18 @@ class Horario extends CI_Controller {
         $pdf->SetHeaderMargin(30);
         $pdf->SetTopMargin(10);
         $pdf->setFooterMargin(20);
-        $pdf->SetAutoPageBreak(true);
+        $pdf->SetAutoPageBreak(TRUE, 0); 
         $pdf->SetAuthor('Author');
         $pdf->SetDisplayMode('real', 'default');
         $pdf->setPrintHeader(false);
         $pdf->setPrintFooter(false);
+
+$pdf->SetMargins(15, 15, 15);
+$pdf->SetHeaderMargin(15);
+$pdf->SetFooterMargin(15);
+
+// set auto page breaks
+$pdf->SetAutoPageBreak(TRUE, 15);
 
         $pdf->AddPage();
         $tabla = '
@@ -135,7 +143,6 @@ class Horario extends CI_Controller {
     } 
     .imgtitle{
         width:55px;
-
     }
     .titulo{
      font-family:Verdana, Geneva, sans-serif;
@@ -168,19 +175,67 @@ class Horario extends CI_Controller {
                 }
 </style>
 <div id="areaimprimir">  
-          <table width="600" border="0" >
-  <tr>
-    <td width="101" align="center"><img   class="imgtitle" src="' . $logo2 . '" /></td>
-    <td colspan="2" align="center">
+          <table width="600" border="0" >';
+          if((isset($this->session->idplantel) && !empty($this->session->idplantel)) && ($this->session->idplantel == 7 || $this->session->idplantel == 8)){
+   $tabla .= '<tr>
+    <td width="150" align="center" valing="top"><img  src="' . $logo2 . '" /></td>
+    <td colspan="2" width="230" align="center">
             <label class="nombreplantel">' . $detalle_logo[0]->nombreplantel . '</label><br>
             <label class="txtn">' . $detalle_logo[0]->asociado . '</label><br>
-            <label class="direccion">' . $detalle_logo[0]->direccion . '</label><br>
-            <label class="telefono">TELÉFONO: ' . $detalle_logo[0]->telefono . '</label>
+            <label class="direccion">C.C.T.' . $detalle_logo[0]->clave . '</label><br>';
+   if($this->session->idplantel == 8){
+           $tabla .= ' <label class="telefono">TURNO MATUTINO</label><br/>';
+   }
+    if($this->session->idplantel == 7){
+           $tabla .= ' <label class="telefono">TURNO VESPERTINO</label><br/>';
+   }
+             $tabla .= '<label class="telefono">136 años educando a la niñez y juventud</label>
     </td>
-    <td width="137" align="center"><img   class="imgtitle" src="' . $logo . '" /></td>
-  </tr> 
- 
-  </table> <br/>';
+    <td width="150" align="center"><img     src="' . $logo . '" /></td>';
+   $tabla .= '</tr>';
+   $tabla .= '<tr>
+    <td width="150" align="center" style="font-size:10px;">CICLO ESCOLAR '.$detalle_horario->yearinicio.'-'.$detalle_horario->yearfin.'</td>
+    <td colspan="2"  width="230" align="center">  </td>
+    <td width="150" align="center" style="font-size:10px;"> '.$detalle_horario->nombrenivel.' '.$detalle_horario->nombregrupo.'</td>';
+   $tabla .= '</tr>';
+          } else if((isset($this->session->idplantel) && !empty($this->session->idplantel)) && ($this->session->idplantel == 4)){
+   $tabla .= '<tr>
+    <td width="150" align="center" valing="top"><img  src="' . $logo2 . '" /></td>
+    <td colspan="2" width="230" align="center">
+            <label class="nombreplantel">' . $detalle_logo[0]->nombreplantel . '</label><br>
+            <label class="txtn">' . $detalle_logo[0]->asociado . '</label><br>
+            <label class="direccion">C.C.T.' . $detalle_logo[0]->clave . '</label><br>';  
+             $tabla .= '<label class="telefono">Incorporado a la Dirección General del Bachillerato - Modalidad Escolarizada
+RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorporación y Revalidación
+</label>
+    </td>
+    <td width="150" align="center"><img     src="' . $logo . '" /></td>';
+             
+   $tabla .= '</tr>'; 
+      $tabla .= '<tr>
+    <td width="150" align="center" style="font-size:10px;">CICLO ESCOLAR '.$detalle_horario->yearinicio.'-'.$detalle_horario->yearfin.'</td>
+    <td colspan="2"  width="230" align="center">  </td>
+    <td width="150" align="center" style="font-size:10px;"> '.$detalle_horario->nombrenivel.' '.$detalle_horario->nombregrupo.'</td>';
+   $tabla .= '</tr>';
+          }else{
+               $tabla .= '<tr>
+    <td width="150" align="center" valing="top"><img class="imgtitle" src="' . $logo2 . '" /></td>
+    <td colspan="2" width="230" align="center">
+            <label class="nombreplantel">' . $detalle_logo[0]->nombreplantel . '</label><br>
+            <label class="txtn">' . $detalle_logo[0]->asociado . '</label><br>
+            <label class="direccion">C.C.T.' . $detalle_logo[0]->clave . '</label><br>';
+    
+             $tabla .= '<label class="telefono">136 años educando a la niñez y juventud</label>
+    </td>
+    <td width="150" align="center"><img   class="imgtitle"  src="' . $logo . '" /></td>';
+   $tabla .= '</tr>';
+   $tabla .= '<tr>
+    <td width="150" align="center" style="font-size:10px;">CICLO ESCOLAR '.$detalle_horario->yearinicio.'-'.$detalle_horario->yearfin.'</td>
+    <td colspan="2"  width="230" align="center">  </td>
+    <td width="150" align="center" style="font-size:10px;"> '.$detalle_horario->nombrenivel.' '.$detalle_horario->nombregrupo.'</td>';
+   $tabla .= '</tr>';
+          }
+  $tabla .= '</table> <br/>';
 
 
         $tabla .= '<table class="tblhorario" width="600" cellpadding="2" > ';

@@ -90,7 +90,7 @@ class Horario_model extends CI_Model {
         }
     }
     public function detalleHorarioDetalle($idhorariodetalle = '') {
-        $this->db->select('m.nombreclase, h.idgrupo, m.idmateria, p.idprofesor, h.idperiodo, pm.idprofesormateria, h.idhorario');
+        $this->db->select('m.nombreclase, h.idgrupo, p.urlvideoconferencia, m.idmateria, p.idprofesor, h.idperiodo, pm.idprofesormateria, h.idhorario,hd.iddia, DATE_FORMAT(hd.horainicial, "%H:%i") as horainicial, DATE_FORMAT(hd.horafinal, "%H:%i") as horafinal');
         $this->db->from('tblhorario h');
         $this->db->join('tblhorario_detalle hd', 'h.idhorario = hd.idhorario');
         $this->db->join('tblprofesor_materia pm', 'pm.idprofesormateria = hd.idmateria');
@@ -105,11 +105,16 @@ class Horario_model extends CI_Model {
         }
     }
         public function detalleHorario($idhorario = '') {
-        $this->db->select('h.idgrupo, h.idhorario, g.nombregrupo,e.nombreespecialidad, n.nombrenivel, h.idperiodo');
+        $this->db->select('m1.nombremes as mesinicio, m2.nombremes as mesfin,y1.nombreyear as yearinicio,y2.nombreyear as yearfin,h.idgrupo, h.idhorario, g.nombregrupo,e.nombreespecialidad,n.idnivelestudio, n.nombrenivel, h.idperiodo');
         $this->db->from('tblhorario h'); 
         $this->db->join('tblgrupo g', 'g.idgrupo = h.idgrupo');
         $this->db->join('tblespecialidad e', 'e.idespecialidad = g.idespecialidad');
         $this->db->join('tblnivelestudio n','n.idnivelestudio = g.idnivelestudio');
+        $this->db->join('tblperiodo p','p.idperiodo = h.idperiodo');
+        $this->db->join('tblmes m1','m1.idmes = p.idmesinicio');
+        $this->db->join('tblmes m2','m2.idmes = p.idmesfin');
+        $this->db->join('tblyear y1','y1.idyear = p.idyearinicio');
+        $this->db->join('tblyear y2','y2.idyear = p.idyearfin');
         $this->db->where('h.idhorario',$idhorario);
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
@@ -183,7 +188,7 @@ class Horario_model extends CI_Model {
 
     public function showAllDiaHorarioSinDua($idhorario, $reprobadas = '') {
         $sql = '
-        SELECT idmateria,
+        SELECT idmateria, 
    concat(DATE_FORMAT(horario.horainicial, "%H:%i")," - ",date_format(horario.horafinal,"%H:%i")) as hora,
     MAX(CASE  WHEN horario.iddia = 1 THEN   CONCAT( "<strong>",horario.nombreclase,"</strong><br><small>",profesor,"</small>")
       WHEN horario.iddia = "Todos" THEN horario.nombreclase ELSE ""
@@ -194,6 +199,9 @@ END) AS lunesurl,
  MAX(CASE  WHEN horario.iddia = 1 THEN   urlvideoconferenciagrabado
       WHEN horario.iddia = "Todos" THEN "" ELSE ""
 END) AS lunesurlgrabado,
+ MAX(CASE  WHEN horario.iddia = 1 THEN   idhorariodetalle
+      WHEN horario.iddia = "Todos" THEN "" ELSE ""
+END) AS lunesidhorariodetalle,
      MAX(  CASE  
      WHEN horario.iddia = 2 THEN   CONCAT( "<strong>",horario.nombreclase,"</strong><br><small>",profesor,"</small>")
      WHEN horario.iddia = "Todos" THEN horario.nombreclase 
@@ -205,6 +213,9 @@ END) AS martesurl,
  MAX(CASE  WHEN horario.iddia = 2 THEN   urlvideoconferenciagrabado
       WHEN horario.iddia = "Todos" THEN "" ELSE ""
 END) AS martesurlgrabado,
+ MAX(CASE  WHEN horario.iddia = 2 THEN   idhorariodetalle
+      WHEN horario.iddia = "Todos" THEN "" ELSE ""
+END) AS martesidhorariodetalle,
       MAX( CASE  WHEN horario.iddia = 3 THEN   CONCAT( "<strong>",horario.nombreclase,"</strong><br><small>",profesor,"</small>")
         WHEN horario.iddia = "Todos" THEN horario.nombreclase 
         ELSE ""
@@ -215,6 +226,9 @@ END) AS miercolesurl,
  MAX(CASE  WHEN horario.iddia = 3 THEN   urlvideoconferenciagrabado
       WHEN horario.iddia = "Todos" THEN "" ELSE ""
 END) AS miercolesurlgrabado,
+ MAX(CASE  WHEN horario.iddia = 3 THEN   idhorariodetalle
+      WHEN horario.iddia = "Todos" THEN "" ELSE ""
+END) AS miercolesidhorariodetalle,
       MAX( CASE  WHEN horario.iddia = 4 THEN    CONCAT( "<strong>",horario.nombreclase,"</strong><br><small>",profesor,"</small>")
         WHEN horario.iddia = "Todos" THEN horario.nombreclase ELSE ""
 END )AS jueves,
@@ -224,6 +238,9 @@ END) AS juevesurl,
  MAX(CASE  WHEN horario.iddia = 4 THEN   urlvideoconferenciagrabado
       WHEN horario.iddia = "Todos" THEN "" ELSE ""
 END) AS juevesurlgrabado,
+ MAX(CASE  WHEN horario.iddia = 4 THEN   idhorariodetalle
+      WHEN horario.iddia = "Todos" THEN "" ELSE ""
+END) AS juevesidhorariodetalle,
        MAX(CASE  WHEN horario.iddia = 5 THEN  CONCAT( "<strong>",horario.nombreclase,"</strong><br><small>",profesor,"</small>")
          WHEN horario.iddia = "Todos" THEN horario.nombreclase ELSE ""
 END )AS viernes,
@@ -232,8 +249,10 @@ END )AS viernes,
 END) AS viernesurl,
  MAX(CASE  WHEN horario.iddia = 5 THEN   urlvideoconferenciagrabado
       WHEN horario.iddia = "Todos" THEN "" ELSE ""
-END) AS viernesurlgrabado
-
+END) AS viernesurlgrabado,
+ MAX(CASE  WHEN horario.iddia = 5 THEN   idhorariodetalle
+      WHEN horario.iddia = "Todos" THEN "" ELSE ""
+END) AS viernesidhorariodetalle
 FROM(select iddia, horainicial, horafinal, nombreclase,idhorariodetalle,idmateria, opcion,  CONCAT(nombre," ",apellidop," ",apellidom) profesor, urlvideoconferencia, urlvideoconferenciagrabado
    from vhorarioclases 
     WHERE idhorario =' . $idhorario . '';

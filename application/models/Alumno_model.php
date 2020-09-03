@@ -142,7 +142,7 @@ class Alumno_model extends CI_Model {
     }
 
     public function showAllMateriasAlumno($idalumno = '', $activo = '') {
-        $this->db->select('pe.idperiodo, hd.idhorariodetalle,ma.nombreclase,p.nombre, p.apellidop, p.apellidom, g.nombregrupo,ne.nombrenivel, g.idgrupo, h.idhorario,m.nombremes as mesinicio,m2.nombremes as mesfin,y.nombreyear as yearinicio,y2.nombreyear as yearfin, pla.nombreplantel,pla.asociado, pla.direccion, pla.telefono, a.matricula, ho.idhorario');
+        $this->db->select('pe.idperiodo, hd.idhorariodetalle,ma.nombreclase,p.nombre, p.apellidop, p.apellidom, g.nombregrupo,ne.nombrenivel, g.idgrupo, h.idhorario,m.nombremes as mesinicio,m2.nombremes as mesfin,y.nombreyear as yearinicio,y2.nombreyear as yearfin, pla.nombreplantel,pla.asociado, pla.direccion, pla.telefono, a.matricula, ho.idhorario,ma.unidades');
         $this->db->from('tblhorario_detalle hd');
         $this->db->join('tblprofesor_materia pm', 'pm.idprofesormateria = hd.idmateria');
         $this->db->join('tblprofesor p', 'p.idprofesor = pm.idprofesor');
@@ -419,6 +419,7 @@ FROM
     apellidop,
     apellidom,
     idmateria,
+    unidades,
     opcion
 FROM
     (select 
@@ -432,6 +433,7 @@ FROM
             p.apellidop,
             p.apellidom,
             m.idmateria,
+            m.unidades,
             1 as opcion
     FROM
         tblhorario_detalle hd
@@ -454,6 +456,7 @@ FROM
             p.apellidop,
             p.apellidom,
             m.idmateria,
+            m.unidades,
             0 as opcion
     FROM
         tblmateria_reprobada mr
@@ -578,7 +581,7 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function showAllTareaAlumno($dhorario = '', $idmateria = '') {
+    public function showAllTareaAlumno($idhorario = '', $idmateria = '') {
         $this->db->select('t.idtarea, hd.idhorariodetalle,hd.idhorario, hd.horainicial, hd.horafinal, m.nombreclase,p.nombre, p.apellidop, p.apellidom,t.tarea, t.fechaentrega');
         $this->db->from('tblhorario_detalle hd');
         $this->db->join('tblprofesor_materia pm', 'hd.idmateria = pm.idprofesormateria');
@@ -586,7 +589,7 @@ GROUP BY hd.idmateria) tabla");
         $this->db->join('tblprofesor p', 'p.idprofesor = pm.idprofesor');
         $this->db->join('tbltarea t', 't.idhorariodetalle = hd.idhorariodetalle');
         if (isset($idhorario) && !empty($idhorario)) {
-            $this->db->where('hd.idhorario', $dhorario);
+            $this->db->where('hd.idhorario', $idhorario);
         }
         if (isset($idmateria) && !empty($idmateria)) {
             $this->db->where('m.idmateria', $idmateria);

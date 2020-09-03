@@ -162,8 +162,8 @@ class Phorario extends CI_Controller {
               if (isset($row->miercolesnumeroanfitrion) && !empty($row->miercolesnumeroanfitrion)) {
                 $tabla .= '<br>Número anfitrion: '.$row->miercolesnumeroanfitrion.'<br>';
             }
-            if ((isset($row->miersolesurlgrabado) && !empty($row->miersolesurlgrabado))) {
-                $tabla .= '<label><a  target="_blank" href=" ' . $row->miersolesurlgrabado . '"><i class="fa fa-external-link"></i> Video grabado<a/></label>';
+            if ((isset($row->miercolesurlgrabado) && !empty($row->miercolesurlgrabado))) {
+                $tabla .= '<label><a  target="_blank" href=" ' . $row->miercolesurlgrabado . '"><i class="fa fa-external-link"></i> Video grabado<a/></label>';
                 $tabla .= ' <a  href="javascript:void(0)"  class="delete_button_url"
                                                                 data-toggle="modal" data-target="#largeModalDelete"
                                                                 data-idhorariodetalle="' . $row->miercolesidhorariodetalle . '"  >

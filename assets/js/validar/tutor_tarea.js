@@ -25,23 +25,12 @@ $(document).ready(function () {
 
         for (instance in CKEDITOR.instances) {
             CKEDITOR.instances[instance].updateElement();
-        }
-        var file_data = $('#documento').prop('files')[0];
-        var form_data = new FormData();
-        form_data.append('documento',file_data); 
-         form_data.append('fechaentrega',$('#fechaentrega')); 
-          form_data.append('horaentrega',$('#horaentrega')); 
-           form_data.append('tarea',$('#tarea')); 
+        }  
         
         $.ajax({
             type: "POST",
-            //dataType:'text',
-            //cache:false,
-            //contentType:false,
-            async:true,
-            processData:false,
-            url: my_var_1 + "Pgrupo/addTarea",
-            data: form_data,
+            url: my_var_1 +"Pgrupo/addTarea",
+            data: $('#frmtarea').serialize(),
             success: function (data) {
                 $('#btnguardar').prop("disabled", false);
                 $('#btnguardar').html(

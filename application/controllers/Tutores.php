@@ -16,6 +16,7 @@ class Tutores extends CI_Controller {
         $this->load->model('data_model');
         $this->load->library('permission');
         $this->load->library('session');
+          $this->load->model('tarea_model', 'tarea');
         $this->load->model('alumno_model', 'alumno');
         $this->load->model('estadocuenta_model', 'estadocuenta');
         $this->load->model('grupo_model', 'grupo');
@@ -62,7 +63,7 @@ class Tutores extends CI_Controller {
                     }
                     $profesores = implode(",", $array_profesor);
                     $mensajes = $this->mensaje->showAllMensajeATutor($profesores);
-                    $tareas = $this->mensaje->showAllTareaATutor($profesores);
+                     $tareas = $this->mensaje->showAllTareaATutor($profesores,$idhorario);
                 }
             }
         }
@@ -750,8 +751,8 @@ if(isset($lunesAll) && !empty($lunesAll)){
             $detalle = $this->alumno->showAllMateriasAlumno($idalumno);
             if (isset($detalle[0]->idhorario) && !empty($detalle[0]->idhorario)) {
                 $idhorario = $detalle[0]->idhorario;
-                $idhorariodetalle = $detalle[0]->idhorariodetalle;
-                $tareas = $this->alumno->showAllTareaAlumno($idhorario);
+               // $idhorariodetalle = $detalle[0]->idhorariodetalle;
+                $tareas = $this->alumno->showAllTareaAlumno($idhorario,'');
                 $data = array(
                     'tareas' => $tareas,
                     'controller' => $this,
@@ -778,9 +779,74 @@ if(isset($lunesAll) && !empty($lunesAll)){
             $this->load->view('tutor/footer');
         }
     }
-
+     public function tareasv2($idalumno = '', $idnivelestudio = '', $idperiodo = '') {
+        Permission::grant(uri_string());
+        $idalumno = $this->decode($idalumno);
+        $idperiodo = $this->decode($idperiodo);
+        if ((isset($idalumno) && !empty($idalumno)) && (isset($idperiodo) && !empty($idperiodo))) {
+            $detalle = $this->alumno->showAllMateriasAlumno($idalumno);
+            if (isset($detalle[0]->idhorario) && !empty($detalle[0]->idhorario)) {
+                        
+                $idhorario = $detalle[0]->idhorario;
+                $idhorariodetalle = $detalle[0]->idhorariodetalle;
+                $tareas = $this->alumno->showAllTareaAlumno($idhorario,'');
+                $data = array(
+                    'tareas' => $tareas,
+                    'controller' => $this,
+                    'idhorario'=>$idhorario,
+                    'idalumno'=>$idalumno
+                );
+                $this->load->view('tutor/header');
+                $this->load->view('tutor/alumnos/tarea/index', $data);
+                $this->load->view('tutor/footer');
+                
+            } else {
+                $data = array(
+                    'heading' => 'Notificación',
+                    'message' => 'El Alumno(a) no tiene registrado Tareas.',
+                );
+                $this->load->view('tutor/header');
+                $this->load->view('tutor/error/general', $data);
+                $this->load->view('tutor/footer');
+            }
+        } else {
+            $data = array(
+                'heading' => 'Error',
+                'message' => 'Intente mas tarde.',
+            );
+            $this->load->view('tutor/header');
+            $this->load->view('tutor/error/general', $data);
+            $this->load->view('tutor/footer');
+        }
+    }
+  public function detalletareav2($idtarea, $idhorario) {
+        $idhorario = $this->decode($idhorario);
+        if ((isset($idtarea) && !empty($idtarea)) && (isset($idhorario) && !empty($idhorario))) {
+            $validar_tarea = $this->tarea->validarTareaAlumno($idtarea, $idhorario);
+            if ($validar_tarea) {
+                $data = array(
+                    'idtarea' => $idtarea
+                );
+                $this->load->view('tutor/header');
+                $this->load->view('tutor/alumnos/tarea/detalle', $data);
+                $this->load->view('tutor/footer');
+            } else {
+                $data = array(
+                    'heading' => 'ERROR',
+                    'message' => 'Ocurrio un error, intente mas tarde.',
+                );
+                $this->load->view('errors/html/error_general', $data);
+            }
+        } else {
+            $data = array(
+                'heading' => 'ERROR',
+                'message' => 'Ocurrio un error, intente mas tarde.',
+            );
+            $this->load->view('errors/html/error_general', $data);
+        }
+    }
     public function detalletarea($idtarea = '') {
-        $idtarea = $this->decode($idtarea);
+                        
         if (isset($idtarea) && !empty($idtarea)) {
             $detalle_tarea = $this->mensaje->detalleTarea($idtarea);
             $data = array(

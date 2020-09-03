@@ -45,7 +45,7 @@ class Mensaje_model extends CI_Model {
             return false;
         }
     } 
-       public function showAllTareaATutor($profesores = '') {
+       public function showAllTareaATutor($profesores = '',$idhorario = '') {
         $this->db->select('t.idtarea, t.idnotificacionalumno, t.idnotificaciontutor,hd.idhorariodetalle,hd.idhorario, hd.horainicial, hd.horafinal, m.nombreclase,p.nombre, p.apellidop, p.apellidom,t.tarea, t.fechaentrega');
         $this->db->from('tblhorario_detalle hd');
         $this->db->join('tblprofesor_materia pm', 'hd.idmateria = pm.idprofesormateria');
@@ -54,6 +54,9 @@ class Mensaje_model extends CI_Model {
         $this->db->join('tbltarea t', 't.idhorariodetalle = hd.idhorariodetalle'); 
         if (isset($idmateria) && !empty($idmateria)) {
            $this->db->where_in('hd.idmateria', $profesores);
+        }
+        if (isset($idhorario) && !empty($idhorario)) {
+           $this->db->where_in('t.idhorario', $idhorario);
         }
         $query = $this->db->get();
         if ($query->num_rows() > 0) {

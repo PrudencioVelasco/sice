@@ -9,7 +9,7 @@
             <div class="col-md-12  col-sm-12 col-xs-12">
                 <div class="x_panel">
                     <div class="x_title">
-                        <h2><strong><i class="fa fa-slideshare"></i> ADMINISTRAR PLANIFICACIONES</strong></h2>
+                        <h2><strong><i class="fa fa-slideshare"></i> ADMINISTRAR PLANEACIONES</strong></h2>
 
                         <div class="clearfix"></div>
                     </div>
@@ -30,25 +30,18 @@
                                     <th class="text-white" v-column-sortable:nombregrupo>GRUPO </th>
                                     <th class="text-white" v-column-sortable:nombreclase>MATERIA </th>  
                                     <th class="text-white" v-column-sortable:nombreprofesor>DOCENTE </th>  
-                                    <th class="text-white" v-column-sortable:bloque>BLOQUE </th>  
-                                    <th class="text-white" v-column-sortable:fechaejecucion>F. EJECUCIÓN </th>  
-                                    <th class="text-center text-white"> </th>
+                                    <th class="text-white" v-column-sortable:documento>DOCUMENTO </th>  
+                                    <th class="text-white" v-column-sortable:fechainicio>F. INICIO </th>  
+                                     <th class="text-white" v-column-sortable:fechafin>F. TERMINO </th> 
                                     </thead>
                                     <tbody class="table-light">
                                         <tr v-for="row in planificaciones" class="table-default"> 
                                             <td><strong>{{row.nombrenivel}} - {{row.nombregrupo}}</strong></td>
                                             <td><strong>{{row.nombreclase}}</strong></td>
                                             <td><strong>{{row.nombreprofesor}}</strong></td>
-                                            <td>{{row.bloque}}</td>
-                                            <td>{{row.fechaejecucion}}</td>
-                                            <td align="right">
-
-
-                                                <button type="button" class="btn btn-icons btn-info btn-sm waves-effect waves-black" @click=" abrirEditModal(); selectPlanificacion(row)" title="Modificar Datos"> <i class="fa fa-edit" aria-hidden="true"></i>
-                                                    Editar
-                                                </button>   
-
-                                            </td>
+                                            <td><a target='_blank' v-bind:href="'../documentos/planeacion/licenciatura/' + row.documento"><i class="fa fa-cloud-download"></i> DESCARGAR</a></td>
+                                            <td>{{row.fechainicio}}</td>
+                                            <td>{{row.fechafin}}</td> 
                                         </tr>
                                         <tr v-if="emptyResult">
                                             <td colspan="6" class="text-center h4">Sin registros</td>

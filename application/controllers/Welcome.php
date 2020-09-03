@@ -53,7 +53,8 @@ class Welcome extends CI_Controller {
                     'nombre' => $result->nombre,
                     'apellidop' => $result->apellidop,
                     'apellidom' => $result->apellidom,
-                    'idplantel' => $result->idplantel
+                    'idplantel' => $result->idplantel,
+                    'idniveleducativo' => $result->idniveleducativo
                 ]);
                 //$this->session->set_userdata('user', $data);
                 redirect('/Alumnos/');
@@ -88,6 +89,7 @@ class Welcome extends CI_Controller {
                         'apellidom' => $value->apellidom,
                         'idplantel' => $value->idplantel,
                         'nivel_educativo' => $value->nombreniveleducativo,
+                        'idniveleducativo' => $value->idniveleducativo,
                         'planteles' => $escuelas
                     ]);
                     redirect('/Profesores');
@@ -109,21 +111,27 @@ class Welcome extends CI_Controller {
 
         $result = $this->usuario->loginTutor($correo);
         if ($result) {
-            if (password_verify($password, $result->password)) {
+            foreach ($result as $value){
+            if (password_verify($password, $value->password)) {
+                 $escuelas = $this->usuario->listaPlantelTutor($correo);
                 $this->session->set_userdata([
-                    'user_id' => $result->id,
-                    'idtutor' => $result->idtutor,
-                    'nombre' => $result->nombre,
-                    'apellidop' => $result->apellidop,
-                    'apellidom' => $result->apellidom,
-                    'idplantel' => $result->idplantel
+                    'user_id' => $value->id,
+                    'idtutor' => $value->idtutor,
+                    'nombre' => $value->nombre,
+                    'apellidop' => $value->apellidop,
+                    'apellidom' => $value->apellidom,
+                    'idplantel' => $value->idplantel,
+                    'nivel_educativo' => $value->nombreniveleducativo,
+                    'idniveleducativo' => $value->idniveleducativo,
+                    'planteles' => $escuelas
                 ]);
-                $this->session->set_flashdata('bienvenida', 'Bienvenido(a) ' . $result->nombre);
+                //$this->session->set_flashdata('bienvenida', 'Bienvenido(a) ' . $result->nombre);
                 redirect('/Tutores');
             } else {
                 $this->session->set_flashdata('err2', 'Correo o Contraseña son incorrectos.');
                 redirect('/');
             }
+        }
         } else {
             $this->session->set_flashdata('err2', 'Correo o Contraseña son incorrectos.');
             redirect('/');
@@ -161,7 +169,7 @@ class Welcome extends CI_Controller {
 
                 $this->session->set_userdata($data_session);
                 if (!empty($escuelas)) {
-                    $this->session->set_flashdata('informacion', 'Usuario o Contraseña son incorrectos.');
+                    //$this->session->set_flashdata('err', 'Usuario o Contraseña son incorrectos.');
                 }
                 redirect('/Admin');
             } else {
@@ -209,6 +217,7 @@ class Welcome extends CI_Controller {
             'idplantel' => $idplantel,
             'idrol' => $this->session->idrol,
             'nivel_educativo' => $detalle_plantel->nombreniveleducativo,
+             'idniveleducativo' => $detalle_plantel->idniveleducativo,
             'planteles' => $this->session->planteles
         );
         $this->session->set_userdata($data_session);
@@ -225,14 +234,33 @@ class Welcome extends CI_Controller {
             'nombre' => $this->session->nombre,
             'apellidop' => $this->session->apellidop,
             'apellidom' => $this->session->apellidom,
-            'idplantel' => $this->session->idplantel,
+            'idplantel' => $idplantel,
             'nivel_educativo' => $detalle_plantel->nombreniveleducativo,
+             'idniveleducativo' => $detalle_plantel->idniveleducativo,
             'planteles' => $this->session->planteles
         );
         $this->session->set_userdata($data_session);
         //$this->session->set_userdata('user', $data);
         $this->session->set_flashdata('informacion_exito', 'Usuario o Contraseña son incorrectos.');
         redirect('/Profesores');
+    }
+    public function cambiarplantelTutor($idplantel,$idtutor) {
+        $detalle_plantel = $this->usuario->detallePlantel($idplantel);
+        $data_session = array(
+            'user_id' => $this->session->user_id,
+            'idtutor' => $idtutor,
+            'nombre' => $this->session->nombre,
+            'apellidop' => $this->session->apellidop,
+            'apellidom' => $this->session->apellidom,
+            'idplantel' => $idplantel,
+            'nivel_educativo' => $detalle_plantel->nombreniveleducativo,
+            'idniveleducativo' => $detalle_plantel->idniveleducativo,
+            'planteles' => $this->session->planteles
+        );
+        $this->session->set_userdata($data_session);
+        //$this->session->set_userdata('user', $data);
+        $this->session->set_flashdata('informacion_exito', 'Usuario o Contraseña son incorrectos.');
+        redirect('/Tutores');
     }
 
 }

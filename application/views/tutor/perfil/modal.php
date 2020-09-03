@@ -2,11 +2,11 @@
                  <div class="modal-dialog" role="document">
                      <div class="modal-content">
                          <div class="modal-header">
-                             <h4 class="modal-title" id="defaultModalLabel">EDITAR ALUMNO</h4>
+                             <h4 class="modal-title" id="defaultModalLabel">DETALLES ALUMNO(A)</h4>
                          </div>
                          <div class="modal-body">
                              <div
-                                 style=" height: 200px; padding-top:13px; padding-right:15px; overflow-x: hidden; overflow-y: scroll;">
+                                 style="padding-top:13px; padding-right:15px;">
                                  <div class="row">
                                      <div class="col-md-12 col-sm-12 col-xs-12 ">
                                          <div class="col-red" v-html="formValidate.msgerror"></div>
@@ -108,22 +108,18 @@
 
                                              <div class="col-red" v-html="formValidate.nacionalidad"></div>
                                          </div>
-                                     </div>
-
-                                     <div class="col-md-6 col-sm-12 col-xs-12 ">
-                                         <div class="form-group ">
-
+                                     </div> 
+<div class="col-md-6 col-sm-12 col-xs-12 ">
+                                         <div class="form-group">
                                              <label class="form-label">
-                                                 <font color="red">*</font> SERVICIO MEDICO
+                                                 <font color="red">*</font> FECHA NACIMIENTO
                                              </label>
-                                             <input disabled type="text" v-model="chooseAlumno.serviciomedico"
+                                             <input disabled type="date" v-model="chooseAlumno.fechanacimiento"
                                                  class="form-control"
-                                                 :class="{'is-invalid': formValidate.serviciomedico}" name="po">
-
-                                             <div class="col-red" v-html="formValidate.serviciomedico"></div>
+                                                 :class="{'is-invalid': formValidate.fechanacimiento}" name="po">
+                                             <div class="col-red" v-html="formValidate.fechanacimiento"></div>
                                          </div>
-                                     </div>
-
+                                     </div> 
                                  </div>
                                  <div class="row">
 
@@ -133,7 +129,7 @@
                                              <input disabled type="text" v-model="chooseAlumno.telefono"
                                                  class="form-control" :class="{'is-invalid': formValidate.telefono}"
                                                  name="po">
-                                             <small>A 10 digitos.</small>
+                                             
                                              <div class="col-red" v-html="formValidate.telefono"></div>
                                          </div>
                                      </div>
@@ -144,7 +140,7 @@
                                              <input disabled type="text" v-model="chooseAlumno.telefonoemergencia"
                                                  class="form-control"
                                                  :class="{'is-invalid': formValidate.telefonoemergencia}" name="po">
-                                             <small>A 10 digitos.</small>
+                                           
                                              <div class="col-red" v-html="formValidate.telefonoemergencia"></div>
                                          </div>
                                      </div>
@@ -154,104 +150,18 @@
 
                                      <div class="col-md-6 col-sm-12 col-xs-12 ">
                                          <div class="form-group">
-                                             <label class="form-label"> TIPO SANGUINEO</label>
-                                             <select disabled style="border-bottom: solid #ebebeb 2px;"
-                                                 v-model="chooseAlumno.idtiposanguineo"
-                                                 :class="{'is-invalid': formValidate.idtiposanguineo}"
-                                                 class="form-control">
-                                                 <option value="">-- SELECCIONAR --</option>
-                                                 <option v-for="option in tipossanguineos"
-                                                     selected="option.idtiposanguineo == chooseAlumno.idtiposanguineo ? 'selected' : ''"
-                                                     v-bind:value="option.idtiposanguineo">
-                                                     {{ option.tiposanguineo  }}
-                                                 </option>
+                                             <label class="form-label"> TIPO SANGUINEO</label><br/>
+                                             <span>{{chooseAlumno.tiposanguineo}}</span> 
                                              </select>
                                              <div class="col-red" v-html="formValidate.idtiposanguineo"></div>
                                          </div>
-                                     </div>
-
-                                     <div class="col-md-6 col-sm-12 col-xs-12 ">
-                                         <div class="form-group ">
-
-                                             <label class="form-label">
-                                                 <font color="red">*</font> ALERGIA O PADECIMIENTO
-                                             </label>
-                                             <input type="text" v-model="chooseAlumno.alergiaopadecimiento"
-                                                 class="form-control"
-                                                 :class="{'is-invalid': formValidate.alergiaopadecimiento}" name="po">
-
-                                             <div class="col-red" v-html="formValidate.alergiaopadecimiento"></div>
-                                         </div>
-                                     </div>
-
-                                 </div>
-                                 <div class="row">
-
-                                     <div class="col-md-6 col-sm-12 col-xs-12 ">
-                                         <div class="form-group ">
-
-                                             <label class="form-label">
-                                                 <font color="red">*</font> PESO
-                                             </label>
-                                             <input type="text" v-model="chooseAlumno.peso" class="form-control"
-                                                 :class="{'is-invalid': formValidate.peso}" name="po">
-
-                                             <div class="col-red" v-html="formValidate.peso"></div>
-                                         </div>
-                                     </div>
-
-                                     <div class="col-md-6 col-sm-12 col-xs-12 ">
-                                         <div class="form-group ">
-
-                                             <label class="form-label">
-                                                 <font color="red">*</font> ESTATURA
-                                             </label>
-                                             <input type="text" v-model="chooseAlumno.estatura" class="form-control"
-                                                 :class="{'is-invalid': formValidate.estatura}" name="po">
-
-                                             <div class="col-red" v-html="formValidate.estatura"></div>
-                                         </div>
-                                     </div>
-
-                                 </div>
-                                 <div class="row clearfix">
-                                     <div class="col-md-6 col-sm-12 col-xs-12 ">
-                                         <div class="form-group ">
-
-                                             <label class="form-label">NÚMERO FOLIO</label>
-                                             <input type="text" v-model="chooseAlumno.numfolio" class="form-control"
-                                                 :class="{'is-invalid': formValidate.numfolio}" name="po">
-
-                                             <div class="col-red" v-html="formValidate.numfolio"></div>
-                                         </div>
-                                     </div>
-                                     <div class="col-md-6 col-sm-12 col-xs-12 ">
-                                         <div class="form-group ">
-
-                                             <label class="form-label">NÚMERO DE ACTA</label>
-                                             <input type="text" v-model="chooseAlumno.numacta" class="form-control"
-                                                 :class="{'is-invalid': formValidate.numacta}" name="po">
-
-                                             <div class="col-red" v-html="formValidate.numacta"></div>
-                                         </div>
-                                     </div>
-                                 </div>
-                                 <div class="row clearfix">
-                                     <div class="col-md-6 col-sm-12 col-xs-12 ">
-                                         <div class="form-group ">
-
-                                             <label class="form-label">NÚMERO DE LIBRO</label>
-                                             <input type="text" v-model="chooseAlumno.numlibro" class="form-control"
-                                                 :class="{'is-invalid': formValidate.numlibro}" name="po">
-
-                                             <div class="col-red" v-html="formValidate.numlibro"></div>
-                                         </div>
-                                     </div>
+                                     </div> 
+ 
                                      <div class="col-md-6 col-sm-12 col-xs-12 ">
                                          <div class="form-group ">
 
                                              <label class="form-label">CORREO ELECTRONICO</label>
-                                             <input type="text" v-model="chooseAlumno.correo" class="form-control"
+                                             <input disabled type="text" v-model="chooseAlumno.correo" class="form-control"
                                                  :class="{'is-invalid': formValidate.correo}" name="po">
 
                                              <div class="col-red" v-html="formValidate.correo"></div>
@@ -277,37 +187,7 @@
                                              <div class="col-red" v-html="formValidate.sexo"></div>
                                          </div>
                                      </div>
-                                 </div>
-                                 <div class="row clearfix">
-                                     <div class="col-md-6 col-sm-12 col-xs-12 ">
-                                         <div class="form-group">
-                                             <label class="form-label">
-                                                 <font color="red">*</font> FECHA NACIMIENTO
-                                             </label>
-                                             <input type="date" v-model="chooseAlumno.fechanacimiento"
-                                                 class="form-control"
-                                                 :class="{'is-invalid': formValidate.fechanacimiento}" name="po">
-                                             <div class="col-red" v-html="formValidate.fechanacimiento"></div>
-                                         </div>
-                                     </div>
-                                     <div class="col-md-6 col-sm-12 col-xs-12 ">
-                                         <div class="form-group">
-                                             <label class="form-label"> ESPECIALIDAD</label>
-                                             <select style="border-bottom: solid #ebebeb 2px;"
-                                                 v-model="chooseAlumno.idespecialidad"
-                                                 :class="{'is-invalid': formValidate.idespecialidad}"
-                                                 class="form-control">
-                                                 <option value="">-- SELECCIONAR --</option>
-                                                 <option v-for="option in especialidades"
-                                                     selected="option.idespecialidad == chooseAlumno.idespecialidad ? 'selected' : ''"
-                                                     v-bind:value="option.idespecialidad">
-                                                     {{ option.nombreespecialidad }}
-                                                 </option>
-                                             </select>
-                                             <div class="col-red" v-html="formValidate.idespecialidad"></div>
-                                         </div>
-                                     </div>
-                                 </div>
+                                 </div> 
                                  <div class="row clearfix">
                                      <div class="col-md-12 col-sm-12 col-xs-12 ">
                                          <div class="form-group ">
@@ -315,10 +195,10 @@
                                              <label class="form-label">
                                                  <font color="red">*</font> DOMICILIO
                                              </label>
-                                             <input type="test" v-model="chooseAlumno.domicilio" class="form-control"
+                                             <input type="test" disabled v-model="chooseAlumno.domicilio" class="form-control"
                                                  :class="{'is-invalid': formValidate.domicilio}" name="po">
 
-                                             <small>Formato: Calle, Num, Colonia, CP, Ciudad, Estado.</small>
+                                            
                                              <div class="col-red" v-html="formValidate.domicilio"></div>
                                          </div>
                                      </div>
@@ -339,9 +219,7 @@
                                  </div>
                                  <div class="col-md-6 col-sm-12 col-xs-12 ">
                                      <button class="btn btn-danger waves-effect waves-black" @click="clearAll"><i
-                                             class='fa fa-ban'></i> Cancelar</button>
-                                     <button class="btn btn-primary waves-effect waves-black" @click="updateAlumno"><i
-                                             class='fa fa-edit'></i> Modificar</button>
+                                             class='fa fa-ban'></i> Cerrar</button> 
                                  </div>
                              </div>
                          </div>

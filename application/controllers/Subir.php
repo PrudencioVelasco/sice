@@ -22,7 +22,16 @@ class Subir extends CI_Controller {
         $this->load->helper('numeroatexto_helper');
         $this->load->library('excel');
     }
-
+  public function password() {
+      $alumnos = $this->alumno->showAll(1);
+      foreach ($alumnos as $value) {
+          $idalumno = $value->idalumno;
+          $data = array(
+              'password'=>password_hash('28duguer', PASSWORD_DEFAULT)
+          );
+          $this->alumno->updateAlumno($idalumno,$data);
+      }
+  }
     public function index() {
         $this->load->view('admin/header');
         $this->load->view('admin/subir/index');
@@ -72,9 +81,10 @@ class Subir extends CI_Controller {
             $estado = $allDataInSheet[$i]["N"];
             $correo = $allDataInSheet[$i]["O"];
             $telefono = $allDataInSheet[$i]["P"];
-            $tiposangre = $allDataInSheet[$i]["Q"];
-            $idplantel = $allDataInSheet[$i]["R"];
-            $idespecialidad = $allDataInSheet[$i]["S"];
+             $curp = $allDataInSheet[$i]["Q"];
+            $tiposangre = $allDataInSheet[$i]["R"];
+            $idplantel = $allDataInSheet[$i]["S"];
+            $idespecialidad = $allDataInSheet[$i]["T"];
 
             $direccion = $calle . ", " . $calonia . ", C.P. " . $cp . ", " . $municipio . ", " . $estado;
             $validar = $this->tutor->validadMatricula($matricula);
@@ -83,23 +93,23 @@ class Subir extends CI_Controller {
                     'idplantel' => $idplantel,
                     'idespecialidad' => $idespecialidad,
                     'matricula' => trim($matricula),
-                    'curp' => '',
+                    'curp' => $curp,
                     'nombre' => strtoupper($alumno_nombre),
                     'apellidop' => strtoupper($alumno_apellidop),
                     'apellidom' => strtoupper($alumno_apellidom),
-                    'lugarnacimiento' => 'NO DEFINIDO',
-                    'nacionalidad' => 'NO DEFINIDO',
+                    'lugarnacimiento' => '',
+                    'nacionalidad' => '',
                     'domicilio' => $direccion,
                     'telefono' => 0,
                     'telefonoemergencia' => 0,
-                    'serviciomedico' => 'NO DEFINIDO',
+                    'serviciomedico' => '',
                     'idtiposanguineo' => $tiposangre,
-                    'alergiaopadecimiento' => 'NO DEFINIDO',
+                    'alergiaopadecimiento' => '',
                     'peso' => 0.00,
                     'estatura' => 0.00,
-                    'numfolio' => 'NO DEFINIDO',
-                    'numacta' => 'NO DEFINIDO',
-                    'numlibro' => 'NO DEFINIDO',
+                    'numfolio' => '',
+                    'numacta' => '',
+                    'numlibro' => '',
                     'fechanacimiento' => $fechanacimiento,
                     'foto' => '',
                     'sexo' => $genero,
@@ -112,7 +122,7 @@ class Subir extends CI_Controller {
 
                 // var_dump($data);
 
-               /* $idalumno = $this->alumno->addAlumno($data);
+               $idalumno = $this->alumno->addAlumno($data);
                 $datausuario = array(
                     'idusuario' => $idalumno,
                     'idtipousuario' => 3,
@@ -123,7 +133,7 @@ class Subir extends CI_Controller {
                     'id_rol' => 12,
                     'id_user' => $idusuario
                 );
-                $id_usuario_rol = $this->user->addUserRol($data_usuario_rol);*/
+                $id_usuario_rol = $this->user->addUserRol($data_usuario_rol);
 
                 $validar_add_madre = $this->tutor->validadAddTutor($idplantel, trim($nombre), trim($apellidop), trim($apellidom));
                 if ($validar_add_madre == false) {
@@ -133,9 +143,9 @@ class Subir extends CI_Controller {
                         'nombre' => strtoupper($nombre),
                         'apellidop' => strtoupper($apellidop),
                         'apellidom' => strtoupper($apellidom),
-                        'escolaridad' => 'NO DEFINIDO',
-                        'ocupacion' => 'NO DEFINIDO',
-                        'dondetrabaja' => 'NO DEFINIDO',
+                        'escolaridad' => '',
+                        'ocupacion' => '',
+                        'dondetrabaja' => '',
                         'fnacimiento' => date('Y-m-d'),
                         'direccion' => strtoupper($direccion),
                         'telefono' => $telefono,
@@ -147,7 +157,7 @@ class Subir extends CI_Controller {
                         'idusuario' => $this->session->user_id,
                         'fecharegistro' => date('Y-m-d H:i:s')
                     );
-                   /* $idtutor = $this->tutor->addTutor($data_tutor_madre);
+                    $idtutor = $this->tutor->addTutor($data_tutor_madre);
                     $datausuario_tutor = array(
                         'idusuario' => $idtutor,
                         'idtipousuario' => 5,
@@ -163,17 +173,17 @@ class Subir extends CI_Controller {
                         'idtutor' => $idtutor,
                         'idalumno' => $idalumno
                     );
-                    $this->tutor->addTutorAlumno($data);*/
+                    $this->tutor->addTutorAlumno($data);
                 } else {
                     //var_dump($validar);
-                    echo $matricula."<br>";
+                  
                    // echo $validar[0]->matricula;
-                    /*$idtutor = $validar_add_madre[0]->idtutor;
+                    $idtutor = $validar_add_madre[0]->idtutor;
                     $data = array(
                         'idtutor' => $idtutor,
                         'idalumno' => $idalumno
                     );
-                    $this->tutor->addTutorAlumno($data);*/
+                    $this->tutor->addTutorAlumno($data);
                 }
             }
         }

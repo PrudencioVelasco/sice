@@ -106,7 +106,7 @@
                                                         </div>
                                                         <div class="content">
                                                             <div class="text">
-                                                                <span class="titulocatalogo">PLANIFICACIÓN</span>
+                                                                <span class="titulocatalogo">PLANEACIÓN</span>
                                                             </div>
                                                             <div class="number"></div>
                                                         </div>

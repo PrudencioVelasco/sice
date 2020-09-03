@@ -26,7 +26,8 @@
                         <div class="col-md-6 col-sm-12 col-xs-12 "> 
                             <div class="form-group"> 
                                 <label><font color="red">*</font> SELECCIONE LA OPCIÓN PARA CALIFICAR</label>
-                            <select class=" form-control" v-model="chooseAlumnosTareas.idestatustarea" style="border-bottom: solid #ccc 1px; "> 
+                              <select class=" form-control" v-model="chooseAlumnosTareas.idestatustarea" style="border-bottom: solid #ccc 1px; "> 
+                                  
                                   <option   v-for="option in estatustarea"  :selected="option.idestatustarea == chooseAlumnosTareas.idestatustarea ? 'selected' : ''" :value="option.idestatustarea" >
                                         {{ option.nombreestatus }}   
                                     </option>

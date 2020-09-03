@@ -71,7 +71,11 @@ var vu = new Vue({
             $("#editRegister").modal("show");
         },
         showAll() {
-            axios.get(this.url + "Tarea/showAll").then(function (response) {
+            axios.get(this.url + "Tarea/showAll",{
+                params: {
+                    idhorariodetalle: this.idhorariodetalle,
+                }
+            }).then(function (response) {
                 if (response.data.tareas == null) {
                     vu.noResult()
                 } else {
@@ -87,7 +91,11 @@ var vu = new Vue({
         },
         searchTarea() {
             var formData = vu.formData(vu.search);
-            axios.post(this.url + "Tarea/searchTarea", formData).then(function (response) {
+            axios.post(this.url + "Tarea/searchTarea", formData,{
+                params: {
+                    idhorariodetalle: this.idhorariodetalle,
+                }
+            }).then(function (response) {
                 if (response.data.tareas == null) {
                     vu.noResult()
                 } else {

@@ -15,10 +15,8 @@ class Planificacion_model extends CI_Model {
 
     public function showAll($idprofesor = '', $idplantel = '') {
         $this->db->select("CONCAT(pro.nombre,' ',pro.apellidop,' ',pro.apellidom) as nombreprofesor,ne.nombrenivel, g.nombregrupo, m.nombreclase,"
-                . "p.idhorariodetalle, p.idperiodo, p.idprofesor,p.idgrupo, p.bloque, DATE_FORMAT(p.fechaejecucion,'%d/%m/%Y') as fechaejecucion,"
-                . "p.practicasociallenguaje, p.enfoque, p.ambito,p.competenciafavorece,p.tipotext ,p.aprendizajeesperado,p.propositodelproyecto,"
-                . "p.produccionesdesarrolloproyecto, p.recursosdidacticos, p.indicadoresevaluacion, p.observacionesdocente, p.observacionescoordinador, p.idplanificacion");
-        $this->db->from('tblplanificacion p');
+                . "p.idhorariodetalle, p.idperiodo, p.idprofesor,p.idgrupo,   DATE_FORMAT(p.fechainicio,'%d/%m/%Y') as fechainicio, DATE_FORMAT(p.fechafin,'%d/%m/%Y') as fechafin,p.documento, p.idplaneacion");
+        $this->db->from('tblplaneacion_licenciatura p');
         $this->db->join('tblprofesor_materia pm', 'p.idprofesor = pm.idprofesormateria');
         $this->db->join('tblprofesor pro', 'pro.idprofesor = pm.idprofesor');
         $this->db->join('tblmateria m', 'm.idmateria = pm.idmateria');
@@ -180,14 +178,13 @@ class Planificacion_model extends CI_Model {
             "ne.nombrenivel,' '",
             "g.nombregrupo,' '",
             "m.nombreclase,' '",
-            "DATE_FORMAT(p.fechaejecucion,'%d/%m/%Y'),' '",
-            "p.bloque"
+            "DATE_FORMAT(p.fechainicio,'%d/%m/%Y'),' '",
+            "DATE_FORMAT(p.fechafin,'%d/%m/%Y')"
         );
         $this->db->select("CONCAT(pro.nombre,' ',pro.apellidop,' ',pro.apellidom) as nombreprofesor,ne.nombrenivel, g.nombregrupo, m.nombreclase,"
-                . "p.idhorariodetalle, p.idperiodo, p.idprofesor,p.idgrupo, p.bloque, DATE_FORMAT(p.fechaejecucion,'%d/%m/%Y') as fechaejecucion,"
-                . "p.practicasociallenguaje, p.enfoque, p.ambito,p.competenciafavorece,p.tipotext ,p.aprendizajeesperado,p.propositodelproyecto,"
-                . "p.produccionesdesarrolloproyecto, p.recursosdidacticos, p.indicadoresevaluacion, p.observacionesdocente, p.observacionescoordinador, p.idplanificacion");
-        $this->db->from('tblplanificacion p');
+                . "p.idhorariodetalle, p.idperiodo, p.idprofesor,p.idgrupo,DATE_FORMAT(p.fechainicio,'%d/%m/%Y') as fechainicio, DATE_FORMAT(p.fechafin,'%d/%m/%Y') as fechafin,"
+                . "p.documento,  p.idplaneacion");
+        $this->db->from('tblplaneacion_licenciatura p');
         $this->db->join('tblprofesor_materia pm', 'p.idprofesor = pm.idprofesormateria');
         $this->db->join('tblprofesor pro', 'pro.idprofesor = pm.idprofesor');
         $this->db->join('tblmateria m', 'm.idmateria = pm.idmateria');
