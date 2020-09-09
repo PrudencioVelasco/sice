@@ -32,6 +32,24 @@ class CicloEscolar_model extends CI_Model {
             return false;
         }
     }
+    public function showAllCicloEscolar($idplantel = '') {
+        $this->db->select('p.*,m.nombremes as mesinicio,m2.nombremes as mesfin,y.nombreyear as yearinicio,y2.nombreyear as yearfin');
+        $this->db->from('tblperiodo p');
+        $this->db->join('tblmes m ', ' p.idmesinicio = m.idmes');
+        $this->db->join('tblmes m2 ', ' p.idmesfin = m2.idmes');
+        $this->db->join('tblyear y ', ' p.idyearinicio = y.idyear');
+        $this->db->join('tblyear y2 ', ' p.idyearfin = y2.idyear');
+        if (isset($idplantel) && !empty($idplantel)) {
+            $this->db->where('p.idplantel',$idplantel);
+        } 
+        $this->db->order_by('p.idperiodo DESC');
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
           public function showAllCicloEscolarActivo($idplantel = '') {
         $this->db->select('p.*,m.nombremes as mesinicio,m2.nombremes as mesfin,y.nombreyear as yearinicio,y2.nombreyear as yearfin');
         $this->db->from('tblperiodo p'); 
@@ -42,7 +60,7 @@ class CicloEscolar_model extends CI_Model {
         if (isset($idplantel) && !empty($idplantel)) {
         $this->db->where('p.idplantel',$idplantel); 
         }   
-         $this->db->where('p.activo',1); 
+        $this->db->where('p.activo',1); 
         $this->db->order_by('p.idperiodo DESC');
          $query = $this->db->get();
         if ($query->num_rows() > 0) {

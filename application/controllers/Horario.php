@@ -1,13 +1,14 @@
 <?php
-
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 date_default_timezone_set("America/Mexico_City");
 
-class Horario extends CI_Controller {
+class Horario extends CI_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
-        if (!isset($_SESSION['user_id'])) {
+        if (! isset($_SESSION['user_id'])) {
             $this->session->set_flashdata('flash_data', 'You don\'t have access! ss');
             return redirect('welcome');
         }
@@ -19,39 +20,42 @@ class Horario extends CI_Controller {
         $this->load->library('session');
     }
 
-    public function inicio() {
-        //Permission::grant(uri_string());
+    public function inicio()
+    {
+        // Permission::grant(uri_string());
         $this->load->view('admin/header');
         $this->load->view('admin/horario/index');
         $this->load->view('admin/footer');
     }
 
-    public function searchHorario() {
-        //Permission::grant(uri_string());
+    public function searchHorario()
+    {
+        // Permission::grant(uri_string());
         $idplantel = $this->session->idplantel;
         $value = $this->input->post('text');
         $query = $this->horario->searchHorario($value, $idplantel);
         if ($query) {
             $result['horarios'] = $query;
         }
-        if (isset($result) && !empty($result)) {
+        if (isset($result) && ! empty($result)) {
             echo json_encode($result);
         }
     }
 
-    public function showAll() {
-        //Permission::grant(uri_string()); 
+    public function showAll()
+    {
         $query = $this->horario->showAll($this->session->idplantel);
-        //var_dump($query);
+
         if ($query) {
             $result['horarios'] = $this->horario->showAll($this->session->idplantel);
         }
-        if (isset($result) && !empty($result)) {
+        if (isset($result) && ! empty($result)) {
             echo json_encode($result);
         }
     }
 
-    public function detalle($id) {
+    public function detalle($id)
+    {
         # code...
         Permission::grant(uri_string());
         $activo_horario = 0;
@@ -66,7 +70,7 @@ class Horario extends CI_Controller {
         $data = array(
             'id' => $id,
             'activo_horario' => $activo_horario,
-            'detalle_horario'=>$detalle_horario,
+            'detalle_horario' => $detalle_horario,
             'activo_ciclo_escolar' => $activo_ciclo_escolar
         );
         $this->load->view('admin/header');
@@ -74,36 +78,31 @@ class Horario extends CI_Controller {
         $this->load->view('admin/footer');
     }
 
-    public function descargar($idhorario = '') {
-        //$idhorario = $this->decode($idhorario);
-        //if((isset($idhorario) && !empty($idhorario))){
+    public function descargar($idhorario = '')
+    {
         $detalle_logo = $this->alumno->logo($this->session->idplantel);
         $detalle_horario = $this->horario->detalleHorario($idhorario);
         $logo = base_url() . '/assets/images/escuelas/' . $detalle_logo[0]->logoplantel;
         $logo2 = base_url() . '/assets/images/escuelas/' . $detalle_logo[0]->logosegundo;
 
-        $dias = $this->alumno->showAllDias();
         $this->load->library('tcpdf');
-        $hora = date("h:i:s a");
-        //$linkimge = base_url() . '/assets/images/woorilogo.png';
-        $fechaactual = date('d/m/Y');
         $pdf = new Pdf('P', 'mm', 'A4', true, 'UTF-8', false);
         $pdf->SetTitle('Horario de clases.');
         $pdf->SetHeaderMargin(30);
         $pdf->SetTopMargin(10);
         $pdf->setFooterMargin(20);
-        $pdf->SetAutoPageBreak(TRUE, 0); 
+        $pdf->SetAutoPageBreak(TRUE, 0);
         $pdf->SetAuthor('Author');
         $pdf->SetDisplayMode('real', 'default');
         $pdf->setPrintHeader(false);
         $pdf->setPrintFooter(false);
 
-$pdf->SetMargins(15, 15, 15);
-$pdf->SetHeaderMargin(15);
-$pdf->SetFooterMargin(15);
+        $pdf->SetMargins(15, 15, 15);
+        $pdf->SetHeaderMargin(15);
+        $pdf->SetFooterMargin(15);
 
-// set auto page breaks
-$pdf->SetAutoPageBreak(TRUE, 15);
+        // set auto page breaks
+        $pdf->SetAutoPageBreak(TRUE, 15);
 
         $pdf->AddPage();
         $tabla = '
@@ -176,67 +175,61 @@ $pdf->SetAutoPageBreak(TRUE, 15);
 </style>
 <div id="areaimprimir">  
           <table width="600" border="0" >';
-          if((isset($this->session->idplantel) && !empty($this->session->idplantel)) && ($this->session->idplantel == 7 || $this->session->idplantel == 8)){
-   $tabla .= '<tr>
+        if ((isset($this->session->idniveleducativo) && ! empty($this->session->idniveleducativo)) && ($this->session->idniveleducativo == 5)) {
+            $tabla .= '<tr>
+    <td width="150" align="center" valing="top"><img width="100" src="' . $logo2 . '" /></td>
+    <td colspan="2" width="230" align="center">
+            <label class="nombreplantel" >"VALOR Y CONFIANZA"</label><br>
+            <label class="txtn"style="color:#0c4d9e;" >INSTITUTO MORELOS</label><br>
+            <label class="direccion" style="color:#0c4d9e;">C.C.T.' . $detalle_logo[0]->clave . '</label><br>';
+            $tabla .= ' <label class="telefono" style="color:#0c4d9e;">TURNO '.$detalle_horario->nombreturno.'</label><br/>';
+            $tabla .= '<label class="telefono" style="color:#49950c;">136 años educando a la niñez y juventud</label>
+    </td>
+    <td width="150" align="center"><img  width="120"   src="' . $logo . '" /></td>';
+            $tabla .= '</tr>';
+            $tabla .= '<tr>
+    <td width="150" align="center" style="font-size:10px;">CICLO ESCOLAR ' . $detalle_horario->yearinicio . '-' . $detalle_horario->yearfin . '</td>
+    <td colspan="2"  width="230" align="center">  </td>
+    <td width="150" align="center" style="font-size:10px;"> ' . $detalle_horario->nombrenivel . ' ' . $detalle_horario->nombregrupo . '</td>';
+            $tabla .= '</tr>';
+        } else if ((isset($this->session->idniveleducativo) && ! empty($this->session->idniveleducativo)) && ($this->session->idniveleducativo == 3)) {
+            $tabla .= '<tr>
     <td width="150" align="center" valing="top"><img  src="' . $logo2 . '" /></td>
     <td colspan="2" width="230" align="center">
-            <label class="nombreplantel">' . $detalle_logo[0]->nombreplantel . '</label><br>
+            <label class="nombreplantel" >' . $detalle_logo[0]->nombreplantel . '</label><br>
             <label class="txtn">' . $detalle_logo[0]->asociado . '</label><br>
             <label class="direccion">C.C.T.' . $detalle_logo[0]->clave . '</label><br>';
-   if($this->session->idplantel == 8){
-           $tabla .= ' <label class="telefono">TURNO MATUTINO</label><br/>';
-   }
-    if($this->session->idplantel == 7){
-           $tabla .= ' <label class="telefono">TURNO VESPERTINO</label><br/>';
-   }
-             $tabla .= '<label class="telefono">136 años educando a la niñez y juventud</label>
-    </td>
-    <td width="150" align="center"><img     src="' . $logo . '" /></td>';
-   $tabla .= '</tr>';
-   $tabla .= '<tr>
-    <td width="150" align="center" style="font-size:10px;">CICLO ESCOLAR '.$detalle_horario->yearinicio.'-'.$detalle_horario->yearfin.'</td>
-    <td colspan="2"  width="230" align="center">  </td>
-    <td width="150" align="center" style="font-size:10px;"> '.$detalle_horario->nombrenivel.' '.$detalle_horario->nombregrupo.'</td>';
-   $tabla .= '</tr>';
-          } else if((isset($this->session->idplantel) && !empty($this->session->idplantel)) && ($this->session->idplantel == 4)){
-   $tabla .= '<tr>
-    <td width="150" align="center" valing="top"><img  src="' . $logo2 . '" /></td>
-    <td colspan="2" width="230" align="center">
-            <label class="nombreplantel">' . $detalle_logo[0]->nombreplantel . '</label><br>
-            <label class="txtn">' . $detalle_logo[0]->asociado . '</label><br>
-            <label class="direccion">C.C.T.' . $detalle_logo[0]->clave . '</label><br>';  
-             $tabla .= '<label class="telefono">Incorporado a la Dirección General del Bachillerato - Modalidad Escolarizada
+            $tabla .= '<label class="telefono">Incorporado a la Dirección General del Bachillerato - Modalidad Escolarizada
 RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorporación y Revalidación
 </label>
     </td>
     <td width="150" align="center"><img     src="' . $logo . '" /></td>';
-             
-   $tabla .= '</tr>'; 
-      $tabla .= '<tr>
-    <td width="150" align="center" style="font-size:10px;">CICLO ESCOLAR '.$detalle_horario->yearinicio.'-'.$detalle_horario->yearfin.'</td>
+
+            $tabla .= '</tr>';
+            $tabla .= '<tr>
+    <td width="150" align="center" style="font-size:10px;">CICLO ESCOLAR ' . $detalle_horario->yearinicio . '-' . $detalle_horario->yearfin . '</td>
     <td colspan="2"  width="230" align="center">  </td>
-    <td width="150" align="center" style="font-size:10px;"> '.$detalle_horario->nombrenivel.' '.$detalle_horario->nombregrupo.'</td>';
-   $tabla .= '</tr>';
-          }else{
-               $tabla .= '<tr>
+    <td width="150" align="center" style="font-size:10px;"> ' . $detalle_horario->nombrenivel . ' ' . $detalle_horario->nombregrupo . '</td>';
+            $tabla .= '</tr>';
+        } else {
+            $tabla .= '<tr>
     <td width="150" align="center" valing="top"><img class="imgtitle" src="' . $logo2 . '" /></td>
     <td colspan="2" width="230" align="center">
             <label class="nombreplantel">' . $detalle_logo[0]->nombreplantel . '</label><br>
             <label class="txtn">' . $detalle_logo[0]->asociado . '</label><br>
             <label class="direccion">C.C.T.' . $detalle_logo[0]->clave . '</label><br>';
-    
-             $tabla .= '<label class="telefono">136 años educando a la niñez y juventud</label>
+
+            $tabla .= '<label class="telefono">136 años educando a la niñez y juventud</label>
     </td>
     <td width="150" align="center"><img   class="imgtitle"  src="' . $logo . '" /></td>';
-   $tabla .= '</tr>';
-   $tabla .= '<tr>
-    <td width="150" align="center" style="font-size:10px;">CICLO ESCOLAR '.$detalle_horario->yearinicio.'-'.$detalle_horario->yearfin.'</td>
+            $tabla .= '</tr>';
+            $tabla .= '<tr>
+    <td width="150" align="center" style="font-size:10px;">CICLO ESCOLAR ' . $detalle_horario->yearinicio . '-' . $detalle_horario->yearfin . '</td>
     <td colspan="2"  width="230" align="center">  </td>
-    <td width="150" align="center" style="font-size:10px;"> '.$detalle_horario->nombrenivel.' '.$detalle_horario->nombregrupo.'</td>';
-   $tabla .= '</tr>';
-          }
-  $tabla .= '</table> <br/>';
-
+    <td width="150" align="center" style="font-size:10px;"> ' . $detalle_horario->nombrenivel . ' ' . $detalle_horario->nombregrupo . '</td>';
+            $tabla .= '</tr>';
+        }
+        $tabla .= '</table> <br/>';
 
         $tabla .= '<table class="tblhorario" width="600" cellpadding="2" > ';
         $tabla .= '<tr>';
@@ -246,7 +239,6 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
         $tabla .= '<td width="93" align="center" class="txtdia">Miercoles</td>';
         $tabla .= '<td width="93" align="center" class="txtdia">Jueves</td>';
         $tabla .= '<td width="93" align="center" class="txtdia">Viernes</td>';
-
 
         $tabla .= '</tr>';
         $lunesAll = $this->horario->showAllDiaHorarioSinDua($idhorario);
@@ -267,85 +259,80 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
 
         ob_end_clean();
 
-
-        $pdf->Output('Kardex de Calificaciones', 'I');
+        $pdf->Output('Horario Escolar', 'I');
     }
 
-    public function showAllDiaHorario($idhorario, $iddia) {
-        //Permission::grant(uri_string()); 
+    public function showAllDiaHorario($idhorario, $iddia)
+    {
         $query = $this->horario->showAllDiaHorario($idhorario, $iddia);
-        //var_dump($query);
         if ($query) {
             $result['horarios'] = $this->horario->showAllDiaHorario($idhorario, $iddia);
         }
-        if (isset($result) && !empty($result)) {
+        if (isset($result) && ! empty($result)) {
             echo json_encode($result);
         }
     }
 
-    public function showAllDias() {
-        //Permission::grant(uri_string()); 
+    public function showAllDias()
+    {
         $query = $this->horario->showAllDias();
-        //var_dump($query);
         if ($query) {
             $result['dias'] = $this->horario->showAllDias();
         }
-        if (isset($result) && !empty($result)) {
+        if (isset($result) && ! empty($result)) {
             echo json_encode($result);
         }
     }
 
-    public function showAllPeriodos() {
-        //Permission::grant(uri_string());
+    public function showAllPeriodos()
+    {
         $query = $this->horario->showAllPeriodos($this->session->idplantel);
         if ($query) {
             $result['periodos'] = $this->horario->showAllPeriodos($this->session->idplantel);
         }
-        if (isset($result) && !empty($result)) {
+        if (isset($result) && ! empty($result)) {
             echo json_encode($result);
         }
     }
 
-    public function showAllGrupos() {
-        //Permission::grant(uri_string());
+    public function showAllGrupos()
+    {
         $query = $this->horario->showAllGrupos($this->session->idplantel);
         if ($query) {
             $result['grupos'] = $this->horario->showAllGrupos($this->session->idplantel);
         }
-        if (isset($result) && !empty($result)) {
+        if (isset($result) && ! empty($result)) {
             echo json_encode($result);
         }
     }
 
-    public function showAllMaterias() {
-        //Permission::grant(uri_string()); 
+    public function showAllMaterias()
+    {
         $query = $this->horario->showAllMaterias($this->session->idplantel);
-        //var_dump($query);
         if ($query) {
             $result['materias'] = $this->horario->showAllMaterias($this->session->idplantel);
         }
-        if (isset($result) && !empty($result)) {
+        if (isset($result) && ! empty($result)) {
             echo json_encode($result);
         }
     }
 
-    public function validate_time($str) {
+    public function validate_time($str)
+    {
         if ($str != '') {
             $time = preg_match('#^([01]?[0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$#', $str);
 
             if ($time) {
                 return true;
             } else {
-                $this->form_validation->set_message(
-                        'validate_time',
-                        'Formato no valido.'
-                );
+                $this->form_validation->set_message('validate_time', 'Formato no valido.');
                 return false;
             }
         }
     }
 
-    public function addMateriaHorario() {
+    public function addMateriaHorario()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $config = array(
                 array(
@@ -388,14 +375,14 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                         'valid_url' => 'Formato de la URL invalido.'
                     )
                 ),
-                  array(
+                array(
                     'field' => 'numeroanfitrion',
                     'label' => 'Hora final',
                     'rules' => 'trim|integer',
-                    'errors' => array( 
-                         'integer' => 'Debe de ser numero.'
+                    'errors' => array(
+                        'integer' => 'Debe de ser numero.'
                     )
-                ),
+                )
             );
 
             $this->form_validation->set_rules($config);
@@ -407,34 +394,34 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     'horainicial' => form_error('horainicial'),
                     'horafinal' => form_error('horafinal'),
                     'urlvideoconferencia' => form_error('urlvideoconferencia'),
-                     'numeroanfitrion' => form_error('numeroanfitrion')
+                    'numeroanfitrion' => form_error('numeroanfitrion')
                 );
             } else {
                 $idhorario = $this->input->post('idhorario');
                 $detalle_horario = $this->horario->detalleHorario($idhorario);
                 $idperiodo = $detalle_horario->idperiodo;
                 $idmateria = $this->input->post('idmateria');
-                $validar = $this->horario->validadAgregarMateriaHorario($idperiodo,$idmateria,$this->input->post('horainicial'),$this->input->post('horafinal'),$this->input->post('iddia'));
-               if($validar == false){
-                $data = array(
-                    'idhorario' => $this->input->post('idhorario'),
-                    'idmateria' => strtoupper($this->input->post('idmateria')),
-                    'iddia' => strtoupper($this->input->post('iddia')),
-                    'horainicial' => strtoupper($this->input->post('horainicial')),
-                    'horafinal' => $this->input->post('horafinal'),
-                    'urlvideoconferencia' => $this->input->post('urlvideoconferencia'),
-                    'urlvideoconferenciagrabado' =>'',
-                     'numeroanfitrion' =>$this->input->post('numeroanfitrion'),
-                    'idusuario' => $this->session->user_id,
-                    'fecharegistro' => date('Y-m-d H:i:s')
-                );
-                $this->horario->addMateriaHorario($data);
-               }else{
-                   $result['error'] = true;
+                $validar = $this->horario->validadAgregarMateriaHorario($idperiodo, $idmateria, $this->input->post('horainicial'), $this->input->post('horafinal'), $this->input->post('iddia'));
+                if ($validar == false) {
+                    $data = array(
+                        'idhorario' => $this->input->post('idhorario'),
+                        'idmateria' => strtoupper($this->input->post('idmateria')),
+                        'iddia' => strtoupper($this->input->post('iddia')),
+                        'horainicial' => strtoupper($this->input->post('horainicial')),
+                        'horafinal' => $this->input->post('horafinal'),
+                        'urlvideoconferencia' => $this->input->post('urlvideoconferencia'),
+                        'urlvideoconferenciagrabado' => '',
+                        'numeroanfitrion' => $this->input->post('numeroanfitrion'),
+                        'idusuario' => $this->session->user_id,
+                        'fecharegistro' => date('Y-m-d H:i:s')
+                    );
+                    $this->horario->addMateriaHorario($data);
+                } else {
+                    $result['error'] = true;
                     $result['msg'] = array(
-                        'msgerror' => 'El docente ya esta impartiendo clases a la misma hora y dia en: '.$validar->nombrenivel.' '.$validar->nombregrupo
-                    ); 
-               }
+                        'msgerror' => 'El docente ya esta impartiendo clases a la misma hora y dia en: ' . $validar->nombrenivel . ' ' . $validar->nombregrupo
+                    );
+                }
             }
         } else {
             $result['error'] = true;
@@ -442,12 +429,13 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
             );
         }
-        if (isset($result) && !empty($result)) {
+        if (isset($result) && ! empty($result)) {
             echo json_encode($result);
         }
     }
 
-    public function addReceso() {
+    public function addReceso()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $config = array(
                 array(
@@ -501,12 +489,13 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
             );
         }
-        if (isset($result) && !empty($result)) {
+        if (isset($result) && ! empty($result)) {
             echo json_encode($result);
         }
     }
 
-    public function addHoraSinClases() {
+    public function addHoraSinClases()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $config = array(
                 array(
@@ -560,12 +549,13 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
             );
         }
-        if (isset($result) && !empty($result)) {
+        if (isset($result) && ! empty($result)) {
             echo json_encode($result);
         }
     }
 
-    public function updateHoraSinClases() {
+    public function updateHoraSinClases()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $config = array(
                 array(
@@ -617,12 +607,13 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
             );
         }
-        if (isset($result) && !empty($result)) {
+        if (isset($result) && ! empty($result)) {
             echo json_encode($result);
         }
     }
 
-    public function addHorario() {
+    public function addHorario()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $config = array(
                 array(
@@ -675,12 +666,13 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
             );
         }
-        if (isset($result) && !empty($result)) {
+        if (isset($result) && ! empty($result)) {
             echo json_encode($result);
         }
     }
 
-    public function updateHorario() {
+    public function updateHorario()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $config = array(
                 array(
@@ -734,12 +726,13 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
             );
         }
-        if (isset($result) && !empty($result)) {
+        if (isset($result) && ! empty($result)) {
             echo json_encode($result);
         }
     }
 
-    public function updateMateriaHorario() {
+    public function updateMateriaHorario()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $config = array(
                 array(
@@ -781,12 +774,13 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     'errors' => array(
                         'valid_url' => 'Formato de la URL invalido.'
                     )
-                ), array(
+                ),
+                array(
                     'field' => 'numeroanfitrion',
                     'label' => 'Numero anfitrion',
                     'rules' => 'trim|integer',
-                    'errors' => array( 
-                         'integer' => 'Debe de ser numero.'
+                    'errors' => array(
+                        'integer' => 'Debe de ser numero.'
                     )
                 )
             );
@@ -800,7 +794,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     'horainicial' => form_error('horainicial'),
                     'horafinal' => form_error('horafinal'),
                     'urlvideoconferencia' => form_error('urlvideoconferencia'),
-                     'numeroanfitrion' => form_error('numeroanfitrion')
+                    'numeroanfitrion' => form_error('numeroanfitrion')
                 );
             } else {
                 $id = $this->input->post('idhorariodetalle');
@@ -810,8 +804,8 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     'iddia' => strtoupper($this->input->post('iddia')),
                     'horainicial' => strtoupper($this->input->post('horainicial')),
                     'horafinal' => $this->input->post('horafinal'),
-                    'urlvideoconferencia' => $this->input->post('urlvideoconferencia'), 
-                      'numeroanfitrion' =>$this->input->post('numeroanfitrion'),
+                    'urlvideoconferencia' => $this->input->post('urlvideoconferencia'),
+                    'numeroanfitrion' => $this->input->post('numeroanfitrion'),
                     'idusuario' => $this->session->user_id,
                     'fecharegistro' => date('Y-m-d H:i:s')
                 );
@@ -825,12 +819,13 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
             );
         }
-        if (isset($result) && !empty($result)) {
+        if (isset($result) && ! empty($result)) {
             echo json_encode($result);
         }
     }
 
-    public function updateReceso() {
+    public function updateReceso()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $config = array(
                 array(
@@ -884,12 +879,13 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
             );
         }
-        if (isset($result) && !empty($result)) {
+        if (isset($result) && ! empty($result)) {
             echo json_encode($result);
         }
     }
 
-    public function deleteHorarioMateria() {
+    public function deleteHorarioMateria()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $id = $this->input->get('id');
             $query = $this->horario->deleteHorarioMateria($id);
@@ -907,12 +903,13 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
             );
         }
-        if (isset($result) && !empty($result)) {
+        if (isset($result) && ! empty($result)) {
             echo json_encode($result);
         }
     }
 
-    public function deleteReceso() {
+    public function deleteReceso()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $id = $this->input->get('id');
             $query = $this->horario->deleteReceso($id);
@@ -930,12 +927,13 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
             );
         }
-        if (isset($result) && !empty($result)) {
+        if (isset($result) && ! empty($result)) {
             echo json_encode($result);
         }
     }
 
-    public function deleteHorario() {
+    public function deleteHorario()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $idhorario = $this->input->get('idhorario');
             $query = $this->horario->deleteHorario($idhorario);
@@ -945,12 +943,13 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
         } else {
             $result['horarios'] = false;
         }
-        if (isset($result) && !empty($result)) {
+        if (isset($result) && ! empty($result)) {
             echo json_encode($result);
         }
     }
 
-    public function deleteSinClases() {
+    public function deleteSinClases()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $id = $this->input->get('id');
             $query = $this->horario->deleteSinClases($id);
@@ -968,9 +967,8 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
             );
         }
-        if (isset($result) && !empty($result)) {
+        if (isset($result) && ! empty($result)) {
             echo json_encode($result);
         }
     }
-
 }

@@ -34,13 +34,13 @@
                                <div class="col-md-6 col-sm-12 col-xs-12 ">
                                   <div class="form-group">
                                       <label><font color="red">*</font> Fecha</label>
-                                      <input type="date"  name="fecha" class="form-control">
+                                      <input type="date"  name="fecha" class="form-control"  style="border-bottom: solid 1px #ccc;"  >
                                     </div>
                                 </div>
                                 <div class="col-md-6 col-sm-12 col-xs-12 ">
                                   <div class="form-group">
                                       <label><font color="red">*</font> Unidad</label>
-                                      <select name="unidad" required="" class="form-control">
+                                      <select name="unidad" required=""  style="border-bottom: solid 1px #ccc;" class="form-control">
                                         <option value="">-- SELECCIONAR --</option>
                                        <?php
                                         if(isset($unidades) && !empty($unidades)){
@@ -125,7 +125,7 @@
                                 <div class="row clearfix">
                                   <div class="col-md-4 col-sm-12 col-xs-12 ">
                                   <div class="form-group"> 
-                                      <select name="unidad" required="" id="unidad"  class="form-control">
+                                      <select name="unidad" required="" id="unidad"  style="border-bottom: solid 1px #ccc;" class="form-control">
                                         <option value="">-- UNIDAD --</option>
                                         <option value="0">TODOS</option>
                                        <?php
@@ -143,14 +143,14 @@
                                     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-6">
                                         <div class="form-group">
                                             <div class="form-line">
-                                                <input type="date" class="form-control" name="fechainicio" required="" placeholder="Fecha inicio" id="fechainicio">
+                                                <input type="date" class="form-control"  style="border-bottom: solid 1px #ccc;" name="fechainicio" required="" placeholder="Fecha inicio" id="fechainicio">
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-6">
                                         <div class="form-group">
                                             <div class="form-line">
-                                                <input type="date" class="form-control" name="fechafin" placeholder="Fecha fin" required="" id="fechafin">
+                                                <input type="date" class="form-control"  style="border-bottom: solid 1px #ccc;" name="fechafin" placeholder="Fecha fin" required="" id="fechafin">
                                             </div>
                                         </div>
                                     </div>

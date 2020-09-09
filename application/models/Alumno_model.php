@@ -968,10 +968,8 @@ GROUP BY hd.idmateria) tabla");
                                 INNER JOIN tblestatus_nivel en ON en.idestatusnivel = ag.idestatusnivel
                         WHERE
                             ag.idgrupo = h.idgrupo
-                                AND ag.idalumno = $idalumno
-                                AND (p.activo = 0 OR h.activo = 0)
-                                ORDER BY p.idperiodo DESC");
-        //  return $query->result();
+                                AND ag.idalumno = $idalumno 
+                                ORDER BY p.idperiodo DESC"); 
 
         if ($query->num_rows() > 0) {
             return $query->result();

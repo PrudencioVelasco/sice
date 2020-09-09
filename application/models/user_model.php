@@ -247,7 +247,7 @@ class User_model extends CI_Model {
     }
 
     public function loginAdmin($usuario) {
-        $this->db->select('ne.nombreniveleducativo,u.id, p.nombre, p.apellidop, p.apellidom, p.idpersonal, pla.nombreplantel, pla.idplantel, ur.id_rol as idrol, p.password');
+        $this->db->select('ne.nombreniveleducativo, ne.idniveleducativo,u.id, p.nombre, p.apellidop, p.apellidom, p.idpersonal, pla.nombreplantel, pla.idplantel, ur.id_rol as idrol, p.password');
         $this->db->from('tblpersonal p');
         $this->db->join('users u', 'u.idusuario = p.idpersonal');
         $this->db->join('tblplantel pla', 'pla.idplantel = p.idplantel');

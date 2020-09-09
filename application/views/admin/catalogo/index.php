@@ -130,6 +130,23 @@
                                                                 </div> 
 
                                                         </div>
+                                                           <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                                                            <a class="pointer"
+                                                               href="<?= base_url('/Calificacion/asistencia') ?>">
+                                                                <div
+                                                                    class="info-box-2 bg-light-blue hover-expand-effect pointer">
+                                                                    <div class="icon">
+                                                                        <i class="fa fa-thumbs-up"></i>
+                                                                    </div>
+                                                                    <div class="content">
+                                                                        <div class="text">
+                                                                            <span class="titulocatalogo">ASISTENCIAS</span>
+                                                                        </div>
+                                                                        <div class="number"></div>
+                                                                    </div>
+                                                                </div> 
+
+                                                        </div>
 
                                                         </div>
 

@@ -54,13 +54,10 @@
                                       <div class="col-md-4 col-sm-12 col-xs-12 ">
                                         <div class="form-group"> 
                                             <select style="border-bottom: solid #ebebeb 2px;" name="tiporeporte" class="form-control">
-                                                <option value="">-- TIPO DE REPORTE --</option> 
-                                                <option value="1">LISTA</option>
-                                                <option value="2">PROMEDIO</option>
-                                                <option value="3">PROMEDIO DE RECUPERACIÓN</option> 
+                                                <option value="">-- TIPO DE REPORTE --</option>  
+                                                <option value="2">PROMEDIO FINAL</option> 
                                                 <option value="4">CALIFICACIÓN POR MATERIA</option>
-                                                <option value="5">CALIFICACIÓN POR MATERIA EN RECUPERACIÓN</option>
-                                                <option value="6">VERIFICACIÓN SUBIDO</option>
+                                                <option value="5">CALIFICACIÓN POR MATERIA EN RECUPERACIÓN</option> 
                                             </select> 
                                         </div>
                                     </div>  

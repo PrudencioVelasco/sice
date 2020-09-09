@@ -906,7 +906,8 @@ class Alumno extends CI_Controller {
     public function detalle($id) {
         Permission::grant(uri_string());
         $kardex = $this->alumno->allKardex($id);
-        $cicloescolar_activo = $this->cicloescolar->showAllCicloEscolarActivo($this->session->idplantel);
+        $cicloescolar_activo = $this->cicloescolar->showAllCicloEscolar($this->session->idplantel);
+         
         $grupo_actual = "";
         $valida_grupo = $this->alumno->validadAlumnoGrupo($id);
         if ($valida_grupo) {
@@ -924,8 +925,7 @@ class Alumno extends CI_Controller {
                 $total_periodo = $total_periodo + 1;
                 $idhorario = $row->idhorario;
                 $materias = $this->alumno->showAllMaterias($idhorario);
-                $unidades = $this->alumno->showAllUnidades($this->session->idplantel);
-                //var_dump($materias);
+                $unidades = $this->alumno->showAllUnidades($this->session->idplantel); 
                 $total_materia = 0;
                 $total_unidad = 0;
                 if ($materias != FALSE) {
@@ -941,8 +941,7 @@ class Alumno extends CI_Controller {
                 $datoscalifiacacion = $this->horario->calificacionGeneralAlumno($idhorario, $id);
                 if ($datoscalifiacacion != FALSE && $total_materia > 0) {
                     $suma_calificacion = ($datoscalifiacacion->calificaciongeneral / $total_unidad) / $total_materia;
-                }
-                // echo $suma_calificacion;
+                } 
             }
             $calificacion_final = $suma_calificacion / $total_periodo;
         }
@@ -1487,11 +1486,11 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
         $tabla .= '<table class="table  table-striped  table-hover">
         <thead class="bg-teal">
          <th>#</th>
-        <th>MATERIAA</th>';
+        <th>MATERIA</th>';
         $tabla .= '<th>CALIFICACIÓN</th>';
         $tabla .= '</thead>';
         $c = 1;
-
+        if (isset($calificaciones) && !empty($calificaciones)){
         foreach ($calificaciones as $row) {
             $tabla .= '<tr>';
             $tabla .= '<td>' . $c++ . '</td>';
@@ -1503,6 +1502,9 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
                 $tabla .= '<td>' . $row->calificacion . '</td>';
             }
             $tabla .= '</tr>';
+        }
+        }else {
+            $tabla .= '<tr><td colspan="3" align="center">Sin registros</td></tr>';
         }
 
 
@@ -1536,7 +1538,7 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
         $tabla .= '<th></th>';
         $tabla .= '</thead>';
         $c = 1;
-
+        if (isset($materias) && !empty($materias)){
         foreach ($materias as $row) {
             $idhorariodetalle = $row->idhorariodetalle;
             $calificacion = 0;
@@ -1566,7 +1568,9 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
             $tabla .= '</td>';
             $tabla .= '</tr>';
         }
-
+        }else{
+            $tabla .= '<tr><td colspan="5" align="center">Sin registros</td></tr>';
+        }
         $tabla .= '</table>';
         return $tabla;
     }
@@ -1881,21 +1885,17 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
 
             $datosalumno = $this->alumno->showAllAlumnoId($idalumno);
             $datoshorario = $this->horario->showNivelGrupo($idhorario);
-            $materias = $this->alumno->showAllMateriasPasadas($idhorario,$idalumno,$idperiodo);
-            // $unidades =  $this->grupo->unidades($this->session->idplantel);
+            $materias = $this->alumno->showAllMateriasPasadas($idhorario,$idalumno,$idperiodo); 
             $idnivelestudio = $datoshorario->idnivelestudio;
             $idniveleducativo = $datoshorario->idniveleducativo;
             $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
-
-            //$alumno_grupo = $this->grupo->detalleAlumnoGrupo($idalumno,$idperiodo);
+ 
             if ($idniveleducativo == 1) {
-                //PRIMARIA
-                //$tabla = $this->obtenerCalificacionPrimaria($idhorario,$idalumno);
+                //PRIMARIA 
                 $tabla = $this->obtenerCalificacionPrimaria($idhorario, $idalumno);
             }
              if ($idniveleducativo == 4) {
-                //PREESCOLAR
-                //$tabla = $this->obtenerCalificacionPrimaria($idhorario,$idalumno);
+                //PREESCOLAR 
                 $tabla = $this->obtenerCalificacionPrimaria($idhorario, $idalumno);
             }
             if ($idniveleducativo == 2) {

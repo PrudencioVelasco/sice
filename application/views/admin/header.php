@@ -55,7 +55,9 @@
          <link href="<?php echo base_url(); ?>/assets/js/vue-picker/VueTimepicker.css" rel="stylesheet" type="text/css"/>
         <script src="<?php echo base_url(); ?>/assets/js/vue-picker/VueTimepicker.umd.js" type="text/javascript"></script>
         <script src="<?php echo base_url(); ?>/assets/js/vue-picker/VueTimepicker.umd.min.js" type="text/javascript"></script>
-        
+       
+        <script src="<?php echo base_url(); ?>/assets/vue/select2/vue-multiselect.min.js"></script>
+		<link rel="stylesheet" href="<?php echo base_url(); ?>/assets/vue/select2/vue-multiselect.min.css">
         <!--       <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/vue-ctk-date-time-picker@1.4.1/dist/vue-ctk-date-time-picker.css">
       
     <script src="https://cdn.jsdelivr.net/npm/vue-ctk-date-time-picker@1.4.1/dist/vue-ctk-date-time-picker.umd.js" charset="utf-8"></script>

@@ -319,13 +319,14 @@ ORDER BY nombrenivel ASC");
 
     public function detalleHorarioDetalle($idhorariodetalle) {
         # code...
-        $this->db->select('hd.idmateria as idprofesormateria, n.numeroordinaria,h.idhorario, m.nombreclase, pm.idmateria,h.idgrupo,h.idperiodo, m.unidades,p.nombre, p.apellidop, p.apellidom');
+        $this->db->select('hd.idmateria as idprofesormateria, t.nombreturno, n.numeroordinaria,h.idhorario, m.nombreclase, pm.idmateria,h.idgrupo,h.idperiodo, m.unidades,p.nombre, p.apellidop, p.apellidom');
         $this->db->from('tblhorario_detalle hd');
         $this->db->join('tblprofesor_materia pm', 'hd.idmateria = pm.idprofesormateria');
         $this->db->join('tblhorario h', 'h.idhorario  = hd.idhorario');
         $this->db->join('tblmateria m', 'm.idmateria = pm.idmateria');
         $this->db->join('tblprofesor p', 'p.idprofesor = pm.idprofesor');
         $this->db->join('tblgrupo g', 'g.idgrupo = h.idgrupo');
+        $this->db->join('tblturno t', 'g.idturno = t.idturno');
         $this->db->join('tblnivelestudio n', 'n.idnivelestudio = g.idnivelestudio');
         $this->db->where('hd.idhorariodetalle', $idhorariodetalle);
         $query = $this->db->get();
@@ -335,6 +336,7 @@ ORDER BY nombrenivel ASC");
             return false;
         }
     }
+     
 
     public function detalleUnidad($idunidad) {
         # code...
@@ -350,6 +352,7 @@ ORDER BY nombrenivel ASC");
     }        public function totalAsistencias($idunidad,$idhoraridetalle,$idalumno) {
         $sql = "SELECT 
    COALESCE(  COUNT(a.idalumno),0) AS totalregistrado,
+   
      COALESCE(SUM(CASE
         WHEN a.idmotivo = 4 THEN 1
         ELSE 0

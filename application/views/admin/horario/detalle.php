@@ -1,4 +1,33 @@
   <!-- page content -->
+  <style>
+[data-title]:hover:after{
+    opacity:1;
+    transition:all 0.1s ease 0.5s;
+    visibility:visible;
+}
+[data-title]:after{
+    content:attr(data-title);
+    backgroud-color:#333;
+    color:#fff;
+    font-size:14px;
+    font-family:Raleway;
+    position:absolute;
+    padding:3px 20px;
+    bottom:-1.6em;
+    left:100%;
+    white-space:nowrap;
+    box-shadow:1px 1px 3px #222222;
+    opacity:0;
+    border:1px 1px 3px #111111;
+    z-index:99999;
+    visibility:hidden;
+    border-radius:6px;
+    
+}
+[data-title]{
+position:relative;
+}
+</style>
   <div class="right_col" role="main">
 
     <div class="">
@@ -47,7 +76,7 @@
                             <ul class="nav navbar-right panel_toolbox" style="border: 2px solid #ccc; border-radius: 4px; margin-bottom: 4px">
                                 <li style="padding: 0 0 0 10px;"><a class="collapse-link " style="color: #000; text-decoration: none; ">
                                   <div v-if="row.opcion == 'NORMAL'">
-                                    <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
+                                    <strong   :title="row.nombreclase" >{{row.nombreclaserecortado}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
                                      <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small><br/>
                                     
                                      <small v-if="row.urlvideoconferencia" ><a target='_blank' v-bind:href="row.urlvideoconferencia"> <i class="fa fa-external-link"></i> {{row.urlvideoconferencia}}</a></small>
@@ -88,7 +117,7 @@
                             <ul class="nav navbar-right panel_toolbox" style="border: 2px solid #ccc; border-radius: 4px; margin-bottom: 4px">
                               <li  style="padding: 0 0 0 10px;"><a class="collapse-link " style="color: #000;  text-decoration: none;">
                                   <div v-if="row.opcion == 'NORMAL'">
-                                    <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
+                                    <strong  :title="row.nombreclase">{{row.nombreclaserecortado}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
                                     <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small><br/>
                                      <small v-if="row.urlvideoconferencia" ><a target='_blank' v-bind:href="row.urlvideoconferencia"> <i class="fa fa-external-link"></i> {{row.urlvideoconferencia}}</a></small>
                                   </div>
@@ -127,7 +156,7 @@
                             <ul class="nav navbar-right panel_toolbox" style="border: 2px solid #ccc; border-radius: 4px; margin-bottom: 4px">
                               <li  style="padding: 0 0 0 10px;"><a class="collapse-link " style="color: #000;  text-decoration: none;">
                                   <div v-if="row.opcion == 'NORMAL'">
-                                    <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
+                                    <strong  :title="row.nombreclase">{{row.nombreclaserecortado}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
                                     <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small><br/>
                                      <small  v-if="row.urlvideoconferencia" ><a target='_blank' v-bind:href="row.urlvideoconferencia"> <i class="fa fa-external-link"></i> {{row.urlvideoconferencia}}</a></small>
                                   </div>
@@ -166,7 +195,7 @@
                             <ul class="nav navbar-right panel_toolbox" style="border: 2px solid #ccc; border-radius: 4px; margin-bottom: 4px">
                               <li  style="padding: 0 0 0 10px;"><a class="collapse-link " style="color: #000;  text-decoration: none;">
                                   <div v-if="row.opcion == 'NORMAL'">
-                                    <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
+                                    <strong  :title="row.nombreclase">{{row.nombreclaserecortado}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
                                     <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small><br/>
                                      <small v-if="row.urlvideoconferencia" ><a target='_blank' v-bind:href="row.urlvideoconferencia"> <i class="fa fa-external-link"></i> {{row.urlvideoconferencia}}</a></small>
                                   </div>
@@ -205,7 +234,7 @@
                             <ul class="nav navbar-right panel_toolbox" style="border: 2px solid #ccc; border-radius: 4px; margin-bottom: 4px">
                               <li  style="padding: 0 0 0 10px;"><a class="collapse-link " style="color: #000; text-decoration: none;">
                                   <div v-if="row.opcion == 'NORMAL'">
-                                    <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
+                                    <strong  :title="row.nombreclase">{{row.nombreclaserecortado}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
                                     <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small><br/>
                                        <smalL v-if="row.urlvideoconferencia"><a target='_blank' v-bind:href="row.urlvideoconferencia"> <i class="fa fa-external-link"></i> {{row.urlvideoconferencia}}</a></small>
                                   </div>

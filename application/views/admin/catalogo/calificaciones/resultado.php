@@ -21,7 +21,7 @@
                     <div class="x_content"> 
                         <div class="row"  align="center"> 
 
-                            <form method="POST" action="<?= base_url(),'Calificacion/buscar'?>">
+                            <form   method="POST" action="<?= base_url(),'Calificacion/buscar'?>">
                                 <div class="row">
                                     <div class="col-md-3 col-sm-12 col-xs-12 ">
                                         <div class="form-group"> 
@@ -55,12 +55,9 @@
                                         <div class="form-group"> 
                                             <select style="border-bottom: solid #ebebeb 2px;" name="tiporeporte" class="form-control">
                                                 <option value="">-- TIPO DE REPORTE --</option> 
-                                                <option value="1">LISTA</option>
-                                                <option value="2">PROMEDIO</option>
-                                                <option value="3">PROMEDIO DE RECUPERACIÓN</option> 
+                                                <option value="2">PROMEDIO FINAL</option> 
                                                 <option value="4">CALIFICACIÓN POR MATERIA</option>
-                                                <option value="5">CALIFICACIÓN POR MATERIA EN RECUPERACIÓN</option>
-                                                <option value="6">VERIFICACIÓN SUBIDO</option>
+                                                <option value="5">CALIFICACIÓN POR MATERIA EN RECUPERACIÓN</option> 
                                             </select> 
                                         </div>
                                     </div>  
@@ -105,3 +102,40 @@
     <div class="clearfix"></div>
     <div id="notif-group" class="tabbed_notifications"></div>
 </div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#tablageneralcal').DataTable({
+            keys: true,
+            "scrollX": true,
+            dom: 'Bfrtip',
+            buttons: [
+                'excelHtml5'
+            ],
+            "language": {
+                "sProcessing": "Procesando...",
+                "sLengthMenu": "Mostrar _MENU_ registros",
+                "sZeroRecords": "No se encontraron resultados",
+                "sEmptyTable": "Ningún dato disponible en esta tabla",
+                "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                "sInfoPostFix": "",
+                "sSearch": "Buscar:",
+                "sUrl": "",
+                "sInfoThousands": ",",
+                "sLoadingRecords": "Cargando...",
+                "oPaginate": {
+                    "sFirst": "Primero",
+                    "sLast": "Último",
+                    "sNext": "Siguiente",
+                    "sPrevious": "Anterior"
+                },
+                "oAria": {
+                    "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+                    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                }
+            }
+        });
+
+    });
+</script>

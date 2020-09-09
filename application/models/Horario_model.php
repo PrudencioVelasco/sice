@@ -90,12 +90,14 @@ class Horario_model extends CI_Model {
         }
     }
     public function detalleHorarioDetalle($idhorariodetalle = '') {
-        $this->db->select('m.nombreclase, h.idgrupo, p.urlvideoconferencia, m.idmateria, p.idprofesor, h.idperiodo, pm.idprofesormateria, h.idhorario,hd.iddia, DATE_FORMAT(hd.horainicial, "%H:%i") as horainicial, DATE_FORMAT(hd.horafinal, "%H:%i") as horafinal');
+        $this->db->select('m.nombreclase, t.nombreturno, h.idgrupo, p.urlvideoconferencia, m.idmateria, p.idprofesor, h.idperiodo, pm.idprofesormateria, h.idhorario,hd.iddia, DATE_FORMAT(hd.horainicial, "%H:%i") as horainicial, DATE_FORMAT(hd.horafinal, "%H:%i") as horafinal');
         $this->db->from('tblhorario h');
         $this->db->join('tblhorario_detalle hd', 'h.idhorario = hd.idhorario');
         $this->db->join('tblprofesor_materia pm', 'pm.idprofesormateria = hd.idmateria');
         $this->db->join('tblmateria m', 'm.idmateria = pm.idmateria');
-        $this->db->join('tblprofesor p', 'p.idprofesor = pm.idprofesor'); 
+        $this->db->join('tblprofesor p', 'p.idprofesor = pm.idprofesor');
+        $this->db->join('tblgrupo g', 'g.idgrupo = h.idgrupo');
+        $this->db->join('tblturno t', 't.idturno = g.idturno');
         $this->db->where('hd.idhorariodetalle',$idhorariodetalle);
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
@@ -105,7 +107,7 @@ class Horario_model extends CI_Model {
         }
     }
         public function detalleHorario($idhorario = '') {
-        $this->db->select('m1.nombremes as mesinicio, m2.nombremes as mesfin,y1.nombreyear as yearinicio,y2.nombreyear as yearfin,h.idgrupo, h.idhorario, g.nombregrupo,e.nombreespecialidad,n.idnivelestudio, n.nombrenivel, h.idperiodo');
+        $this->db->select('m1.nombremes as mesinicio, m2.nombremes as mesfin,y1.nombreyear as yearinicio,y2.nombreyear as yearfin,h.idgrupo, h.idhorario, g.nombregrupo,e.nombreespecialidad,n.idnivelestudio, n.nombrenivel, h.idperiodo, t.nombreturno');
         $this->db->from('tblhorario h'); 
         $this->db->join('tblgrupo g', 'g.idgrupo = h.idgrupo');
         $this->db->join('tblespecialidad e', 'e.idespecialidad = g.idespecialidad');
@@ -115,6 +117,7 @@ class Horario_model extends CI_Model {
         $this->db->join('tblmes m2','m2.idmes = p.idmesfin');
         $this->db->join('tblyear y1','y1.idyear = p.idyearinicio');
         $this->db->join('tblyear y2','y2.idyear = p.idyearfin');
+        $this->db->join('tblturno t','t.idturno = g.idturno');
         $this->db->where('h.idhorario',$idhorario);
         $query = $this->db->get();
         if ($query->num_rows() > 0) {

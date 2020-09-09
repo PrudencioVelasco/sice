@@ -151,14 +151,14 @@
                                         <div class="col-lg-3 col-md-4 col-sm-4 col-xs-6">
                                             <div class="form-group">
                                                 <div class="form-line">
-                                                    <input type="date" class="form-control" name="fechainicio" required="" placeholder="Fecha inicio" id="fechainicio">
+                                                    <input type="date" class="form-control" style="border-bottom: solid 1px #ccc;" name="fechainicio" required="" placeholder="Fecha inicio" id="fechainicio">
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-lg-3 col-md-4 col-sm-4 col-xs-6">
                                             <div class="form-group">
                                                 <div class="form-line">
-                                                    <input type="date" class="form-control" name="fechafin" placeholder="Fecha fin" required="" id="fechafin">
+                                                    <input type="date" class="form-control"  style="border-bottom: solid 1px #ccc;" name="fechafin" placeholder="Fecha fin" required="" id="fechafin">
                                                 </div>
                                             </div>
                                         </div>
