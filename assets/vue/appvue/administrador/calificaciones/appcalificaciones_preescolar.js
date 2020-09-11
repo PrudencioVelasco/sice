@@ -49,7 +49,7 @@ var v = new Vue({
 	},
 	created() {
 		this.showAll();
-		this.showAllMaterias();
+		//this.showAllMaterias();
 		this.showAllTiposCalificacion();
 		this.showAllPeriodos();
 		this.showAllGrupos();
@@ -59,13 +59,12 @@ var v = new Vue({
 		 onSelect (option, id) {
     	 
     	},
-		orderBy(sortFn) {
-			// sort your array data like this.userArray
+		orderBy(sortFn) { 
 			this.alumnos.sort(sortFn);
 		},
 		abrirAddModal() {
 			$('#abrirModal').modal('show');
-			v.showAllMaterias();
+			v.showAllMaterias(this.idgrupo);
 		},
 		abrirDetalleModal() {
 			$('#abrirDetalleModal').modal('show'); 
@@ -74,9 +73,14 @@ var v = new Vue({
 			$('#abrirEditModal').modal('show'); 
 		},
 		showAll() {},
-		showAllMaterias() {
+		showAllMaterias(idgrupo) {
 
-			axios.get(this.url + "Calificacion/showAllMaterias/")
+			axios.get(this.url + "Calificacion/showAllMaterias/", {
+                     params: { 
+						 idgrupo: idgrupo
+
+                     }
+                 })
 				.then(response => (this.materias = response.data.materias));
 
 		},
@@ -164,9 +168,10 @@ var v = new Vue({
 				//Limpiamos el arreglo
 				this.value = [];
 				v.modificarArregloMateria();
+				this.idtipocalificacion='';
 				this.materias_seleccionadas.sort();
 			}else{
-				swal("Información", "Seleccione el o los cursos y la calificacion. ", "info")
+				swal("NOTIFICACION", "SELECCIONE EL Y LOS CURSOS Y LA CALIFICACION. ", "info")
 			}
 		},
  
@@ -208,11 +213,13 @@ var v = new Vue({
 
                      }
                  }).then(response => (this.alumnos = response.data.alumnos));
+						v.showAllMaterias(idgrupo);
 			}else{
-					swal("Información", "Seleccione el periodo, grupo y mes. ", "info")
+					swal("NOTIFICACION", "SELECCIONE EL PERIODO, GRUPO Y MES. ", "info")
 			}
 		},
 		registrarCalificacion() {
+			if(v.materias_seleccionadas.length > 0){
 			v.error = false;
 			v.cargando = true;
 			var formData = v.formData();
@@ -238,7 +245,10 @@ var v = new Vue({
 					v.clearAll();
 					v.clearMSG();
 				}
-			})
+			});
+			}else{
+					swal("NOTIFICACION", "SELECCIONE LAS ASIGNATURAS PARA CALIFICAR. ", "info")
+			}
 		},
 		eliminarMateriaAlumno(row) {
 			 

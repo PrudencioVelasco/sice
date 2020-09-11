@@ -26,11 +26,24 @@ class Calificacion_model extends CI_Model {
             return false;
         }
     }
-
-    public function allMateriasPreescolar() {
+    public function detalleGrupo($idgrupo){
+        $this->db->select('g.idgrupo, g.idnivelestudio');
+        $this->db->from('tblgrupo g'); 
+        $this->db->where('g.idgrupo', $idgrupo);  
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
+    public function allMateriasPreescolar($idnivelestudio ='') {
         $this->db->select('ma.idmateriapreescolar, ma.nombremateria');
         $this->db->from('tblmateria_preescolar ma'); 
         $this->db->where('ma.activo', 1); 
+        if(isset($idnivelestudio) && !empty($idnivelestudio) && $idnivelestudio == 1){
+        $this->db->where('ma.idmateriapreescolar NOT IN(27)'); 
+        }
         $this->db->order_by('ma.nombremateria ASC');
         $query = $this->db->get();
         if ($this->db->affected_rows() > 0) {

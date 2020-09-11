@@ -37,23 +37,22 @@ class Alumnos extends CI_Controller {
             $tareas = $this->alumno->showTareaAlumnoMateria($idhorario, $fecha); 
             $mensajes = $this->mensaje->showAllMensajeAlumno($idhorario);
         }
-
-        //var_dump($mensajes);
+ 
         $data = array(
             'tareas' => $tareas, 
             'mensajes' => $mensajes,
             'idhorario'=>$idhorario,
             'controller' => $this,
             'idalumno'=>$idalumno
-        );
-        // var_dump($tareas);
+        ); 
 
         $this->load->view('alumno/header');
-       if($this->session->idniveleducativo == 1){
+       /*  if($this->session->idniveleducativo == 1){
         $this->load->view('alumno/tarea/index', $data);
         }else{
              $this->load->view('alumno/index', $data);
-        }
+        } */
+        $this->load->view('alumno/tarea/index', $data);
         $this->load->view('alumno/footer');
     }
     public function detalletarea($idtarea, $idhorario) {

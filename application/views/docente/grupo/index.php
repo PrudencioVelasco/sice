@@ -133,17 +133,10 @@
                                                                                class="fa fa-check-circle"></i> Asistencia</a>
                                                                     </li>
                                                                     <li>
-                                                                        <?php if((isset($this->session->idniveleducativo) && !empty($this->session->idniveleducativo)) && $this->session->idniveleducativo == 1) { ?>
                                                                         <a
                                                                             href="<?php echo site_url('Pgrupo/tareav2/' . $controller->encode($value->idhorario) . '/' . $controller->encode($value->idhorariodetalle)) ?>"><i
                                                                                 style="color: #000;" class="fa fa-book"></i>
-                                                                            Tarea</a>
-                                                                        <?php }else{ ?>
-                                                                          <a
-                                                                            href="<?php echo site_url('Pgrupo/tarea/' . $controller->encode($value->idhorario) . '/' . $controller->encode($value->idhorariodetalle)) ?>"><i
-                                                                                style="color: #000;" class="fa fa-book"></i>
-                                                                            Tarea</a>
-                                                                        <?php } ?>
+                                                                            Tarea</a> 
                                                                     </li>
                                                                     <li><a
                                                                             href="<?php echo site_url('Pgrupo/mensaje/' . $controller->encode($value->idhorario) . '/' . $controller->encode($value->idhorariodetalle)) ?>">

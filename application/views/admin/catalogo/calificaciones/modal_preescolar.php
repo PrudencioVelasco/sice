@@ -22,7 +22,7 @@
                         <div class="col-md-7 col-sm-12 col-xs-12 ">
 
                             <div class="form-group"> 
-                               <multiselect v-model="value"  @select="onSelect" :options="materias" :multiple="true" :close-on-select="false" :clear-on-select="false" :preserve-search="true" placeholder="Curso" label="nombremateria" track-by="nombremateria" :preselect-first="true">
+                               <multiselect v-model="value"  @select="onSelect" :options="materias" :multiple="true" :close-on-select="false" :clear-on-select="false" :preserve-search="true" placeholder="ASIGNATURA" label="nombremateria" track-by="nombremateria" :preselect-first="true">
     							<template slot="selection" slot-scope="{ values, search, isOpen }"><span class="multiselect__single" v-if="values.length &amp;&amp; !isOpen">{{ values.length }} options selected</span></template>
                                
                             </div>
@@ -119,7 +119,7 @@
                         <div class="col-md-7 col-sm-12 col-xs-12 ">
 
                             <div class="form-group"> 
-                               <multiselect v-model="value"  @select="onSelect" :options="materias" :multiple="true" :close-on-select="false" :clear-on-select="false" :preserve-search="true" placeholder="Curso" label="nombremateria" track-by="nombremateria" :preselect-first="true">
+                               <multiselect v-model="value"  @select="onSelect" :options="materias" :multiple="true" :close-on-select="false" :clear-on-select="false" :preserve-search="true" placeholder="ASIGNATURA" label="nombremateria" track-by="nombremateria" :preselect-first="true">
     							<template slot="selection" slot-scope="{ values, search, isOpen }"><span class="multiselect__single" v-if="values.length &amp;&amp; !isOpen">{{ values.length }} options selected</span></template>
                                
                             </div>

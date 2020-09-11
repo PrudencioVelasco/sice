@@ -60,17 +60,17 @@
                                                                            title="Mensajes"> <i style="color: #dd3115;"
                                                                                              class="fa fa-envelope"></i>
                                                                             Mensajes</a></li>
-                                                                     <?php if((isset($this->session->idniveleducativo) && !empty($this->session->idniveleducativo)) && ($this->session->idniveleducativo == 1)){ ?>
-                                                                    <li><a href="<?php echo site_url('Tutores/tareasv2/' . $controller->encode($value->idalumno) . '/' . $controller->encode($value->idnivelestudio) . '/' . $controller->encode($value->idperiodo)) ?>"
+                                                                     <li><a href="<?php echo site_url('Tutores/tareasv2/' . $controller->encode($value->idalumno) . '/' . $controller->encode($value->idnivelestudio) . '/' . $controller->encode($value->idperiodo)) ?>"
                                                                            title="Tareas"><i style="color: #000;"
                                                                                           class="fa fa-book"></i>
                                                                             Tarea</a></li>
-                                                                     <?php } else {?>
-                                                                             <li><a href="<?php echo site_url('Tutores/tareas/' . $controller->encode($value->idalumno) . '/' . $controller->encode($value->idnivelestudio) . '/' . $controller->encode($value->idperiodo)) ?>"
-                                                                           title="Tareas"><i style="color: #000;"
-                                                                                          class="fa fa-book"></i>
-                                                                            Tarea</a></li>
-                                                                     <?php } ?>
+                                                                            <?php if (isset($this->session->idniveleducativo) && !empty($this->session->idniveleducativo) && $this->session->idniveleducativo == 2) {   ?>
+                                                                      <li><a href="<?php echo site_url('Tutores/planeaciones/' . $controller->encode($value->idalumno) . '/' . $controller->encode($value->idhorario) . '/' . $controller->encode($value->idperiodo)) ?>"
+                                                                           title="Tareas"><i style="color: #5811dd;"
+                                                                                          class="fa fa-file"></i>
+                                                                            Planeaciones</a></li>
+                                                                            <?php } ?>
+                                                                      
 <!--                                                                    <li><a href="<?php //echo site_url('Tutores/pagos/' . $controller->encode($value->idalumno) . '/' . $controller->encode($value->idnivelestudio) . '/' . $controller->encode($value->idperiodo)) ?>"
                                                                            title="Pagos"><i class="fa fa-paypal "
                                                                                          style="color:#215adc;"></i>

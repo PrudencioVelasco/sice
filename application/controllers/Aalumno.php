@@ -883,6 +883,10 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
         $tabla .= '</table>';
         return $tabla;
     }
+    
+    public  function  obtenerCalificacionPreescolar($idhorario = '', $idalumno = ''){
+        
+    }
 
     public function obtenerCalificacion2($idhorario = '', $idalumno = '') {
         # code...
@@ -1350,7 +1354,10 @@ tblcalificacion  {border-collapse:collapse}
             $calificacion = "";
             if($this->session->idniveleducativo == 5){
             $tabla = $this->obtenerCalificacionLicenciatura($idhorario, $idalumno);
-            }else {
+            }elseif ($this->session->idniveleducativo == 4){
+                $tabla = $this->obtenerCalificacionPreescolar($idhorario, $idalumno);
+            }
+            else {
                 $tabla = $this->obtenerCalificacion2($idhorario, $idalumno);
             }
             $datosalumno = $this->alumno->showAllAlumnoId($idalumno);
@@ -1430,7 +1437,11 @@ tblcalificacion  {border-collapse:collapse}
                     // 'detalle_siguiente_oportunidad'=>$detalle_siguiente_oportunidad
             );
             $this->load->view('alumno/header');
-            $this->load->view('alumno/kardex/calificacion', $data);
+            if ($this->session->idniveleducativo == 4) {
+                $this->load->view('alumno/preescolar/actual', $data);
+            }else{
+                $this->load->view('alumno/kardex/calificacion', $data);
+            } 
             $this->load->view('alumno/footer');
         } else {
             $data = array(

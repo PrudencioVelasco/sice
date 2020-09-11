@@ -330,9 +330,14 @@ class Calificacion extends CI_Controller {
     
     //CRUD PREESCOLAR
     public  function showAllMaterias (){
-        $query = $this->calificacion->allMateriasPreescolar(); 
+        $idgrupo = $this->input->get('idgrupo');
+        $resultado = $this->calificacion->detalleGrupo($idgrupo);
+        if($resultado){
+            $idnivelestudio = $resultado->idnivelestudio;
+            $query = $this->calificacion->allMateriasPreescolar($idnivelestudio); 
         if ($query) {
-            $result['materias'] = $this->calificacion->allMateriasPreescolar();
+            $result['materias'] = $this->calificacion->allMateriasPreescolar($idnivelestudio);
+        }
         }
         if(isset($result) && !empty($result)){
             echo json_encode($result);
@@ -455,6 +460,8 @@ class Calificacion extends CI_Controller {
         $alumnos = $this->calificacion->showAllAlumnosPreescolar($idperiodo, $idgrupo, $idmes);
         $sheet = $this->excel->getActiveSheet();
         PHPExcel_Shared_Font::setAutoSizeMethod(PHPExcel_Shared_Font::AUTOSIZE_METHOD_EXACT);
+        $detalle_logo = $this->alumno->logo($this->session->idplantel);
+        $logo = $_SERVER['DOCUMENT_ROOT']  . '/sice/assets/images/escuelas/' . $detalle_logo[0]->logoplantel;
         $contador_interno = 0;
         foreach ($alumnos as $alumno) {
         
@@ -464,17 +471,29 @@ class Calificacion extends CI_Controller {
 
             //$objWorkSheet->setTitle('Listado de Alumnos');
             // Contador de filas
-            $contador = 1;
+            $contador = 12;
             // Definimos los títulos de la cabecera.
             $style = array(
               'alignment'=> array(
                   'vertical'=>PHPExcel_Style_Alignment::VERTICAL_BOTTOM
               )
             );
-            $objWorkSheet->getStyle("A1:AC1")->applyFromArray($style);
-            $objWorkSheet->getStyle("A1:AC1")->getAlignment()->setTextRotation(90);
-            $objWorkSheet->getStyle("A1:AC1")->getAlignment()->setWrapText(true);
-            $objWorkSheet->getRowDimension("1")->setRowHeight(150);
+            
+         
+            $objDrawing = new PHPExcel_Worksheet_Drawing();    //create object for Worksheet drawing
+            $objDrawing->setName('Customer Signature');        //set name to image
+            $objDrawing->setDescription('Customer Signature'); //set description to image 
+            $objDrawing->setPath($logo);
+            $objDrawing->setOffsetX(25);                       //setOffsetX works properly
+            $objDrawing->setOffsetY(10);                       //setOffsetY works properly
+            $objDrawing->setCoordinates('A3');       //set image to cell
+            $objDrawing->setWidth(140);                 //set width, height
+            $objDrawing->setHeight(140);  
+            $objDrawing->setWorksheet( $this->excel->getActiveSheet());
+            $objWorkSheet->getStyle("A12:AC12")->applyFromArray($style);
+            $objWorkSheet->getStyle("A12:AC12")->getAlignment()->setTextRotation(90);
+            $objWorkSheet->getStyle("A12:AC12")->getAlignment()->setWrapText(true);
+            $objWorkSheet->getRowDimension("12")->setRowHeight(150);
             $objWorkSheet->getColumnDimension("B")->setWidth(7);
             $objWorkSheet->getColumnDimension("C")->setWidth(5);
             $objWorkSheet->getColumnDimension("D")->setWidth(5);
@@ -643,12 +662,11 @@ class Calificacion extends CI_Controller {
             $objWorkSheet->setTitle( $alumno->nombrealumno);
         }
 
-        $archivo = "Lista de Alumnos {$idperiodo}.xls";
+         $archivo = "Lista de Alumnos {$idperiodo}.xls";
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="' . $archivo . '"');
         header('Cache-Control: max-age=0');
-        $objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5');
-        // Hacemos una salida al navegador con el archivo Excel.
-        $objWriter->save('php://output');
+        $objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5'); 
+        $objWriter->save('php://output');  
     }
 }
