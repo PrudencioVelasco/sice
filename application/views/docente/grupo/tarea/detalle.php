@@ -77,7 +77,7 @@
 
 
                                                 <button  v-if="row.idestatustarea" type="button" class="btn btn-icons btn-default btn-sm waves-effect waves-black" @click=" abrirEditModal(); selectAlumnosTareas(row)" title="Modificar Datos"> <i class="fa fa-edit" aria-hidden="true"></i>
-                                                    Detalle
+                                                    Calificar
                                                 </button>  
                                             </td>
                                         </tr>
@@ -139,6 +139,7 @@
     <div class="clearfix"></div>
     <div id="notif-group" class="tabbed_notifications"></div>
 </div>
-
+<script src="<?php echo base_url(); ?>/assets/editor/ckeditor5-vue/ckeditor.js" type="text/javascript"></script>
+<script src="<?php echo base_url(); ?>/assets/editor/ckeditor.js" type="text/javascript"></script>
 <script data-my_var_1="<?php echo base_url() ?>" data-my_var_2="<?php echo $idtarea; ?>"  data-my_var_3="<?php echo $idhorario; ?>"  data-my_var_4="<?php echo $idmateria; ?>"  data-my_var_5="<?php echo $idprofesormateria; ?>"  src="<?php echo base_url(); ?>/assets/vue/appvue/docente/tarea/apptarea_detalle.js"></script> 
 

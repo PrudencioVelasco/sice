@@ -63,6 +63,15 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div v-if="contestado && contestado.observacionesdocente != ''">
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-md-8  col-sm-12 col-xs-12">
+                                            <h6>Observaciones del docente:</h6>
+                                            <div v-html="contestado.observacionesdocente" ></div>
+                                        </div> 
+                                    </div>
+                                    </div>
                                 </div>
                                 <?php include'modal.php'; ?>
                             </div>

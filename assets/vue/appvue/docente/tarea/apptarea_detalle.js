@@ -23,9 +23,15 @@ if (typeof my_var_5 === "undefined") {
 }
  
 Vue.config.devtools = true; 
+Vue.use(CKEditor);
 var vu = new Vue({
     el: '#appplanificacion',
     data: { 
+	 editor: ClassicEditor,
+        editorData: '<p>Content of the editor.</p>',
+        editorConfig: {
+            // The configuration of the editor.
+        },
         url: my_var_1,
         idtarea: my_var_2, 
         idhorario: my_var_3, 
@@ -39,8 +45,7 @@ var vu = new Vue({
         estatustarea:[],
         search: {text: ''},
         emptyResult: false,
-          success: false,
-            
+          success: false, 
             loading: false,
         newTarea: {
             titulo: '',
@@ -134,7 +139,7 @@ var vu = new Vue({
             vu.cargando = true;
             vu.error = false;
             var formData = vu.formData(vu.chooseAlumnosTareas); 
-              formData.append('idtarea', this.idtarea);
+                formData.append('idtarea', this.idtarea); 
             axios.post(this.url + "Tarea/calificarTareaAlumno", formData).then(function (response) {
                 if (response.data.error) {
                     vu.formValidate = response.data.msg;
@@ -190,7 +195,7 @@ var vu = new Vue({
             vu.error = false;
             $("#editRegister").modal("hide");
             $("#addRegister").modal("hide");
-
+			vu.showAll()
             vu.newTarea = {
                 titulo: '',
                 tarea: '',
@@ -199,7 +204,7 @@ var vu = new Vue({
                 smserror: ''
             };
             vu.formValidate = false;
-            vu.refresh();
+            vu.refresh(); 
 
         },
         noResult() {

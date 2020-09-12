@@ -57,6 +57,14 @@
                                                 <a v-if="contestado.iddocumento" v-bind:href="'https://drive.google.com/uc?export=download&id='+ contestado.iddocumento" target="_blank"><i class="fa fa-cloud-download"></i> DOCUMENTO ENVIADO</a>
                                             </div>
                                         </div>
+                                        <div v-if="contestado && contestado.observacionesdocente != ''">
+                                         <div class="row">
+                                            <div class="col-md-8  col-sm-12 col-xs-12">
+                                                <h6>Observaciones del docente:</h6>
+                                                <div v-html="contestado.observacionesdocente" ></div>
+                                            </div> 
+                                        </div>
+                                        </div>
                                     </div>
                                 </div> 
                             </div>
@@ -94,4 +102,4 @@
 <script src="<?php echo base_url(); ?>/assets/editor/ckeditor5-vue/ckeditor.js" type="text/javascript"></script>
 <script src="<?php echo base_url(); ?>/assets/editor/ckeditor.js" type="text/javascript"></script>
 
-<script data-my_var_1="<?php echo base_url() ?>" data-my_var_2="<?php echo $idtarea; ?>" src="<?php echo base_url(); ?>/assets/vue/appvue/tutor/tarea/appdetalletarea.js"></script> 
+<script data-my_var_1="<?php echo base_url() ?>" data-my_var_2="<?php echo $idtarea; ?>" data-my_var_3="<?php echo $idalumno; ?>" src="<?php echo base_url(); ?>/assets/vue/appvue/tutor/tarea/appdetalletarea.js"></script> 

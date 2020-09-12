@@ -18,14 +18,11 @@
                             <div   v-if="chooseAlumnosTareas.mensaje" v-html="chooseAlumnosTareas.mensaje"></div>
                         </div>
                     </div>
+                    <hr>
                      <div class="row">
                         <div class="col-md-6 col-sm-12 col-xs-12 "> 
-                            <a v-if="chooseAlumnosTareas.iddocumento"  v-bind:href="'https://drive.google.com/open?id='+ chooseAlumnosTareas.iddocumento"><i class="fa fa-download"></i> DESCARGAR DOCUMENTO</a>
-                        </div>
-                  
-                        <div class="col-md-6 col-sm-12 col-xs-12 "> 
                             <div class="form-group"> 
-                                <label><font color="red">*</font> SELECCIONE LA OPCIÓN PARA CALIFICAR</label>
+                                <label><font color="red">*</font> SELECCIONE EL TIPO DE CALIFICACION</label>
                               <select class=" form-control" v-model="chooseAlumnosTareas.idestatustarea" style="border-bottom: solid #ccc 1px; "> 
                                   
                                   <option   v-for="option in estatustarea"  :selected="option.idestatustarea == chooseAlumnosTareas.idestatustarea ? 'selected' : ''" :value="option.idestatustarea" >
@@ -35,7 +32,21 @@
                                 <div class="col-red" v-html="formValidate.idnivelestudio"></div>
                             </div>
                         </div>
+                        
+                        <div class="col-md-6 col-sm-12 col-xs-12 "> 
+                            <a v-if="chooseAlumnosTareas.iddocumento"  v-bind:href="'https://drive.google.com/uc?export=download&id='+ chooseAlumnosTareas.iddocumento"><i class="fa fa-download"></i> DESCARGAR DOCUMENTO</a>
+                        </div>
+                  
+                     
                     </div>
+                      <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12 ">
+                            <label>Observaciones</label>
+                            <ckeditor :editor="editor" v-model="chooseAlumnosTareas.observaciones" :config="editorConfig"></ckeditor>
+                         <div class="col-red" v-html="formValidate.observacionesa"></div>
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
             <div class="modal-footer">

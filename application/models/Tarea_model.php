@@ -99,7 +99,7 @@ class Tarea_model extends CI_Model {
         }
     }
     public function detalleRespuestaTareaAlumno($idtarea,$idalumno) {
-         $this->db->select("dt.mensaje,dt.nombrearchivo,et.idestatustarea, dt.iddocumento, dt.fecharegistro, et.nombreestatus");
+         $this->db->select("dt.mensaje,dt.nombrearchivo,et.idestatustarea, dt.observacionesdocente, dt.iddocumento, dt.fecharegistro, et.nombreestatus");
         $this->db->from('tbltareav2 t');
         $this->db->join('tbldetalle_tarea dt','dt.idtarea = t.idtarea');
         $this->db->join('tblestatustarea et','et.idestatustarea = dt.idestatustarea');
@@ -163,7 +163,8 @@ SELECT
     nombrearchivo,
     iddocumento,
     fecharegistro,
-    iddetalletarea
+    iddetalletarea,
+    observaciones
 FROM
     (SELECT 
         a.idalumno,
@@ -178,6 +179,7 @@ FROM
             (SELECT nombreestatus FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS estatustarea,
             (SELECT te.idestatustarea FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS idestatustarea,
                   (SELECT dt.mensaje FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS mensaje,
+                (SELECT dt.observacionesdocente FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS observaciones,
                         (SELECT dt.nombrearchivo FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS nombrearchivo,
                               (SELECT dt.iddocumento FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS iddocumento,
                                    (SELECT DATE_FORMAT(dt.fecharegistro,'%d/%m/%Y %h:%i %p') FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS fecharegistro,
@@ -222,6 +224,7 @@ WHERE
             (SELECT nombreestatus FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS estatustarea,
             (SELECT te.idestatustarea FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS idestatustarea,
                   (SELECT dt.mensaje FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS mensaje,
+  (SELECT dt.observacionesdocente FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS observaciones,
                         (SELECT dt.nombrearchivo FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS nombrearchivo,
                               (SELECT dt.iddocumento FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS iddocumento,
                                     (SELECT DATE_FORMAT(dt.fecharegistro,'%d/%m/%Y %h:%i %p') FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS fecharegistro,

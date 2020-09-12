@@ -44,6 +44,7 @@ class Calificacion_model extends CI_Model {
         if(isset($idnivelestudio) && !empty($idnivelestudio) && $idnivelestudio == 1){
         $this->db->where('ma.idmateriapreescolar NOT IN(27)'); 
         }
+        $this->db->where('ma.idmateriapreescolar NOT IN(1,10,19,21,26)'); 
         $this->db->order_by('ma.nombremateria ASC');
         $query = $this->db->get();
         if ($this->db->affected_rows() > 0) {

@@ -7,6 +7,10 @@ var my_var_2 = this_js_script.attr('data-my_var_2');
 if (typeof my_var_2 === "undefined") {
     var my_var_2 = 'some_default_value';
 }
+var my_var_3 = this_js_script.attr('data-my_var_3');
+if (typeof my_var_3 === "undefined") {
+    var my_var_3 = 'some_default_value';
+}
 Vue.config.devtools = true;
 Vue.use(CKEditor);
 var v = new Vue({
@@ -20,6 +24,7 @@ var v = new Vue({
         },
         url: my_var_1,
         idtarea: my_var_2,
+		idalumno:my_var_3,
         addModal: false,
         editModal: false,
         //deleteModal:false,
@@ -60,9 +65,10 @@ var v = new Vue({
             );
         },
           showTareaContestado() {
-            axios.get(this.url + "Tarea/showdetalleRespuestaTareaAlumno", {
+            axios.get(this.url + "Tarea/showdetalleRespuestaTareaAlumnoTutor", {
                 params: {
                     idtarea: this.idtarea,
+					idalumno: this.idalumno,
                 }
             }).then(
                     (response) => (this.contestado = response.data.contestado)

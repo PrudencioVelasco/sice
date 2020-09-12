@@ -82,7 +82,19 @@ class Tarea extends CI_Controller {
         $idtarea = $this->input->get('idtarea');
         $idalumno = $this->session->idalumno;
         $query = $this->tarea->detalleRespuestaTareaAlumno($idtarea, $idalumno);
-        //var_dump($query);
+       
+        if ($query) {
+            $result['contestado'] = $this->tarea->detalleRespuestaTareaAlumno($idtarea, $idalumno);
+        }
+        if (isset($result) && !empty($result)) {
+            echo json_encode($result);
+        }
+    }
+    public function showdetalleRespuestaTareaAlumnoTutor() {
+        $idtarea = $this->input->get('idtarea');
+         $idalumno =$this->input->get('idalumno');
+        $query = $this->tarea->detalleRespuestaTareaAlumno($idtarea, $idalumno);
+      
         if ($query) {
             $result['contestado'] = $this->tarea->detalleRespuestaTareaAlumno($idtarea, $idalumno);
         }
@@ -559,10 +571,19 @@ class Tarea extends CI_Controller {
         } else {
             $iddetalletarea = trim($this->input->post('iddetalletarea'));
             $idestatustarea = trim($this->input->post('idestatustarea'));
+            $observaciones = trim($this->input->post('observaciones'));
+            if($idestatustarea != 1){
             $data = array(
-                'idestatustarea' => $idestatustarea
+                'idestatustarea' => $idestatustarea,
+                'observacionesdocente'=>$observaciones
             );
             $this->tarea->updateDetalleTarea($iddetalletarea, $data);
+            }else{
+                $result['error'] = true;
+                $result['msg'] = array(
+                    'msgerror' => "SELECCIONAR LA OPCION DE CALIFICACION"
+                );
+            }
         }
         if (isset($result) && !empty($result)) {
             echo json_encode($result);
