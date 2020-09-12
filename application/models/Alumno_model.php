@@ -2,22 +2,26 @@
 
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class Alumno_model extends CI_Model {
+class Alumno_model extends CI_Model
+{
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->load->database();
     }
 
-    public function __destruct() {
+    public function __destruct()
+    {
         $this->db->close();
     }
 
-    public function showAll($idplantel = '') {
+    public function showAll($idplantel = '')
+    {
         $this->db->select("t.idalumno, t.nombre, t.apellidop, t.apellidom,t.idplantel, t.idespecialidad,"
-                . "t.matricula, t.curp,t.lugarnacimiento, t.nacionalidad, t.domicilio, t.telefono,t.telefonoemergencia,"
-                . "t.serviciomedico,t.idtiposanguineo,t.alergiaopadecimiento, t.peso, t.estatura,t.numfolio, t.numacta,numlibro,"
-                . "t.foto, t.sexo, t.correo,t.password,t.idalumnoestatus, DATE_FORMAT(t.fechanacimiento,'%d/%m/%Y') as fechanacimiento,n.nombreniveleducativo,ae.idestatusalumno, ae.nombreestatus");
+            . "t.matricula, t.curp,t.lugarnacimiento, t.nacionalidad, t.domicilio, t.telefono,t.telefonoemergencia,"
+            . "t.serviciomedico,t.idtiposanguineo,t.alergiaopadecimiento, t.peso, t.estatura,t.numfolio, t.numacta,numlibro,"
+            . "t.foto, t.sexo, t.correo,t.password,t.idalumnoestatus, DATE_FORMAT(t.fechanacimiento,'%d/%m/%Y') as fechanacimiento,n.nombreniveleducativo,ae.idestatusalumno, ae.nombreestatus");
         $this->db->from('tblalumno t');
         $this->db->join('tblplantel p', 't.idplantel = p.idplantel');
         $this->db->join('tblniveleducativo n', 'n.idniveleducativo = p.idniveleducativo');
@@ -33,7 +37,8 @@ class Alumno_model extends CI_Model {
         }
     }
 
-    public function showAllEstatusAlumno() {
+    public function showAllEstatusAlumno()
+    {
         $this->db->select('ae.*');
         $this->db->from('tblalumno_estatus ae');
         $query = $this->db->get();
@@ -44,7 +49,8 @@ class Alumno_model extends CI_Model {
         }
     }
 
-    public function logo($idplantel = '') {
+    public function logo($idplantel = '')
+    {
         $this->db->select('p.*');
         $this->db->from('tblplantel p');
         if (isset($idplantel) && !empty($idplantel)) {
@@ -58,7 +64,8 @@ class Alumno_model extends CI_Model {
         }
     }
 
-    public function buscarAlumno($matricula = '') {
+    public function buscarAlumno($matricula = '')
+    {
         $this->db->select('a.idalumno, a.nombre, a.apellidop, a.apellidom');
         $this->db->from('tblalumno a');
         $this->db->where('a.matricula', $matricula);
@@ -70,7 +77,8 @@ class Alumno_model extends CI_Model {
         }
     }
 
-    public function becaAlumno($idalumno = '') {
+    public function becaAlumno($idalumno = '')
+    {
         $this->db->select('ag.idalumnogrupo, b.descuento,b.descripcion');
         $this->db->from('tblbeca b');
         $this->db->join('tblalumno_grupo ag', 'ag.idbeca = b.idbeca');
@@ -84,7 +92,8 @@ class Alumno_model extends CI_Model {
         }
     }
 
-    public function showAllBecas() {
+    public function showAllBecas()
+    {
         $this->db->select('b.idbeca, b.descuento,b.descripcion');
         $this->db->from('tblbeca b');
         $this->db->where('b.activo', 1);
@@ -96,7 +105,8 @@ class Alumno_model extends CI_Model {
         }
     }
 
-    public function showAllAlumnosTutor($idtutor = '') {
+    public function showAllAlumnosTutor($idtutor = '')
+    {
         $this->db->select('a.idalumno,a.nombre, a.apellidop, a.apellidom');
         $this->db->from('tbltutoralumno ta');
         $this->db->join('tblalumno a', 'a.idalumno = ta.idalumno');
@@ -110,7 +120,8 @@ class Alumno_model extends CI_Model {
         }
     }
 
-    public function showAllTiposSanguineos() {
+    public function showAllTiposSanguineos()
+    {
         $this->db->select('ts.*');
         $this->db->from('tbltiposanguineo ts');
         $query = $this->db->get();
@@ -121,7 +132,8 @@ class Alumno_model extends CI_Model {
         }
     }
 
-    public function showAllAlumnosTutorActivos($idtutor = '') {
+    public function showAllAlumnosTutorActivos($idtutor = '')
+    {
         $this->db->select('a.idalumno, h.idhorario, a.nombre, a.apellidop, a.apellidom,ne.nombrenivel, ne.idnivelestudio, g.nombregrupo, g.idgrupo, ag.idperiodo');
         $this->db->from('tblalumno a');
         $this->db->join('tbltutoralumno ta', 'a.idalumno=ta.idalumno');
@@ -141,7 +153,8 @@ class Alumno_model extends CI_Model {
         }
     }
 
-    public function showAllMateriasAlumno($idalumno = '', $activo = '') {
+    public function showAllMateriasAlumno($idalumno = '', $activo = '')
+    {
         $this->db->select('pe.idperiodo, hd.idhorariodetalle,ma.nombreclase,p.nombre, p.apellidop, p.apellidom, g.nombregrupo,ne.nombrenivel, g.idgrupo, h.idhorario,m.nombremes as mesinicio,m2.nombremes as mesfin,y.nombreyear as yearinicio,y2.nombreyear as yearfin, pla.nombreplantel,pla.asociado, pla.direccion, pla.telefono, a.matricula, ho.idhorario,ma.unidades');
         $this->db->from('tblhorario_detalle hd');
         $this->db->join('tblprofesor_materia pm', 'pm.idprofesormateria = hd.idmateria');
@@ -175,7 +188,8 @@ class Alumno_model extends CI_Model {
         }
     }
 
-    public function showAllPagoInscripcion($idalumno = '', $idperiodo = '') {
+    public function showAllPagoInscripcion($idalumno = '', $idperiodo = '')
+    {
         $this->db->select("tp2.concepto,( SELECT
          GROUP_CONCAT(CONCAT_WS(' ', tp.nombretipopago)
                     SEPARATOR ', ') ) AS nombretipopago, tp.nombretipopago, DATE_FORMAT(pi.fecharegistro,'%d/%m/%Y') as fecharegistro, dpi.idformapago, pi.online, pi.pagado");
@@ -198,7 +212,8 @@ class Alumno_model extends CI_Model {
         }
     }
 
-    public function showAllPagoColegiaturas($idalumno = '', $idperiodo = '') {
+    public function showAllPagoColegiaturas($idalumno = '', $idperiodo = '')
+    {
         $query = $this->db->query("SELECT 
     ec.idestadocuenta,
     SUM(dp.descuento) AS descuento,
@@ -233,7 +248,8 @@ FROM
         }
     }
 
-    public function showColonias($cp) {
+    public function showColonias($cp)
+    {
         $this->db->select('c.*');
         $this->db->from('tblcolonia c');
         $this->db->where('c.cp', $cp);
@@ -245,7 +261,8 @@ FROM
         }
     }
 
-    public function showMunicipio($cp) {
+    public function showMunicipio($cp)
+    {
         $this->db->select('m.*');
         $this->db->from('tblcolonia c');
         $this->db->join('tblmunicipio m ', 'c.idmunicipio = m.idmunicipio');
@@ -258,7 +275,8 @@ FROM
         }
     }
 
-    public function showEstado($cp) {
+    public function showEstado($cp)
+    {
         $this->db->select('e.*');
         $this->db->from('tblcolonia c');
         $this->db->join('tblmunicipio m ', 'c.idmunicipio = m.idmunicipio');
@@ -272,7 +290,8 @@ FROM
         }
     }
 
-    public function showAllUnidades($idplantel = '') {
+    public function showAllUnidades($idplantel = '')
+    {
         $this->db->select('u.*');
         $this->db->from('tblunidad u');
         if (isset($idplantel) && !empty($idplantel)) {
@@ -286,7 +305,8 @@ FROM
         }
     }
 
-    public function showAllEspecialidades($idplantel = '') {
+    public function showAllEspecialidades($idplantel = '')
+    {
         $this->db->select('e.*');
         $this->db->from('tblespecialidad e');
         if (isset($idplantel) && !empty($idplantel)) {
@@ -300,7 +320,8 @@ FROM
         }
     }
 
-    public function showAllDias() {
+    public function showAllDias()
+    {
         $this->db->select('d.*');
         $this->db->from('tbldia d');
         $this->db->where('d.iddia NOT IN (6,7)');
@@ -312,11 +333,12 @@ FROM
         }
     }
 
-    public function showAllGrupos($idplantel = '') {
+    public function showAllGrupos($idplantel = '')
+    {
         $this->db->select('g.idgrupo,n.nombrenivel,g.nombregrupo,t.nombreturno, e.nombreespecialidad');
         $this->db->from('tblgrupo g');
         $this->db->join('tblnivelestudio n', 'n.idnivelestudio = g.idnivelestudio');
-         $this->db->join('tblespecialidad e', 'e.idespecialidad = g.idespecialidad');
+        $this->db->join('tblespecialidad e', 'e.idespecialidad = g.idespecialidad');
         $this->db->join('tblturno t', 'g.idturno = t.idturno');
         if (isset($idplantel) && !empty($idplantel)) {
             $this->db->where('g.idplantel', $idplantel);
@@ -330,7 +352,8 @@ FROM
         }
     }
 
-    public function showAllTipoAsistencia() {
+    public function showAllTipoAsistencia()
+    {
         $this->db->select('a.*');
         $this->db->from('tblmotivo_asistencia a');
         $query = $this->db->get();
@@ -341,7 +364,8 @@ FROM
         }
     }
 
-    public function showAllTutorAlumno($idalumno = '') {
+    public function showAllTutorAlumno($idalumno = '')
+    {
         $this->db->select('t.nombre,t.apellidop,t.apellidom,t.escolaridad,t.ocupacion,t.dondetrabaja, t.fnacimiento,direccion,telefono,correo');
         $this->db->from('tbltutor t');
         $this->db->join('tbltutoralumno ta', 'ta.idtutor= t.idtutor');
@@ -354,7 +378,8 @@ FROM
         }
     }
 
-    public function validarAddAlumnoGrupo($idcicloescolar = '', $idalumno = '', $idgrupo = '', $idplantel = '') {
+    public function validarAddAlumnoGrupo($idcicloescolar = '', $idalumno = '', $idgrupo = '', $idplantel = '')
+    {
         $this->db->select('ag.*');
         $this->db->from('tblalumno_grupo ag');
         $this->db->join('tblalumno a', 'a.idalumno = ag.idalumno');
@@ -372,7 +397,8 @@ FROM
         }
     }
 
-    public function validarMatricula($matricula = '', $idalumno = '', $idplantel = '') {
+    public function validarMatricula($matricula = '', $idalumno = '', $idplantel = '')
+    {
         $this->db->select('a.*');
         $this->db->from('tblalumno a');
         $this->db->where('a.matricula', $matricula);
@@ -390,7 +416,8 @@ FROM
         }
     }
 
-    public function validarAsignarTutor($idalumno = '', $idtutor = '', $idplantel = '') {
+    public function validarAsignarTutor($idalumno = '', $idtutor = '', $idplantel = '')
+    {
         $this->db->select('a.*');
         $this->db->from('tblalumno a');
         $this->db->join('tbltutoralumno ta', 'a.idalumno = ta.idalumno');
@@ -407,7 +434,8 @@ FROM
         }
     }
 
-    public function showAllMaterias($idhorario, $reprobadas = '') {
+    public function showAllMaterias($idhorario, $reprobadas = '')
+    {
         $sql = 'select 
     idprofesormateri,
     idhorariodetalle,
@@ -478,7 +506,8 @@ GROUP BY idmateria , nombreclase ASC';
         }
     }
 
-    public function showAllMateriasPasadas($idhorario, $idalumno, $idperiodo) {
+    public function showAllMateriasPasadas($idhorario, $idalumno, $idperiodo)
+    {
         $query = $this->db->query("SELECT   idnivelestudio, idprofesormateri,
     idhorariodetalle,
     idhorario,
@@ -581,7 +610,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function showAllTareaAlumno($idhorario = '', $idmateria = '') {
+    public function showAllTareaAlumno($idhorario = '', $idmateria = '')
+    {
         $this->db->select('t.idtarea, hd.idhorariodetalle,hd.idhorario, hd.horainicial, hd.horafinal, m.nombreclase,p.nombre, p.apellidop, p.apellidom,t.tarea, t.fechaentrega');
         $this->db->from('tblhorario_detalle hd');
         $this->db->join('tblprofesor_materia pm', 'hd.idmateria = pm.idprofesormateria');
@@ -602,7 +632,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function showTareaAlumnoMateria($dhorario, $limitar_consulta = '') {
+    public function showTareaAlumnoMateria($dhorario, $limitar_consulta = '')
+    {
         $this->db->select('t.idnotificacionalumno,t.idnotificaciontutor,hd.idhorariodetalle,hd.idhorario, hd.horainicial, hd.horafinal, m.nombreclase,p.nombre, p.apellidop, p.apellidom,LEFT(t.tarea, 90) as tarea, t.idtarea, t.fechaentrega');
         $this->db->from('tblhorario_detalle hd');
         $this->db->join('tblprofesor_materia pm', 'hd.idmateria = pm.idprofesormateria');
@@ -621,7 +652,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function validadAlumnoGrupo($idalumno) {
+    public function validadAlumnoGrupo($idalumno)
+    {
         $this->db->select('t.*');
         $this->db->from('tblalumno_grupo t');
         $this->db->where('t.idalumno', $idalumno);
@@ -633,7 +665,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function detalleUnidad($idunidad = '') {
+    public function detalleUnidad($idunidad = '')
+    {
         $this->db->select('u.*');
         $this->db->from('tblunidad u');
         $this->db->where('u.idunidad', $idunidad);
@@ -645,7 +678,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function showAllTutoresDisponibles($idplantel = '') {
+    public function showAllTutoresDisponibles($idplantel = '')
+    {
         $this->db->select('t.*');
         $this->db->from('tbltutor t');
         if (isset($idplantel) && !empty($idplantel)) {
@@ -660,7 +694,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function showAllTutores($idalumno) {
+    public function showAllTutores($idalumno)
+    {
         $this->db->select('t.idtutoralumno, a.nombre, a.apellidop, a.apellidom');
         $this->db->from('tbltutoralumno t');
         $this->db->join('tbltutor a', 'a.idtutor = t.idtutor');
@@ -673,7 +708,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function showAllOportunidadesExamen($idplantel) {
+    public function showAllOportunidadesExamen($idplantel)
+    {
         $this->db->select('oe.idoportunidadexamen');
         $this->db->from('tbloportunidad_examen oe');
         $this->db->where('oe.idplantel', $idplantel);
@@ -686,7 +722,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function showAllTareas($idhorariodetalle) {
+    public function showAllTareas($idhorariodetalle)
+    {
         $this->db->select('t.*');
         $this->db->from('tbltarea t');
         $this->db->where('t.idhorariodetalle', $idhorariodetalle);
@@ -698,7 +735,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function showAllMotivoAsistencia() {
+    public function showAllMotivoAsistencia()
+    {
         $this->db->select('t.*');
         $this->db->from('tblmotivo_asistencia t');
         $query = $this->db->get();
@@ -709,7 +747,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function detalleClase($idhorariodetalle = '') {
+    public function detalleClase($idhorariodetalle = '')
+    {
         $this->db->select('m.nombreclase');
         $this->db->from('tblhorario_detalle hd');
         $this->db->join('tblprofesor_materia pm', 'hd.idmateria = pm.idprofesormateria');
@@ -723,7 +762,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function obtenerTodasMateriaReprobadasActivas($idalumno) {
+    public function obtenerTodasMateriaReprobadasActivas($idalumno)
+    {
         $this->db->select('ms.idmateriaprincipal, ms.idmateriasecundaria, m.nombreclase, m.idmateria');
         $this->db->from('tblmateria_reprobada mr');
         $this->db->join('tblalumno_grupo ag', 'ag.idalumnogrupo = mr.idalumnogrupo');
@@ -739,7 +779,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function showAllAlumnoId($idalumno) {
+    public function showAllAlumnoId($idalumno)
+    {
         $this->db->select('t.*, e.nombreespecialidad');
         $this->db->from('tblalumno t');
         $this->db->where('t.idalumno', $idalumno);
@@ -753,7 +794,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function calificacionAlumno($idalumno, $idhorario, $idoportunidadexamen) {
+    public function calificacionAlumno($idalumno, $idhorario, $idoportunidadexamen)
+    {
         $query = $this->db->query("SELECT c.idalumno,  (sum(c.calificacion)/count(c.idunidad)) as calificacion,count(c.idunidad) as totalunidad
             FROM tblcalificacion c 
             WHERE c.idalumno = $idalumno
@@ -790,7 +832,8 @@ GROUP BY hd.idmateria) tabla");
         return false;
     }
 
-    public function ultimaFechaAsistencia($idalumno, $idhorariodetalle) {
+    public function ultimaFechaAsistencia($idalumno, $idhorariodetalle)
+    {
         $this->db->select('a.fecha');
         $this->db->from('tblasistencia a');
         $this->db->where('a.idalumno', $idalumno);
@@ -804,7 +847,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function primeraFechaAsistencia($idalumno, $idhorariodetalle) {
+    public function primeraFechaAsistencia($idalumno, $idhorariodetalle)
+    {
         $this->db->select('a.fecha');
         $this->db->from('tblasistencia a');
         $this->db->where('a.idalumno', $idalumno);
@@ -818,7 +862,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function detalleOportunidadExamen($idplantel, $numero = '') {
+    public function detalleOportunidadExamen($idplantel, $numero = '')
+    {
         $this->db->select('oe.*');
         $this->db->from('tbloportunidad_examen oe');
         $this->db->where('oe.idplantel', $idplantel);
@@ -831,7 +876,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function siguienteOportunidadExamen($idplantel, $numero = '') {
+    public function siguienteOportunidadExamen($idplantel, $numero = '')
+    {
         $this->db->select('oe.*');
         $this->db->from('tbloportunidad_examen oe');
         $this->db->where('oe.idplantel', $idplantel);
@@ -844,7 +890,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function listaAlumnoPorGrupo($idgrupo = '', $idplantel = '') {
+    public function listaAlumnoPorGrupo($idgrupo = '', $idplantel = '')
+    {
         $query = $this->db->query("SELECT * FROM vlistaalumnogrupo WHERE idplantel = $idplantel AND idgrupo = $idgrupo ORDER BY apellidop DESC");
         //  return $query->result();
 
@@ -855,7 +902,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function horarioDia($idalumno, $idnivelestudio, $iddia) {
+    public function horarioDia($idalumno, $idnivelestudio, $iddia)
+    {
         $query = $this->db->query("SELECT 
                             ne.nombrenivel,
                             g.nombregrupo,
@@ -913,7 +961,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function nivelEstudio($idalumno) {
+    public function nivelEstudio($idalumno)
+    {
         $query = $this->db->query("SELECT 
                     g.nombregrupo, ne.idnivelestudio, ne.nombrenivel
                 FROM
@@ -933,7 +982,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function allKardex($idalumno) {
+    public function allKardex($idalumno)
+    {
         $query = $this->db->query("SELECT 
                             h.idhorario,
                             p.idperiodo,
@@ -969,7 +1019,7 @@ GROUP BY hd.idmateria) tabla");
                         WHERE
                             ag.idgrupo = h.idgrupo
                                 AND ag.idalumno = $idalumno 
-                                ORDER BY p.idperiodo DESC"); 
+                                ORDER BY p.idperiodo DESC");
 
         if ($query->num_rows() > 0) {
             return $query->result();
@@ -978,7 +1028,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function obtenerGrupo($idalumno) {
+    public function obtenerGrupo($idalumno)
+    {
         $query = $this->db->query("SELECT 
                                     h.idhorario,
                                     m.nombremes as mesinicio,
@@ -1021,12 +1072,13 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function searchAlumno($match, $idplantel = '') {
+    public function searchAlumno($match, $idplantel = '')
+    {
         $field = 't.nombre,' . "' '" . ',t.apellidop,' . "' '" . ',t.apellidom,' . "' '" . ',t.matricula,' . "' '" . ',n.nombreniveleducativo';
         $this->db->select("t.idalumno, t.nombre, t.apellidop, t.apellidom,t.idplantel, t.idespecialidad,"
-                . "t.matricula, t.curp,t.lugarnacimiento, t.nacionalidad, t.domicilio, t.telefono,t.telefonoemergencia,"
-                . "t.serviciomedico,t.idtiposanguineo,t.alergiaopadecimiento, t.peso, t.estatura,t.numfolio, t.numacta,numlibro,"
-                . "t.foto, t.sexo, t.correo,t.password,t.idalumnoestatus, DATE_FORMAT(t.fechanacimiento,'%d/%m/%Y') as fechanacimiento,n.nombreniveleducativo,ae.idestatusalumno, ae.nombreestatus");
+            . "t.matricula, t.curp,t.lugarnacimiento, t.nacionalidad, t.domicilio, t.telefono,t.telefonoemergencia,"
+            . "t.serviciomedico,t.idtiposanguineo,t.alergiaopadecimiento, t.peso, t.estatura,t.numfolio, t.numacta,numlibro,"
+            . "t.foto, t.sexo, t.correo,t.password,t.idalumnoestatus, DATE_FORMAT(t.fechanacimiento,'%d/%m/%Y') as fechanacimiento,n.nombreniveleducativo,ae.idestatusalumno, ae.nombreestatus");
         $this->db->from('tblalumno t');
         $this->db->join('tblplantel p', 't.idplantel = p.idplantel');
         $this->db->join('tblniveleducativo n', 'n.idniveleducativo = p.idniveleducativo');
@@ -1043,7 +1095,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function searchTutores($match, $idalumno) {
+    public function searchTutores($match, $idalumno)
+    {
         $field = array(
             't.nombre',
             't.apellidop',
@@ -1062,25 +1115,29 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function addAlumno($data) {
+    public function addAlumno($data)
+    {
         $this->db->insert('tblalumno', $data);
         $insert_id = $this->db->insert_id();
         return $insert_id;
     }
 
-    public function asignarGrupo($data) {
+    public function asignarGrupo($data)
+    {
         $this->db->insert('tblalumno_grupo', $data);
         $insert_id = $this->db->insert_id();
         return $insert_id;
     }
 
-    public function addTutorAlumno($data) {
+    public function addTutorAlumno($data)
+    {
         $this->db->insert('tbltutoralumno', $data);
         $insert_id = $this->db->insert_id();
         return $insert_id;
     }
 
-    public function detalleAlumno($idalumno) {
+    public function detalleAlumno($idalumno)
+    {
         $this->db->select('t.*, 
          e.nombreespecialidad,
          p.clave,
@@ -1101,7 +1158,8 @@ GROUP BY hd.idmateria) tabla");
         return $query->first_row();
     }
 
-    public function detalleAlumnoNivelEducativo($idalumno, $idperiodo) {
+    public function detalleAlumnoNivelEducativo($idalumno, $idperiodo)
+    {
         $this->db->select('g.idnivelestudio');
         $this->db->from('tblalumno a');
         $this->db->join('tblalumno_grupo ag', 'ag.idalumno = a.idalumno');
@@ -1112,7 +1170,8 @@ GROUP BY hd.idmateria) tabla");
         return $query->first_row();
     }
 
-    public function updateAlumno($id, $field) {
+    public function updateAlumno($id, $field)
+    {
         $this->db->where('idalumno', $id);
         $this->db->update('tblalumno', $field);
         if ($this->db->affected_rows() > 0) {
@@ -1122,7 +1181,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function updateBecaAlumno($id, $field) {
+    public function updateBecaAlumno($id, $field)
+    {
         $this->db->where('idalumnogrupo', $id);
         $this->db->where('activo', 1);
         $this->db->update('tblalumno_grupo', $field);
@@ -1133,7 +1193,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function updateAlumnoGrupo($id, $field) {
+    public function updateAlumnoGrupo($id, $field)
+    {
         $this->db->where('idalumnogrupo', $id);
         $this->db->update('tblalumno_grupo', $field);
         if ($this->db->affected_rows() > 0) {
@@ -1143,7 +1204,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function detalleGrupoActual($idalumno) {
+    public function detalleGrupoActual($idalumno)
+    {
         $this->db->select('ag.idalumnogrupo, g.idgrupo, g.nombregrupo, n.nombrenivel, t.nombreturno');
         $this->db->from('tblalumno_grupo ag');
         $this->db->join('tblgrupo g', 'ag.idgrupo = g.idgrupo');
@@ -1159,7 +1221,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function obtenerCalificacionMateria($idhorariodetalle = '', $idalumno = '', $idunidad = '') {
+    public function obtenerCalificacionMateria($idhorariodetalle = '', $idalumno = '', $idunidad = '')
+    {
         $this->db->select('c.calificacion');
         $this->db->from('tblcalificacion c');
         $this->db->where('c.idalumno', $idalumno);
@@ -1173,7 +1236,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function detalleReprobado($idreprobado) {
+    public function detalleReprobado($idreprobado)
+    {
         $this->db->select('mr.*');
         $this->db->from('tblmateria_reprobada mr');
         $this->db->where('mr.idreprobada', $idreprobado);
@@ -1185,7 +1249,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function obtenerAsistenciaMateria($idhorariodetalle = '', $idalumno = '', $idunidad = '') {
+    public function obtenerAsistenciaMateria($idhorariodetalle = '', $idalumno = '', $idunidad = '')
+    {
         $this->db->select('a.*');
         $this->db->from('tblasistencia a');
         $this->db->where('a.idalumno', $idalumno);
@@ -1200,7 +1265,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function deleteTutor($id) {
+    public function deleteTutor($id)
+    {
         $this->db->where('idtutoralumno', $id);
         $this->db->delete('tbltutoralumno');
         if ($this->db->affected_rows() > 0) {
@@ -1210,7 +1276,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function deleteReprobada($id) {
+    public function deleteReprobada($id)
+    {
         $this->db->where('iddetalle', $id);
         $this->db->delete('tbldetalle_reprobada');
         if ($this->db->affected_rows() > 0) {
@@ -1220,7 +1287,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function obtenerCalificacionAlumno($idalumno = '', $idgrupo = '', $idplantel = '') {
+    public function obtenerCalificacionAlumno($idalumno = '', $idgrupo = '', $idplantel = '')
+    {
         $query = $this->db->query(" SELECT 
                                     p.nombre,
                                     p.apellidop,
@@ -1259,7 +1327,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function calificacionSecuPrepa($idalumno = '', $idhorariodetalle = '', $oportunidad = '') {
+    public function calificacionSecuPrepa($idalumno = '', $idhorariodetalle = '', $oportunidad = '')
+    {
         $query = $this->db->query("SELECT 
                         FORMAT( COALESCE((COALESCE(SUM(c.calificacion), 0) / (count(c.idunidad))),
             0),2) AS calificacion, 
@@ -1291,7 +1360,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function deleteAlumno($idalumno = '') {
+    public function deleteAlumno($idalumno = '')
+    {
         # code...
         $this->db->where('idalumno', $idalumno);
         $this->db->delete('tblalumno');
@@ -1302,7 +1372,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function obtenerPeriodo($idalumno) {
+    public function obtenerPeriodo($idalumno)
+    {
         $this->db->select('a.idalumno,ag.idperiodo, ag.idgrupo, h.idhorario,a.idplantel');
         $this->db->from('tblalumno a');
         $this->db->join('tblalumno_grupo ag', 'a.idalumno = ag.idalumno');
@@ -1320,7 +1391,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function showAllCalificacionAlumno($idalumno = '', $idhorario = '', $idplantel = '') {
+    public function showAllCalificacionAlumno($idalumno = '', $idhorario = '', $idplantel = '')
+    {
         $query = $this->db->query("SELECT 
                         COALESCE((COALESCE(SUM(c.calificacion), 0) / (SELECT 
                                         COUNT(*)
@@ -1344,7 +1416,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function calificacionFinalPrimaria($idalumno = '', $idhorario = '', $idplantel = '') {
+    public function calificacionFinalPrimaria($idalumno = '', $idhorario = '', $idplantel = '')
+    {
         $query = $this->db->query("SELECT 
                                FORMAT( COALESCE((COALESCE(SUM(c.calificacion), 0) / (SELECT 
                                                 COUNT(*)
@@ -1376,7 +1449,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function materiasAsignadas($idplantel = '') {
+    public function materiasAsignadas($idplantel = '')
+    {
         $query = $this->db->query("SELECT 
                 dr.iddetalle,
                 a.idalumno,
@@ -1427,7 +1501,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function materiaPendientesAAsignar($idplantel = '') {
+    public function materiaPendientesAAsignar($idplantel = '')
+    {
         $query = $this->db->query(" SELECT 
                 mr.idreprobada,
                 a.idalumno,
@@ -1460,7 +1535,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function showMateriaParaAsignar($idmateria, $idplantel = '') {
+    public function showMateriaParaAsignar($idmateria, $idplantel = '')
+    {
         $query = $this->db->query("SELECT 
             hd.idhorariodetalle,
                             h.idhorario,
@@ -1495,7 +1571,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function validarEliminarReprobada($iddetalle) {
+    public function validarEliminarReprobada($iddetalle)
+    {
         $query = $this->db->query("SELECT 
                                     hd.*
                                 FROM
@@ -1520,7 +1597,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function calificacionFinal($idalumno, $idplantel) {
+    public function calificacionFinal($idalumno, $idplantel)
+    {
         $query = $this->db->query(" SELECT p.idperiodo,
         CONCAT(a.apellidop, ' ', a.apellidom, ' ', a.nombre) AS alumno,
             FORMAT((SUM(c.calificacion) / (COUNT(c.idunidad))), 2) AS calificacionxperiodo,
@@ -1554,7 +1632,8 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
-    public function calificacionPorOportunidad($idalumno, $idhorario, $idoportunidad, $idmateria = '') {
+    public function calificacionPorOportunidad($idalumno, $idhorario, $idoportunidad, $idmateria = '')
+    {
         $sql = " SELECT 
                         m.nombreclase,
                         concat(p.nombre,' ',p.apellidop,' ',p.apellidom) as profesor,
@@ -1595,7 +1674,8 @@ GROUP BY hd.idmateria) tabla");
             return false;
         }
     }
- public function calificacionAlumnoParaPromover($idalumno, $idgrupo,$idhorario) {
+    public function calificacionAlumnoParaPromover($idalumno, $idgrupo, $idhorario)
+    {
         $sql = " SELECT   
                     FORMAT((SUM(c.calificacion) / COUNT(c.idunidad)),
                         2) AS calificacion,
@@ -1641,4 +1721,95 @@ GROUP BY hd.idmateria) tabla");
         }
     }
 
+    public function obtenerMeses()
+    {
+        $this->db->select('m.idmes,m.nombremes');
+        $this->db->from('tblmes as m');
+
+        $query = $this->db->get();
+
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+
+    public function obtenerMaterias($idnivelestudio = '')
+    {
+
+
+        $this->db->select('mp.idmateriapreescolar,mp.nombremateria');
+        $this->db->from('tblmateria_preescolar as mp');
+        if (isset($idnivelestudio) && !empty($idnivelestudio) && $idnivelestudio == 1) {
+            $this->db->where('mp.idmateriapreescolar not in (27)');
+        }
+        $this->db->order_by('mp.numero ASC');
+
+
+        $query = $this->db->get();
+
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+
+    public function obtenerCalificacionPreescolar($idperiodo = '', $idalumno = '', $idmateria = '', $idmes = '')
+    {
+
+        $this->db->select("calificacion.abreviatura");
+        $this->db->from('tblcalificacion_preescolar califpreescolar');
+        $this->db->join('tblperiodo periodo', 'califpreescolar.idperiodo = periodo.idperiodo');
+        $this->db->join('tblalumno alumno', 'califpreescolar.idalumno = alumno.idalumno');
+        $this->db->join('tblmateria_preescolar materia', 'califpreescolar.idmateriapreescolar = materia.idmateriapreescolar');
+        $this->db->join('tblmes mes', 'califpreescolar.idmes = mes.idmes');
+        $this->db->join('tbltipo_calificacion calificacion', 'califpreescolar.idtipocalificacion = calificacion.idtipocalificacion');
+
+
+        if (
+            isset($idperiodo) && !empty($idperiodo)
+            && isset($idalumno) && !empty($idalumno)
+            && isset($idmateria) && !empty($idmateria)
+            && isset($idmes)      && !empty($idmes)
+        ) {
+
+            $this->db->where('califpreescolar.idperiodo', $idperiodo);
+            $this->db->where('califpreescolar.idalumno', $idalumno);
+            $this->db->where('califpreescolar.idmateriapreescolar', $idmateria);
+            $this->db->where('califpreescolar.idmes', $idmes);
+        }
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
+
+    public function obtenerFaltasPreescolar($idperiodo = '', $idalumno = '', $idmes = '')
+    {
+
+
+        $this->db->select('asistencia.faltas');
+        $this->db->from('tblasistencia_preescolar as asistencia');
+
+        if (
+            isset($idperiodo) && !empty($idperiodo)
+            && isset($idalumno) && !empty($idalumno)
+            && isset($idmes)   && !empty($idmes)
+        ) {
+
+            $this->db->where('asistencia.idperiodo', $idperiodo);
+            $this->db->where('asistencia.idalumno', $idalumno);
+            $this->db->where('asistencia.idmes', $idmes);
+        }
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
 }
