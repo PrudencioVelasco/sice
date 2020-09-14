@@ -46,9 +46,14 @@
 
                                                 <select name="tiporeporte"  style=" border-bottom: solid #ccc 2px;" id="" required class="form-control">
                                                     <option value="">-- TIPO DE REPORTE --</option>
-                                                    <option value="1">LISTA DE ALUMNOS</option>
-                                                    <option value="2">CALIFICACION PDF</option>
-                                                    <option value="3">CALIFICACION EXCEL</option>
+                                                    <option value="28">LISTA DE ALUMNOS</option>
+                                                    <option value="29">CALIFICACION PDF</option>
+                                                    <option value="30">CALIFICACION 1RE OPORTUNIDAD</option>
+                                                    <?php if (isset($oportunidades) && !empty($oportunidades)){
+                                                        foreach ($oportunidades as $row){
+                                                            echo '<option value="'.$row->idoportunidadexamen.'" >'.$row->nombreoportunidad.'</option>';
+                                                        }
+                                                    } ?>
                                                 </select>
 
                                             </div>

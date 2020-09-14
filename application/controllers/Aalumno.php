@@ -1507,6 +1507,7 @@ tblcalificacion  {border-collapse:collapse}
         Permission::grant(uri_string());
         $idhorario = $this->decode($idhorario);
         $idperiodo = $this->decode($idperiodo);
+        $tabla = "";
         if ((isset($idhorario) && !empty($idhorario)) && (isset($idperiodo) && !empty($idperiodo))) {
             $idalumno = $this->session->idalumno;
             $datosalumno = $this->alumno->showAllAlumnoId($idalumno);

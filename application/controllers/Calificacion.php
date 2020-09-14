@@ -48,7 +48,7 @@ class Calificacion extends CI_Controller {
         $this->load->view('admin/catalogo/asistencias/index',$data);
         $this->load->view('admin/footer');
     }
-    public  function  buscarCursos(){
+    public function buscarCursos(){
         $idgrupo = $this->input->post('idgrupo');
         $idperiodo = $this->input->post('idperiodo');
        
@@ -80,7 +80,7 @@ class Calificacion extends CI_Controller {
         redirect('Calificacion/buscarAsistencia/'.$cicloescolar.'/'.$grupo.'/'.$curso.'/'.$tiporeporte.'/'.$fechainicio.'/'.$fechafin);
         
     }
-    public  function buscarAsistencia($idperiodo = '',$idgrupo = '',$idcurso='',$tiporeporte='',$fechainicio='',$fechafin = ''){
+    public function buscarAsistencia($idperiodo = '',$idgrupo = '',$idcurso='',$tiporeporte='',$fechainicio='',$fechafin = ''){
         if((isset($idperiodo) && !empty($idperiodo)) 
             && (isset($idgrupo) && !empty($idgrupo)) 
             && (isset($idcurso) && !empty($idcurso))
@@ -356,6 +356,32 @@ class Calificacion extends CI_Controller {
             echo json_encode($result);
         }
     }
+    public  function  showCalificacionesDetalle(){
+        $idalumno = $this->input->get('idalumno');
+        $idperiodo = $this->input->get('idperiodo');
+        $idgrupo = $this->input->get('idgrupo');
+        $idmes = $this->input->get('idmes');
+        $query = $this->calificacion->showAllCalificacionesDetalle($idperiodo,$idgrupo,$idmes,$idalumno);
+        if ($query) {
+            $result['calificaciones_registradas'] = $this->calificacion->showAllCalificacionesDetalle($idperiodo,$idgrupo,$idmes,$idalumno);
+        }
+        if(isset($result) && !empty($result)){
+            echo json_encode($result);
+        }
+    }
+    public  function  showAsistenciasYaRegistradas(){
+        $idalumno = $this->input->get('idalumno');
+        $idperiodo = $this->input->get('idperiodo');
+        $idgrupo = $this->input->get('idgrupo');
+        $idmes = $this->input->get('idmes');
+        $query = $this->calificacion->obtenerAsistenciaPreescolar($idperiodo,$idgrupo,$idmes,$idalumno);
+        if ($query) {
+            $result['asistencias_registradas'] = $this->calificacion->obtenerAsistenciaPreescolar($idperiodo,$idgrupo,$idmes,$idalumno);
+        }
+        if(isset($result) && !empty($result)){
+            echo json_encode($result);
+        }
+    }
     public  function showAllTiposCalificacionPreescolar (){
         $query = $this->calificacion->allTipoCalificacionPreescolar();
         if ($query) {
@@ -447,29 +473,139 @@ class Calificacion extends CI_Controller {
             echo json_encode($result);
         }
     }
-    public  function generarExcel() {
+    public function addFaltas() { 
+            $config = array(
+                array(
+                    'field' => 'totalfaltas',
+                    'label' => 'Faltas',
+                    'rules' => 'trim|required|is_natural',
+                    'errors' => array(
+                        'required' => 'Campo obligatorio.',
+                        'is_natural'=>'Solo numero enteros.'
+                    )
+                ), 
+            );
+            
+            $this->form_validation->set_rules($config);
+            if ($this->form_validation->run() == FALSE) {
+                $result['error'] = true;
+                $result['msg'] = array( 
+                    'totalfaltas' => form_error('totalfaltas')
+                );
+            } else { 
+                $totalfaltas = trim($this->input->post('totalfaltas'));
+                $idperiodo = trim($this->input->post('idperiodo'));
+                $idalumno = trim($this->input->post('idalumno'));
+                $idmes = trim($this->input->post('idmes'));
+                $idgrupo = trim($this->input->post('idgrupo'));
+                $data = array(
+                    'idperiodo' => $idperiodo,
+                    'idgrupo' => $idgrupo,
+                    'idalumno' => $idalumno,
+                    'idmes' => $idmes,
+                    'faltas' => $totalfaltas,
+                    'idusuario' => $this->session->user_id,
+                    'fecharegistro' => date('Y-m-d H:i:s'),
+                );
+                $this->calificacion->addAsistenciaPreescolar($data);
+            }
+       
+        if (isset($result) && !empty($result)) {
+            echo json_encode($result);
+        }
+    }
+    public function updateFaltas() {
+        $config = array(
+            array(
+                'field' => 'faltas',
+                'label' => 'Faltas',
+                'rules' => 'trim|required|is_natural',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.',
+                    'is_natural'=>'Solo numero enteros.'
+                )
+            ),
+        );
+        
+        $this->form_validation->set_rules($config);
+        if ($this->form_validation->run() == FALSE) {
+            $result['error'] = true;
+            $result['msg'] = array(
+                'faltas' => form_error('faltas')
+            );
+        } else {
+            $faltas = trim($this->input->post('faltas'));
+            $id = trim($this->input->post('idasistenciapreescolar'));
+            $data = array(
+                'faltas' => $faltas,
+                'idusuario' => $this->session->user_id,
+                'fecharegistro' => date('Y-m-d H:i:s'),
+            );
+            $this->calificacion->updateFaltas($id,$data);
+        }
+        
+        if (isset($result) && !empty($result)) {
+            echo json_encode($result);
+        }
+    }
+    
+    public  function generarExcel($idperiodo,$idgrupo,$idmes) {
             
          $cabezera = array(
          'A', 'B', 'C','D','E', 'F', 'G','H', 'I', 'J','K', 'L', 'M', 'N', 'O','P', 'Q', 'R','S', 'T', 'U','V','W', 'X','Y','Z','AA','AB','AC','AD','AE'
         );
          
         $this->load->library('excel');
-        $idmes = 1;
-        $idperiodo = 10;
-        $idgrupo = 31;
+        
         $alumnos = $this->calificacion->showAllAlumnosPreescolar($idperiodo, $idgrupo, $idmes);
+        $detalle_grupo = $this->calificacion->detalleGrupo($idgrupo);
+        $idnivelestudio = $detalle_grupo->idnivelestudio;
         $sheet = $this->excel->getActiveSheet();
         PHPExcel_Shared_Font::setAutoSizeMethod(PHPExcel_Shared_Font::AUTOSIZE_METHOD_EXACT);
         $detalle_logo = $this->alumno->logo($this->session->idplantel);
-        $logo = $_SERVER['DOCUMENT_ROOT']  . '/sice/assets/images/escuelas/' . $detalle_logo[0]->logoplantel;
+        $detalle_periodo = $this->calificacion->detallePeriodo($idperiodo);
+       
+        
         $contador_interno = 0;
         foreach ($alumnos as $alumno) {
-        
+            
+            $logosecundario = $_SERVER['DOCUMENT_ROOT']  . '/sice/assets/images/escuelas/' . $detalle_logo[0]->logoplantel;
+            $logoprincipal = $_SERVER['DOCUMENT_ROOT']  . '/sice/assets/images/escuelas/' . $detalle_logo[0]->logosegundo;
+            $banda = $_SERVER['DOCUMENT_ROOT']  . '/sice/assets/images/escuelas/cabezado_preescolar_morelos.png';
+            $objDrawing = new PHPExcel_Worksheet_Drawing();    //create object for Worksheet drawing
+            $objDrawing->setName('Customer Signature');        //set name to image
+            $objDrawing->setDescription('Customer Signature'); //set description to image
+            $objDrawing->setPath($logoprincipal);
+            $objDrawing->setOffsetX(20);                       //setOffsetX works properly
+            $objDrawing->setOffsetY(0);                       //setOffsetY works properly
+            $objDrawing->setCoordinates('A2');       //set image to cell
+            $objDrawing->setWidth(120);                 //set width, height
+            $objDrawing->setHeight(120);
+            
+            $objDrawing2 = new PHPExcel_Worksheet_Drawing();    //create object for Worksheet drawing
+            $objDrawing2->setName('Customer Signature');        //set name to image
+            $objDrawing2->setDescription('Customer Signature'); //set description to image
+            $objDrawing2->setPath($logosecundario);
+            $objDrawing2->setOffsetX(20);                       //setOffsetX works properly
+            $objDrawing2->setOffsetY(0);                       //setOffsetY works properly
+            $objDrawing2->setCoordinates('Z2');       //set image to cell
+            $objDrawing2->setWidth(120);                 //set width, height
+            $objDrawing2->setHeight(120);
+            
+            $objDrawing3 = new PHPExcel_Worksheet_Drawing();    //create object for Worksheet drawing
+            $objDrawing3->setName('Customer Signature');        //set name to image
+            $objDrawing3->setDescription('Customer Signature'); //set description to image
+            $objDrawing3->setPath($banda);
+            $objDrawing3->setOffsetX(0);                       //setOffsetX works properly
+            //$objDrawing3->setOffsetY(0);                       //setOffsetY works properly
+            $objDrawing3->setCoordinates('A8');       //set image to cell
+            $objDrawing3->setWidthAndHeight(1050,80);
+            $objDrawing3->setResizeProportional(true);
+            
+      
+            $materias = $this->calificacion->allMateriasPreescolarReporte($idnivelestudio);
             $this->excel->setActiveSheetIndex(0);
-            $objWorkSheet = $this->excel->createSheet($contador_interno);
-            // $objPHPExcel = $this->excel->addSheet($objWorkSheet);
-
-            //$objWorkSheet->setTitle('Listado de Alumnos');
+            $objWorkSheet = $this->excel->createSheet($contador_interno); 
             // Contador de filas
             $contador = 12;
             // Definimos los títulos de la cabecera.
@@ -478,19 +614,100 @@ class Calificacion extends CI_Controller {
                   'vertical'=>PHPExcel_Style_Alignment::VERTICAL_BOTTOM
               )
             );
+            $style_horizontal = array(
+                'alignment'=> array(
+                    'horizontal'=>PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+                )
+            );
+            //COMBINAR CELDAS
+            $style_titulo = array(
+                'font'  => array(
+                    'bold'  => true,
+                    //'color' => array('rgb' => 'FF0000'),
+                    'size'  => 12,
+                    'name'  => 'Century Gothic'
+                ),
+                'alignment'=> array(
+                    'horizontal'=>PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+                )
+            );  
+            $style_leyenda = array(
+                'font'  => array(
+                    'bold'  => true,
+                    'color' => array('rgb' => '00B050'),
+                    'size'  => 12,
+                    'name'  => 'Century Gothic'
+                ),
+                'alignment'=> array(
+                    'horizontal'=>PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+                )
+            );
             
-         
-            $objDrawing = new PHPExcel_Worksheet_Drawing();    //create object for Worksheet drawing
-            $objDrawing->setName('Customer Signature');        //set name to image
-            $objDrawing->setDescription('Customer Signature'); //set description to image 
-            $objDrawing->setPath($logo);
-            $objDrawing->setOffsetX(25);                       //setOffsetX works properly
-            $objDrawing->setOffsetY(10);                       //setOffsetY works properly
-            $objDrawing->setCoordinates('A3');       //set image to cell
-            $objDrawing->setWidth(140);                 //set width, height
-            $objDrawing->setHeight(140);  
-            $objDrawing->setWorksheet( $this->excel->getActiveSheet());
-            $objWorkSheet->getStyle("A12:AC12")->applyFromArray($style);
+            $style_calificacion = array(
+                'font'  => array(
+                    'bold'  => true,
+                    //'color' => array('rgb' => '00B050'),
+                    'size'  => 10,
+                    'name'  => 'Century Gothic'
+                ),
+                'alignment'=> array(
+                    'horizontal'=>PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+                )
+            );
+            
+            $style_institucion = array(
+                'font'  => array(
+                    'bold'  => true,
+                    'color' => array('rgb' => '002060'),
+                    'size'  => 12,
+                    'name'  => 'Century Gothic'
+                ),
+                'alignment'=> array(
+                    'horizontal'=>PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+                )
+            );
+            $style_asignaturas = array(
+                'font'  => array(
+                    'bold'  => true,
+                    //'color' => array('rgb' => 'FF0000'),
+                    'size'  => 10,
+                    'name'  => 'Century Gothic'
+                ),
+                'alignment'=> array(
+                    'vertical'=>PHPExcel_Style_Alignment::VERTICAL_BOTTOM
+                )
+            );
+            $objWorkSheet->mergeCells("J2:V2");
+            $objWorkSheet->mergeCells("J3:V3");
+            $objWorkSheet->mergeCells("J4:V4");
+            $objWorkSheet->mergeCells("J5:V5");
+            $objWorkSheet->mergeCells("J6:V6");
+            $objWorkSheet->mergeCells("J7:V7");
+            $objWorkSheet->setCellValue("J2", '“VALOR Y CONFIANZA”');
+            $objWorkSheet->setCellValue("J3", 'INSTITUTO MORELOS');
+            $objWorkSheet->setCellValue("J4", 'PREESCOLAR 09PJN0142A');
+            $objWorkSheet->setCellValue("J5", 'ACUERDO 09060267');
+            $objWorkSheet->setCellValue("J6", '135 AÑOS DE CALIDAD EDUCATIVA ACREDITADO POR LA CNEP');
+            $objWorkSheet->setCellValue("J7", 'CICLO ESCOLAR '.$detalle_periodo->yearinicio.' - '.$detalle_periodo->yearfin);
+            $objWorkSheet->getStyle("J2")->applyFromArray($style_titulo);
+            $objWorkSheet->getStyle("J3")->applyFromArray($style_institucion);
+            $objWorkSheet->getStyle("J4")->applyFromArray($style_titulo);
+            $objWorkSheet->getStyle("J5")->applyFromArray($style_titulo);
+            $objWorkSheet->getStyle("J6")->applyFromArray($style_leyenda); 
+            $objWorkSheet->getStyle('J7')->applyFromArray($style_titulo);
+            $objWorkSheet->getStyle('J2')->applyFromArray($style_titulo);
+            
+            
+            $objWorkSheet->mergeCells("A10:B10");
+            $objWorkSheet->setCellValue("A10", 'ALUMNO(A):');
+            $objWorkSheet->mergeCells("C10:V10");
+            $objWorkSheet->setCellValue("C10", $alumno->nombrealumno);
+            $objWorkSheet->getStyle("A10")->getFont()->setBold(true);
+            $objWorkSheet->getStyle("C10")->getFont()->setBold(true);
+            $objWorkSheet->getStyle('C10')->getFont()->setUnderline(true);
+            
+           
+            $objWorkSheet->getStyle("A12:AC12")->applyFromArray($style_asignaturas);
             $objWorkSheet->getStyle("A12:AC12")->getAlignment()->setTextRotation(90);
             $objWorkSheet->getStyle("A12:AC12")->getAlignment()->setWrapText(true);
             $objWorkSheet->getRowDimension("12")->setRowHeight(150);
@@ -522,8 +739,40 @@ class Calificacion extends CI_Controller {
             $objWorkSheet->getColumnDimension("AA")->setWidth(5);
             $objWorkSheet->getColumnDimension("AB")->setWidth(5);
             $objWorkSheet->getColumnDimension("AC")->setWidth(5); 
-             $objWorkSheet->getStyle("A1:AC1")->getFont()->setBold(true); 
-
+            //$objWorkSheet->getStyle("A12:AC12")->getFont()->setBold(true); 
+            
+           
+            
+            if ($idnivelestudio == 1){
+            $objWorkSheet->setCellValue("A{$contador}");
+            $objWorkSheet->setCellValue("B{$contador}", 'Área de Desarrollo  Personal Y Social');
+            $objWorkSheet->setCellValue("C{$contador}", 'Autonomía');
+            $objWorkSheet->setCellValue("D{$contador}", 'Socialización');
+            $objWorkSheet->setCellValue("E{$contador}", 'Filosofía infantil');
+            $objWorkSheet->setCellValue("F{$contador}", 'Cantos y Juegos');
+            $objWorkSheet->setCellValue("G{$contador}", 'Psicomotricidad');
+            $objWorkSheet->setCellValue("H{$contador}", 'Danza');
+            $objWorkSheet->setCellValue("I{$contador}", 'Educación Física');
+            $objWorkSheet->setCellValue("J{$contador}", 'Conducta');
+            $objWorkSheet->setCellValue("K{$contador}", 'Campos de Formación Académica ');
+            $objWorkSheet->setCellValue("L{$contador}", 'Lenguaje Oral');
+            $objWorkSheet->setCellValue("M{$contador}", 'Lenguaje Escrito');
+            $objWorkSheet->setCellValue("N{$contador}", 'Número');
+            $objWorkSheet->setCellValue("O{$contador}", 'Ubicación Espacial');
+            $objWorkSheet->setCellValue("P{$contador}", 'Forma y Medida');
+            $objWorkSheet->setCellValue("Q{$contador}", 'Inglés');
+            $objWorkSheet->setCellValue("R{$contador}", 'Mundo Natural');
+            $objWorkSheet->setCellValue("S{$contador}", 'Cultura y Vida Social');
+            $objWorkSheet->setCellValue("T{$contador}", 'Ambitos de autonomía Curricular');
+            $objWorkSheet->setCellValue("U{$contador}", 'Computación'); 
+            $objWorkSheet->setCellValue("V{$contador}", 'Apoyo en el aprendizaje');
+            $objWorkSheet->setCellValue("W{$contador}", 'Puntualidad');
+            $objWorkSheet->setCellValue("X{$contador}", 'Uniforme');
+            $objWorkSheet->setCellValue("Y{$contador}", 'Participación');
+            $objWorkSheet->setCellValue("Z{$contador}", 'Tareas');
+            $objWorkSheet->setCellValue("AA{$contador}", 'Faltas');
+            $objWorkSheet->setCellValue("AB{$contador}", 'Promedio Mensual');
+        }else{
             $objWorkSheet->setCellValue("A{$contador}");
             $objWorkSheet->setCellValue("B{$contador}", 'Área de Desarrollo  Personal Y Social');
             $objWorkSheet->setCellValue("C{$contador}", 'Autonomía');
@@ -553,116 +802,195 @@ class Calificacion extends CI_Controller {
             $objWorkSheet->setCellValue("AA{$contador}", 'Tareas');
             $objWorkSheet->setCellValue("AB{$contador}", 'Faltas');
             $objWorkSheet->setCellValue("AC{$contador}", 'Promedio Mensual');
+        }
             $idalumno = $alumno->idalumno;
            
-            $materias = $this->calificacion->allMateriasPreescolar();
+           
             $meses = $this->calificacion->allMeses();
             if ($meses) {
                 foreach ($meses as $opcion) {
                     $idmes = $opcion->idmes;
+                    $contador ++;
                         $objWorkSheet->getStyle("A{$contador}")->getFont()->setBold(true); 
                     // Incrementamos una fila más, para ir a la siguiente.
-                    $contador ++;
+                   
                     $objWorkSheet->setCellValue("A{$contador}", $opcion->nombremes);
                     foreach ($materias as $materia){
                         $idmateria = $materia->idmateriapreescolar;
+                        if ($idmateria == 26) {
+                            $result = $this->calificacion->obtenerFaltasPreescolar($idperiodo,$idgrupo,$idalumno,$idmes);
+                            if($result){
+                                $objWorkSheet->setCellValue("AA{$contador}", $result->faltas);
+                            } 
+                        }
+                        
                         $row = $this->calificacion->obtenerCalificacionPreescolar($idperiodo, $idgrupo, $idalumno,$idmes,$idmateria);
                         // Informacion de las filas de la consulta.
                         if ($row){
                         if ($row->idmateriapreescolar == 1) {
                             $objWorkSheet->setCellValue("B{$contador}", $row->abreviatura);
+                            $objWorkSheet->getStyle("B{$contador}")->applyFromArray($style_calificacion);
+                            
                         }
                         if ($row->idmateriapreescolar == 2) {
                             $objWorkSheet->setCellValue("C{$contador}", $row->abreviatura);
+                            $objWorkSheet->getStyle("C{$contador}")->applyFromArray($style_calificacion);
                         }
                         if ($row->idmateriapreescolar == 3) {
                             $objWorkSheet->setCellValue("D{$contador}", $row->abreviatura);
+                            $objWorkSheet->getStyle("D{$contador}")->applyFromArray($style_calificacion);
                         }
                         if ($row->idmateriapreescolar == 4) {
                             $objWorkSheet->setCellValue("E{$contador}", $row->abreviatura);
+                            $objWorkSheet->getStyle("E{$contador}")->applyFromArray($style_calificacion);
                         }
                         if ($row->idmateriapreescolar == 5) {
                             $objWorkSheet->setCellValue("F{$contador}", $row->abreviatura);
+                            $objWorkSheet->getStyle("F{$contador}")->applyFromArray($style_calificacion);
                         }
                         if ($row->idmateriapreescolar == 6) {
                             $objWorkSheet->setCellValue("G{$contador}", $row->abreviatura);
+                            $objWorkSheet->getStyle("G{$contador}")->applyFromArray($style_calificacion);
                         }
                         if ($row->idmateriapreescolar == 7) {
                             $objWorkSheet->setCellValue("H{$contador}", $row->abreviatura);
+                            $objWorkSheet->getStyle("H{$contador}")->applyFromArray($style_calificacion);
                         }
                         if ($row->idmateriapreescolar == 8) {
                             $objWorkSheet->setCellValue("I{$contador}", $row->abreviatura);
+                            $objWorkSheet->getStyle("I{$contador}")->applyFromArray($style_calificacion);
                         }
                         if ($row->idmateriapreescolar == 9) {
                             $objWorkSheet->setCellValue("J{$contador}", $row->abreviatura);
+                            $objWorkSheet->getStyle("J{$contador}")->applyFromArray($style_calificacion);
                         }
                         if ($row->idmateriapreescolar == 10) {
                             $objWorkSheet->setCellValue("K{$contador}", $row->abreviatura);
+                            $objWorkSheet->getStyle("K{$contador}")->applyFromArray($style_calificacion);
                         }
                         if ($row->idmateriapreescolar == 11) {
                             $objWorkSheet->setCellValue("L{$contador}", $row->abreviatura);
+                            $objWorkSheet->getStyle("L{$contador}")->applyFromArray($style_calificacion);
                         }
                         if ($row->idmateriapreescolar == 12) {
                             $objWorkSheet->setCellValue("M{$contador}", $row->abreviatura);
+                            $objWorkSheet->getStyle("M{$contador}")->applyFromArray($style_calificacion);
                         }
                         if ($row->idmateriapreescolar == 13) {
                             $objWorkSheet->setCellValue("N{$contador}", $row->abreviatura);
+                            $objWorkSheet->getStyle("N{$contador}")->applyFromArray($style_calificacion);
                         }
                         if ($row->idmateriapreescolar == 14) {
                             $objWorkSheet->setCellValue("O{$contador}", $row->abreviatura);
+                            $objWorkSheet->getStyle("O{$contador}")->applyFromArray($style_calificacion);
                         }
                         if ($row->idmateriapreescolar == 15) {
                             $objWorkSheet->setCellValue("P{$contador}", $row->abreviatura);
+                            $objWorkSheet->getStyle("P{$contador}")->applyFromArray($style_calificacion);
                         }
                         if ($row->idmateriapreescolar == 16) {
                             $objWorkSheet->setCellValue("Q{$contador}", $row->abreviatura);
+                            $objWorkSheet->getStyle("Q{$contador}")->applyFromArray($style_calificacion);
                         }
                         if ($row->idmateriapreescolar == 17) {
                             $objWorkSheet->setCellValue("R{$contador}", $row->abreviatura);
+                            $objWorkSheet->getStyle("R{$contador}")->applyFromArray($style_calificacion);
                         }
                         if ($row->idmateriapreescolar == 18) {
                             $objWorkSheet->setCellValue("S{$contador}", $row->abreviatura);
+                            $objWorkSheet->getStyle("S{$contador}")->applyFromArray($style_calificacion);
                         }
                         if ($row->idmateriapreescolar == 19) {
                             $objWorkSheet->setCellValue("T{$contador}", $row->abreviatura);
+                            $objWorkSheet->getStyle("T{$contador}")->applyFromArray($style_calificacion);
                         }
                         if ($row->idmateriapreescolar == 20) {
                             $objWorkSheet->setCellValue("U{$contador}", $row->abreviatura);
+                            $objWorkSheet->getStyle("U{$contador}")->applyFromArray($style_calificacion);
                         }
-                        if ($row->idmateriapreescolar == 27) {
-                            $objWorkSheet->setCellValue("V{$contador}", $row->abreviatura);
+                        
+                        if ($idnivelestudio == 1){ 
+                            if ($row->idmateriapreescolar == 21) {
+                                $objWorkSheet->setCellValue("V{$contador}", $row->abreviatura);
+                                $objWorkSheet->getStyle("V{$contador}")->applyFromArray($style_calificacion);
+                            }
+                            if ($row->idmateriapreescolar == 22) {
+                                $objWorkSheet->setCellValue("W{$contador}", $row->abreviatura);
+                                $objWorkSheet->getStyle("W{$contador}")->applyFromArray($style_calificacion);
+                            }
+                            if ($row->idmateriapreescolar == 23) {
+                                $objWorkSheet->setCellValue("X{$contador}", $row->abreviatura);
+                                $objWorkSheet->getStyle("X{$contador}")->applyFromArray($style_calificacion);
+                            }
+                            if ($row->idmateriapreescolar == 24) {
+                                $objWorkSheet->setCellValue("Y{$contador}", $row->abreviatura);
+                                $objWorkSheet->getStyle("Y{$contador}")->applyFromArray($style_calificacion);
+                            }
+                            if ($row->idmateriapreescolar == 25) {
+                                $objWorkSheet->setCellValue("Z{$contador}", $row->abreviatura);
+                                $objWorkSheet->getStyle("Z{$contador}")->applyFromArray($style_calificacion);
+                            }
+                         
+                            if ($row->idmateriapreescolar == 28) {
+                                $objWorkSheet->setCellValue("AB{$contador}", $row->abreviatura);
+                                $objWorkSheet->getStyle("AB{$contador}")->applyFromArray($style_calificacion);
+                            }
+                        }else {
+                            if ($row->idmateriapreescolar == 27) {
+                                $objWorkSheet->setCellValue("V{$contador}", $row->abreviatura);
+                                $objWorkSheet->getStyle("V{$contador}")->applyFromArray($style_calificacion);
+                            }
+                            if ($row->idmateriapreescolar == 21) {
+                                $objWorkSheet->setCellValue("W{$contador}", $row->abreviatura);
+                                $objWorkSheet->getStyle("W{$contador}")->applyFromArray($style_calificacion);
+                            }
+                            if ($row->idmateriapreescolar == 22) {
+                                $objWorkSheet->setCellValue("X{$contador}", $row->abreviatura);
+                                $objWorkSheet->getStyle("X{$contador}")->applyFromArray($style_calificacion);
+                            }
+                            if ($row->idmateriapreescolar == 23) {
+                                $objWorkSheet->setCellValue("Y{$contador}", $row->abreviatura);
+                                $objWorkSheet->getStyle("V{$contador}")->applyFromArray($style_calificacion);
+                            }
+                            if ($row->idmateriapreescolar == 24) {
+                                $objWorkSheet->setCellValue("Z{$contador}", $row->abreviatura);
+                                $objWorkSheet->getStyle("Z{$contador}")->applyFromArray($style_calificacion);
+                            }
+                            if ($row->idmateriapreescolar == 25) {
+                                $objWorkSheet->setCellValue("AA{$contador}", $row->abreviatura);
+                                $objWorkSheet->getStyle("AA{$contador}")->applyFromArray($style_calificacion);
+                            }
+                            if ($row->idmateriapreescolar == 26) {
+                                $result = $this->calificacion->obtenerFaltasPreescolar($idperiodo,$idgrupo,$idalumno,$idmes);
+                                if($result){
+                                    $objWorkSheet->setCellValue("AB{$contador}", $result->faltas);
+                                    $objWorkSheet->getStyle("AB{$contador}")->applyFromArray($style_calificacion);
+                                }else{
+                                    $objWorkSheet->setCellValue("AB{$contador}", '0');
+                                    $objWorkSheet->getStyle("AB{$contador}")->applyFromArray($style_calificacion);
+                                }
+                            }
+                            if ($row->idmateriapreescolar == 28) {
+                                $objWorkSheet->setCellValue("AC{$contador}", $row->abreviatura);
+                                $objWorkSheet->getStyle("AC{$contador}")->applyFromArray($style_calificacion);
+                            }
                         }
-                        if ($row->idmateriapreescolar == 21) {
-                            $objWorkSheet->setCellValue("W{$contador}", $row->abreviatura);
-                        }
-                        if ($row->idmateriapreescolar == 22) {
-                            $objWorkSheet->setCellValue("X{$contador}", $row->abreviatura);
-                        }
-                        if ($row->idmateriapreescolar == 23) {
-                            $objWorkSheet->setCellValue("Y{$contador}", $row->abreviatura);
-                        }
-                        if ($row->idmateriapreescolar == 24) {
-                            $objWorkSheet->setCellValue("Z{$contador}", $row->abreviatura);
-                        }
-                        if ($row->idmateriapreescolar == 25) {
-                            $objWorkSheet->setCellValue("AA{$contador}", $row->abreviatura);
-                        }
-                        if ($row->idmateriapreescolar == 26) {
-                            $objWorkSheet->setCellValue("AB{$contador}", $row->abreviatura);
-                        }
-                        if ($row->idmateriapreescolar == 28) {
-                            $objWorkSheet->setCellValue("AC{$contador}", $row->abreviatura);
-                        }
+                        
+                       
                      }
                     }
                    
                 }
             }
-           
-            $objWorkSheet->setTitle( $alumno->nombrealumno);
+            
+            $objDrawing->setWorksheet( $this->excel->getActiveSheet());
+            $objDrawing2->setWorksheet( $this->excel->getActiveSheet());
+            $objDrawing3->setWorksheet( $this->excel->getActiveSheet());
+            
+            $objWorkSheet->setTitle($alumno->nombre );
         }
 
-         $archivo = "Lista de Alumnos {$idperiodo}.xls";
+         $archivo = "Reporte de Calificaciones Preescolar {$idperiodo}.xls";
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="' . $archivo . '"');
         header('Cache-Control: max-age=0');

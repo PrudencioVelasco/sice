@@ -53,11 +53,13 @@ class pGrupo extends CI_Controller
 
         $result = $this->grupo->showAllGruposProfesor($this->session->idprofesor);
         $unidades = $this->grupo->unidades();
+        $oportunidades=$this->grupo->showAllOportunidades($this->session->idplantel);
 
         $data = array(
             'datos' => $result,
             'grupos' => $result,
             'unidades' => $unidades,
+            'oportunidades'=>$oportunidades,
             'controller' => $this
         );
         $this->load->view('docente/header');
@@ -2684,37 +2686,8 @@ class pGrupo extends CI_Controller
         $idhorario = $detalle->idhorario;
         $idprofesormateria = $detalle->idprofesormateria;
         $tiporeporte = $this->input->post('tiporeporte');
-        $cabezera = array(
-            'A',
-            'B',
-            'C',
-            'D',
-            'E',
-            'F',
-            'G',
-            'H',
-            'I',
-            'J',
-            'K',
-            'L',
-            'M',
-            'N',
-            'O',
-            'P',
-            'Q',
-            'R',
-            'S',
-            'T',
-            'U',
-            'V',
-            'W',
-            'X',
-            'Y',
-            'Y'
-        );
-        foreach ($cabezera as $row) {}
 
-        if ($tiporeporte == 1) {
+        if ($tiporeporte == 28) {
             $alumnos = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria);
 
             $this->load->library('excel');
@@ -2780,7 +2753,7 @@ class pGrupo extends CI_Controller
             // Hacemos una salida al navegador con el archivo Excel.
             $objWriter->save('php://output');
         }
-        if ((isset($this->session->idniveleducativo) && ! empty($this->session->idniveleducativo)) && ($tiporeporte == 2 && $this->session->idniveleducativo == 5)) {
+       else if ((isset($this->session->idniveleducativo) && ! empty($this->session->idniveleducativo)) && ($tiporeporte == 29 && $this->session->idniveleducativo == 5)) {
             $detalle_logo = $this->alumno->logo($this->session->idplantel);
             $detalle_horario_p = $this->horario->detalleHorario($idhorario);
             $logo = base_url() . '/assets/images/escuelas/' . $detalle_logo[0]->logoplantel;
@@ -3174,7 +3147,7 @@ class pGrupo extends CI_Controller
 
             $pdf->Output('Calificaciones.pdf', 'D');
         }
-        if ((isset($this->session->idniveleducativo) && ! empty($this->session->idniveleducativo)) && ($tiporeporte == 2 && $this->session->idniveleducativo == 3)) {
+       else if ((isset($this->session->idniveleducativo) && ! empty($this->session->idniveleducativo)) && ($tiporeporte == 29 && $this->session->idniveleducativo == 3)) {
             $detalle_logo = $this->alumno->logo($this->session->idplantel);
             $detalle_horario_p = $this->horario->detalleHorario($idhorario);
             $logo = base_url() . '/assets/images/escuelas/' . $detalle_logo[0]->logoplantel;
@@ -3564,7 +3537,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
 
             $pdf->Output('Calificaciones.pdf', 'D');
         }
-        if ((isset($this->session->idniveleducativo) && ! empty($this->session->idniveleducativo)) && ($tiporeporte == 2 && ($this->session->idniveleducativo == 1 || $this->session->idniveleducativo == 2))) {
+       else if ((isset($this->session->idniveleducativo) && ! empty($this->session->idniveleducativo)) && ($tiporeporte == 29 && ($this->session->idniveleducativo == 1 || $this->session->idniveleducativo == 2))) {
             $detalle_logo = $this->alumno->logo($this->session->idplantel);
             $detalle_horario_p = $this->horario->detalleHorario($idhorario);
             $logo = base_url() . '/assets/images/escuelas/' . $detalle_logo[0]->logoplantel;
@@ -3656,6 +3629,16 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     .imgtitle{
                       width:70px;
                     }
+                .txtnombre{
+                       font-size:9px;
+                       font-weight:bold;
+                       text:center;
+                }
+                .txtdocente{
+                       font-size:9px;
+                       font-weight:bold;
+                       text:center;
+                }
                </style>';
             $tabla .= '<table  border="0" >';
             if ((isset($this->session->idniveleducativo) && ! empty($this->session->idniveleducativo)) && ($this->session->idniveleducativo == 1 || $this->session->idniveleducativo == 2)) {
@@ -3668,12 +3651,12 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 $tabla .= '<label class="telefono">136 años educando a la niñez y juventud </label>
              </td>
              
-             <td width="150" align="center"  ><br/><br/><img  class="imgtitle" src="' . $logo . '" /></td>';
+             <td width="150" align="center"  ><img  class="imgtitle" src="' . $logo . '" /></td>';
                 $tabla .= '</tr>';
-                $tabla .= ' <tr><td colspan="4" align="center" ><strong>CONCENTRADO DE CALIFICACIONES</strong></td></tr>';
-                $tabla .= ' <tr><td colspan="4" align="center" ><strong>CICLO ESCOLAR ' . $detalle_horario_p->yearinicio . '-' . $detalle_horario_p->yearfin . '</strong></td></tr>';
-                $tabla .= ' <tr><td colspan="4" align="left" ><strong>ASIGNATURA: ' . $detalle_horario->nombreclase . '</strong></td></tr>';
-                $tabla .= ' <tr><td colspan="2" align="left" ><strong>DOCENTE: ' . $detalle_horario->nombre . ' ' . $detalle_horario->apellidop . ' ' . $detalle_horario->apellidom . '</strong></td>' . '<td colspan="2" align="right" ><strong>AÑO: ' . $detalle_horario->numeroordinaria . '</strong></td></tr>';
+                $tabla .= ' <tr><td colspan="4" align="center" class="txtdocente" ><strong>CONCENTRADO DE CALIFICACIONES</strong></td></tr>';
+                $tabla .= ' <tr><td colspan="4" align="center"  class="txtdocente" ><strong>CICLO ESCOLAR ' . $detalle_horario_p->yearinicio . '-' . $detalle_horario_p->yearfin . '</strong></td></tr>';
+                $tabla .= ' <tr><td colspan="4" align="left"  class="txtdocente" ><strong>ASIGNATURA: ' . $detalle_horario->nombreclase . '</strong></td></tr>';
+                $tabla .= ' <tr><td colspan="2" align="left"  class="txtdocente" ><strong>DOCENTE: ' . $detalle_horario->nombre . ' ' . $detalle_horario->apellidop . ' ' . $detalle_horario->apellidom . '</strong></td>' . '<td colspan="2" align="right" class="txtdocente" ><strong>AÑO: ' . $detalle_horario->numeroordinaria . '</strong></td></tr>';
             }
             $tabla .= '</table><br><br>';
 
@@ -3725,17 +3708,17 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     $total_asistencia = 0;
                     $total_faltas = 0;
                     $tabla .= '<tr  class="tblborder">';
-                    $tabla .= '  <td  align="center">' . $c ++ . '</td>';
+                    $tabla .= '  <td  align="center" class="txtnombre">' . $c ++ . '</td>';
                     if ($row->opcion == 0) {
-                        $tabla .= '<td  align="left"><label style="color:red;">R:</label> ' . $row->apellidop . " " . $row->apellidom . " " . $row->nombre . '</td>';
+                        $tabla .= '<td  align="left"  class="txtnombre"><label style="color:red;">R:</label> ' . $row->apellidop . " " . $row->apellidom . " " . $row->nombre . '</td>';
                     } else {
-                        $tabla .= '<td  align="left">' . $row->apellidop . " " . $row->apellidom . " " . $row->nombre . '</td>';
+                        $tabla .= '<td  align="left" class="txtnombre">' . $row->apellidop . " " . $row->apellidom . " " . $row->nombre . '</td>';
                     }
                     if (isset($idprimera_unidad) && ! empty($idprimera_unidad)) {
                         $row1 = $this->grupo->detalleUnidad($idprimera_unidad);
                         $val = $this->grupo->obtenerCalificacion($row->idalumno, $row1->idunidad, $idhorariodetalle);
                         $row_asistencia = $this->grupo->totalAsistencias($idprimera_unidad, $idhorariodetalle, $row->idalumno);
-                        $tabla .= '<td  align="center">';
+                        $tabla .= '<td  align="center" class="txtnombre">';
                         if ($val != false) {
                             $suma_calificacion = $suma_calificacion + $val->calificacion;
                             $tabla .= '<label>' . $val->calificacion . '  </label>';
@@ -3746,16 +3729,16 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                         if ($row_asistencia) {
                             $total_asistencia = $total_asistencia + $row_asistencia[0]->totalregistrado;
                             $total_faltas = $total_faltas + $row_asistencia[0]->totalfalta;
-                            $tabla .= '<td  align="center">' . $row_asistencia[0]->totalfalta . '</td>';
+                            $tabla .= '<td class="txtnombre" align="center">' . $row_asistencia[0]->totalfalta . '</td>';
                         } else {
-                            $tabla .= '<td  align="center">0</td>';
+                            $tabla .= '<td class="txtnombre" align="center">0</td>';
                         }
                     }
                     if (isset($idsegunda_unidad) && ! empty($idsegunda_unidad)) {
                         $row2 = $this->grupo->detalleUnidad($idsegunda_unidad);
                         $val = $this->grupo->obtenerCalificacion($row->idalumno, $row2->idunidad, $idhorariodetalle);
                         $row_asistencia = $this->grupo->totalAsistencias($idsegunda_unidad, $idhorariodetalle, $row->idalumno);
-                        $tabla .= '<td  align="center">';
+                        $tabla .= '<td  align="center" class="txtnombre">';
                         if ($val != false) {
                             $suma_calificacion = $suma_calificacion + $val->calificacion;
                             $tabla .= '<label>' . $val->calificacion . '  </label>';
@@ -3766,16 +3749,16 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                         if ($row_asistencia) {
                             $total_asistencia = $total_asistencia + $row_asistencia[0]->totalregistrado;
                             $total_faltas = $total_faltas + $row_asistencia[0]->totalfalta;
-                            $tabla .= '<td  align="center">' . $row_asistencia[0]->totalfalta . '</td>';
+                            $tabla .= '<td class="txtnombre" align="center">' . $row_asistencia[0]->totalfalta . '</td>';
                         } else {
-                            $tabla .= '<td  align="center">0</td>';
+                            $tabla .= '<td class="txtnombre" align="center">0</td>';
                         }
                     }
                     if (isset($idtercera_unidad) && ! empty($idtercera_unidad)) {
                         $row3 = $this->grupo->detalleUnidad($idtercera_unidad);
                         $val = $this->grupo->obtenerCalificacion($row->idalumno, $row3->idunidad, $idhorariodetalle);
                         $row_asistencia = $this->grupo->totalAsistencias($idtercera_unidad, $idhorariodetalle, $row->idalumno);
-                        $tabla .= '<td  align="center">';
+                        $tabla .= '<td class="txtnombre" align="center">';
                         if ($val != false) {
                             $suma_calificacion = $suma_calificacion + $val->calificacion;
                             $tabla .= '<label>' . $val->calificacion . '  </label>';
@@ -3786,16 +3769,16 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                         if ($row_asistencia) {
                             $total_asistencia = $total_asistencia + $row_asistencia[0]->totalregistrado;
                             $total_faltas = $total_faltas + $row_asistencia[0]->totalfalta;
-                            $tabla .= '<td  align="center">' . $row_asistencia[0]->totalfalta . '</td>';
+                            $tabla .= '<td class="txtnombre" align="center">' . $row_asistencia[0]->totalfalta . '</td>';
                         } else {
-                            $tabla .= '<td  align="center">0</td>';
+                            $tabla .= '<td class="txtnombre" align="center">0</td>';
                         }
                     }
                     if (isset($idcuarto_unidad) && ! empty($idcuarto_unidad)) {
                         $row4 = $this->grupo->detalleUnidad($idcuarto_unidad);
                         $val = $this->grupo->obtenerCalificacion($row->idalumno, $row4->idunidad, $idhorariodetalle);
                         $row_asistencia = $this->grupo->totalAsistencias($idcuarto_unidad, $idhorariodetalle, $row->idalumno);
-                        $tabla .= '<td  align="center">';
+                        $tabla .= '<td  class="txtnombre" align="center">';
                         if ($val != false) {
                             $suma_calificacion = $suma_calificacion + $val->calificacion;
                             $tabla .= '<label>' . $val->calificacion . '  </label>';
@@ -3806,16 +3789,16 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                         if ($row_asistencia) {
                             $total_asistencia = $total_asistencia + $row_asistencia[0]->totalregistrado;
                             $total_faltas = $total_faltas + $row_asistencia[0]->totalfalta;
-                            $tabla .= '<td  align="center">' . $row_asistencia[0]->totalfalta . '</td>';
+                            $tabla .= '<td class="txtnombre" align="center">' . $row_asistencia[0]->totalfalta . '</td>';
                         } else {
-                            $tabla .= '<td  align="center">0</td>';
+                            $tabla .= '<td class="txtnombre" align="center">0</td>';
                         }
                     }
                     if (isset($idquinte_unidad) && ! empty($idquinte_unidad)) {
                         $row5 = $this->grupo->detalleUnidad($idquinte_unidad);
                         $val = $this->grupo->obtenerCalificacion($row->idalumno, $row5->idunidad, $idhorariodetalle);
                         $row_asistencia = $this->grupo->totalAsistencias($idquinte_unidad, $idhorariodetalle, $row->idalumno);
-                        $tabla .= '<td  align="center">';
+                        $tabla .= '<td class="txtnombre" align="center">';
                         if ($val != false) {
                             $suma_calificacion = $suma_calificacion + $val->calificacion;
                             $tabla .= '<label>' . $val->calificacion . '  </label>';
@@ -3826,16 +3809,16 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                         if ($row_asistencia) {
                             $total_asistencia = $total_asistencia + $row_asistencia[0]->totalregistrado;
                             $total_faltas = $total_faltas + $row_asistencia[0]->totalfalta;
-                            $tabla .= '<td  align="center">' . $row_asistencia[0]->totalfalta . '</td>';
+                            $tabla .= '<td class="txtnombre" align="center">' . $row_asistencia[0]->totalfalta . '</td>';
                         } else {
-                            $tabla .= '<td  align="center">0</td>';
+                            $tabla .= '<td class="txtnombre" align="center">0</td>';
                         }
                     }
                     if (isset($idsexto_unidad) && ! empty($idsexto_unidad)) {
                         $row6 = $this->grupo->detalleUnidad($idsexto_unidad);
                         $val = $this->grupo->obtenerCalificacion($row->idalumno, $row6->idunidad, $idhorariodetalle);
                         $row_asistencia = $this->grupo->totalAsistencias($idsexto_unidad, $idhorariodetalle, $row->idalumno);
-                        $tabla .= '<td  align="center">';
+                        $tabla .= '<td class="txtnombre" align="center">';
                         if ($val != false) {
                             $suma_calificacion = $suma_calificacion + $val->calificacion;
                             $tabla .= '<label>' . $val->calificacion . '  </label>';
@@ -3846,19 +3829,19 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                         if ($row_asistencia) {
                             $total_asistencia = $total_asistencia + $row_asistencia[0]->totalregistrado;
                             $total_faltas = $total_faltas + $row_asistencia[0]->totalfalta;
-                            $tabla .= '<td  align="center">' . $row_asistencia[0]->totalfalta . '</td>';
+                            $tabla .= '<td class="txtnombre" align="center">' . $row_asistencia[0]->totalfalta . '</td>';
                         } else {
-                            $tabla .= '<td  align="center">0</td>';
+                            $tabla .= '<td class="txtnombre" align="center">0</td>';
                         }
                     }
-                    $tabla .= '<td  align="center">';
+                    $tabla .= '<td class="txtnombre" align="center">';
                     if ($suma_calificacion > 0 && $unidades_materia > 0) {
                         $tabla .= '<label>' . number_format(($suma_calificacion / $unidades_materia), 2) . '</label>';
                     } else {
                         $tabla .= '<small>SIN REGISTRAR</small>';
                     }
                     $tabla .= '</td>';
-                    $tabla .= '<td  align="center">';
+                    $tabla .= '<td class="txtnombre" align="center">';
                     if ($total_faltas > 0 && $total_asistencia > 0) {
                         $tabla .= '<label>' . obtenerPorcentaje($total_faltas, $total_asistencia) . '%</label>';
                     } else {
@@ -3868,7 +3851,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     $tabla .= '</tr>';
                 }
                 $tabla .= '<tr>';
-                $tabla .= '<td colspan="2"  align="center"></td>';
+                $tabla .= '<td colspan="2"class="txtnombre"  align="center"></td>';
                 if (isset($idprimera_unidad) && ! empty($idprimera_unidad)) {
                     $tabla .= '<td></td>';
                     $tabla .= '<td></td>';
@@ -3949,26 +3932,33 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 $tabla .= '<tr><td colspan="' . $total_colspan . '" style="border-bottom:solid 1px black;"></td></tr>';
                 $tabla .= '<tr><td colspan="' . $total_colspan . '" style="border-bottom:solid 1px black;"></td></tr>';
             }
-            $tabla .= '</table>';
-            // echo $tabla;
+            $tabla .= '</table>'; 
             $pdf->writeHTML($tabla, true, false, false, false, '');
 
             ob_end_clean();
 
             $pdf->Output('Calificaciones.pdf', 'D');
         }
-        if ($tiporeporte == 3) {
+        else if ($tiporeporte == 30 ) {
+            $idhorariodetalle_encriptado = $this->encode($idhorariodetalle); 
+            redirect('Pgrupo/calificaciones/' . $idhorariodetalle_encriptado.'/'.$tiporeporte);
+        }else{
             $idhorariodetalle_encriptado = $this->encode($idhorariodetalle);
-            redirect('Pgrupo/calificaciones/' . $idhorariodetalle_encriptado);
+            redirect('Pgrupo/calificaciones/' . $idhorariodetalle_encriptado.'/'.$tiporeporte);
         }
     }
 
-    public function calificaciones($idhorariodetalle)
+    public function calificaciones($idhorariodetalle,$tiporeporte)
     {
         $idhorariodetalle = $this->decode($idhorariodetalle);
-        if (isset($idhorariodetalle) && ! empty($idhorariodetalle)) {
-
-            $tabla = $this->reporteCalificacionAlumnos($idhorariodetalle);
+        if ((isset($idhorariodetalle) && ! empty($idhorariodetalle))) {
+           $tabla = "";
+           if($tiporeporte == 30){
+               $tabla = $this->reporteCalificacionAlumnos($idhorariodetalle);
+           }else{
+               $tabla = $this->reporteCalificacionPorOportunidad($idhorariodetalle,$tiporeporte);
+           }
+           
             $data = array(
                 'tabla' => $tabla
             );
@@ -3977,7 +3967,29 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
             $this->load->view('docente/footer');
         }
     }
-
+    public function reporteCalificacionPorOportunidad($idhorariodetalle,$idportunidad){
+        $tabla = "";
+        $calificaciones = $this->grupo->showAllCalificacionOportunidad($idhorariodetalle,$idportunidad);
+        $tabla .= '<table id="tablageneral2" class="table table-striped  dt-responsive nowrap" cellspacing="0" width="100%">
+            <thead class="bg-teal">
+                <th>#</th>
+                 <th>NOMBRE</th>'; 
+        $tabla .= '<th>CALIFICACION</th>';
+        $tabla .= '</thead>';
+        $c = 1;
+      
+        if (isset($calificaciones) && ! empty($calificaciones)) {
+            foreach ($calificaciones as $row) {
+                $tabla .= '<tr>';
+                    $tabla .= '<td>' . $c ++ . '</td>';
+                    $tabla .= '<td>' . $row->apellidop . " " . $row->apellidom . " " . $row->nombre . '</td>'; 
+                    $tabla .= '<td> </td>';
+                $tabla .= '</tr>';
+            }
+        }
+        $tabla .= '</table>';
+        return $tabla;
+    }
     public function reporteCalificacionAlumnos($idhorariodetalle)
     {
         if ((isset($this->session->idnivelestudio) && ! empty($this->session->idnivelestudio)) && ($this->session->idnivelestudio == 5)) {
@@ -4023,28 +4035,13 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     $suma_calificacion = 0;
                     $total_unidades = 0;
                     if (isset($unidades) && ! empty($unidades)) {
-                        foreach ($unidades as $block) :
-                            // $suma_calificacion = 0;
+                        foreach ($unidades as $block) : 
                             $total_unidades += 1;
                             $val = $this->grupo->obtenerCalificacion($row->idalumno, $block->idunidad, $idhorariodetalle);
                             $tabla .= '<td>';
                             if ($val != false) {
                                 $suma_calificacion = $suma_calificacion + $val->calificacion;
                                 $tabla .= '<label>' . $val->calificacion . '  </label>';
-                                $fecha_inicio = date('Y-m-d');
-                                $fecha_fin = date('Y-m-d', strtotime($val->fecharegistro));
-                                $total_dias = dias_pasados($fecha_inicio, $fecha_fin);
-                                if ($total_dias <= 3) {
-                                    $tabla .= '  <a  href="javascript:void(0)"><i class="fa fa-pencil edit_button"  data-toggle="modal" data-target="#myModal"
-				                                data-idcalificacion="' . $val->idcalificacion . '"
-				                                data-calificacion="' . $val->calificacion . '"
-				                                data-alumno="' . $row->apellidop . " " . $row->apellidom . " " . $row->nombre . '"
-			                                   style = "color:blue;" title="Editar Calificación"></i> </a>';
-                                    $tabla .= '  <a  href="javascript:void(0)"><i class="fa fa-trash delete_button"  data-toggle="modal" data-target="#myModalDelete"
-				                                data-idcalificacion="' . $val->idcalificacion . '"
-				                                data-alumno="' . $row->apellidop . " " . $row->apellidom . " " . $row->nombre . '"
-				                               style = "color:red;" title="Eliminar Calificación"></i> </a>';
-                                }
                             } else {
                                 $tabla .= '<label>No registrado</label>';
                             }

@@ -14,7 +14,7 @@
                 <div class="x_panel">
                     <div class="x_title">
                         <div class="col-md-6 col-sm-12 col-xs-12 ">
-                            <h2><strong> <i class="fa fa-check-circle"></i> CALIFICACIONES</strong></h2>
+                            <h2><strong> <i class="fa fa-check-circle" style="color: #80e166;"></i> CALIFICACIONES</strong></h2>
                         </div> 
                         <div class="clearfix"></div>
                     </div>
@@ -59,10 +59,14 @@
                                            </div>
                                     </div>  
                                 </div>
-                              <div class="row">
-                               <!-- <multiselect v-model="value"  @select="onSelect" :options="materias" :multiple="true" :close-on-select="false" :clear-on-select="false" :preserve-search="true" placeholder="Pick some" label="nombremateria" track-by="nombremateria" :preselect-first="true">
-    <template slot="selection" slot-scope="{ values, search, isOpen }"><span class="multiselect__single" v-if="values.length &amp;&amp; !isOpen">{{ values.length }} options selected</span></template>
-                                    {{ value  }} -->
+                                <div v-if="alumnos.length > 0 ">
+                                	  <div class="row" align="left"> 
+                                    	<div class="col-md-12 col-sm-12 col-xs-12 "> 
+                                    		<a href="#" v-bind:href="'generarExcel/'+ idperiodo +'/'+idgrupo+'/'+idmes" class="btn btn-default"><i style="color:#73cf5a;" class="fa fa-file-excel-o" aria-hidden="true"></i> Generar Excel</a>
+                                    	</div>
+                                    </div>
+                                </div>
+                              <div class="row"> 
                                     <div class="col-md-12 col-sm-12 col-xs-12 ">
                                     	  <table class="table table-hover table-striped">
                                     <thead class="bg-teal">  
@@ -82,11 +86,36 @@
                                             <span v-if="alumno.registrado && alumno.registrado == 0" class="label label-info" >NO REGISTRADO</span>
                                              <span v-if="alumno.registrado && alumno.registrado > 0" class="label label-success" >REGISTRADO</span>
                                             </td>
-                                            <td align="right"> 
-												 	  <button v-if="alumno.registrado && alumno.registrado == 0 && alumno.activo == 1" type="button" class="btn btn-primary btn-sm" @click="abrirAddModal();seleccionarAlumno(alumno.idalumno)">Agregar</button>
-												 	  <button v-if="alumno.registrado && alumno.registrado > 0 && alumno.activo == 1" type="button" @click="abrirEditModal(); seleccionarAlumnoEditar(alumno.idalumno)" class="btn btn-info btn-sm">Editar</button>
-												      <button v-if="alumno.registrado && alumno.registrado > 0 " @click="abrirDetalleModal(); seleccionarAlumnoEditar(alumno.idalumno)" type="button" class="btn btn-default btn-sm"> Detalle</button>
-
+                                            <td align="right">  
+												 	 <!--  <button v-if="alumno.registrado && alumno.registrado > 0 && alumno.activo == 1" type="button" @click="abrirEditModal(); seleccionarAlumnoEditar(alumno.idalumno)" class="btn btn-info btn-sm">Editar</button> -->
+												     
+												
+												<div class="btn-group" role="group"  v-if="alumno.registrado &&  alumno.activo == 1 && (alumno.registrado > 0 && alumno.faltas != null)" >
+                                                    <div class="btn-group" role="group">
+                                                        <button type="button" class="btn btn-info waves-effect dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                              Editar
+                                                            <span class="caret"></span>
+                                                        </button>
+                                                        <ul class="dropdown-menu"> 
+                                                            <li ><a href="#" title="Editar Calificacion" @click="abrirEditModal(); seleccionarAlumnoEditar(alumno.idalumno)">Calificacion</a></li> 
+                                                            <li><a href="#" title="Editar Faltas" v-if="alumno.faltas != null" @click="abrirEditFaltasModal();selectAlumnoAsistencia(alumno)"> Faltas</a></li>
+                                                         </ul>
+                                                    </div>
+                                                </div> 
+                                                
+												<div class="btn-group" role="group"  v-if="alumno.registrado &&  alumno.activo == 1 && (alumno.registrado == 0 || alumno.faltas == null)" >
+                                                    <div class="btn-group" role="group">
+                                                        <button type="button" class="btn btn-info waves-effect dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                              Agregar
+                                                            <span class="caret"></span>
+                                                        </button>
+                                                        <ul class="dropdown-menu"> 
+                                                            <li ><a href="#" title="Agregar Calificacion" v-if="alumno.registrado == 0" @click="abrirAddModal();seleccionarAlumno(alumno.idalumno)">Calificacion</a></li> 
+                                                            <li><a href="#" title="Agregar Faltas" v-if="alumno.faltas == null" @click="abrirAddFaltasModal();seleccionarAlumno(alumno.idalumno)"> Faltas</a></li>
+                                                         </ul>
+                                                    </div>
+                                                </div>    
+                                                 <button v-if="alumno.registrado && alumno.registrado > 0 " @click="abrirDetalleModal(); seleccionarAlumnoCalificacion(alumno.idalumno)" type="button" class="btn btn-default btn-sm"> Detalle</button>
                                             </td>
                                         </tr>
                                        

@@ -26,6 +26,21 @@ class Calificacion_model extends CI_Model {
             return false;
         }
     }
+    public  function  detallePeriodo($idperiodo){
+        $this->db->select('m.nombremes as mesinicio,m2.nombremes as mesfin,y.nombreyear as yearinicio,y2.nombreyear as yearfin');
+        $this->db->from('tblperiodo pe');
+        $this->db->join('tblmes m ', ' pe.idmesinicio = m.idmes');
+        $this->db->join('tblmes m2 ', ' pe.idmesfin = m2.idmes');
+        $this->db->join('tblyear y ', ' pe.idyearinicio = y.idyear');
+        $this->db->join('tblyear y2 ', ' pe.idyearfin = y2.idyear');
+        $this->db->where('pe.idperiodo', $idperiodo);
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
     public function detalleGrupo($idgrupo){
         $this->db->select('g.idgrupo, g.idnivelestudio');
         $this->db->from('tblgrupo g'); 
@@ -33,6 +48,21 @@ class Calificacion_model extends CI_Model {
         $query = $this->db->get();
         if ($this->db->affected_rows() > 0) {
             return $query->first_row();
+        } else {
+            return false;
+        }
+    }
+    public function allMateriasPreescolarReporte($idnivelestudio ='') {
+        $this->db->select('ma.idmateriapreescolar, ma.nombremateria');
+        $this->db->from('tblmateria_preescolar ma');
+        $this->db->where('ma.activo', 1);
+        if(isset($idnivelestudio) && !empty($idnivelestudio) && $idnivelestudio == 1){
+            $this->db->where('ma.idmateriapreescolar NOT IN(27)');
+        } 
+        $this->db->order_by('ma.numero ASC');
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->result();
         } else {
             return false;
         }
@@ -45,7 +75,7 @@ class Calificacion_model extends CI_Model {
         $this->db->where('ma.idmateriapreescolar NOT IN(27)'); 
         }
         $this->db->where('ma.idmateriapreescolar NOT IN(1,10,19,21,26)'); 
-        $this->db->order_by('ma.nombremateria ASC');
+        $this->db->order_by('ma.numero ASC');
         $query = $this->db->get();
         if ($this->db->affected_rows() > 0) {
             return $query->result();
@@ -249,6 +279,20 @@ class Calificacion_model extends CI_Model {
             return false;
         }
     }
+    public function  obtenerFaltasPreescolar($idperiodo,$idgrupo,$idalumno,$idmes){
+        $this->db->select('ap.faltas');
+        $this->db->from('tblasistencia_preescolar ap'); 
+        $this->db->where('ap.idperiodo', $idperiodo);
+        $this->db->where('ap.idgrupo', $idgrupo);
+        $this->db->where('ap.idalumno', $idalumno);
+        $this->db->where('ap.idmes', $idmes); 
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
     public  function detalleCurso($idprofesormateria) {
         $this->db->select('m.nombreclase');
         $this->db->from('tblprofesor_materia pm');
@@ -261,6 +305,22 @@ class Calificacion_model extends CI_Model {
             return false;
         }
     }
+    
+    public  function obtenerAsistenciaPreescolar($idperiodo,$idgrupo,$idmes,$idalumno) {
+        $this->db->select('ap.faltas');
+        $this->db->from('tblasistencia_preescolar ap'); 
+        $this->db->where('ap.idperiodo', $idperiodo);
+        $this->db->where('ap.idgrupo', $idgrupo);
+        $this->db->where('ap.idalumno', $idalumno);
+        $this->db->where('ap.idmes', $idmes);
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
+    
     public  function motivoAsistencia(){
         $this->db->select('ma.idmotivo, ma.nombremotivo');
         $this->db->from('tblmotivo_asistencia ma'); 
@@ -339,6 +399,15 @@ class Calificacion_model extends CI_Model {
                 ag.idgrupo,
                 a.matricula,
                 p.activo,
+                a.nombre,
+                (SELECT ao.faltas FROM tblasistencia_preescolar ao 
+                            WHERE  ao.idalumno = a.idalumno
+                            AND ao.idperiodo = ag.idperiodo
+                            AND ao.idgrupo = ag.idgrupo AND ao.idmes = $idmes) as faltas,
+   (SELECT ao.idasistenciapreescolar FROM tblasistencia_preescolar ao 
+                            WHERE  ao.idalumno = a.idalumno
+                            AND ao.idperiodo = ag.idperiodo
+                            AND ao.idgrupo = ag.idgrupo AND ao.idmes = $idmes) as idasistenciapreescolar,
                 CONCAT(a.apellidop,
                         ' ',
                         a.apellidom,
@@ -349,7 +418,7 @@ class Calificacion_model extends CI_Model {
                     FROM
                         tblcalificacion_preescolar cp 
                     WHERE
-                        cp.idalumno = a.idalumno
+                           cp.idalumno = a.idalumno
                             AND cp.idperiodo = ag.idperiodo
                             AND cp.idgrupo = ag.idgrupo AND cp.idmes = $idmes) AS registrado,
                 (SELECT 
@@ -474,12 +543,63 @@ ORDER BY    oe.numero DESC");
         }
     }
     
+    public function updateFaltas($id, $field) {
+        $this->db->where('idasistenciapreescolar', $id);
+        $this->db->update('tblasistencia_preescolar', $field);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
     public function addCalificacionPreescolar($data) {
         $this->db->insert('tblcalificacion_preescolar', $data);
         $insert_id = $this->db->insert_id();
         return $insert_id;
     }
-    
-    
+    public function addAsistenciaPreescolar($data) {
+        $this->db->insert('tblasistencia_preescolar', $data);
+        $insert_id = $this->db->insert_id();
+        return $insert_id;
+    }
+    public function showAllCalificacionesDetalle($idperiodo, $idgrupo, $idmes,$idalumno) {
+        $sql = "SELECT 
+    numero, nombremateria, tipocalificacion, abreviatura
+FROM
+    (SELECT 
+        ma.numero,
+            ma.nombremateria,
+            tc.tipocalificacion,
+            tc.abreviatura
+    FROM
+        tblmateria_preescolar ma
+    INNER JOIN tblcalificacion_preescolar cp ON cp.idmateriapreescolar = ma.idmateriapreescolar
+    INNER JOIN tbltipo_calificacion tc ON tc.idtipocalificacion = cp.idtipocalificacion
+    WHERE
+        cp.idperiodo = $idperiodo
+        AND cp.idgrupo = $idgrupo
+            AND cp.idmes = $idmes
+            AND cp.idalumno = $idalumno UNION ALL SELECT 
+        27 AS numero,
+            'FALTAS' AS nombremateria,
+            ap.faltas AS tipocalificacion,
+            ap.faltas AS abreviatura
+    FROM
+        tblasistencia_preescolar ap
+    WHERE
+         ap.idperiodo = $idperiodo 
+            AND ap.idgrupo = $idgrupo
+            AND ap.idmes = $idmes
+            AND ap.idalumno = $idalumno) 
+            tblasistencia
+            ORDER BY numero ASC";
+        $query = $this->db->query($sql);
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
 
 }

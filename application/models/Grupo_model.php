@@ -57,6 +57,7 @@ class Grupo_model extends CI_Model {
             return false;
         }
     }
+ 
 
     public function showAllPeriodos($idplantel = '') {
         $this->db->select('p.idperiodo,m1.nombremes as mesinicio, m2.nombremes as mesfin, y1.nombreyear as yearinicio, y2.nombreyear as yearfin');
@@ -129,6 +130,19 @@ class Grupo_model extends CI_Model {
         $this->db->from('tbloportunidad_examen n');
         $this->db->where('n.numero > 1');
         $this->db->where('n.idplantel', $idplantel);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+    public function showAllCalificacionOportunidad($idhorariodetalle,$idoportunidad) {
+        $this->db->select('a.nombre, a.apellidop, a.apellidom, c.calificacion');
+        $this->db->from('tblcalificacion c');
+        $this->db->join('tblalumno a', 'a.idalumno = c.idalumno');
+        $this->db->where('c.idoportunidadexamen',$idoportunidad);
+        $this->db->where('c.idhorariodetalle', $idhorariodetalle);
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();
@@ -843,8 +857,7 @@ WHERE
         $this->db->select('c.idcalificacion, c.calificacion, date(c.fecharegistro) as fecharegistro');
         $this->db->from('tblcalificacion c');
         $this->db->join('tblunidad u', 'c.idunidad = u.idunidad');
-        $this->db->where('c.idalumno', $idalumno);
-        //$this->db->where('a.idhorario', $idhorario); 
+        $this->db->where('c.idalumno', $idalumno); 
         $this->db->where('c.idhorariodetalle', $idhorariodetalle);
         $this->db->where('c.idunidad', $idunidad);
         $this->db->order_by('c.fecharegistro ASC');
