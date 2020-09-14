@@ -16,10 +16,10 @@
                             <div class="col-md-12 col-sm-12 col-xs-12 ">
                                 <table class="table table-hover table-striped">
                                     <thead class="bg-teal">
-                                    <th>#</th>
-                                    <th>GRUPO</th>
-                                    <th>ALUMNO</th>
-                                    <th></th>
+                                        <th>#</th>
+                                        <th>GRUPO</th>
+                                        <th>ALUMNO</th>
+                                        <th></th>
                                     </thead>
                                     <tbody>
                                         <?php
@@ -37,86 +37,92 @@
                                                         <div class="btn-group" role="group">
                                                             <div class="btn-group" role="group">
                                                                 <button type="button"
-                                                                        class="btn btn-info waves-effect dropdown-toggle"
-                                                                        data-toggle="dropdown" aria-haspopup="true"
-                                                                        aria-expanded="false">
-                                                                    <i class='fa fa-plus'></i> Opciones
-                                                                    <span class="caret"></span>
-                                                                </button>
-                                                                <ul class="dropdown-menu">
-                                                                    <!--<li ><a href="<?php //echo site_url('Tutores/materias/'.$value->idalumno)  ?>"   title="Eliminar Datos"><i class="fa fa-trash"></i> Materias</a></li>-->
-                                                                    <li><a href="<?php echo site_url('Tutores/horario/' . $controller->encode($value->idalumno)) ?>"
-                                                                           title="Horario"><i class="fa fa-edit"></i>
-                                                                            Horario</a></li>
-                                                                    <li><a href="<?php echo site_url('Tutores/boletas/' . $controller->encode($value->idalumno)) ?>"
-                                                                           title="Examen"><i style="color: #0b94e3;"
-                                                                                          class="fa fa-file-text-o"></i>
-                                                                            Calificación</a></li>
-                                                                    <li><a href="<?php echo site_url('Tutores/asistencias/' . $controller->encode($value->idalumno)) ?>"
-                                                                           title="Asistencias"> <i style="color: #31d50b;"
-                                                                                                class="fa fa-check-circle"></i>
-                                                                            Asistencia</a></li>
-                                                                    <li><a href="<?php echo site_url('Tutores/mensajes/' . $controller->encode($value->idalumno) . '/' . $controller->encode($value->idnivelestudio) . '/' . $controller->encode($value->idperiodo)) ?>"
-                                                                           title="Mensajes"> <i style="color: #dd3115;"
-                                                                                             class="fa fa-envelope"></i>
-                                                                            Mensajes</a></li>
-                                                                     <li><a href="<?php echo site_url('Tutores/tareasv2/' . $controller->encode($value->idalumno) . '/' . $controller->encode($value->idnivelestudio) . '/' . $controller->encode($value->idperiodo)) ?>"
-                                                                           title="Tareas"><i style="color: #000;"
-                                                                                          class="fa fa-book"></i>
-                                                                            Tarea</a></li>
-                                                                            <?php if (isset($this->session->idniveleducativo) && !empty($this->session->idniveleducativo) && $this->session->idniveleducativo == 2) {   ?>
-                                                                      <li><a href="<?php echo site_url('Tutores/planeaciones/' . $controller->encode($value->idalumno) . '/' . $controller->encode($value->idhorario) . '/' . $controller->encode($value->idperiodo)) ?>"
-                                                                           title="Tareas"><i style="color: #5811dd;"
-                                                                                          class="fa fa-file"></i>
-                                                                            Planeaciones</a></li>
-                                                                            <?php } ?>
-                                                                      
+                                                                class="btn btn-info waves-effect dropdown-toggle"
+                                                                data-toggle="dropdown" aria-haspopup="true"
+                                                                aria-expanded="false">
+                                                                <i class='fa fa-plus'></i> Opciones
+                                                                <span class="caret"></span>
+                                                            </button>
+                                                            <ul class="dropdown-menu">
+                                                                <!--<li ><a href="<?php //echo site_url('Tutores/materias/'.$value->idalumno)  ?>"   title="Eliminar Datos"><i class="fa fa-trash"></i> Materias</a></li>-->
+                                                                <li><a href="<?php echo site_url('Tutores/horario/' . $controller->encode($value->idalumno)) ?>"
+                                                                 title="Horario"><i class="fa fa-edit"></i>
+                                                             Horario</a></li>
+                                                             <?php if($value->idniveleducativo == 4){?>
+                                                                <li><a href="<?php echo site_url('Tutores/calificacionPreescolar/'  . $controller->encode($value->idalumno) . '/' . $controller->encode($value->idnivelestudio) . '/' . $controller->encode($value->idperiodo)) ?>"
+                                                                 title="Calificación"><i style="color: #0b94e3;"
+                                                                 class="fa fa-file-text-o"></i>
+                                                             Calificación</a></li>
+                                                         <?php } else { ?>
+                                                            <li><a href="<?php echo site_url('Tutores/boletas/' . $controller->encode($value->idalumno)) ?>"
+                                                             title="Calificación"><i style="color: #0b94e3;"
+                                                             class="fa fa-file-text-o"></i>
+                                                         Calificación</a></li>
+                                                     <?php } ?>
+                                                     <li><a href="<?php echo site_url('Tutores/asistencias/' . $controller->encode($value->idalumno)) ?>"
+                                                         title="Asistencias"> <i style="color: #31d50b;"
+                                                         class="fa fa-check-circle"></i>
+                                                     Asistencia</a></li>
+                                                     <li><a href="<?php echo site_url('Tutores/mensajes/' . $controller->encode($value->idalumno) . '/' . $controller->encode($value->idnivelestudio) . '/' . $controller->encode($value->idperiodo)) ?>"
+                                                         title="Mensajes"> <i style="color: #dd3115;"
+                                                         class="fa fa-envelope"></i>
+                                                     Mensajes</a></li>
+                                                     <li><a href="<?php echo site_url('Tutores/tareasv2/' . $controller->encode($value->idalumno) . '/' . $controller->encode($value->idnivelestudio) . '/' . $controller->encode($value->idperiodo)) ?>"
+                                                         title="Tareas"><i style="color: #000;"
+                                                         class="fa fa-book"></i>
+                                                     Tarea</a></li>
+                                                     <?php if (isset($this->session->idniveleducativo) && !empty($this->session->idniveleducativo) && $this->session->idniveleducativo == 2) {   ?>
+                                                      <li><a href="<?php echo site_url('Tutores/planeaciones/' . $controller->encode($value->idalumno) . '/' . $controller->encode($value->idhorario) . '/' . $controller->encode($value->idperiodo)) ?>"
+                                                         title="Tareas"><i style="color: #5811dd;"
+                                                         class="fa fa-file"></i>
+                                                     Planeaciones</a></li>
+                                                 <?php } ?>
 <!--                                                                    <li><a href="<?php //echo site_url('Tutores/pagos/' . $controller->encode($value->idalumno) . '/' . $controller->encode($value->idnivelestudio) . '/' . $controller->encode($value->idperiodo)) ?>"
                                                                            title="Pagos"><i class="fa fa-paypal "
                                                                                          style="color:#215adc;"></i>
-                                                                            Pagos</a></li>-->
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <?php
-                                            }
-                                        }else{
-                                            echo '<tr><td colspan="4" align="center">Sin registros</td></tr>';
-                                        }
-                                        ?>
+                                                                                     Pagos</a></li>-->
+                                                                                 </ul>
+                                                                             </div>
+                                                                         </div>
+                                                                     </td>
+                                                                 </tr>
+                                                                 <?php
+                                                             }
+                                                         }else{
+                                                            echo '<tr><td colspan="4" align="center">Sin registros</td></tr>';
+                                                        }
+                                                        ?>
 
-                                    </tbody>
-                                    <tfoot>
-                                </table>
+                                                    </tbody>
+                                                    <tfoot>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
+                        <!-- footer content -->
+                        <footer>
+                            <div class="copyright-info">
+                                <p class="pull-right">SICE - Sistema Integral para el Control Escolar</a>
+                                </p>
+                            </div>
+                            <div class="clearfix"></div>
+                        </footer>
+                        <!-- /footer content -->
+
                     </div>
+                    <!-- /page content -->
                 </div>
+
             </div>
-        </div>
-    </div>
 
-    <!-- footer content -->
-    <footer>
-        <div class="copyright-info">
-            <p class="pull-right">SICE - Sistema Integral para el Control Escolar</a>
-            </p>
-        </div>
-        <div class="clearfix"></div>
-    </footer>
-    <!-- /footer content -->
-
-</div>
-<!-- /page content -->
-</div>
-
-</div>
-
-<div id="custom_notifications" class="custom-notifications dsp_none">
-    <ul class="list-unstyled notifications clearfix" data-tabbed_notifications="notif-group">
-    </ul>
-    <div class="clearfix"></div>
-    <div id="notif-group" class="tabbed_notifications"></div>
-</div>
+            <div id="custom_notifications" class="custom-notifications dsp_none">
+                <ul class="list-unstyled notifications clearfix" data-tabbed_notifications="notif-group">
+                </ul>
+                <div class="clearfix"></div>
+                <div id="notif-group" class="tabbed_notifications"></div>
+            </div>
