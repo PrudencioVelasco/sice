@@ -134,13 +134,14 @@ class Alumno_model extends CI_Model
 
     public function showAllAlumnosTutorActivos($idtutor = '')
     {
-        $this->db->select('a.idalumno, h.idhorario, a.nombre, a.apellidop, a.apellidom,ne.nombrenivel, ne.idnivelestudio, g.nombregrupo, g.idgrupo, ag.idperiodo');
+        $this->db->select('a.idalumno, h.idhorario, a.nombre, a.apellidop, a.apellidom,ne.nombrenivel, ne.idnivelestudio, g.nombregrupo, g.idgrupo, ag.idperiodo, p.idniveleducativo');
         $this->db->from('tblalumno a');
         $this->db->join('tbltutoralumno ta', 'a.idalumno=ta.idalumno');
         $this->db->join('tblalumno_grupo ag', 'ag.idalumno=a.idalumno');
         $this->db->join('tblgrupo g', 'g.idgrupo=ag.idgrupo');
         $this->db->join('tblnivelestudio ne', 'g.idnivelestudio=ne.idnivelestudio');
         $this->db->join('tblhorario h', 'h.idperiodo = ag.idperiodo');
+        $this->db->join('tblplantel p', 'a.idplantel = p.idplantel');
         $this->db->where('h.idgrupo = ag.idgrupo');
         $this->db->where('ta.idtutor', $idtutor);
         $this->db->where('ag.activo', 1);
@@ -781,7 +782,7 @@ GROUP BY hd.idmateria) tabla");
 
     public function showAllAlumnoId($idalumno)
     {
-        $this->db->select('t.*, e.nombreespecialidad');
+        $this->db->select('t.*, e.nombreespecialidad,');
         $this->db->from('tblalumno t');
         $this->db->where('t.idalumno', $idalumno);
         $this->db->join('tblespecialidad e', 't.idespecialidad = e.idespecialidad');
@@ -996,7 +997,8 @@ GROUP BY hd.idmateria) tabla");
                             ne.idnivelestudio,
                             ne.nombrenivel,
                             en.idestatusnivel,
-                            en.nombreestatusnivel
+                            en.nombreestatusnivel,
+                            plantel.idniveleducativo
                         FROM
                             tblperiodo p
                                 INNER JOIN
@@ -1015,7 +1017,12 @@ GROUP BY hd.idmateria) tabla");
                             tblgrupo g ON ag.idgrupo = g.idgrupo
                                 INNER JOIN
                             tblnivelestudio ne ON ne.idnivelestudio = g.idnivelestudio
-                                INNER JOIN tblestatus_nivel en ON en.idestatusnivel = ag.idestatusnivel
+                                INNER JOIN 
+                            tblestatus_nivel en ON en.idestatusnivel = ag.idestatusnivel
+                                INNER JOIN 
+                            tblalumno a ON ag.idalumno = a.idalumno
+                                INNER JOIN 
+                            tblplantel plantel ON a.idplantel = plantel.idplantel
                         WHERE
                             ag.idgrupo = h.idgrupo
                                 AND ag.idalumno = $idalumno 

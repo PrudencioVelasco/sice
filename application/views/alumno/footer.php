@@ -45,11 +45,9 @@
     $(document).ready(function () {
         $('#tblcalificacionpreescolar').DataTable({
              keys: true,
+             responsive: true,
             "scrollX": true,
-            dom: 'Bfrtip',
-           buttons: [
-        'excelHtml5'
-        ],
+            dom: 'Pfrtip',
             "language": {
                 "sProcessing": "Procesando...",
                 "sLengthMenu": "Mostrar _MENU_ registros",

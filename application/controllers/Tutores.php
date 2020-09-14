@@ -727,6 +727,7 @@ class Tutores extends CI_Controller
 
         $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
         $calificaciones = $this->alumno->calificacionFinalPrimaria($idalumno, $idhorario, $idplantel);
+        var_dump($calificaciones);
         $tabla = "";
         $tabla .= '<table class="table  table-striped  table-hover">
         <thead class="bg-teal">
@@ -3453,6 +3454,86 @@ tblcalificacion  {border-collapse:collapse}
             $this->load->view('tutor/error/general', $data);
             $this->load->view('tutor/footer');
         }
+    }
+
+    public function calificacionPreescolar($idalumno = '', $idnivelestudio = '', $idperiodo = '')
+    {
+
+      $idalumno = $this->decode($idalumno);
+      $idnivelestudio = $this->decode($idnivelestudio);
+      $idperiodo = $this->decode($idperiodo);
+
+      $tabla = $this->obtenerCalificacionPreescolar($idalumno,$idnivelestudio,$idperiodo);
+
+      $data = array('tabla' => $tabla);
+
+      $this->load->view('tutor/header');
+      $this->load->view('tutor/alumnos/calificacion_preescolar', $data);
+      $this->load->view('tutor/footer');
+
+    }
+
+
+    public  function  obtenerCalificacionPreescolar($idalumno = '', $idnivelestudio = '', $idperiodo = '')
+    {
+
+        //Permission::grant(uri_string());
+
+        //Obtener meses
+        $meses = $this->alumno->obtenerMeses();
+        $materias = $this->alumno->obtenerMaterias($idnivelestudio);
+
+
+        $tabla = "";
+        $tabla .= '<table id="tblcalificacionpreescolartutor" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+        <thead class="bg-teal">
+        <th>ASIGNATURA</th>';
+        foreach ($meses as $mes) {
+            $tabla .= '<th>' . $mes->nombremes . '</th>';
+        }
+
+        $tabla .= '</thead>
+        <tbody>';
+        foreach ($materias as $materia) {
+            $idmateria = $materia->idmateriapreescolar;
+
+            if ($idmateria != 1 && $idmateria != 10 && $idmateria != 19 && $idmateria != 21) {
+
+                $tabla .= '<tr>';
+                $tabla .= '<td>' . $materia->nombremateria . '</td>';
+
+                foreach ($meses as $mes) {
+                    $idmes = $mes->idmes;
+
+                    if ($idmateria == 26) {
+                        $faltas = $this->alumno->obtenerFaltasPreescolar($idperiodo, $idalumno, $idmes);
+
+                        if ($faltas) {
+
+                            $tabla .= '<td>' . $faltas->faltas . '<td>';
+                        } else {
+                            $tabla .= '<td></td>';
+                        }
+                    } else {
+                        $calificacion = $this->alumno->obtenerCalificacionPreescolar($idperiodo, $idalumno, $idmateria, $idmes);
+
+                        if ($calificacion) {
+
+                            $tabla .= '<td>' . $calificacion->abreviatura . '<td>';
+                        } else {
+                            $tabla .= '<td></td>';
+                        }
+                    }
+                }
+                 $tabla .= '</tr>';
+            }
+        }
+
+        $tabla .= '
+        </tbody>
+        </table>';
+
+        return $tabla;
     }
 
 }
