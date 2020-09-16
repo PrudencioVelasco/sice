@@ -518,7 +518,17 @@ class Tutores extends CI_Controller
                 if ($idhorario != "") {
 
                     $calificacion = "";
-                    $tabla = $this->obtenerCalificacion2($idhorario, $idalumno);
+                    $tabla ="";
+
+                    //Obtener nivel educativo del alumno
+                    $data = $this->alumno->obtenerNivelEducativoAlumno($idalumno);
+
+                    if ($data->idniveleducativo == 5) {
+                      $tabla = $this->obtenerCalificacionLicenciatura($idhorario, $idalumno);
+                    } else {
+                      $tabla = $this->obtenerCalificacion2($idhorario, $idalumno);
+                    }
+                    
                     $datosalumno = $this->alumno->showAllAlumnoId($idalumno);
                     $datoshorario = $this->horario->showNivelGrupo($idhorario);
                     $array_materias_reprobadas = array();
@@ -628,93 +638,137 @@ class Tutores extends CI_Controller
     public function obtenerCalificacion2($idhorario = '', $idalumno = '')
     {
         # code...
-        Permission::grant(uri_string());
-        $unidades = $this->grupo->unidades($this->session->idplantel);
-        $array_materias_reprobadas = array();
-        $materias_reprobadas = $this->alumno->obtenerTodasMateriaReprobadasActivas($idalumno);
-        if (isset($materias_reprobadas) && ! empty($materias_reprobadas)) {
-            foreach ($materias_reprobadas as $row) {
-                array_push($array_materias_reprobadas, $row->idmateriaprincipal);
-            }
+      Permission::grant(uri_string());
+
+        //Extraer informacion del Alumno 
+      $data = $this->alumno->obtenerNivelEducativoAlumno($idalumno);
+      //var_dump($data);
+
+      $unidades = $this->grupo->unidades($data->idplantel);
+      $array_materias_reprobadas = array();
+      $materias_reprobadas = $this->alumno->obtenerTodasMateriaReprobadasActivas($idalumno);
+      if (isset($materias_reprobadas) && ! empty($materias_reprobadas)) {
+        foreach ($materias_reprobadas as $row) {
+          array_push($array_materias_reprobadas, $row->idmateriaprincipal);
         }
-        $reprobadas = implode(",", $array_materias_reprobadas);
+      }
+      $reprobadas = implode(",", $array_materias_reprobadas);
 
-        $materias = $this->alumno->showAllMaterias($idhorario, $reprobadas);
-        $datoshorario = $this->horario->showNivelGrupo($idhorario);
-        $idnivelestudio = $datoshorario->idnivelestudio;
+      $materias = $this->alumno->showAllMaterias($idhorario, $reprobadas);
+      $datoshorario = $this->horario->showNivelGrupo($idhorario);
+      $idnivelestudio = $datoshorario->idnivelestudio;
 
-        $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
-        $total_unidades = 0;
-        $total_materia = 0;
-        if ($materias != false) {
-            foreach ($materias as $row) {
+      $detalle_configuracion = $this->configuracion->showAllConfiguracion($data->idplantel, $idnivelestudio);
+      $total_unidades = 0;
+      $total_materia = 0;
+      if ($materias != false) {
+        foreach ($materias as $row) {
                 # code...
-                $total_materia = $total_materia + 1;
-            }
+          $total_materia = $total_materia + 1;
         }
-        $tabla = "";
-        $tabla .= '<table class="table  table-striped  table-hover">
-        <thead class="bg-teal">
+      }
+      $tabla = "";
+      $tabla .= '<table class="table  table-striped  table-hover">
+      <thead class="bg-teal">
       <th>#</th>
       <th>MATERIA</th>';
-        if (isset($unidades) && ! empty($unidades)) {
-            foreach ($unidades as $block) :
-                $total_unidades += 1;
-                $tabla .= '<th><strong>' . $block->nombreunidad . '</strong></th>';
-            endforeach
-            ;
-        } else {
-            $tabla .= '<th><strong></strong></th>';
-        }
-        $tabla .= '<th>C. FINAL</th>';
-        $tabla .= '</thead>';
-        $c = 1;
-        if (isset($materias) && ! empty($materias)) {
-            $suma_calificacion = 0;
-            foreach ($materias as $row) {
+      if (isset($unidades) && ! empty($unidades)) {
+        foreach ($unidades as $block) :
+          $total_unidades += 1;
+          $tabla .= '<th><strong>' . $block->nombreunidad . '</strong></th>';
+        endforeach
+        ;
+      } else {
+        $tabla .= '<th><strong></strong></th>';
+      }
+      $tabla .= '<th>C. FINAL</th>';
+      $tabla .= '</thead>';
+      $c = 1;
+      if (isset($materias) && ! empty($materias)) {
+        $suma_calificacion = 0;
+        foreach ($materias as $row) {
                 // $alumn = $al->getAlumn();
-                $suma_calificacion = 0;
-                $tabla .= '<tr>
-        <td>' . $c ++ . '</td>
-        <td>';
-                if ($row->opcion == 0) {
-                    $tabla .= '<label style="color:red;">R: </label>';
-                }
-                $tabla .= '<strong>' . $row->nombreclase . '</strong><br><small>( ' . $row->nombre . ' ' . $row->apellidop . ' ' . $row->apellidom . '</small>)</td>';
-                foreach ($unidades as $block) :
-                    $val = $this->grupo->obtenerCalificacion($idalumno, $block->idunidad, $row->idhorariodetalle);
+          $suma_calificacion = 0;
+          $tabla .= '<tr>
+          <td>' . $c ++ . '</td>
+          <td>';
+          if ($row->opcion == 0) {
+            $tabla .= '<label style="color:red;">R: </label>';
+          }
+          $tabla .= '<strong>' . $row->nombreclase . '</strong><br><small>( ' . $row->nombre . ' ' . $row->apellidop . ' ' . $row->apellidom . '</small>)</td>';
+          foreach ($unidades as $block) :
+            $val = $this->grupo->obtenerCalificacion($idalumno, $block->idunidad, $row->idhorariodetalle);
 
-                    $tabla .= '<td>';
-                    if ($val != false) {
-                        $suma_calificacion = $suma_calificacion + $val->calificacion;
-                        if (validar_calificacion($val->calificacion, $detalle_configuracion[0]->calificacion_minima)) {
-                            $tabla .= '<label style="color:red;">' . $val->calificacion . '</label>';
-                        } else {
-                            $tabla .= '<label style="color:green;">' . $val->calificacion . '</label>';
-                        }
-                    } else {
-                        $tabla .= '<label>No registrado</label>';
-                    }
-                    $tabla .= '</td>';
-                endforeach
-                ;
-                $tabla .= '<td>';
-                $calificacion_final = number_format($suma_calificacion / $total_unidades, 2);
-                if (validar_calificacion($calificacion_final, $detalle_configuracion[0]->calificacion_minima)) {
-                    if ($suma_calificacion > 0.0) {
-                        $tabla .= '<label style="color:red;">' . number_format($suma_calificacion / $total_unidades, 2) . '</label>';
-                    } else {
-                        $tabla .= '<label "> </label>';
-                    }
-                } else {
-                    $tabla .= '<label style="color:green;">' . number_format($suma_calificacion / $total_unidades, 2) . '</label>';
+            $tabla .= '<td>';
+            if ($val != false) {
+             
+             $idcalificacion = $val->idcalificacion;
+             $detalle_calificacion = $this->grupo->detalleCalificacionSecundaria($idcalificacion);
+
+              $suma_calificacion = $suma_calificacion + $val->calificacion;
+              
+              if (validar_calificacion($val->calificacion, $detalle_configuracion[0]->calificacion_minima)) {
+
+                $tabla .= '<label style="color:red;">' . $val->calificacion . '</label>';
+
+                if ($data->idniveleducativo == 2) {
+                 
+                  $tabla .= '  <a  href="javascript:void(0)"><i class="fa fa-eye detalle_button"  data-toggle="modal" data-target="#myModalDetalle"
+                  data-idcalificacion="' . $val->idcalificacion . '"
+                  data-iddetallecalificacion="' . $detalle_calificacion->iddetallecalificacion . '"
+                  data-proyecto="' . $detalle_calificacion->proyecto . '"
+                  data-tarea="' . $detalle_calificacion->tarea . '"
+                  data-participacion="' . $detalle_calificacion->participacion . '"
+                  data-examen="' . $detalle_calificacion->examen . '"
+                  data-calificacion="' . $val->calificacion . '"
+                  data-alumno="' . $row->apellidop . " " . $row->apellidom . " " . $row->nombre . '"
+                  style = "color:#378efa;" title="Ver detalle Calificación"></i> </a>';
                 }
-                $tabla .= '</td>';
-                $tabla .= '</tr>';
+
+              } else {
+                
+                $tabla .= '<label style="color:green;">' . $val->calificacion . '</label>';
+
+                if ($data->idniveleducativo == 2) {
+                  
+                  $tabla .= '  <a  href="javascript:void(0)"><i class="fa fa-eye detalle_button"  data-toggle="modal" data-target="#myModalDetalle"
+                  data-idcalificacion="' . $val->idcalificacion . '"
+                  data-iddetallecalificacion="' . $detalle_calificacion->iddetallecalificacion . '"
+                  data-proyecto="' . $detalle_calificacion->proyecto . '"
+                  data-tarea="' . $detalle_calificacion->tarea . '"
+                  data-participacion="' . $detalle_calificacion->participacion . '"
+                  data-examen="' . $detalle_calificacion->examen . '"
+                  data-calificacion="' . $val->calificacion . '"
+                  data-alumno="' . $row->apellidop . " " . $row->apellidom . " " . $row->nombre . '"
+                  style = "color:#378efa;" title="Ver detalle Calificación"></i> </a>';
+                }
+
+              }
+            } else {
+              $tabla .= '<label>No registrado</label>';
             }
+            $tabla .= '</td>';
+          endforeach
+          ;
+          $tabla .= '<td>';
+          $calificacion_final = number_format($suma_calificacion / $total_unidades, 2);
+          if (validar_calificacion($calificacion_final, $detalle_configuracion[0]->calificacion_minima)) {
+            if ($suma_calificacion > 0.0) {
+              $tabla .= '<label style="color:red;">' . number_format($suma_calificacion / $total_unidades, 2) . '</label>';
+            } else {
+              $tabla .= '<label "> </label>';
+            }
+          } else {
+            $tabla .= '<label style="color:green;">' . number_format($suma_calificacion / $total_unidades, 2) . '</label>';
+          }
+          $tabla .= '</td>';
+          $tabla .= '</tr>';
         }
-        $tabla .= '</table>';
-        return $tabla;
+      }
+      $tabla .= '</table>';
+
+      return $tabla;
+
     }
 
     public function obtenerCalificacionPrimaria($idhorario = '', $idalumno = '')
@@ -727,7 +781,7 @@ class Tutores extends CI_Controller
 
         $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
         $calificaciones = $this->alumno->calificacionFinalPrimaria($idalumno, $idhorario, $idplantel);
-        var_dump($calificaciones);
+
         $tabla = "";
         $tabla .= '<table class="table  table-striped  table-hover">
         <thead class="bg-teal">
@@ -3510,7 +3564,7 @@ tblcalificacion  {border-collapse:collapse}
 
                         if ($faltas) {
 
-                            $tabla .= '<td>' . $faltas->faltas . '<td>';
+                            $tabla .= '<td>' . $faltas->faltas . '</td>';
                         } else {
                             $tabla .= '<td></td>';
                         }
@@ -3519,7 +3573,7 @@ tblcalificacion  {border-collapse:collapse}
 
                         if ($calificacion) {
 
-                            $tabla .= '<td>' . $calificacion->abreviatura . '<td>';
+                            $tabla .= '<td>' . $calificacion->abreviatura . '</td>';
                         } else {
                             $tabla .= '<td></td>';
                         }
@@ -3533,6 +3587,100 @@ tblcalificacion  {border-collapse:collapse}
         </tbody>
         </table>';
 
+        return $tabla;
+    }
+
+    public function obtenerCalificacionLicenciatura($idhorario = '', $idalumno = '')
+    {
+        # code...
+        Permission::grant(uri_string());
+        $unidades = $this->grupo->unidades($this->session->idplantel);
+        $array_materias_reprobadas = array();
+        $materias_reprobadas = $this->alumno->obtenerTodasMateriaReprobadasActivas($idalumno);
+        if (isset($materias_reprobadas) && !empty($materias_reprobadas)) {
+            foreach ($materias_reprobadas as $row) {
+                array_push($array_materias_reprobadas, $row->idmateriaprincipal);
+            }
+        }
+        $reprobadas = implode(",", $array_materias_reprobadas);
+
+        $materias = $this->alumno->showAllMaterias($idhorario, $reprobadas);
+        $datoshorario = $this->horario->showNivelGrupo($idhorario);
+        $idnivelestudio = $datoshorario->idnivelestudio;
+
+        $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
+
+        $total_materia = 0;
+        if ($materias != false) {
+            foreach ($materias as $row) {
+                # code...
+                $total_materia = $total_materia + 1;
+            }
+        }
+        $tabla = "";
+        $tabla .= '<table class="table  table-striped  table-hover">
+        <thead class="bg-teal">
+        <th>#</th>
+        <th>MATERIA</th>';
+        foreach ($unidades as $block) :
+
+            $tabla .= '<th><strong>' . $block->nombreunidad . '</strong></th>';
+        endforeach;
+        $tabla .= '<th>C. FINAL</th>';
+        $tabla .= '</thead>';
+        $c = 1;
+
+        if (isset($materias) && !empty($materias)) {
+            $suma_calificacion = 0;
+
+            foreach ($materias as $row) {
+                $total_unidades = $row->unidades;
+                $suma_calificacion = 0;
+                $tabla .= '<tr>
+                <td>' . $c++ . '</td>
+                <td>';
+                if ($row->opcion == 0) {
+                    $tabla .= '<label style="color:red;">R: </label>';
+                }
+                $tabla .= '<strong>' . $row->nombreclase . '</strong><br><small>( ' . $row->nombre . ' ' . $row->apellidop . ' ' . $row->apellidom . '</small>)</td>';
+                foreach ($unidades as $block) {
+
+                    $val = $this->grupo->obtenerCalificacion($idalumno, $block->idunidad, $row->idhorariodetalle);
+
+                    $tabla .= '<td>';
+                    if ($val) {
+
+                        $suma_calificacion = $suma_calificacion + $val->calificacion;
+                        if (validar_calificacion($val->calificacion, $detalle_configuracion[0]->calificacion_minima)) {
+                            $tabla .= '<label style="color:red;">' . $val->calificacion . '</label>';
+                        } else {
+                            $tabla .= '<label style="color:green;">' . $val->calificacion . '</label>';
+                        }
+                    } else {
+                        $tabla .= '<small>No registrado</small>';
+                    }
+                    $tabla .= '</td>';
+                }
+                $tabla .= '<td>';
+                if ($suma_calificacion > 0 && $total_unidades > 0) {
+                    $calificacion_final = number_format($suma_calificacion / $total_unidades, 2);
+                    if (validar_calificacion($calificacion_final, $detalle_configuracion[0]->calificacion_minima)) {
+                        if ($suma_calificacion > 0.0) {
+                            $tabla .= '<label style="color:red;">' . number_format($suma_calificacion / $total_unidades, 2) . '</label>';
+                        } else {
+                            $tabla .= '<label "> </label>';
+                        }
+                    } else {
+                        $tabla .= '<label style="color:green;">' . number_format($suma_calificacion / $total_unidades, 2) . '</label>';
+                    }
+                    $tabla .= '</td>';
+                } else {
+                    $tabla .= '<label "> </label>';
+                }
+                $tabla .= '</tr>';
+            }
+        }
+        $tabla .= '</table>';
         return $tabla;
     }
 

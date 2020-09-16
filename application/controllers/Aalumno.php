@@ -937,7 +937,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
 
                         if ($faltas) {
 
-                            $tabla .= '<td>' . $faltas->faltas . '<td>';
+                            $tabla .= '<td>' . $faltas->faltas . '</td>';
                         } else {
                             $tabla .= '<td></td>';
                         }
@@ -946,7 +946,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
 
                         if ($calificacion) {
 
-                            $tabla .= '<td>' . $calificacion->abreviatura . '<td>';
+                            $tabla .= '<td>' . $calificacion->abreviatura . '</td>';
                         } else {
                             $tabla .= '<td></td>';
                         }
@@ -993,8 +993,8 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
         $tabla = "";
         $tabla .= '<table class="table  table-striped  table-hover">
         <thead class="bg-teal">
-      <th>#</th>
-      <th>MATERIA</th>';
+        <th>#</th>
+        <th>MATERIA</th>';
         foreach ($unidades as $block) :
             $total_unidades += 1;
             $tabla .= '<th><strong>' . $block->nombreunidad . '</strong></th>';
@@ -1007,8 +1007,8 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
             foreach ($materias as $row) {
                 $suma_calificacion = 0;
                 $tabla .= '<tr>
-        <td>' . $c++ . '</td>
-        <td>';
+                <td>' . $c++ . '</td>
+                <td>';
                 if ($row->opcion == 0) {
                     $tabla .= '<label style="color:red;">R: </label>';
                 }
@@ -1025,29 +1025,29 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                             $tabla .= '<label style="color:red;">' . $val->calificacion . '</label>';
                             if ($this->session->idniveleducativo == 2) {
                                 $tabla .= '  <a  href="javascript:void(0)"><i class="fa fa-eye detalle_button"  data-toggle="modal" data-target="#myModalDetalle"
-				                                data-idcalificacion="' . $val->idcalificacion . '"
-                                                                data-iddetallecalificacion="' . $detalle_calificacion->iddetallecalificacion . '"
-				                                data-proyecto="' . $detalle_calificacion->proyecto . '"
-                                                                data-tarea="' . $detalle_calificacion->tarea . '"
-                                                                data-participacion="' . $detalle_calificacion->participacion . '"
-                                                                data-examen="' . $detalle_calificacion->examen . '"
-                                                                data-calificacion="' . $val->calificacion . '"
-				                                data-alumno="' . $row->apellidop . " " . $row->apellidom . " " . $row->nombre . '"
-			                                   style = "color:#378efa;" title="Ver detalle Calificación"></i> </a>';
+                                data-idcalificacion="' . $val->idcalificacion . '"
+                                data-iddetallecalificacion="' . $detalle_calificacion->iddetallecalificacion . '"
+                                data-proyecto="' . $detalle_calificacion->proyecto . '"
+                                data-tarea="' . $detalle_calificacion->tarea . '"
+                                data-participacion="' . $detalle_calificacion->participacion . '"
+                                data-examen="' . $detalle_calificacion->examen . '"
+                                data-calificacion="' . $val->calificacion . '"
+                                data-alumno="' . $row->apellidop . " " . $row->apellidom . " " . $row->nombre . '"
+                                style = "color:#378efa;" title="Ver detalle Calificación"></i> </a>';
                             }
                         } else {
                             $tabla .= '<label style="color:#36ad36;">' . $val->calificacion . '</label>';
                             if ($this->session->idniveleducativo == 2) {
                                 $tabla .= '  <a  href="javascript:void(0)"><i class="fa fa-eye detalle_button"  data-toggle="modal" data-target="#myModalDetalle"
-				                                data-idcalificacion="' . $val->idcalificacion . '"
-                                                                data-iddetallecalificacion="' . $detalle_calificacion->iddetallecalificacion . '"
-				                                data-proyecto="' . $detalle_calificacion->proyecto . '"
-                                                                data-tarea="' . $detalle_calificacion->tarea . '"
-                                                                data-participacion="' . $detalle_calificacion->participacion . '"
-                                                                data-examen="' . $detalle_calificacion->examen . '"
-                                                                data-calificacion="' . $val->calificacion . '"
-				                                data-alumno="' . $row->apellidop . " " . $row->apellidom . " " . $row->nombre . '"
-			                                   style = "color:#378efa;" title="Ver detalle Calificación"></i> </a>';
+                                data-idcalificacion="' . $val->idcalificacion . '"
+                                data-iddetallecalificacion="' . $detalle_calificacion->iddetallecalificacion . '"
+                                data-proyecto="' . $detalle_calificacion->proyecto . '"
+                                data-tarea="' . $detalle_calificacion->tarea . '"
+                                data-participacion="' . $detalle_calificacion->participacion . '"
+                                data-examen="' . $detalle_calificacion->examen . '"
+                                data-calificacion="' . $val->calificacion . '"
+                                data-alumno="' . $row->apellidop . " " . $row->apellidom . " " . $row->nombre . '"
+                                style = "color:#378efa;" title="Ver detalle Calificación"></i> </a>';
                             }
                         }
                     } else {
@@ -1074,6 +1074,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
         $tabla .= '</table>';
         return $tabla;
     }
+    
     public function obtenerCalificacionLicenciatura($idhorario = '', $idalumno = '')
     {
         # code...
@@ -1104,8 +1105,8 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
         $tabla = "";
         $tabla .= '<table class="table  table-striped  table-hover">
         <thead class="bg-teal">
-      <th>#</th>
-      <th>MATERIA</th>';
+        <th>#</th>
+        <th>MATERIA</th>';
         foreach ($unidades as $block) :
 
             $tabla .= '<th><strong>' . $block->nombreunidad . '</strong></th>';
@@ -1121,8 +1122,8 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 $total_unidades = $row->unidades;
                 $suma_calificacion = 0;
                 $tabla .= '<tr>
-        <td>' . $c++ . '</td>
-        <td>';
+                <td>' . $c++ . '</td>
+                <td>';
                 if ($row->opcion == 0) {
                     $tabla .= '<label style="color:red;">R: </label>';
                 }

@@ -1797,8 +1797,6 @@ GROUP BY hd.idmateria) tabla");
 
     public function obtenerFaltasPreescolar($idperiodo = '', $idalumno = '', $idmes = '')
     {
-
-
         $this->db->select('asistencia.faltas');
         $this->db->from('tblasistencia_preescolar as asistencia');
 
@@ -1818,5 +1816,22 @@ GROUP BY hd.idmateria) tabla");
         } else {
             return false;
         }
+    }
+
+    public function obtenerNivelEducativoAlumno($idalumno = '')
+    {
+        $this->db->select('p.idplantel,p.idniveleducativo');
+        $this->db->from('tblalumno a');
+        $this->db->join('tblplantel p', 'a.idplantel = p.idplantel');
+
+        if (isset($idalumno) && !empty($idalumno)) {
+            $this->db->where('a.idalumno', $idalumno);
+        }
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }       
     }
 }

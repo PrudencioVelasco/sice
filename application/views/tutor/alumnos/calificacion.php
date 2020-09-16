@@ -73,32 +73,85 @@
                                           
                                           </div>
                                       </div>-->
-                        <?php } else { ?>
-                            <div class="row">
-                                <div class="col-md-12 col-sm-12 col-xs-12 " align="center">
-                                    <label>Sin calificaciones</label>
-                                </div>
+                                  <?php } else { ?>
+                                    <div class="row">
+                                        <div class="col-md-12 col-sm-12 col-xs-12 " align="center">
+                                            <label>Sin calificaciones</label>
+                                        </div>
+                                    </div>
+                                <?php } ?>
                             </div>
-                        <?php } ?>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <div class="modal fade" id="myModalDetalle" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header custom-header">
+                            <button type="button" class="close custom-header-close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <!--<h3 class="modal-title " id="myModalLabel">ALUMNO(A): <label id="alumno_detalle"></label> </h3>-->
+                            <h3 class="modal-title " id="myModalLabel">DETALLE DE CALIFICACIÓN</h3>
+                        </div>
+                        <form method="post" action="" id="frmdetalle">
+                            <div class="modal-body">
+
+                                <div class="alert alert-danger print-error-msg" style="display:none"></div>
+                                <div class="alert alert-success print-success-msg" style="display:none"></div>
+                                <div class="form-group">
+                                    <input class="form-control idcalificacion" type="hidden" name="idcalificacion">
+                                    <input class="iddetallecalificacion" type="hidden" name="iddetallecalificacion"/>
+                                </div> 
+                                <div class="row">
+                                    <div class="col-md-3 col-sm-12 col-xs-12 ">
+                                        <div class="form-group">
+                                            <label><font color="red">*</font> Proyecto</label> 
+                                            <h3 class="pproyecto_calificacion"></h3>
+                                        </div>
+                                    </div> 
+                                    <div class="col-md-3 col-sm-12 col-xs-12 ">
+                                        <div class="form-group">
+                                            <label><font color="red">*</font> T. Casa</label> 
+                                            <h3 class="ptarea_calificacion"></h3>
+                                        </div>
+                                    </div> 
+                                    <div class="col-md-3 col-sm-12 col-xs-12 ">
+                                        <div class="form-group">
+                                            <label><font color="red">*</font> Participación</label> 
+                                            <h3 class="pparticipacion_calificacion"></h3>
+                                        </div>
+                                    </div> 
+                                    <div class="col-md-3 col-sm-12 col-xs-12 ">
+                                        <div class="form-group">
+                                            <label><font color="red">*</font> Examen</label> 
+                                            <h3 class="pexamen_calificacion">%</h3> 
+                                        </div>
+                                    </div> 
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i>
+                                CERRAR</button> 
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- footer content -->
+            <footer>
+                <div class="copyright-info">
+                    <p class="pull-right">SICE - Sistema Integral para el Control Escolar</a>
+                    </p>
+                </div>
+                <div class="clearfix"></div>
+            </footer>
+            <!-- /footer content -->
+
         </div>
+        <!-- /page content -->
     </div>
-
-    <!-- footer content -->
-    <footer>
-        <div class="copyright-info">
-            <p class="pull-right">SICE - Sistema Integral para el Control Escolar</a>
-            </p>
-        </div>
-        <div class="clearfix"></div>
-    </footer>
-    <!-- /footer content -->
-
-</div>
-<!-- /page content -->
-</div>
 
 </div>
 
@@ -108,4 +161,5 @@
     <div class="clearfix"></div>
     <div id="notif-group" class="tabbed_notifications"></div>
 </div> 
+<script data-my_var_1="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/js/validar/alumno_secundaria.js"></script>
 
