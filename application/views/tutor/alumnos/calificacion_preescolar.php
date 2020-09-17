@@ -2,14 +2,15 @@
   <div class="right_col" role="main">
     <div class="">
       <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-12 col-sm-12 col-xs-12">
           <div class="x_panel">
-            <div class="x_title">
+            <div class="x_content">
               <div class="row">
                 <div class="col-md-12 col-sm-12 col-xs-12 ">
                   <h2><strong><i class="fa fa-check-circle"></i> Significado de calificación</strong></h2>
                 </div>
               </div>
+              <div class="x_title"></div>
               <div class="row">
                 <div class="col-md-3 col-sm-3 col-xs-3 alert alert-success alert-dismissible fade in" role="alert">
                   <strong>E:</strong> Excelente
@@ -24,7 +25,6 @@
                   <strong>NA:</strong> Necesita Apoyo
                 </div>
               </div>
-              <div class="clearfix"></div>
             </div>
             <div class="x_content">
               <div class="row">
