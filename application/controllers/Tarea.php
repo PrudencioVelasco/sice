@@ -839,7 +839,7 @@ class Tarea extends CI_Controller {
             } else {
                 $result['error'] = true;
                 $result['msg'] = array(
-                    'msgerror' => "YA REBASÓ EL LIMITE DE ENTREGA2."
+                    'msgerror' => "YA REBASÓ EL LIMITE DE ENTREGA."
                 );
             }
         }

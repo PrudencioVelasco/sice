@@ -8,16 +8,17 @@ if (typeof my_var_2 === "undefined") {
     var my_var_2 = 'some_default_value';
 }
 Vue.config.devtools = true;
-Vue.use(CKEditor);
+Vue.use(VueCkeditor);
 var v = new Vue({
     el: '#appdetalletarea',
+  components: { VueCkeditor },
     data: {
-       editor: ClassicEditor,
-        editorData: '<p>Content of the editor.</p>',
-        editorConfig: {
-            // The configuration of the editor.
-              
-        },
+        config: {
+        //toolbar: [
+        //  ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript']
+        //],
+        height: 300
+      },
         url: my_var_1,
         idtarea: my_var_2,
         addModal: false,

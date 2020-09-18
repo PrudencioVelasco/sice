@@ -99,7 +99,7 @@
     <div class="clearfix"></div>
     <div id="notif-group" class="tabbed_notifications"></div>
 </div>
-<script src="<?php echo base_url(); ?>/assets/editor/ckeditor5-vue/ckeditor.js" type="text/javascript"></script>
-<script src="<?php echo base_url(); ?>/assets/editor/ckeditor.js" type="text/javascript"></script>
+<script src="//cdn.ckeditor.com/4.15.0/standard/ckeditor.js"></script>
+<script src="//unpkg.com/vue-ckeditor2"></script>
 
 <script data-my_var_1="<?php echo base_url() ?>" data-my_var_2="<?php echo $idtarea; ?>" data-my_var_3="<?php echo $idalumno; ?>" src="<?php echo base_url(); ?>/assets/vue/appvue/tutor/tarea/appdetalletarea.js"></script> 

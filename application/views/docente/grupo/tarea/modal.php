@@ -46,8 +46,9 @@
                     </div> 
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12 ">
-                            <label><font color="red">*</font> REDACTAR ACTIVIDAD</label>
-                            <ckeditor :editor="editor" v-model="newTarea.tarea" :config="editorConfig"></ckeditor>
+                            <label><font color="red">*</font> REDACTAR ACTIVIDAD</label> 
+                            <vue-ckeditor  v-model="newTarea.tarea"  :config="config"  />
+      
                          <div class="col-red" v-html="formValidate.tarea"></div>
                         </div>
                     </div>
@@ -127,8 +128,8 @@
                     </div> 
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12 ">
-                            <label><font color="red">*</font> REDACTAR ACTIVIDAD</label>
-                            <ckeditor :editor="editor" v-model="chooseTarea.tarea" :config="editorConfig"></ckeditor>
+                            <label><font color="red">*</font> REDACTAR ACTIVIDAD</label> 
+                             <vue-ckeditor  v-model="chooseTarea.tarea"  :config="config"  />
                          <div class="col-red" v-html="formValidate.tarea"></div>
                         </div>
                     </div>

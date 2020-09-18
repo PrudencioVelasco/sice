@@ -24,9 +24,13 @@ class Calificacion extends CI_Controller {
 
     public function inicio() {
         $idplantel = $this->session->idplantel; 
+        $unidades = $this->calificacion->unidades($idplantel);
+        $oportunidades  = $this->calificacion->oportunidades($idplantel);
         $data = array(
             'periodos'=> $this->cicloescolar->showAll($idplantel),
             'grupos'=> $this->grupo->showAllGrupos($idplantel),
+            'unidades'=>$unidades,
+            'oportunidades'=>$oportunidades
         );
         $this->load->view('admin/header');
         if((isset($this->session->idniveleducativo) && !empty($this->session->idniveleducativo)) && ($this->session->idniveleducativo == 4)){
@@ -104,20 +108,293 @@ class Calificacion extends CI_Controller {
     public function buscarCalificaciones($idclicloescolar = '',$idgrupo = '',$tiporeporte = ''){
         $idplantel = $this->session->idplantel; 
         $tabla = "";
-        if($tiporeporte == 4){
+         $pos_unidad = strpos($tiporeporte, 'u');
+         $pos_oportunidad = strpos($tiporeporte, 'o');
+     
+       if ($pos_unidad !== false) {
+            $array = explode("u", $tiporeporte);
+              $idunidad = $array[1];
+              $tabla = $this->obtenerCalificacionXUnidad($idclicloescolar, $idgrupo, $idunidad); 
+       }else if ($pos_oportunidad !== false) {
+            $array = explode("o", $tiporeporte);
+              $idoportunidad = $array[1];
+        }
+        else if($tiporeporte == 4){
             $tabla = $this->obtenerCalificacion($idclicloescolar, $idgrupo);
         }
-        if($tiporeporte == 2){
+       else if($tiporeporte == 2){
             $tabla = $this->obtenerCalificacionFinal($idclicloescolar, $idgrupo);
-        }
+       }else{
+           
+           $tabla  = "";
+       }
+       $unidades = $this->calificacion->unidades($idplantel);
+       $oportunidades  = $this->calificacion->oportunidades($idplantel);
         $data = array(
             'tabla'=>$tabla,
             'periodos'=> $this->cicloescolar->showAll($idplantel),
             'grupos'=> $this->grupo->showAllGrupos($idplantel),
+            'unidades'=>$unidades,
+            'oportunidades'=>$oportunidades
         );
         $this->load->view('admin/header');
         $this->load->view('admin/catalogo/calificaciones/resultado', $data);
-        $this->load->view('admin/footer');
+        $this->load->view('admin/footer'); 
+    }
+    public function updateFaltasCalificacion()
+    {
+         $config = array(
+            array(
+                'field' => 'faltas',
+                'label' => 'Calificación',
+                'rules' => 'trim|required|is_natural',
+                'errors' => array(
+                    'required' => 'Escriba las faltas',
+                    'is_natural' => 'Debe de ser numero enteros.'
+                )
+            )
+        );
+        $this->form_validation->set_rules($config);
+        if ($this->form_validation->run() == false) {
+            $errors = validation_errors();
+            echo json_encode([
+                'error' => $errors
+            ]);
+        } else {
+            $id = $this->input->post('id');
+            $faltas = $this->input->post('faltas');
+            $data = array(
+                'evaluacion ' => $faltas,
+                'idusuario' => $this->session->user_id,
+                'fecharegistro' => date('Y-m-d H:i:s')
+            );
+            $this->calificacion->updateOtrasEvaluacion($id, $data);
+
+            echo json_encode([
+                'success' => 'Ok'
+            ]);
+        }
+    }
+
+    public function addFaltasCalificacion()
+    {
+        $config = array(
+            array(
+                'field' => 'faltas',
+                'label' => 'Calificación',
+                'rules' => 'trim|required|is_natural',
+                'errors' => array(
+                    'required' => 'Escriba las faltas',
+                    'is_natural' => 'Debe de ser numero enteros.'
+                )
+            )
+        );
+        $this->form_validation->set_rules($config);
+        if ($this->form_validation->run() == false) {
+            $errors = validation_errors();
+            echo json_encode([
+                'error' => $errors
+            ]);
+        } else {
+            $idcalificacion = $this->input->post('idcalificacion');
+            $faltas = $this->input->post('faltas');
+            $data = array(
+                'idcalificacion' => $idcalificacion,
+                'idtipoevaluacion' => 1,
+                'evaluacion ' => $faltas,
+                'idusuario' => $this->session->user_id,
+                'fecharegistro' => date('Y-m-d H:i:s')
+            );
+            $this->calificacion->addFaltasCalificacion($data);
+
+            echo json_encode([
+                'success' => 'Ok'
+            ]);
+        }
+    }
+
+    public function addRetardo()
+    {
+        $config = array(
+            array(
+                'field' => 'retardo',
+                'label' => 'Calificación',
+                'rules' => 'trim|required|is_natural',
+                'errors' => array(
+                    'required' => 'Escriba los retardos',
+                    'is_natural' => 'Debe de ser numero enteros.'
+                )
+            )
+        );
+        $this->form_validation->set_rules($config);
+        if ($this->form_validation->run() == false) {
+            $errors = validation_errors();
+            echo json_encode([
+                'error' => $errors
+            ]);
+        } else {
+            $idcalificacion = $this->input->post('idcalificacion');
+            $retardos = $this->input->post('retardo');
+            $data = array(
+                'idcalificacion' => $idcalificacion,
+                'idtipoevaluacion' => 2,
+                'evaluacion ' => $retardos,
+                'idusuario' => $this->session->user_id,
+                'fecharegistro' => date('Y-m-d H:i:s')
+            );
+            $this->calificacion->addFaltasCalificacion($data);
+            
+            echo json_encode([
+                'success' => 'Ok'
+            ]);
+        }
+    }
+    public function updateRetardo()
+    {
+        $config = array(
+            array(
+                'field' => 'retardo',
+                'label' => 'Calificación',
+                'rules' => 'trim|required|is_natural',
+                'errors' => array(
+                    'required' => 'Escriba los retardos',
+                    'is_natural'=>'Debe de ser numero enteros.'
+                )
+            )
+        );
+        $this->form_validation->set_rules($config);
+        if ($this->form_validation->run() == false) {
+            $errors = validation_errors();
+            echo json_encode([
+                'error' => $errors
+            ]);
+        } else {
+            $id = $this->input->post('id');
+            $retardos = $this->input->post('retardo');
+            $data = array( 
+                'evaluacion' => $retardos,
+                'idusuario' => $this->session->user_id,
+                'fecharegistro' => date('Y-m-d H:i:s')
+            );
+            $this->calificacion->updateOtrasEvaluacion($id,$data);
+            
+            echo json_encode([
+                'success' => 'Ok'
+            ]);
+        }
+    }
+    public function  obtenerCalificacionXUnidad($idperiodo,$idgrupo,$idunidad){
+        $tabla = "";
+        $alumnos = $this->calificacion->alumnosGrupo($idperiodo,$idgrupo);
+        $materias = $this->calificacion->materiasGrupo($idperiodo,$idgrupo);
+        $detalle_periodo = $this->calificacion->detallePeriodo($idperiodo);
+        $estatus_periodo = $detalle_periodo->activo;
+        if(isset($alumnos) && !empty($alumnos)){
+            $tabla .= ' <table  id="tablageneralcal" class=" table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+                <thead class="bg-teal">
+                    <th>#</th>
+                    <th>NOMBRE</th>';
+                    if (isset($materias) && !empty($materias)){
+                        foreach ($materias as $row){
+                            $tabla .='<th>'.$row->nombreclase.'</th>';
+                        }
+                    } 
+                    $tabla .= '</thead>';
+                    $c = 1;
+                    if (isset($alumnos) && !empty($alumnos)) {
+                        foreach ($alumnos as $alumno){
+                            $idalumno = $alumno->idalumno;
+                            $opcion_alumno = $alumno->opcion;
+                            $tabla .='<tr>';
+                                $tabla .= '<td>' . $c++ . '</td>';
+                                $tabla .='<td>'.$alumno->nombre.' '.$alumno->apellidop.' '.$alumno->apellidom.'</td>';
+                                foreach ($materias as $materia) {
+                                    $idmateria = $materia->idmateria;
+                                    $idprofesormateria = $materia->idprofesormateria;
+                                    // AVERIGUAR SI AL ALUMNO PUEDE LLEVAR ESTA MATERIA
+                                    // DEPENDIENDO DE LLEVA REPROBADA
+                                    if ($opcion_alumno == 1) {
+                                        $evaluar = $this->calificacion->validarMateriaSeriada($idalumno, $idmateria,$estatus_periodo);
+                                        if ($evaluar) {
+                                            $tabla .= '<td>No puede llevar esta Asignatura.</td>';
+                                        } else {
+                                            $calificacion = $this->calificacion->obtenerCalificacionXUnidad($idalumno,$idunidad,$idprofesormateria);
+                                            // EVALUA LA CALIFICACION PARA ESTE NIVEL
+                                            if($calificacion){
+                                                $idcalificacion =$calificacion->idcalificacion;
+                                                $tabla .= '<td><label>'.$calificacion->calificacion.'</label>';
+                                                $value_faltas = $this->calificacion->validarExistenciaOtrasEvaluaciones($idcalificacion,1);
+                                                $value_retardo = $this->calificacion->validarExistenciaOtrasEvaluaciones($idcalificacion,2);
+                                                if ($value_faltas) {
+                                                    //YA ESTA REGISTRADO LAS FALTAS
+                                                    $tabla .= '  <a  href="#" class="edit_button" data-toggle="modal" data-target="#modalEditFaltas" 
+                                                    data-id="' .$value_faltas->iddetallecalificacionotras. '"
+                                                    data-faltas="' .$value_faltas->evaluacion. '"
+    				                                data-alumno="' . $alumno->apellidop . " " . $alumno->apellidom . " " . $alumno->nombre . '"
+    				                                ><i class="fa fa-pencil-square fa-lg"  
+    				                                style = "color:#2a90f0;" title="Editar faltas."></i> '.$value_faltas->evaluacion.' - Falta</a> ';
+                                                }else{
+                                                    //NO ESTA REGISTRADO LAS FALTAS
+                                                    $tabla .= '  <a  href="#"  data-toggle="modal" data-target="#modalAddFaltas" class=" add_button"
+                                                    data-idcalificacion="' .$idcalificacion. '"
+    				                                data-alumno="' . $alumno->apellidop . " " . $alumno->apellidom . " " . $alumno->nombre . '"><i class="fa fa-plus-circle fa-lg"  
+    				                                style = "color:#4cc279;" title="Agregar faltas."></i> Falta </a> ';
+                                                }
+                                                
+                                                if ($value_retardo) {
+                                                    //YA ESTA REGISTRADO LOS RETARDO
+                                                  
+                                                    $tabla .= '<a  href="#)" data-toggle="modal" data-target="#modalEditRetardo"  class="edit_button_retardo"
+                                                    data-id="' .$value_retardo->iddetallecalificacionotras. '"
+                                                    data-retardo="' .$value_retardo->evaluacion. '"
+    				                                data-alumno="' . $alumno->apellidop . " " . $alumno->apellidom . " " . $alumno->nombre . '"
+    				                                ><i class="fa fa-pencil-square fa-lg"
+    				                                style = "color:#2a90f0;" title="Editar faltas."></i> '.$value_retardo->evaluacion.' - Retardo</a> ';
+                                                    
+                                                    
+                                                }else{
+                                                    //NO ESTA REGISTRADO LOS RETARDO
+                                                    $tabla .= '  <a  href="#"  data-toggle="modal" data-target="#modalAddRetardo" class="add_button_retardo"
+                                                    data-idcalificacion="' .$idcalificacion. '"
+    				                                data-alumno="' . $alumno->apellidop . " " . $alumno->apellidom . " " . $alumno->nombre . '"><i class="fa fa-plus-circle fa-lg"
+    				                                style = "color:#4cc279;" title="Agregar Retardo."></i> Retardo </a> ';
+                                                }
+                                                
+                                                $tabla .='</td>';
+                                                
+                                                
+                                            }else{
+                                                $tabla .= '<td><small>No registrado</small></td>';
+                                            }
+                                        }
+                                    } else if ($opcion_alumno == 0) {
+                                        //VALIDAR MATERIA REPROBADA
+                                        $validar = $this->calificacion->validarMateriaReprobadaXUnidad($idalumno,$idprofesormateria);
+                                        if ($validar) {
+                                            //VALIDAMOS LA CALIFICACION
+                                            $calificacion = $this->calificacion->obtenerCalificacionXUnidad($idalumno,$idunidad,$idprofesormateria); 
+                                            if($calificacion){
+                                                $tabla .= '<td>'.$calificacion->calificacion.'</td>';
+                                            }else{
+                                                $tabla .= '<td><small>No registrado</small></td>';
+                                            }
+                                        }else{
+                                            //NO PUEDE LLEVAR LA MATERIA 
+                                            $tabla .='<td>No lleva la materia.</td>';
+                                        }
+                                    } else {
+                                        //NO ES NADA
+                                    }
+                                }
+                            $tabla .='</tr>';
+                        }
+                    }
+                    
+                    $tabla .='</table>';
+        }else{
+            //SIN REGISTROS DE ALUMNOS
+        }
+        return $tabla;
     }
     public function obtenerCalificacionFinal($idperiodo,$idgrupo) {
         $idplantel = $this->session->idplantel;
@@ -212,8 +489,10 @@ class Calificacion extends CI_Controller {
     }
     public function obtenerCalificacion($idperiodo,$idgrupo) {
         $idplantel = $this->session->idplantel;
-         $alumnos = $this->calificacion->listaAlumnos($idgrupo,$idplantel,$idperiodo);
-        $materias = $this->calificacion->listaMateriasGrupo($idgrupo,$idplantel,$idperiodo);
+        $detalle_periodo = $this->calificacion->detallePeriodo($idperiodo);
+        $estatus_periodo = $detalle_periodo->activo;
+        $alumnos = $this->calificacion->alumnosGrupo($idperiodo,$idgrupo);
+        $materias = $this->calificacion->materiasGrupo($idperiodo,$idgrupo);
         $tabla = "";
         $tabla .= ' <table  id="tablageneralcal" class=" table table-striped dt-responsive nowrap" cellspacing="0" width="100%"> 
         <thead class="bg-teal">
@@ -232,17 +511,95 @@ class Calificacion extends CI_Controller {
           
             foreach ($alumnos as $row) { 
                 $idalumno = $row->idalumno;
+                $idhorario = $row->idhorario;
                 $tabla .= '<tr>';
-                $tabla .= '  <td>' . $c++ . '</td>'; 
-                $tabla .= '<td>' . $row->apellidop . " " . $row->apellidom . " " . $row->nombre . '</td>';
-               
+                $tabla .= '<td>' . $c++ . '</td>'; 
+                $tabla .= '<td>' . $row->apellidop . " " . $row->apellidom . " " . $row->nombre;
+                //EVALUAR SI YA TIENE REGISTRADOS OTRAS EVALUACIONES
+                $validar_diciplina = $this->calificacion->validarOtrasEvaluaciones($idalumno,$idhorario);
+                if($validar_diciplina){
+                    $tabla .= '  <a  href="#"  data-toggle="modal" data-target="#modalAddOtrasEvaluaciones" class="add_button_diciplina"
+                                                    data-idhorario="' .$idhorario. '"';
+                    foreach ($validar_diciplina as $diciplina){
+                        if($diciplina->idtipoevaluacion == 3){
+                            //DESCIPLINA
+                            $tabla .='data-iddiciplina="' .$diciplina->idcalificaciondisciplina. '"';
+                            $tabla .='data-diciplina="' .$diciplina->evaluacion. '"';
+                        }
+                        if($diciplina->idtipoevaluacion == 4){
+                            //PRESENTACIÓN PERSONAl
+                            $tabla .='data-idpresentacionpersonal="' .$diciplina->idcalificaciondisciplina. '"';
+                            $tabla .='data-presentacionpersonal="' .$diciplina->evaluacion. '"';
+                        }
+                    }
+                    $tabla .= '  data-alumno="' . $row->apellidop . " " . $row->apellidom . " " . $row->nombre . '"><i class="fa fa-plus-circle fa-lg"
+    				                                style = "color:#4cc279;" title="Agregar Retardo."></i> Editar </a> ';
+                }else{
+                    $tabla .= '  <a  href="#"  data-toggle="modal" data-target="#modalAddOtrasEvaluaciones" class="add_button_diciplina"
+                                                    data-idhorario="' .$idhorario. '"
+                                                    data-idalumno="' .$idalumno. '"
+    				                                data-alumno="' . $row->apellidop . " " . $row->apellidom . " " . $row->nombre . '"><i class="fa fa-plus-circle fa-lg"
+    				                                style = "color:#4cc279;" title="Agregar Retardo."></i> Agregar </a> ';
+                    
+                }
+                $tabla .='</td>';
+                $opcion_alumno = $row->opcion;
                 $suma_recorrido = 0;
                 if (isset($materias) && !empty($materias)){
                 foreach ($materias as $block) { 
-                    $idmateria = $block->idmateriareal;
-                    $validar_materia_reprobada = $this->calificacion->validarMateriaReprobada($idalumno,$idmateria);
+                    $idmateria = $block->idmateria; 
+                    $idprofesormateria = $block->idprofesormateria;
+                    //$validar_materia_reprobada = $this->calificacion->validarMateriaReprobada($idalumno,$idmateria);
                     $tabla .= '<td>'; 
-                    if($validar_materia_reprobada){
+                    if ($opcion_alumno == 1) {
+                        $evaluar = $this->calificacion->validarMateriaSeriada($idalumno, $idmateria,$estatus_periodo);
+                        if ($evaluar) {
+                            $tabla .= '<td>No puede llevar esta Asignatura.</td>';
+                        } else {
+                            $valor_calificacion = $this->calificacion->obtenerCalificacionSumatoria($idalumno,$idprofesormateria,$idperiodo);
+                            
+                            //Se refleja la metaria para sacar el promedio
+                            if(isset($valor_calificacion) && !empty($valor_calificacion)){
+                                $suma_recorrido = 0;
+                                foreach ($valor_calificacion as $row_ca){
+                                    if($suma_recorrido == 0){
+                                        $tabla .='<label>'.number_format($row_ca->calificacion,2).'</label>';
+                                    }
+                                    $suma_recorrido = 1;
+                                }
+                                
+                          
+                            }else{
+                                $tabla .='<small>No registrado</small>';
+                            }
+                        }
+                    }else  if ($opcion_alumno == 0) {
+                        $validar = $this->calificacion->validarMateriaReprobadaXUnidad($idalumno,$idprofesormateria);
+                        if ($validar) {
+                            //VALIDAMOS LA CALIFICACION
+                            $valor_calificacion = $this->calificacion->obtenerCalificacionSumatoria($idalumno,$idprofesormateria,$idperiodo);
+                            
+                            //Se refleja la metaria para sacar el promedio
+                            if(isset($valor_calificacion) && !empty($valor_calificacion)){
+                                $suma_recorrido = 0;
+                                foreach ($valor_calificacion as $row_ca){
+                                    if($suma_recorrido == 0){
+                                        $tabla .='<label>'.number_format($row_ca->calificacion,2).'</label>';
+                                    }
+                                    $suma_recorrido = 1;
+                                }
+                            }else{
+                                $tabla .='<small>No registrado</small>';
+                            }
+                        }else{
+                            //NO PUEDE LLEVAR LA MATERIA
+                            $tabla .='<td>No lleva la materia.</td>';
+                        }
+                    }else{
+                        
+                    }
+                    
+/*                     if($validar_materia_reprobada){
                      //No se le muestra la materia porque la reprobo y estaba seriada
                         $tabla .='<small>No puede cursar esta curso.</small>';
                     }else{
@@ -261,7 +618,7 @@ class Calificacion extends CI_Controller {
                             $tabla .='<small>No registrado</small>';
                         }
                      
-                    }
+                    } */
                 
                     $tabla .= '</td>';
                 }

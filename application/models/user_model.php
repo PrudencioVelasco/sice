@@ -186,7 +186,7 @@ class User_model extends CI_Model {
     }
 
     public function loginAlumno($matricula) {
-        $this->db->select('u.id,a.password, a.nombre, a.apellidop, a.apellidom, a.idalumno, a.matricula, pla.idplantel, ne.idniveleducativo, ne.nombreniveleducativo');
+        $this->db->select('u.id,a.password,u.idtipousuario, a.nombre, a.apellidop, a.apellidom, a.idalumno, a.matricula, pla.idplantel, ne.idniveleducativo, ne.nombreniveleducativo');
         $this->db->from('tblalumno a');
         $this->db->join('users u', 'u.idusuario = a.idalumno');
         $this->db->join('tblplantel pla', 'a.idplantel = pla.idplantel');
@@ -215,7 +215,7 @@ class User_model extends CI_Model {
     }
 
     public function loginDocente($correo) {
-        $this->db->select('ne.nombreniveleducativo, ne.idniveleducativo, u.id, p.nombre, p.apellidop, p.apellidom, p.idprofesor,p.correo, pla.idplantel, p.password');
+        $this->db->select('ne.nombreniveleducativo, u.idtipousuario, ne.idniveleducativo, u.id, p.nombre, p.apellidop, p.apellidom, p.idprofesor,p.correo, pla.idplantel, p.password');
         $this->db->from('tblprofesor p');
         $this->db->join('users u', 'u.idusuario = p.idprofesor');
         $this->db->join('tblplantel pla', 'p.idplantel = pla.idplantel');
@@ -231,7 +231,7 @@ class User_model extends CI_Model {
     }
 
     public function loginTutor($correo) {
-        $this->db->select('ne.nombreniveleducativo, ne.idniveleducativo,u.id, t.idtutor, t.nombre, t.apellidop, t.apellidom,pla.idplantel, t.password');
+        $this->db->select('ne.nombreniveleducativo,u.idtipousuario, ne.idniveleducativo,u.id, t.idtutor, t.nombre, t.apellidop, t.apellidom,pla.idplantel, t.password');
         $this->db->from('tbltutor t');
         $this->db->join('users u', 'u.idusuario = t.idtutor');
         $this->db->join('tblplantel pla', 't.idplantel = pla.idplantel');
@@ -247,7 +247,7 @@ class User_model extends CI_Model {
     }
 
     public function loginAdmin($usuario) {
-        $this->db->select('ne.nombreniveleducativo, ne.idniveleducativo,u.id, p.nombre, p.apellidop, p.apellidom, p.idpersonal, pla.nombreplantel, pla.idplantel, ur.id_rol as idrol, p.password');
+        $this->db->select('ne.nombreniveleducativo, u.idtipousuario, ne.idniveleducativo,u.id, p.nombre, p.apellidop, p.apellidom, p.idpersonal, pla.nombreplantel, pla.idplantel, ur.id_rol as idrol, p.password');
         $this->db->from('tblpersonal p');
         $this->db->join('users u', 'u.idusuario = p.idpersonal');
         $this->db->join('tblplantel pla', 'pla.idplantel = p.idplantel');

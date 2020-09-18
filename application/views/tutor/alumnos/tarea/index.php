@@ -50,7 +50,7 @@
                                                         </td>
                                                         <td>{{row.horaentrega}} {{row.fechaentrega}}</td> 
                                                         <td align="right">
-                                                            <a class="btn bg-cyan btn-block btn-xs waves-effect waves-black" href="#" v-bind:href="'/sice/Tutores/detalletareav2/'+ row.idtarea+'/'+idhorario+'/'+idalumno">Detalles</a>
+                                                            <a class="btn bg-cyan btn-block btn-xs waves-effect waves-black" href="#" v-bind:href="'/Tutores/detalletareav2/'+ row.idtarea+'/'+idhorario+'/'+idalumno">Detalles</a>
                                                         </td> 
                                                     </tr>
                                                     <tr v-if="emptyResult">

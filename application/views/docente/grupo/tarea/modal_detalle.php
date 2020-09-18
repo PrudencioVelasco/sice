@@ -42,8 +42,8 @@
                       <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12 ">
                             <label>Observaciones</label>
-                            <ckeditor :editor="editor" v-model="chooseAlumnosTareas.observaciones" :config="editorConfig"></ckeditor>
-                         <div class="col-red" v-html="formValidate.observacionesa"></div>
+                             <vue-ckeditor  v-model="chooseAlumnosTareas.observaciones"  :config="config"  />
+                          <div class="col-red" v-html="formValidate.observacionesa"></div>
                         </div>
                     </div>
                     

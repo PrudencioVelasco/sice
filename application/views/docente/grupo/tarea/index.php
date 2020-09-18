@@ -59,7 +59,7 @@
                                                     Eliminar
                                                 </button>  
                                               
-                                               <a  class="btn btn-icons btn-default btn-sm waves-effect waves-black"  v-bind:href="'/sice/Pgrupo/revisar/'+ row.idtarea"><i class="fa fa-list-alt" aria-hidden="true"></i> Revisar</a> 
+                                               <a  class="btn btn-icons btn-default btn-sm waves-effect waves-black"  v-bind:href="'/Pgrupo/revisar/'+ row.idtarea"><i class="fa fa-list-alt" aria-hidden="true"></i> Revisar</a> 
                                             </td>
                                         </tr>
                                         <tr v-if="emptyResult">
@@ -114,8 +114,8 @@
     <div class="clearfix"></div>
     <div id="notif-group" class="tabbed_notifications"></div>
 </div>
-<script src="<?php echo base_url(); ?>/assets/editor/ckeditor5-vue/ckeditor.js" type="text/javascript"></script>
-<script src="<?php echo base_url(); ?>/assets/editor/ckeditor.js" type="text/javascript"></script>
+<script src="//cdn.ckeditor.com/4.15.0/standard/ckeditor.js"></script>
+<script src="//unpkg.com/vue-ckeditor2"></script>
 
 <script data-my_var_1="<?php echo base_url() ?>" data-my_var_2="<?php echo $idhorario; ?>" data-my_var_3="<?php echo $idhorariodetalle ?>" src="<?php echo base_url(); ?>/assets/vue/appvue/docente/tarea/apptarea_principal.js"></script> 
 

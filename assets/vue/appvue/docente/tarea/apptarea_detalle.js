@@ -23,15 +23,17 @@ if (typeof my_var_5 === "undefined") {
 }
  
 Vue.config.devtools = true; 
-Vue.use(CKEditor);
+Vue.use(VueCkeditor);
 var vu = new Vue({
+	 components: { VueCkeditor },
     el: '#appplanificacion',
-    data: { 
-	 editor: ClassicEditor,
-        editorData: '<p>Content of the editor.</p>',
-        editorConfig: {
-            // The configuration of the editor.
-        },
+    data: {  
+      config: {
+        //toolbar: [
+        //  ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript']
+        //],
+        height: 300
+      },
         url: my_var_1,
         idtarea: my_var_2, 
         idhorario: my_var_3, 

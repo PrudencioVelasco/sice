@@ -15,15 +15,18 @@ if (typeof my_var_3 === "undefined") {
     var my_var_3 = 'some_default_value';
 }
 Vue.config.devtools = true;
-Vue.use(CKEditor);
+Vue.use(VueCkeditor);
 var vu = new Vue({
+	  components: { VueCkeditor },
     el: '#appplanificacion',
     data: {
-        editor: ClassicEditor,
-        editorData: '<p>Content of the editor.</p>',
-        editorConfig: {
-            // The configuration of the editor.
-        },
+    
+      config: {
+        //toolbar: [
+        //  ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript']
+        //],
+        height: 300
+      },
         url: my_var_1,
         idhorario: my_var_2,
         idhorariodetalle: my_var_3,
@@ -59,7 +62,7 @@ var vu = new Vue({
         this.showAll();
         this.showAllGrupos();
     },
-    methods: {
+    methods: { 
         orderBy(sortFn) {
             // sort e array data like this.userArray
             this.tareas.sort(sortFn);

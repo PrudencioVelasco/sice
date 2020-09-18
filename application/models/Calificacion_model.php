@@ -26,8 +26,22 @@ class Calificacion_model extends CI_Model {
             return false;
         }
     }
+    public function oportunidades($idplantel = '') {
+        $this->db->select('o.idoportunidadexamen, o.nombreoportunidad');
+        $this->db->from('tbloportunidad_examen o');
+        if (isset($idplantel) && !empty($idplantel)) {
+            $this->db->where('o.idplantel', $idplantel);
+        }
+        $this->db->where('o.numero > 1');
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
     public  function  detallePeriodo($idperiodo){
-        $this->db->select('m.nombremes as mesinicio,m2.nombremes as mesfin,y.nombreyear as yearinicio,y2.nombreyear as yearfin');
+        $this->db->select('pe.activo, m.nombremes as mesinicio,m2.nombremes as mesfin,y.nombreyear as yearinicio,y2.nombreyear as yearfin');
         $this->db->from('tblperiodo pe');
         $this->db->join('tblmes m ', ' pe.idmesinicio = m.idmes');
         $this->db->join('tblmes m2 ', ' pe.idmesfin = m2.idmes');
@@ -60,6 +74,18 @@ class Calificacion_model extends CI_Model {
             $this->db->where('ma.idmateriapreescolar NOT IN(27)');
         } 
         $this->db->order_by('ma.numero ASC');
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+    public function validarOtrasEvaluaciones($idalumno,$idhorario) {
+        $this->db->select('cd.idcalificaciondisciplina,cd.idtipoevaluacion, cd.evaluacion');
+        $this->db->from('tblcalificacion_disciplina cd');
+        $this->db->where('cd.idalumno', $idalumno); 
+        $this->db->where('cd.idhorario', $idhorario);  
         $query = $this->db->get();
         if ($this->db->affected_rows() > 0) {
             return $query->result();
@@ -168,6 +194,24 @@ class Calificacion_model extends CI_Model {
             return false;
         }
     }
+    public function obtenerCalificacionXUnidad($idalumno = '', $idunidad = '', $idmateria = '') {
+        $this->db->select('c.idcalificacion, c.calificacion');
+        $this->db->from('tblcalificacion c');
+        $this->db->join('tblunidad u', 'c.idunidad = u.idunidad');
+        $this->db->join('tblhorario_detalle hd', 'hd.idhorariodetalle = c.idhorariodetalle');
+        $this->db->where('c.idalumno', $idalumno);
+        $this->db->where('hd.idmateria', $idmateria);
+        $this->db->where('c.idunidad', $idunidad);
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
+    
+  
+    
     public function listaAlumnos($idgrupo = '', $idplantel = '', $idperiodo = '') {
         $this->db->select('a.idalumno, a.nombre, a.apellidop, a.apellidom');
         $this->db->from('tblalumno a');
@@ -182,6 +226,79 @@ class Calificacion_model extends CI_Model {
             return false;
         }
     }
+    public function validarMateriaSeriada($idalumno = '', $idmateria = '',$estatus_periodo = '') {
+        $this->db->select('ag.*');
+        $this->db->from('tblalumno_grupo ag');
+        $this->db->join('tblmateria_reprobada mr', 'ag.idalumnogrupo = mr.idalumnogrupo');
+        $this->db->join('tblmateria_seriada ms', 'ms.idmateriasecundaria  = mr.idmateria');
+        if (isset($estatus_periodo) && !empty($estatus_periodo) && $estatus_periodo == 1){
+            $this->db->where('mr.estatus',1);
+        }
+        if (isset($estatus_periodo) && !empty($estatus_periodo) && $estatus_periodo == 0){
+            $this->db->where('mr.estatus',0);
+        }
+       
+        $this->db->where('ms.eliminado  = 0');
+        $this->db->where('ag.idalumno', $idalumno);
+        $this->db->where('ms.idmateriaprincipal', $idmateria);
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+    public function validarExistenciaOtrasEvaluaciones($idcalificacion,$tipoevaluacion){
+        $this->db->select('dco.iddetallecalificacionotras,dco.evaluacion');
+        $this->db->from('tbldetalle_calificacion_otras dco'); 
+        $this->db->where('dco.idcalificacion', $idcalificacion);
+        if (isset($tipoevaluacion) && !empty($tipoevaluacion)) {
+           $this->db->where('dco.idtipoevaluacion',$tipoevaluacion);
+        }
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
+    public function validarMateriaReprobadaXUnidad($idalumno = '', $idmateria = '') {
+        $this->db->select('ag.*');
+        $this->db->from('tblalumno_grupo ag');
+        $this->db->join('tblmateria_reprobada mr', 'ag.idalumnogrupo = mr.idalumnogrupo');
+        $this->db->join('tbldetalle_reprobada dr', 'dr.idreprobada  = mr.idreprobada');
+        $this->db->where('ag.idalumno', $idalumno);
+        $this->db->where('dr.idprofesormateria', $idmateria);
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+    public function alumnosGrupo($idperiodo, $idgrupo) {
+        
+        $sql =  "SELECT * FROM vwalumnosgrupo WHERE idperiodo = $idperiodo AND idgrupo = $idgrupo";
+        $query = $this->db->query($sql);
+        
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+    public function materiasGrupo($idperiodo, $idgrupo) {
+        
+        $sql =  "SELECT * FROM vwmateriasgrupo WHERE idperiodo = $idperiodo AND idgrupo = $idgrupo";
+        $query = $this->db->query($sql);
+        
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+    
     public function listaMateriasGrupo($idgrupo = '', $idplantel = '', $idperiodo = '') {
         $this->db->select('pm.idprofesormateria,m.idmateria as idmateriareal, hd.idmateria, h.idhorario, hd.idhorariodetalle,  m.nombreclase, p.nombre, p.apellidop, p.apellidom');
         $this->db->from('tblhorario h');
@@ -553,8 +670,22 @@ ORDER BY    oe.numero DESC");
         }
     }
     
+    public function updateOtrasEvaluacion($id, $field) {
+        $this->db->where('idasistenciapreescolar', $id);
+        $this->db->update('tbldetalle_calificacion_otras', $field);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     public function addCalificacionPreescolar($data) {
         $this->db->insert('tblcalificacion_preescolar', $data);
+        $insert_id = $this->db->insert_id();
+        return $insert_id;
+    }
+    public function addFaltasCalificacion($data) {
+        $this->db->insert('tbldetalle_calificacion_otras', $data);
         $insert_id = $this->db->insert_id();
         return $insert_id;
     }

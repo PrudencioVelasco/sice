@@ -43,7 +43,7 @@ class Aalumno extends CI_Controller
 
     public function index()
     {
-        Permission::grant(uri_string());
+        Permission::grant(uri_string()); 
         $this->load->view('alumno/header');
         $this->load->view('alumno/index');
         $this->load->view('alumno/footer');
@@ -53,7 +53,7 @@ class Aalumno extends CI_Controller
     {
         $idalumno = $this->decode($idalumno);
         $idhorario = $this->decode($idhorario);
-        if ((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno))) {
+        if ((isset($idhorario) && ! empty($idhorario)) && (isset($idalumno) && ! empty($idalumno))) {
             $detalle_logo = $this->alumno->logo($this->session->idplantel);
             $detalle_horario = $this->horario->detalleHorario($idhorario);
             $ubicacion_imagen = '/assets/images/escuelas/';
@@ -64,7 +64,7 @@ class Aalumno extends CI_Controller
             $grupo = $this->horario->showNivelGrupo($idhorario);
             $dias = $this->alumno->showAllDias();
             $datelle_alumno = $this->alumno->showAllMateriasAlumno($idalumno);
-            if (isset($datelle_alumno) && !empty($datelle_alumno)) {
+            if (isset($datelle_alumno) && ! empty($datelle_alumno)) {
                 $this->load->library('tcpdf');
                 $hora = date("h:i:s a");
                 $fechaactual = date('d/m/Y');
@@ -158,7 +158,7 @@ class Aalumno extends CI_Controller
 </style>
 <div id="areimprimir">
           <table width="600" border="0" cellpadding="2" cellspacing="0">';
-                if ((isset($this->session->idplantel) && !empty($this->session->idplantel)) && ($this->session->idplantel == 7 || $this->session->idplantel == 8)) {
+                if ((isset($this->session->idplantel) && ! empty($this->session->idplantel)) && ($this->session->idplantel == 7 || $this->session->idplantel == 8)) {
                     $tabla .= '<tr>
     <td width="150" align="center" valing="top"><img  src="' . $logo2 . '" /></td>
     <td colspan="2" width="230" align="center">
@@ -352,84 +352,92 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
             return $tabla;
         }
     }
+
     public function verificarhora()
     {
         date_default_timezone_set("America/Mexico_City");
         $idhorariodetalle = $this->input->post('idhorariodetalle');
 
-        //        if ((isset($idhorariodetalle) && !empty($idhorariodetalle))) {
-        $detalle_horario = $this->horario->detalleHorarioDetalle($idhorariodetalle);
-        //            if (isset($detalle_horario) && !empty($detalle_horario)) {
-        $hora = $detalle_horario[0]->horainicial;
-        $iddia = $detalle_horario[0]->iddia;
-        $url = $detalle_horario[0]->urlvideoconferencia;
-        //                $numero_dia = date('N');
-        //                $nombre_dia = "";
-        //                switch ($iddia) {
-        //                    case 1:
-        //                        $nombre_dia = "LUNES";
-        //
-        //                        break;
-        //                    case 2:
-        //                        $nombre_dia = "MARTES";
-        //
-        //                        break;
-        //                    case 3:
-        //                        $nombre_dia = "MIERCOLES";
-        //
-        //                        break;
-        //                    case 4:
-        //                        $nombre_dia = "JUEVES";
-        //
-        //                        break;
-        //                    case 5:
-        //                        $nombre_dia = "VIERNES";
-        //
-        //                        break;
-        //
-        //                    default:
-        //                        $nombre_dia = "NO ESPECIFICADO";
-        //                        break;
-        //                }
-        //                if ($iddia == $numero_dia) {
-        //                    $fecha_actual = date('Y-m-d H:i:s');
-        //                    $hora_actual = strtotime('-10 minute', strtotime($fecha_actual));
-        //                    $hora_actual_menos10minutos = date('H:i', $hora_actual);
-        //                    $hora_actual_mas30minutos = date('H:i', strtotime('+30 minute', strtotime($hora))); 
-        //                    if (($hora >= $hora_actual_menos10minutos) && ($hora <= $hora_actual_mas30minutos )) {
-        //ENTRA A CLASES PORQUE ESTA EN TIEMPO
-        $data = array(
-            'opcion' => 1,
-            'url' => $url
-        );
-        //                    } else {
-        //                        //NO PUEDE ENTRAR A CLASES PORQUE ES TEMPRANO O YA ES TARDE
-        //                        $data = array(
-        //                            'opcion' => 2,
-        //                            'mensaje' => 'PUEDE ENTRAR A LA CLASE 10 MINUTOS ANTES O 30 MINUTOS DESPUES DE HABER INICIADO.'
-        //                        );
-        //                    }
-        //                } else {
-        //                    $data = array(
-        //                        'opcion' => 4,
-        //                        'mensaje' => 'ESTA CLASE LO PUEDE TENER  EL ' . $nombre_dia
-        //                    );
-        //                }
-        //            } else {
-        //                $data = array(
-        //                    'opcion' => 5,
-        //                    'mensaje' => 'ACTUALIZE LA PAGINA'
-        //                );
-        //            }
-        //        } else {
-        //            //NO VIENE POR POST URL Y HORA
-        //
-        //            $data = array(
-        //                'opcion' => 3,
-        //                'mensaje' => 'Ocurrio un error, intente mas tarde.'
-        //            );
-        //        }
-        if (isset($data) && !empty($data)) {
+        if ((isset($idhorariodetalle) && ! empty($idhorariodetalle))) {
+            $detalle_horario = $this->horario->detalleHorarioDetalle($idhorariodetalle);
+            if (isset($detalle_horario) && ! empty($detalle_horario)) {
+                $hora_inicial = $detalle_horario[0]->horainicial;
+                $hora = date('H:i', strtotime($hora_inicial));
+                $horafinal = $detalle_horario[0]->horafinal;
+                $iddia = $detalle_horario[0]->iddia;
+                $url = $detalle_horario[0]->urlvideoconferencia;
+                $numero_dia = date('N');
+                $nombre_dia = "";
+                switch ($iddia) {
+                    case 1:
+                        $nombre_dia = "LUNES";
+
+                        break;
+                    case 2:
+                        $nombre_dia = "MARTES";
+
+                        break;
+                    case 3:
+                        $nombre_dia = "MIERCOLES";
+
+                        break;
+                    case 4:
+                        $nombre_dia = "JUEVES";
+
+                        break;
+                    case 5:
+                        $nombre_dia = "VIERNES";
+
+                        break;
+
+                    default:
+                        $nombre_dia = "NO ESPECIFICADO";
+                        break;
+                }
+                if ($iddia == $numero_dia) {
+                    $fecha_actual = date('Y-m-d H:i:s'); 
+                    $hora_actual = strtotime('-5 minute', strtotime($hora_inicial));
+                    $hora_actual_menos10minutos = date('H:i', $hora_actual);
+                     $hora_actual_cero = date('H:i', strtotime($fecha_actual));
+                    //$hora_actual_mas30minutos = date('H:i', strtotime('+30 minute', strtotime($hora)));
+                    
+                    $hora_termino_clase = date('H:i', strtotime($horafinal));
+                    //echo $hora_termino_clase;
+                    //echo $hora;
+                    if (($hora_actual_cero >= $hora_actual_menos10minutos) && ($hora_actual_cero <= $hora_termino_clase)) {
+                        // ENTRA A CLASES PORQUE ESTA EN TIEMPO
+                        $data = array(
+                            'opcion' => 1,
+                            'url' => $url
+                        );
+                    } else {
+                        // NO PUEDE ENTRAR A CLASES PORQUE ES TEMPRANO O YA ES TARDE
+                        $data = array(
+                            'opcion' => 2,
+                            'mensaje' => 'PUEDE ENTRAR A LA CLASE 5 MINUTOS ANTES O ANTES DE TERMINAR.'
+                        );
+                    }
+                } else {
+                    $data = array(
+                        'opcion' => 4,
+                        'mensaje' => 'ESTA CLASE LO PUEDE TENER  EL ' . $nombre_dia
+                    );
+                }
+            } else {
+                $data = array(
+                    'opcion' => 5,
+                    'mensaje' => 'ACTUALIZE LA PAGINA'
+                );
+            }
+        } else {
+            // NO VIENE POR POST URL Y HORA
+
+            $data = array(
+                'opcion' => 3,
+                'mensaje' => 'Ocurrio un error, intente mas tarde.'
+            );
+        }
+        if (isset($data) && ! empty($data)) {
             echo json_encode($data);
         }
     }
@@ -478,6 +486,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
     {
         # code...
         Permission::grant(uri_string());
+        
         $idalumno = $this->session->idalumno;
         $idhorario = "";
 
@@ -1588,12 +1597,8 @@ tblcalificacion  {border-collapse:collapse}
     {
         Permission::grant(uri_string());
         $idhorario = $this->decode($idhorario);
-        $idperiodo = $this->decode($idperiodo);
-<<<<<<< HEAD
-        $tabla = "";
-=======
-        $tabla ="";
->>>>>>> master
+        $idperiodo = $this->decode($idperiodo); 
+        $tabla = ""; 
         if ((isset($idhorario) && !empty($idhorario)) && (isset($idperiodo) && !empty($idperiodo))) {
             $idalumno = $this->session->idalumno;
             $datosalumno = $this->alumno->showAllAlumnoId($idalumno);

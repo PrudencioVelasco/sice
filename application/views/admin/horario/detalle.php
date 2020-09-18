@@ -79,7 +79,7 @@ position:relative;
                                     <strong   :title="row.nombreclase" >{{row.nombreclaserecortado}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
                                      <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small><br/>
                                     
-                                     <small v-if="row.urlvideoconferencia" ><a target='_blank' v-bind:href="row.urlvideoconferencia"> <i class="fa fa-external-link"></i> {{row.urlvideoconferencia}}</a></small>
+                                     <small v-if="row.urlvideoconferencia" ><a target='_blank' v-bind:href="row.urlvideoconferencia"> <i class="fa fa-external-link"></i> {{row.urlvideoconferenciarecortado}}</a></small>
                                   </div>
                                   <div v-else>
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})
@@ -119,7 +119,7 @@ position:relative;
                                   <div v-if="row.opcion == 'NORMAL'">
                                     <strong  :title="row.nombreclase">{{row.nombreclaserecortado}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
                                     <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small><br/>
-                                     <small v-if="row.urlvideoconferencia" ><a target='_blank' v-bind:href="row.urlvideoconferencia"> <i class="fa fa-external-link"></i> {{row.urlvideoconferencia}}</a></small>
+                                     <small v-if="row.urlvideoconferencia" ><a target='_blank' v-bind:href="row.urlvideoconferencia"> <i class="fa fa-external-link"></i> {{row.urlvideoconferenciarecortado}}</a></small>
                                   </div>
                                   <div v-else>
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})
@@ -158,7 +158,7 @@ position:relative;
                                   <div v-if="row.opcion == 'NORMAL'">
                                     <strong  :title="row.nombreclase">{{row.nombreclaserecortado}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
                                     <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small><br/>
-                                     <small  v-if="row.urlvideoconferencia" ><a target='_blank' v-bind:href="row.urlvideoconferencia"> <i class="fa fa-external-link"></i> {{row.urlvideoconferencia}}</a></small>
+                                     <small  v-if="row.urlvideoconferencia" ><a target='_blank' v-bind:href="row.urlvideoconferencia"> <i class="fa fa-external-link"></i> {{row.urlvideoconferenciarecortado}}</a></small>
                                   </div>
                                   <div v-else>
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})
@@ -197,7 +197,7 @@ position:relative;
                                   <div v-if="row.opcion == 'NORMAL'">
                                     <strong  :title="row.nombreclase">{{row.nombreclaserecortado}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
                                     <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small><br/>
-                                     <small v-if="row.urlvideoconferencia" ><a target='_blank' v-bind:href="row.urlvideoconferencia"> <i class="fa fa-external-link"></i> {{row.urlvideoconferencia}}</a></small>
+                                     <small v-if="row.urlvideoconferencia" ><a target='_blank' v-bind:href="row.urlvideoconferencia"> <i class="fa fa-external-link"></i> {{row.urlvideoconferenciarecortado}}</a></small>
                                   </div>
                                   <div v-else>
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})
@@ -236,7 +236,7 @@ position:relative;
                                   <div v-if="row.opcion == 'NORMAL'">
                                     <strong  :title="row.nombreclase">{{row.nombreclaserecortado}} </strong> ({{row.horainicial}}-{{row.horafinal}})<br>
                                     <small>{{row.nombre}} {{row.apellidop}} {{row.apellidom}}</small><br/>
-                                       <smalL v-if="row.urlvideoconferencia"><a target='_blank' v-bind:href="row.urlvideoconferencia"> <i class="fa fa-external-link"></i> {{row.urlvideoconferencia}}</a></small>
+                                       <smalL v-if="row.urlvideoconferencia"><a target='_blank' v-bind:href="row.urlvideoconferencia"> <i class="fa fa-external-link"></i> {{row.urlvideoconferenciarecortado}}</a></small>
                                   </div>
                                   <div v-else>
                                     <strong>{{row.nombreclase}} </strong> ({{row.horainicial}}-{{row.horafinal}})

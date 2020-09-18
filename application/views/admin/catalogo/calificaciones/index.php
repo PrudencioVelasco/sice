@@ -58,6 +58,20 @@
                                                 <option value="2">PROMEDIO FINAL</option> 
                                                 <option value="4">CALIFICACIÓN POR MATERIA</option>
                                                 <option value="5">CALIFICACIÓN POR MATERIA EN RECUPERACIÓN</option> 
+                                                <?php 
+                                                if(isset($unidades) && !empty($unidades)){
+                                                    foreach ($unidades as $row){
+                                                        echo '<option value="u'.$row->idunidad.'">'.$row->nombreunidad.'</option>';
+                                                    }
+                                                }
+                                                ?>
+                                                <?php 
+                                                if(isset($oportunidades) && !empty($oportunidades)){
+                                                    foreach ($oportunidades as $row){
+                                                        echo '<option value="o'.$row->idoportunidadexamen.'">'.$row->nombreoportunidad.'</option>';
+                                                    }
+                                                }
+                                                ?>
                                             </select> 
                                         </div>
                                     </div>  

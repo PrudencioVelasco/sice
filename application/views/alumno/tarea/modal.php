@@ -14,7 +14,7 @@
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12 ">
                             <label><font color="red">*</font> ESCRIBIR TAREA</label>
-                            <ckeditor  :editor="editor" v-model="responderTarea.tarea" :config="editorConfig"></ckeditor>
+                             <vue-ckeditor  v-model="responderTarea.tarea"  :config="config"  />
                          <div class="col-red" v-html="formValidate.tarea"></div>
                         </div>
                     </div>
