@@ -1,0 +1,17 @@
+  /*Borde para cards*/
+  .border-card{
+    background: rgb(2,0,36);
+    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 0%, rgba(59,154,219,0.9240429448146446) 50%, rgba(0,212,255,1) 100%); 
+    border-radius: 8px;
+  } 
+
+  /*Estilo global para los Modales*/
+
+  .custom-header{
+  	background-color: #2196f3; 
+   color: #FFFFFF;
+ }
+
+ .custom-header-close{
+  color: #FFFFFF;
+}

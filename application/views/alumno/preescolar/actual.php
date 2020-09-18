@@ -1,9 +1,7 @@
 
 <!-- page content -->
 <div class="right_col" role="main">
-
 	<div class="">
-
 		<div class="row">
 			<div class="col-md-12 col-sm-12 col-xs-12">
 				<div class="x_panel">
@@ -43,21 +41,17 @@
 								</div>
 							</div>
 							<div class="row">
-								<div class="col-md-12 col-sm-12 col-xs-12">
-									<div class="x_content bs-example-popovers">
-										<div class="col-md-3 col-sm-3 col-xs-3 alert alert-success alert-dismissible fade in" role="alert">
-											<strong>E:</strong> Excelente
-										</div>
-										<div class="col-md-3 col-sm-3 col-xs-3 alert alert-info alert-dismissible fade in" role="alert">
-											<strong>MB:</strong> Muy bien
-										</div>
-										<div class="col-md-3 col-sm-3 col-xs-3 alert alert-warning alert-dismissible fade in" role="alert">
-											<strong>B:</strong> Bien
-										</div>
-										<div class="col-md-3 col-sm-3 col-xs-3 alert alert-danger alert-dismissible fade in" role="alert">
-											<strong>NA:</strong> Necesita Apoyo
-										</div>
-									</div>
+								<div class="col-md-3 col-sm-3 col-xs-3 alert alert-success alert-dismissible fade in" role="alert">
+									<strong>E:</strong> Excelente
+								</div>
+								<div class="col-md-3 col-sm-3 col-xs-3 alert alert-info alert-dismissible fade in" role="alert">
+									<strong>MB:</strong> Muy bien
+								</div>
+								<div class="col-md-3 col-sm-3 col-xs-3 alert alert-warning alert-dismissible fade in" role="alert">
+									<strong>B:</strong> Bien
+								</div>
+								<div class="col-md-3 col-sm-3 col-xs-3 alert alert-danger alert-dismissible fade in" role="alert">
+									<strong>NA:</strong> Necesita Apoyo
 								</div>
 							</div>
 							<div class="row">
