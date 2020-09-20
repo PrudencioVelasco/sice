@@ -56,8 +56,7 @@
                                             <select style="border-bottom: solid #ebebeb 2px;" name="tiporeporte" class="form-control">
                                                 <option value="">-- TIPO DE REPORTE --</option>  
                                                 <option value="2">PROMEDIO FINAL</option> 
-                                                <option value="4">CALIFICACIÓN POR MATERIA</option>
-                                                <option value="5">CALIFICACIÓN POR MATERIA EN RECUPERACIÓN</option> 
+                                                <option value="4">CALIFICACIÓN POR MATERIA</option> 
                                                 <?php 
                                                 if(isset($unidades) && !empty($unidades)){
                                                     foreach ($unidades as $row){

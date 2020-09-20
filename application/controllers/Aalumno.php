@@ -858,7 +858,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
         $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
         $total_unidades = 0;
         $total_materia = 0;
-        if ($materias != false) {
+        if (isset($materias) && !empty($materias)) {
             foreach ($materias as $row) {
                 # code...
                 $total_materia = $total_materia + 1;
@@ -874,38 +874,38 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
         $tabla .= '<th></th>';
         $tabla .= '</thead>';
         $c = 1;
-
-        foreach ($materias as $row) {
-            $idhorariodetalle = $row->idhorariodetalle;
-            $calificacion = 0;
-            foreach ($oportunidades_examen as $oportunidad) {
-                $idoportunidadexamen = $oportunidad->idoportunidadexamen;
-                $detalle_calificacion = $this->alumno->calificacionSecuPrepa($idalumno, $idhorariodetalle, $idoportunidadexamen);
-                if ($detalle_calificacion && $calificacion == 0) {
-                    $calificacion .= $detalle_calificacion[0]->calificacion;
+        if (isset($materias) && !empty($materias)){
+            foreach ($materias as $row) {
+                $idhorariodetalle = $row->idhorariodetalle;
+                $calificacion = 0;
+                foreach ($oportunidades_examen as $oportunidad) {
+                    $idoportunidadexamen = $oportunidad->idoportunidadexamen;
+                    $detalle_calificacion = $this->alumno->calificacionSecuPrepa($idalumno, $idhorariodetalle, $idoportunidadexamen);
+                    if ($detalle_calificacion && $calificacion == 0) {
+                        $calificacion .= $detalle_calificacion[0]->calificacion;
+                    }
                 }
+                $tabla .= '<tr>';
+                $tabla .= '<td>' . $c++ . '</td>';
+                $tabla .= '<td>' . $row->nombreclase . '</td>';
+                $tabla .= '<td>' . $row->credito . '</td>';
+                $tabla .= '<td>';
+                if ($detalle_configuracion[0]->calificacion_minima < $calificacion) {
+                    $tabla .= '<label>' . number_format($calificacion, 2) . '</label>';
+                } else {
+                    $tabla .= '<label style="color:red;">NA</label>';
+                }
+    
+                $tabla .= '</td>';
+                $tabla .= '<td>';
+                if ($row->opcion == 0) {
+                    $tabla .= '<label style="color:blue;">R</label>';
+                }
+    
+                $tabla .= '</td>';
+                $tabla .= '</tr>';
             }
-            $tabla .= '<tr>';
-            $tabla .= '<td>' . $c++ . '</td>';
-            $tabla .= '<td>' . $row->nombreclase . '</td>';
-            $tabla .= '<td>' . $row->credito . '</td>';
-            $tabla .= '<td>';
-            if ($detalle_configuracion[0]->calificacion_minima < $calificacion) {
-                $tabla .= '<label>' . number_format($calificacion, 2) . '</label>';
-            } else {
-                $tabla .= '<label style="color:red;">NA</label>';
-            }
-
-            $tabla .= '</td>';
-            $tabla .= '<td>';
-            if ($row->opcion == 0) {
-                $tabla .= '<label style="color:blue;">R</label>';
-            }
-
-            $tabla .= '</td>';
-            $tabla .= '</tr>';
         }
-
         $tabla .= '</table>';
         return $tabla;
     }
@@ -1196,18 +1196,19 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
         $tabla .= '<th>CALIFICACIÓN</th>';
         $tabla .= '</thead>';
         $c = 1;
-
-        foreach ($calificaciones as $row) {
-            $tabla .= '<tr>';
-            $tabla .= '<td>' . $c++ . '</td>';
-            $tabla .= '<td>' . $row->nombreclase . '</td>';
-
-            if ($row->calificacion < $detalle_configuracion[0]->calificacion_minima) {
-                $tabla .= '<td><strong>NA</strong></td>';
-            } else {
-                $tabla .= '<td>' . $row->calificacion . '</td>';
+        if(isset($calificaciones) && !empty($calificaciones)){
+            foreach ($calificaciones as $row) {
+                $tabla .= '<tr>';
+                $tabla .= '<td>' . $c++ . '</td>';
+                $tabla .= '<td>' . $row->nombreclase . '</td>';
+    
+                if ($row->calificacion < $detalle_configuracion[0]->calificacion_minima) {
+                    $tabla .= '<td><strong>NA</strong></td>';
+                } else {
+                    $tabla .= '<td>' . $row->calificacion . '</td>';
+                }
+                $tabla .= '</tr>';
             }
-            $tabla .= '</tr>';
         }
 
         $tabla .= '</table>';

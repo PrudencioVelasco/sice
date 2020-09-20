@@ -56,8 +56,7 @@
                                             <select style="border-bottom: solid #ebebeb 2px;" name="tiporeporte" class="form-control">
                                                 <option value="">-- TIPO DE REPORTE --</option> 
                                                 <option value="2">PROMEDIO FINAL</option> 
-                                                <option value="4">CALIFICACIÓN POR MATERIA</option>
-<!--                                                 <option value="5">CALIFICACIÓN POR MATERIA EN RECUPERACIÓN</option>  -->
+                                                <option value="4">CALIFICACIÓN POR MATERIA</option> 
                                                 <?php 
                                                 if(isset($unidades) && !empty($unidades)){
                                                     foreach ($unidades as $row){
@@ -105,10 +104,7 @@
     <!-- /footer content -->
 
 </div>
-<!-- /page content -->
-</div>
-
-</div>
+ 
 
 <div class="modal fade" id="modalAddFaltas" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -149,7 +145,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <h3 class="modal-title " id="myModalLabel">ALUMNO(A): <label id="alumno_diciplina_add"></label> </h3>
             </div>
-            <form method="post" action="" id="frmagregarotrasevaluaciones">
+            <form method="post" action="" id="frmagregardisciplina">
                 <div class="modal-body"> 
                     <div class="form-group">
                         <input class="form-control idhorario" type="hidden" name="idhorario"> 
@@ -159,7 +155,7 @@
                         <div class="col-md-12 col-sm-12 col-xs-12 ">
                             <div class="form-group">
                                 <label><font color="red">*</font> DISCIPLINA</label> 
-                                <input type="text" style="border-bottom: solid 1px #ccc; border-top: solid 1px #ccc; border-left: solid 1px #ccc; border-right: solid 1px #ccc; padding: 0 5px 0 5px;" class="form-control"   name="retardo"> 
+                                <input type="text" style="border-bottom: solid 1px #ccc; border-top: solid 1px #ccc; border-left: solid 1px #ccc; border-right: solid 1px #ccc; padding: 0 5px 0 5px;" class="form-control"   name="disciplina"> 
                             </div>
                         </div>  
                     </div>
@@ -167,7 +163,7 @@
                         <div class="col-md-12 col-sm-12 col-xs-12 ">
                             <div class="form-group">
                                 <label><font color="red">*</font> PRESENTACIÓN PERSONAL</label> 
-                                <input type="text" style="border-bottom: solid 1px #ccc; border-top: solid 1px #ccc; border-left: solid 1px #ccc; border-right: solid 1px #ccc; padding: 0 5px 0 5px;" class="form-control"   name="retardo"> 
+                                <input type="text" style="border-bottom: solid 1px #ccc; border-top: solid 1px #ccc; border-left: solid 1px #ccc; border-right: solid 1px #ccc; padding: 0 5px 0 5px;" class="form-control"   name="presentacionpersonal"> 
                             </div>
                         </div>  
                     </div>
@@ -175,8 +171,49 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i>
                         CERRAR</button>
-                    <button type="button" id="btnagregarotrasevaluaciones" class="btn btn-primary"><i class="fa fa-plus-circle"></i>
+                    <button type="button" id="btnagregardiciplina" class="btn btn-primary"><i class="fa fa-plus-circle"></i>
                         AGREGAR</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalEditOtrasEvaluaciones" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3 class="modal-title " id="myModalLabel">ALUMNO(A): <label id="alumno_diciplina_edit"></label> </h3>
+            </div>
+            <form method="post" action="" id="frmeditardisciplina">
+                <div class="modal-body"> 
+                    <div class="form-group">
+                        <input class="form-control iddisciplina" type="hidden" name="iddiciplina"> 
+                         <input class="form-control idpresentacionpersonal" type="hidden" name="idpresentacionpersonal"> 
+                    </div> 
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12 ">
+                            <div class="form-group">
+                                <label><font color="red">*</font> DISCIPLINA</label> 
+                                <input type="text" style="border-bottom: solid 1px #ccc; border-top: solid 1px #ccc; border-left: solid 1px #ccc; border-right: solid 1px #ccc; padding: 0 5px 0 5px;" class="form-control disciplina"   name="disciplina"> 
+                            </div>
+                        </div>  
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12 ">
+                            <div class="form-group">
+                                <label><font color="red">*</font> PRESENTACIÓN PERSONAL</label> 
+                                <input type="text" style="border-bottom: solid 1px #ccc; border-top: solid 1px #ccc; border-left: solid 1px #ccc; border-right: solid 1px #ccc; padding: 0 5px 0 5px;" class="form-control presentacionpersonal"   name="presentacionpersonal"> 
+                            </div>
+                        </div>  
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i>
+                        CERRAR</button>
+                    <button type="button" id="btneditardiciplina" class="btn btn-primary"><i class="fa fa-pencil"></i>
+                        MODIFICAR</button>
                 </div>
             </form>
         </div>

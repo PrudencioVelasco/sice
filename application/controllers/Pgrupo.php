@@ -2369,7 +2369,7 @@ class pGrupo extends CI_Controller
         $numero = $this->decode($numero);
         $idplantel = $this->session->idplantel;
         if ((isset($idhorario) && ! empty($idhorario)) && (isset($idhorariodetalle) && ! empty($idhorariodetalle)) && (isset($idopotunidad) && ! empty($idopotunidad)) && (isset($numero) && ! empty($numero))) {
-            // $unidades = $this->grupo->unidades($this->session->idplantel);
+            
             $detalle_oportunidad_anteriot = $this->grupo->obtenerOportunidadAnterior($numero, $idplantel);
             $idoportunidad_anterior = $detalle_oportunidad_anteriot->idoportunidadexamen;
             $detalle_horario = $this->grupo->detalleClase($idhorariodetalle);
@@ -2384,8 +2384,6 @@ class pGrupo extends CI_Controller
             $idnivelestudio = $datoshorario->idnivelestudio;
             $unidades = $this->grupo->obtenerUnidadUno(1);
             $idunidad = $unidades->idunidad;
-            // $todas_unidades = $this->grupo->obtenerUnidades(1);
-            // var_dump($todas_unidades);
             $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
             $data = array(
                 'alumnos' => $alumnos,

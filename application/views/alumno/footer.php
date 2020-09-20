@@ -44,6 +44,13 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $('#tblcalificacionpreescolar').DataTable({
+        "order":[],
+        "columnDefs":[
+        	{
+				"targets":'no-sort',
+				"orderable":false        	
+        	}
+        ],
              keys: true,
              responsive: true,
             "scrollX": true,

@@ -12,11 +12,15 @@
                 <h3><small>Promedio: </small><strong style="color: green">
                   <?php
                     //$calificacion 
-                  if (isset($calificacion) && !empty($calificacion)) {
-                    echo  number_format($calificacion, 2);
-                  } else {
-                    echo "0.00";
-                  }
+                      if (isset($nivel_educativo) && ! empty($nivel_educativo) && $nivel_educativo != 4) {
+                        if (isset($calificacion) && ! empty($calificacion)) {
+                            echo number_format($calificacion, 2);
+                        } else {
+                            echo "0.00";
+                        }
+                    } else {
+                        echo "0.00";
+                    }
                   ?>
                 </strong></h3>
               </ul>
@@ -43,6 +47,7 @@
                   </div>
                 </div>
                 <br>
+                <?php   if (isset($nivel_educativo) && ! empty($nivel_educativo) && $nivel_educativo == 4) { ?>
                 <div class="row">
                   <div class="col-md-12 col-sm-12 col-xs-12 ">
                     <h2><strong><i class="fa fa-check-circle"></i> Significado de calificación</strong></h2>
@@ -62,6 +67,7 @@
                     <strong>NA:</strong> Necesita Apoyo
                   </div>
                 </div>
+                <?php } ?>
                 <div class="row">
                   <?php
                   if (isset($tabla) && !empty($tabla)) {

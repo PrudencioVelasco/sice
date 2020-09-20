@@ -1026,6 +1026,7 @@ GROUP BY hd.idmateria) tabla");
                         WHERE
                             ag.idgrupo = h.idgrupo
                                 AND ag.idalumno = $idalumno 
+                                AND (p.activo = 0 OR h.activo = 0)
                                 ORDER BY p.idperiodo DESC");
 
         if ($query->num_rows() > 0) {

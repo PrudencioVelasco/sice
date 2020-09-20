@@ -46,6 +46,20 @@ $(document).ready(function() {
 		$("#alumno_diciplina_add").text(nombre);
 	});
 	
+	$(document).on("click", '.edit_button_diciplina', function(e) { 
+		var nombre = $(this).data('alumno');
+		var iddisciplina = $(this).data('iddisciplina');
+		var disciplina = $(this).data('disciplina');
+		var idpresentacionpersonal = $(this).data('idpresentacionpersonal');
+		var presentacionpersonal = $(this).data('presentacionpersonal'); 
+		$(".iddisciplina").val(iddisciplina);
+		$(".idpresentacionpersonal").val(idpresentacionpersonal);
+		$(".presentacionpersonal").val(presentacionpersonal);
+		$(".disciplina").val(disciplina);
+		$("#alumno_diciplina_edit").text(nombre);
+	});
+	
+	
 	  $("#btnaddfaltas").click(function () {
         $('#btnaddfaltas').prop("disabled", true);
         $('#btnaddfaltas').html(
@@ -95,8 +109,8 @@ $(document).ready(function() {
             url: my_var_1 +"Calificacion/addRetardo",
             data: $('#frmaddretardo').serialize(),
             success: function (data) {
-                $('#btnaddfaltas').prop("disabled", false);
-                $('#btnaddfaltas').html(
+                $('#btnaddretardo').prop("disabled", false);
+                $('#btnaddretardo').html(
                     `<i class='fa fa-plus-circle'></i> AGREGAR`
                 );
                 var val = $.parseJSON(data); 
@@ -135,8 +149,8 @@ $(document).ready(function() {
             url: my_var_1 +"Calificacion/updateRetardo",
             data: $('#frmmodificarretardo').serialize(),
             success: function (data) {
-                $('#btnaddfaltas').prop("disabled", false);
-                $('#btnaddfaltas').html(
+                $('#btnmodificarretardo').prop("disabled", false);
+                $('#btnmodificarretardo').html(
                     `<i class='fa fa fa-pencil'></i> MODIFICAR`
                 );
                 var val = $.parseJSON(data); 
@@ -174,8 +188,8 @@ $(document).ready(function() {
             url: my_var_1 +"Calificacion/updateFaltasCalificacion",
             data: $('#frmmodificarfaltas').serialize(),
             success: function (data) {
-                $('#btnaddfaltas').prop("disabled", false);
-                $('#btnaddfaltas').html(
+                $('#btnmodificarfaltas').prop("disabled", false);
+                $('#btnmodificarfaltas').html(
                     `<i class='fa fa fa-pencil'></i> MODIFICAR`
                 );
                 var val = $.parseJSON(data); 
@@ -213,8 +227,8 @@ $(document).ready(function() {
             url: my_var_1 +"Calificacion/updateFaltasCalificacion",
             data: $('#frmmodificarfaltas').serialize(),
             success: function (data) {
-                $('#btnaddfaltas').prop("disabled", false);
-                $('#btnaddfaltas').html(
+                $('#btnmodificarfaltas').prop("disabled", false);
+                $('#btnmodificarfaltas').html(
                     `<i class='fa fa fa-pencil'></i> MODIFICAR`
                 );
                 var val = $.parseJSON(data); 
@@ -224,6 +238,83 @@ $(document).ready(function() {
                         type: 'success',
                         title: 'Registrado!',
                         text: 'Fue modificado las faltas con exito.',
+                        showConfirmButton: true
+                    }).then(function () {
+                        location.reload();
+                    });
+                } else {
+                    swal({
+                        type: 'info',
+                        title: 'Notificación',
+                        html: val.error,
+                        customClass: 'swal-wide',
+                        footer: ''
+                    }); 
+                }
+
+            }
+        })
+    });
+
+  $("#btnagregardiciplina").click(function () {
+        $('#btnagregardiciplina').prop("disabled", true);
+        $('#btnagregardiciplina').html(
+            `<span class="fa fa-spinner spinner-border-sm" role="status" aria-hidden="true"></span> PROCESANDO...`
+        ); 
+        $.ajax({
+            type: "POST",
+            url: my_var_1 +"Calificacion/addDisciplina",
+            data: $('#frmagregardisciplina').serialize(),
+            success: function (data) {
+                $('#btnagregardiciplina').prop("disabled", false);
+                $('#btnagregardiciplina').html(
+                    `<i class='fa fa-plus-circle'></i> AGREGAR`
+                );
+                var val = $.parseJSON(data); 
+                if ((val.success === "Ok")) {
+                    swal({
+                        position: 'center',
+                        type: 'success',
+                        title: 'Registrado!',
+                        text: 'Fue registrado con exito.',
+                        showConfirmButton: true
+                    }).then(function () {
+                        location.reload();
+                    });
+                } else {
+                    swal({
+                        type: 'info',
+                        title: 'Notificación',
+                        html: val.error,
+                        customClass: 'swal-wide',
+                        footer: ''
+                    }); 
+                }
+
+            }
+        })
+    });
+	  $("#btneditardiciplina").click(function () {
+        $('#btneditardiciplina').prop("disabled", true);
+        $('#btneditardiciplina').html(
+            `<span class="fa fa-spinner spinner-border-sm" role="status" aria-hidden="true"></span> PROCESANDO...`
+        ); 
+        $.ajax({
+            type: "POST",
+            url: my_var_1 +"Calificacion/editisciplina",
+            data: $('#frmeditardisciplina').serialize(),
+            success: function (data) {
+                $('#btneditardiciplina').prop("disabled", false);
+                $('#btneditardiciplina').html(
+                    `<i class='fa fa fa-pencil'></i> MODIFICAR`
+                );
+                var val = $.parseJSON(data); 
+                if ((val.success === "Ok")) {
+                    swal({
+                        position: 'center',
+                        type: 'success',
+                        title: 'Registrado!',
+                        text: 'Fue modificado  con exito.',
                         showConfirmButton: true
                     }).then(function () {
                         location.reload();
