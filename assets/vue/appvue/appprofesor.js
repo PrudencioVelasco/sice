@@ -29,6 +29,7 @@ var v = new Vue({
             urlvideoconferencia:'',
             numeroanfitrion:'',
             correo: '',
+            estatus: '',
             password: '',
             repitapassword: '',
             smserror: ''},

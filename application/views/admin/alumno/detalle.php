@@ -55,6 +55,16 @@
                                         </label>
                                         <i class="fa fa-pencil" v-if="beca_actual"  @click="abrirEditModalCambiarBeca()"  title="Modificar Beca."></i>  
 
+                                    </li>
+                                    <li>
+                                        <i class="fa fa-check-circle " style="color:#0cb62c;"></i>
+                                        <label>Estatus:
+                                            <span v-if="!estatus_alumno" >Sin estatus</span>
+                                            <span v-if="estatus_alumno.idestatusalumno == 1" style="color: #26B99A;">{{estatus_alumno.nombreestatus}}</span>
+                                            <span v-if="estatus_alumno.idestatusalumno == 2" style="color: #F4A82F;">{{estatus_alumno.nombreestatus}}</span>
+                                            <span v-if="estatus_alumno.idestatusalumno == 3" style="color: #D9534F;">{{estatus_alumno.nombreestatus}}</span>
+                                        </label>
+                                        <i class="fa fa-pencil" v-if="estatus_alumno" @click="abrirEditModalCambiarEstatus()" title="Modificar Beca."></i>
                                     </li> 
                                     <li>
                                         <button  @click=" abrirAddModalFoto()" class="btn btn-info waves-effect btn-block btn-sm "> <i class="fa fa-cloud-upload" ></i> SUBIR FOTO</button>

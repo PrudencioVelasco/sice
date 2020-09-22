@@ -145,6 +145,18 @@ class Alumno extends CI_Controller {
         }
     }
 
+    public function estatusAlumno(){
+        $id = $this->input->get('idalumno');
+        $query = $this->alumno->estatusAlumno($id);
+
+        if ($query) {
+            $result['estatusalumno'] = $this->alumno->estatusAlumno($id);
+        }
+        if (isset($result) && !empty($result)) {
+            echo json_encode($result);
+        }
+    }
+
     public function detalleAlumno() {
         $id = $this->input->get('idalumno');
         $query = $this->alumno->detalleAlumno($id);
@@ -2147,6 +2159,47 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
                     'fecharegistro' => date('Y-m-d H:i:s')
                 );
                 $value = $this->alumno->updateBecaAlumno($idalumno, $data);
+            }
+        } else {
+            $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
+            );
+        }
+
+        if (isset($result) && !empty($result)) {
+            echo json_encode($result);
+        }
+    }
+
+    public function asignarEstatusAlumno() {
+        if (Permission::grantValidar(uri_string()) == 1) {
+            $config = array(
+                array(
+                    'field' => 'idestatus',
+                    'label' => 'Estatus',
+                    'rules' => 'trim|required',
+                    'errors' => array(
+                        'required' => 'Seleccione un estatus.'
+                    )
+                )
+            );
+            $this->form_validation->set_rules($config);
+            if ($this->form_validation->run() == FALSE) {
+
+                $result['error'] = true;
+                $result['msg'] = array(
+                    'idestatus' => form_error('idestatus'),
+                );
+            } else {
+                $idestatus = $this->input->post('idestatus');
+
+                $idalumno = $this->input->post('idalumno');
+                $data = array(
+                    'idalumnoestatus' => $idestatus,
+                    'fecharegistro' => date('Y-m-d H:i:s')
+                );
+                $value = $this->alumno->updateEstatusAlumno($idalumno, $data);
             }
         } else {
             $result['error'] = true;

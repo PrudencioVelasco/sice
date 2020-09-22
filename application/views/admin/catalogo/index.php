@@ -14,7 +14,7 @@
                         <div class="row">
                             <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
                                 <a class="pointer" href="<?= base_url('/User/') ?>">
-                                    <div class="info-box-2 bg-light-blue hover-expand-effect pointer border-card">
+                                    <div class="info-box-2 bg-light-blue hover-expand-effect pointer">
                                         <div class="icon">
                                             <i class="fa fa-user"></i>
                                         </div>
@@ -29,7 +29,7 @@
                             </div>
                             <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
                                 <a class="pointer" href="<?= base_url('/CorteCaja/') ?>">
-                                    <div class="info-box-2 bg-light-blue hover-expand-effect pointer border-card">
+                                    <div class="info-box-2 bg-light-blue hover-expand-effect pointer">
                                         <div class="icon">
                                             <i class="fa fa-inbox"></i>
                                         </div>
@@ -43,7 +43,7 @@
                                     </div>
                                     <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
                                         <a class="pointer" href="<?= base_url('/Materia/inicio') ?>">
-                                            <div class="info-box-2 bg-light-blue hover-expand-effect pointer border-card">
+                                            <div class="info-box-2 bg-light-blue hover-expand-effect pointer">
                                                 <div class="icon">
                                                     <i class="fa fa-book"></i>
                                                 </div>
@@ -58,7 +58,7 @@
                                     </div>
                                     <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
                                         <a class="pointer" href="<?= base_url('/Colegiatura/inicio') ?>">
-                                            <div class="info-box-2 bg-light-blue hover-expand-effect pointer border-card">
+                                            <div class="info-box-2 bg-light-blue hover-expand-effect pointer">
                                                 <div class="icon">
                                                     <i class="fa fa-money"></i>
                                                 </div>
@@ -75,7 +75,7 @@
                                 <div class="row">
                                     <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
                                         <a class="pointer" href="<?= base_url('/Examen/inicio') ?>">
-                                            <div class="info-box-2  bg-light-blue hover-expand-effect pointer border-card">
+                                            <div class="info-box-2  bg-light-blue hover-expand-effect pointer">
                                                 <div class="icon">
                                                     <i class="fa fa-file"></i>
                                                 </div>
@@ -90,7 +90,7 @@
                                     </div>
                                     <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
                                         <a class="pointer" href="<?= base_url('/Planificacion/administrar') ?>">
-                                            <div class="info-box-2 bg-light-blue hover-expand-effect pointer border-card">
+                                            <div class="info-box-2 bg-light-blue hover-expand-effect pointer">
                                                 <div class="icon">
                                                     <i class="fa fa-file-text "></i>
                                                 </div>
@@ -104,7 +104,7 @@
                                             </div>
                                             <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
                                                 <a class="pointer" href="<?= base_url('/Calificacion/inicio') ?>">
-                                                    <div class="info-box-2 bg-light-blue hover-expand-effect pointer border-card">
+                                                    <div class="info-box-2 bg-light-blue hover-expand-effect pointer">
                                                         <div class="icon">
                                                             <i class="fa fa-check-circle "></i>
                                                         </div>
@@ -118,7 +118,7 @@
                                                 </div>
                                                 <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
                                                     <a class="pointer" href="<?= base_url('/Calificacion/asistencia') ?>">
-                                                        <div class="info-box-2 bg-light-blue hover-expand-effect pointer border-card">
+                                                        <div class="info-box-2 bg-light-blue hover-expand-effect pointer">
                                                             <div class="icon">
                                                                 <i class="fa fa-thumbs-up"></i>
                                                             </div>

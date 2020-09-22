@@ -26,9 +26,11 @@ var vede = new Vue({
         grupos:[],
         ciclos_escolares:[],
         beca_actual: [],
+        estatus_alumno: [],
         grupo_actual:[],
         calificacion:[],
         becas:[],
+        estatus:[],
         asignarGrupo: {
             idalumno: my_var_2,
             idcicloescolar:'',
@@ -38,6 +40,11 @@ var vede = new Vue({
         asignarBeca:{
             idalumno: my_var_2,
             idbeca: '', 
+            msgerror: ''
+        },
+        asignarEstatus:{
+            idalumno: my_var_2,
+            idestatus: '',
             msgerror: ''
         },
         
@@ -51,7 +58,9 @@ var vede = new Vue({
         this.showAllGrupo();
         this.showAllCiclosEscolares();
         this.becaActual();
+        this.estatusAlumno();
         this.showAllBecas();
+        this.showAllEstatus();
         this.calificacionAlumno();
         
     },
@@ -73,6 +82,9 @@ var vede = new Vue({
         },
         abrirSubirFoto() {
             $('#uploadFoto').modal('show');
+        },
+        abrirEditModalCambiarEstatus() {
+            $('#editEstatus').modal('show');
         },
         selectRegistro(row) {
             vede.chooseRegistro = row;
@@ -110,6 +122,14 @@ var vede = new Vue({
             }).then(response => (this.beca_actual = response.data.becaactual));
 
         },
+        estatusAlumno() {
+            axios.get(this.url + "Alumno/estatusAlumno/", {
+                params: {
+                    idalumno: this.idalumno
+                }
+            }).then(response => (this.estatus_alumno = response.data.estatusalumno));
+
+        },
         showAllGrupo() {
             axios.get(this.url + "Alumno/showAllGrupos/").then(response => (this.grupos = response.data.grupos));
 
@@ -117,6 +137,9 @@ var vede = new Vue({
         showAllBecas() {
             axios.get(this.url + "Alumno/showAllBecas/").then(response => (this.becas = response.data.becas));
 
+        },
+        showAllEstatus(){
+            axios.get(this.url + "Alumno/showAllEstatusAlumno/").then(response => (this.estatus = response.data.estatusalumno));
         }, 
         showAllCiclosEscolares() {
             axios.get(this.url + "Alumno/showAllCiclosEscolar/").then(response => (this.ciclos_escolares = response.data.cicloescolar));
@@ -217,6 +240,31 @@ var vede = new Vue({
 
                 }
             })
+        },
+        addEstatus() {
+            vede.error = false;
+            vede.cargando = true;
+            var formData = v.formData(vede.asignarEstatus);
+            formData.append('idalumno', vede.estatus_alumno.idalumno);
+
+            axios.post(this.url + "Alumno/asignarEstatusAlumno", formData).then(function (response) {
+                if (response.data.error) {
+                    vede.formValidate = response.data.msg;
+                    vede.error = true;
+                    vede.cargando = false;
+                } else {
+                    swal({
+                        position: 'center',
+                        type: 'success',
+                        title: 'Exito!',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+
+                    vede.clearAll();
+
+                }
+            })
         }, 
         updateGrupo() {
             vede.error = false;
@@ -241,7 +289,7 @@ var vede = new Vue({
 
                 }
             })
-        }, 
+        },
         clearAll() {
             $('#addAsignarGrupo').modal('hide');
             $('#editGrupo').modal('hide');
@@ -249,9 +297,11 @@ var vede = new Vue({
             $('#addBeca').modal('hide');
             $('#editBeca').modal('hide');
             $('#subirFoto').modal('hide');
+            $('#editEstatus').modal('hide');
             vede.detalleAlumno();
             vede.grupoActual();
             vede.becaActual();
+            vede.estatusAlumno();
             vede.formValidate = false; 
             vede.error = false;
             vede.cargando = false; 

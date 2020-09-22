@@ -204,6 +204,7 @@ class Profesor extends CI_Controller {
                         'foto' => '',
                         'urlvideoconferencia' => $this->input->post('urlvideoconferencia'),
                         'numeroanfitrion' => $this->input->post('numeroanfitrion'),
+                        'estatus' => 1,
                         'idusuario' => $this->session->user_id,
                         'fecharegistro' => date('Y-m-d H:i:s')
                     );
@@ -337,6 +338,7 @@ class Profesor extends CI_Controller {
                         'correo' => $this->input->post('correo'),
                           'urlvideoconferencia' => $this->input->post('urlvideoconferencia'),
                         'numeroanfitrion' => $this->input->post('numeroanfitrion'),
+                        'estatus' => $this->input->post('estatus'),
                         'idusuario' => $this->session->user_id,
                         'fecharegistro' => date('Y-m-d H:i:s')
                     );

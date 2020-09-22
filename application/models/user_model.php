@@ -186,12 +186,13 @@ class User_model extends CI_Model {
     }
 
     public function loginAlumno($matricula) {
-        $this->db->select('u.id,a.password,u.idtipousuario, a.nombre, a.apellidop, a.apellidom, a.idalumno, a.matricula, pla.idplantel, ne.idniveleducativo, ne.nombreniveleducativo');
+        $this->db->select('u.id,a.password,u.idtipousuario, a.nombre, a.apellidop, a.apellidom, a.idalumno, a.matricula, a.idalumnoestatus,pla.idplantel, ne.idniveleducativo, ne.nombreniveleducativo');
         $this->db->from('tblalumno a');
         $this->db->join('users u', 'u.idusuario = a.idalumno');
         $this->db->join('tblplantel pla', 'a.idplantel = pla.idplantel');
         $this->db->join('tblniveleducativo ne','ne.idniveleducativo = pla.idniveleducativo');
         $this->db->where('a.matricula', $matricula);
+        $this->db->where('a.idalumnoestatus', 1);
         $this->db->where('u.idtipousuario', 3);
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
@@ -215,12 +216,13 @@ class User_model extends CI_Model {
     }
 
     public function loginDocente($correo) {
-        $this->db->select('ne.nombreniveleducativo, u.idtipousuario, ne.idniveleducativo, u.id, p.nombre, p.apellidop, p.apellidom, p.idprofesor,p.correo, pla.idplantel, p.password');
+        $this->db->select('ne.nombreniveleducativo, u.idtipousuario, ne.idniveleducativo, u.id, p.nombre, p.apellidop, p.apellidom, p.idprofesor,p.correo, pla.idplantel, p.password,p.estatus');
         $this->db->from('tblprofesor p');
         $this->db->join('users u', 'u.idusuario = p.idprofesor');
         $this->db->join('tblplantel pla', 'p.idplantel = pla.idplantel');
           $this->db->join('tblniveleducativo ne', 'ne.idniveleducativo = pla.idniveleducativo');
         $this->db->where('p.correo', $correo);
+        $this->db->where('p.estatus', 1);
         $this->db->where('u.idtipousuario', 1);
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
@@ -247,13 +249,14 @@ class User_model extends CI_Model {
     }
 
     public function loginAdmin($usuario) {
-        $this->db->select('ne.nombreniveleducativo, u.idtipousuario, ne.idniveleducativo,u.id, p.nombre, p.apellidop, p.apellidom, p.idpersonal, pla.nombreplantel, pla.idplantel, ur.id_rol as idrol, p.password');
+        $this->db->select('ne.nombreniveleducativo, u.idtipousuario, ne.idniveleducativo,u.id, p.nombre, p.apellidop, p.apellidom, p.idpersonal, pla.nombreplantel, pla.idplantel, ur.id_rol as idrol, p.password, p.activo');
         $this->db->from('tblpersonal p');
         $this->db->join('users u', 'u.idusuario = p.idpersonal');
         $this->db->join('tblplantel pla', 'pla.idplantel = p.idplantel');
         $this->db->join('tblniveleducativo ne', 'ne.idniveleducativo = pla.idniveleducativo');
         $this->db->join('users_rol ur', 'u.id = ur.id_user');
         $this->db->where('p.usuario', $usuario);
+        $this->db->where('p.activo', 1);
         $this->db->where('u.idtipousuario', 2);
         $query = $this->db->get();
         if ($query->num_rows() > 0) {

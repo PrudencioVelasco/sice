@@ -92,6 +92,22 @@ class Alumno_model extends CI_Model
         }
     }
 
+    public function estatusAlumno($idalumno = '')
+    {
+        $this->db->select('a.idalumno,ae.idestatusalumno,ae.nombreestatus');
+        $this->db->from('tblalumno a');
+        $this->db->join('tblalumno_estatus ae', 'a.idalumnoestatus = ae.idestatusalumno');
+        $this->db->where('a.idalumno', $idalumno);
+        $query = $this->db->get();
+
+        if ($query->num_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
+
+
     public function showAllBecas()
     {
         $this->db->select('b.idbeca, b.descuento,b.descripcion');
@@ -1150,8 +1166,8 @@ GROUP BY hd.idmateria) tabla");
          e.nombreespecialidad,
          p.clave,
          p.nombreplantel, 
-         p.direccion, 
-         p.telefono, 
+         p.direccion,
+         p.telefono,
          ts.tiposanguineo,
          p.idniveleducativo,
          t.telefono as telefonocelular,
@@ -1194,6 +1210,17 @@ GROUP BY hd.idmateria) tabla");
         $this->db->where('idalumnogrupo', $id);
         $this->db->where('activo', 1);
         $this->db->update('tblalumno_grupo', $field);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function updateEstatusAlumno($idalumno, $data)
+    {
+        $this->db->where('idalumno', $idalumno);
+        $this->db->update('tblalumno', $data);
         if ($this->db->affected_rows() > 0) {
             return true;
         } else {

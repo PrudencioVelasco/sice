@@ -442,6 +442,7 @@ FROM(
         $this->db->join('tblprofesor p', 'pm.idprofesor = p.idprofesor');
         if (isset($idplantel) && !empty($idplantel)) {
             $this->db->where('m.idplantel', $idplantel);
+            $this->db->where('p.estatus', 1);
         }
         $this->db->order_by('m.nombreclase ASC');
         $query = $this->db->get();

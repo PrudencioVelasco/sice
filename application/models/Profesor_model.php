@@ -17,10 +17,11 @@ class Profesor_model extends CI_Model {
     public function showAll($idplantel = '') {
         $this->db->select('t.*');
         $this->db->from('tblprofesor t'); 
-      if (isset($idplantel) && !empty($idplantel)) {
-        $this->db->where('t.idplantel',$idplantel); 
+        if (isset($idplantel) && !empty($idplantel)) {
+            $this->db->where('t.idplantel',$idplantel);
+            $this->db->where('t.estatus',1);
         }  
-         $query = $this->db->get();
+        $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();
         } else {

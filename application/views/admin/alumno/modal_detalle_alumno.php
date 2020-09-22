@@ -164,6 +164,44 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="editEstatus" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="defaultModalLabel">ASIGNAR ESTATUS</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12 ">
+                        <div class="col-red" v-html="formValidate.msgerror"></div>
+                    </div>
+                </div>
+                <div class="row clearfix">
+                    <div class="col-md-12 col-sm-12 col-xs-12 ">
+                        <div class="form-group">
+                            <select style="border-bottom: solid #ebebeb 2px;" v-model="asignarEstatus.idestatus"  :class="{'is-invalid': formValidate.idestatus}" class="form-control show-tick">
+                                <option value="" selected >-- ESTATUS  --</option>
+                                <option   v-for="option in estatus" v-bind:value="option.idestatusalumno">
+                                    {{ option.nombreestatus  }}
+                                </option>
+                            </select>
+                            <div class="col-red" v-html="formValidate.idestatus"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12 "  align="right"  >
+                        <button class="btn btn-danger waves-effect waves-black" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
+                        <button class="btn btn-primary waves-effect waves-black" @click="addEstatus"><i class='fa fa-floppy-o'></i> Agregar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Finaliza Nuevo Modales para el estatus de Alumno-->
 
 <div class="modal fade" id="subirFoto" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">

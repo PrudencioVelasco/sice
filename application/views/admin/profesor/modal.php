@@ -258,6 +258,20 @@
                                 </div>      
                                 <div class="col-red" v-html="formValidate.correo"></div>
                             </div>
+                        </div>
+                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                            <div class="form-group form-float">
+                                <label class="form-label"><font color="red">*</font> Estatus</label>
+                                <div class="demo-radio-button">
+                                    <input name="group5" type="radio" id="radio_31" class="with-gap radio-col-blue"
+                                        v-model="chooseProfesor.estatus" value="1" :checked="chooseProfesor.estatus==1" />
+                                    <label for="radio_31">ACTIVO</label>
+                                    <input name="group5" type="radio" id="radio_32" class="with-gap radio-col-red"
+                                        v-model="chooseProfesor.estatus" value="0" :checked="chooseProfesor.estatus==0" />
+                                    <label for="radio_32">INACTIVO</label>
+                                </div>
+                                <div class="col-red" v-html="formValidate.estatus"></div>
+                            </div>
                         </div>  
                     </div>
                        <div class="row">
