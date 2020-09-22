@@ -584,7 +584,7 @@ FROM(
     }
 
     public function showNivelGrupo($idhorario) {
-        $this->db->select('pla.idniveleducativo, n.idnivelestudio, p.idperiodo, m.nombremes as mesinicio,m2.nombremes as mesfin,y.nombreyear as yearinicio,y2.nombreyear as yearfin, g.nombregrupo, n.nombrenivel, t.nombreturno');
+        $this->db->select('pla.idniveleducativo, n.idnivelestudio, p.idperiodo, m.nombremes as mesinicio,m2.nombremes as mesfin,y.nombreyear as yearinicio,y2.nombreyear as yearfin, g.nombregrupo, n.nombrenivel, n.numeroordinaria, t.nombreturno, n.numeroromano');
         $this->db->from('tblperiodo p');
         $this->db->join('tblhorario h', 'h.idperiodo = p.idperiodo');
         $this->db->join('tblgrupo g', 'g.idgrupo = h.idgrupo');

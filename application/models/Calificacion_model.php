@@ -19,6 +19,7 @@ class Calificacion_model extends CI_Model {
         if (isset($idplantel) && !empty($idplantel)) {
             $this->db->where('u.idplantel', $idplantel);
         }
+        $this->db->order_by('u.numero ASC');
         $query = $this->db->get();
         if ($this->db->affected_rows() > 0) {
             return $query->result();
@@ -239,6 +240,21 @@ class Calificacion_model extends CI_Model {
             return false;
         }
     }
+    public function obtenerDirector($idplantel) {
+        $this->db->select('p.nombre, p.apellidop, p.apellidom');
+        $this->db->from('tblpersonal p');
+        $this->db->join('users u', 'p.idpersonal = u.idusuario');
+        $this->db->join('users_rol ur', 'ur.id_user = u.id');
+        $this->db->where('u.idtipousuario', 2);
+        $this->db->where('p.idplantel', $idplantel);
+        $this->db->where('ur.id_rol', 13);
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
     
   
     
@@ -362,6 +378,24 @@ class Calificacion_model extends CI_Model {
             return false;
         }
     }
+    public  function obtenerAsistenciaBoleta($idalumno ='', $idperiodo ='',$idprofesormateria,$tipo = ''){
+        $this->db->select('COUNT(as.idasistencia) as total');
+        $this->db->from('tblasistencia as');
+        $this->db->join('tblmotivo_asistencia ma', 'ma.idmotivo = as.idmotivo');
+        $this->db->join('tblhorario_detalle hd', 'hd.idhorariodetalle = as.idhorariodetalle');
+        $this->db->join('tblhorario h', 'hd.idhorario = h.idhorario');
+        $this->db->where('h.idperiodo', $idperiodo);
+        $this->db->where('as.idalumno', $idalumno);
+        $this->db->where('as.idmotivo', $tipo);
+        $this->db->where('hd.idmateria',$idprofesormateria);
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
+    
     public  function obtenerAsistencia($idperiodo = '',$idgrupo = '',$idmateria = '',$tipoasistencia = '',$fechainicio = '',$fechafin = ''){
         $this->db->select('m.nombreclase,CONCAT(p.apellidop," ",p.apellidom," ",p.nombre) as nombreprofesor,CONCAT(a.apellidop," ",a.apellidom," ",a.nombre) as nombrealumno ');
         $this->db->from('tblasistencia as');
@@ -582,6 +616,39 @@ class Calificacion_model extends CI_Model {
                 tblperiodo p ON p.idperiodo = ag.idperiodo 
             WHERE ag.idperiodo = $idperiodo
             AND ag.idgrupo = $idgrupo");
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+    public function materiasXRecuperar($idperiodo,$idalumno) {
+        $query = $this->db->query("SELECT
+            	hd.idhorariodetalle,
+                pm.idprofesormateria,
+                h.idhorario,
+            	m.clave ,
+            	m.nombreclase
+            FROM
+            	tblalumno a
+            INNER JOIN tblalumno_grupo ag on
+            	a.idalumno = ag.idalumno
+            INNER JOIN tblmateria_reprobada mr on
+            	mr.idalumnogrupo = ag.idalumnogrupo
+            INNER JOIN tbldetalle_reprobada dr on
+            	dr.idreprobada = mr.idreprobada
+            INNER JOIN tblhorario h on
+            	h.idhorario = dr.idhorario
+            INNER JOIN tblhorario_detalle hd on
+            	hd.idhorario = h.idhorario
+            INNER JOIN tblprofesor_materia pm on
+            	pm.idprofesormateria = hd.idmateria
+            INNER JOIN tblmateria m on
+            	m.idmateria = pm.idmateria
+            WHERE
+            	hd.idmateria = dr.idprofesormateria
+            AND h.idperiodo = $idperiodo
+            AND ag.idalumno = $idalumno");
         if ($query->num_rows() > 0) {
             return $query->result();
         } else {

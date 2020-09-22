@@ -1151,7 +1151,7 @@ GROUP BY hd.idmateria) tabla");
          p.clave,
          p.nombreplantel, 
          p.direccion, 
-         p.telefono,
+         p.telefono, 
          ts.tiposanguineo,
          p.idniveleducativo,
          t.telefono as telefonocelular,

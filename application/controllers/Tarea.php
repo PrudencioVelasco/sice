@@ -230,7 +230,7 @@ class Tarea extends CI_Controller {
             if (isset($_FILES["file"]) && !empty($_FILES["file"])) {
                 $this->load->library('Autoload');
                 $archivoParaSubir = $_FILES["file"];
-                $maxsize = 1000000;
+                $maxsize = 15000000;
                 $allowed = array('gif', 'png', 'jpg', 'jpeg', 'gif', 'docx', 'doc', 'pdf', 'xls', 'xlsx');
                 $filename = $_FILES['file']['name'];
                 $ext = pathinfo($filename, PATHINFO_EXTENSION);
@@ -321,7 +321,7 @@ class Tarea extends CI_Controller {
                     } else {
                         $result['error'] = true;
                         $result['msg'] = array(
-                            'msgerror' => "EL DOCUMENTO DEBE DE PESAR 1MB COMO MAXIMO."
+                            'msgerror' => "EL DOCUMENTO DEBE DE PESAR 15MB COMO MAXIMO."
                         );
                     }
                 } else {
@@ -406,7 +406,7 @@ class Tarea extends CI_Controller {
             $horaentrega = trim($this->input->post('horaentregareal'));
             if (isset($_FILES["file"]) && !empty($_FILES["file"])) {
 
-                $maxsize = 1000000;
+                $maxsize = 15000000;
                 $allowed = array('gif', 'png', 'jpg', 'jpeg', 'gif', 'docx', 'doc', 'pdf', 'xls', 'xlsx');
                 $filename = $_FILES['file']['name'];
                 $ext = pathinfo($filename, PATHINFO_EXTENSION);
@@ -500,7 +500,7 @@ class Tarea extends CI_Controller {
                     } else {
                         $result['error'] = true;
                         $result['msg'] = array(
-                            'msgerror' => "EL DOCUMENTO DEBE DE PESAR 1MB COMO MAXIMO."
+                            'msgerror' => "EL DOCUMENTO DEBE DE PESAR 15MB COMO MAXIMO."
                         );
                     }
                 } else {
@@ -717,7 +717,7 @@ class Tarea extends CI_Controller {
 
             if ($fechaactual <= $fecha_antes) {
                 if (isset($_FILES["file"]) && !empty($_FILES["file"])) {
-                    $maxsize = 1000000;
+                    $maxsize = 15000000;
                     $allowed = array('gif', 'png', 'jpg', 'jpeg', 'gif', 'docx', 'doc', 'pdf', 'xls', 'xlsx');
                     $filename = $_FILES['file']['name'];
                     $ext = pathinfo($filename, PATHINFO_EXTENSION);
@@ -806,7 +806,7 @@ class Tarea extends CI_Controller {
                         } else {
                             $result['error'] = true;
                             $result['msg'] = array(
-                                'msgerror' => "EL DOCUMENTO DEBE DE PESAR 1MB COMO MAXIMO."
+                                'msgerror' => "EL DOCUMENTO DEBE DE PESAR 15MB COMO MAXIMO."
                             );
                         }
                     } else {
