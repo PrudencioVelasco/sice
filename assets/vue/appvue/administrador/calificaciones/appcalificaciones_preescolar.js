@@ -23,10 +23,10 @@ var v = new Vue({
 		idalumno: '',
 		grupos: [],
 		alumnos: [],
-		materias: [], 
+		materias: [],
 		materias_registradas: [],
 		materias_seleccionadas: [],
-		calificaciones_registradas:[],
+		calificaciones_registradas: [],
 		meses: [],
 		value: [],
 		idtipocalificacion: '',
@@ -122,12 +122,13 @@ var v = new Vue({
 		},
 		seleccionarAlumno(idalumno) {
 			this.idalumno = idalumno;
+			v.materias_seleccionadas = [];
 		},
 		selectAlumnoAsistencia(alumno) {
 			v.chooseAsistencia = alumno;
 
 		},
-		seleccionarAlumnoCalificacion(idalumno){
+		seleccionarAlumnoCalificacion(idalumno) {
 			this.idalumno = idalumno;
 			axios.get(this.url + "Calificacion/showCalificacionesDetalle/", {
 				params: {
@@ -139,12 +140,13 @@ var v = new Vue({
 				}
 			}).then(function(response) {
 				if (response.data.calificaciones_registradas != null) {
-					v.calificaciones_registradas = response.data.calificaciones_registradas; 
+					v.calificaciones_registradas = response.data.calificaciones_registradas;
 
-				} 
+				}
 			});
 		},
 		seleccionarAlumnoEditar(idalumno) {
+			v.materias_seleccionadas = [];
 			this.idalumno = idalumno;
 			axios.get(this.url + "Calificacion/showMateriasYaRegistradas/", {
 				params: {
@@ -156,9 +158,20 @@ var v = new Vue({
 				}
 			}).then(function(response) {
 				if (response.data.materias_registradas != null) {
-					v.materias_registradas = response.data.materias_registradas;
+					//v.materias_registradas = response.data.materias_registradas;
+					response.data.materias_registradas.forEach(item => {
+						var objeto = {
+							// Le agregas la fecha
+							idmateria: item.idmateriapreescolar,
+							nombremateria: item.nombremateria,
+							idcalificacion: item.idtipocalificacion,
+						}
 
-					v.materias_registradas.forEach(item => {
+						//Lo agregas al array.
+						v.materias_seleccionadas.push(objeto);
+					});
+				 
+					response.data.materias_registradas.forEach(item => {
 						v.materias.forEach(function(car, index, object) {
 							if (car.idmateriapreescolar === item.idmateriapreescolar) {
 								object.splice(index, 1);
@@ -234,39 +247,47 @@ var v = new Vue({
 				swal("NOTIFICACION", "SELECCIONE EL Y LOS CURSOS Y LA CALIFICACION. ", "info")
 			}
 		},
-	    updateAsistencia() {
-	      v.error = false;
-	      v.cargando = true;
-	      var formData = v.formData(v.chooseAsistencia);
-	      axios
-	        .post(this.url + "Calificacion/updateFaltas", formData)
-	        .then(function (response) {
-	          if (response.data.error) {
-	            v.formValidate = response.data.msg;
-	            v.cargando = false;
-	            v.error = true;
-	          } else {
-	            //v.successMSG = response.data.success;
-	            v.clearAll();
-	            v.clearMSG();
-	            swal({
-	              position: "center",
-	              type: "success",
-	              title: "Modificado!",
-	              showConfirmButton: false,
-	              timer: 1500,
-	            });
-	          }
-	        });
-	    },
-		eliminarMateria(idmateria) { 
+		updateAsistencia() {
+			v.error = false;
+			v.cargando = true;
+			var formData = v.formData(v.chooseAsistencia);
+			axios
+				.post(this.url + "Calificacion/updateFaltas", formData)
+				.then(function(response) {
+					if (response.data.error) {
+						v.formValidate = response.data.msg;
+						v.cargando = false;
+						v.error = true;
+					} else {
+						//v.successMSG = response.data.success;
+						v.clearAll();
+						v.clearMSG();
+						swal({
+							position: "center",
+							type: "success",
+							title: "Modificado!",
+							showConfirmButton: false,
+							timer: 1500,
+						});
+					}
+				});
+		},
+		eliminarMateria(idmateria) {
 			this.materias_seleccionadas.forEach(function(car, index, object) {
 				if (car.idmateria === idmateria) {
+						var objeto = {
+						// Le agregas la fecha
+						idmateriapreescolar: car.idmateria,
+						nombremateria: car.nombremateria,
+					} 
+				 
+					//Lo agregas al array.
+					v.materias.push(objeto);
 					object.splice(index, 1);
 				}
 			});
-			this.materias_seleccionadas.sort();
-			v.modificarArregloMateria();
+
+			 
 		},
 		modificarArregloMateria() {
 			if (this.materias_seleccionadas.length > 0) {
@@ -279,6 +300,19 @@ var v = new Vue({
 				});
 			}
 			this.materias_seleccionadas.sort();
+		},
+		agregarMateriaEliminadas(idmateria) {
+			this.materias_seleccionadas.forEach(function(car, index, object) {
+				if (car.idmateria === idmateria) {
+					var objeto = {
+						// Le agregas la fecha
+						idmateriapreescolar: car.idmateria,
+						nombremateria: car.nombremateria,
+					} 
+					//Lo agregas al array.
+					v.materias.push(objeto);
+				}
+			}); 
 		},
 		searchAlumnos() {
 			var idmes = this.$refs.idmes.value;
@@ -436,6 +470,7 @@ var v = new Vue({
 			v.formValidate = false;
 			v.value = [];
 			v.materias_seleccionadas = [];
+			v.materias_registradas = [];
 			v.showAllMaterias(this.idgrupo);
 			v.searchAlumnos();
 			v.cargando = false;

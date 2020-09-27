@@ -313,7 +313,7 @@ $(document).ready(function() {
                     swal({
                         position: 'center',
                         type: 'success',
-                        title: 'Registrado!',
+                        title: 'Modificado!',
                         text: 'Fue modificado  con exito.',
                         showConfirmButton: true
                     }).then(function () {

@@ -233,7 +233,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h3 class="modal-title " id="myModalLabel">Alumno: <label id="alumno"></label> </h3>
+                <h3 class="modal-title " id="myModalLabel">ALUMNO(A): <label id="alumno"></label> </h3>
             </div>
             <form method="post" action="" id="frmmodificar">
                 <div class="modal-body">
@@ -247,7 +247,7 @@
                         <label>
                             <font color="red">*</font> Calificación
                         </label><br>
-                        <input type="text" name="calificacion" class="form-control calificacion">
+                        <input type="text" name="calificacion" style="border-bottom: solid #ccc 2px;" class="form-control calificacion">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -268,7 +268,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h3 class="modal-title " id="myModalLabel">ALUMNO: <label id="alumnodelete"></label> </h3>
+                <h3 class="modal-title " id="myModalLabel">ALUMNO(a): <label id="alumnodelete"></label> </h3>
             </div>
             <form method="post" action="" id="frmeliminar">
                 <div class="modal-body">

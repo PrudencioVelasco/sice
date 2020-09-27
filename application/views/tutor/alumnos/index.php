@@ -53,7 +53,7 @@
                                                                  title="Calificación"><i style="color: #0b94e3;"
                                                                  class="fa fa-file-text-o"></i>
                                                              Calificación</a></li>
-                                                         <?php } else { ?>
+                                                         <?php  } else { ?>
                                                             <li><a href="<?php echo site_url('Tutores/boletas/' . $controller->encode($value->idalumno)) ?>"
                                                              title="Calificación"><i style="color: #0b94e3;"
                                                              class="fa fa-file-text-o"></i>

@@ -18,7 +18,8 @@ class pGrupo extends CI_Controller
         $this->load->model('grupo_model', 'grupo');
         $this->load->model('alumno_model', 'alumno');
         $this->load->model('tarea_model', 'tarea');
-        $this->load->model('mensaje_model', 'mensaje');
+        $this->load->model('mensaje_model', 'mensaje'); 
+        $this->load->model('calificacion_model', 'calificacion');
         $this->load->library('encryption');
         $this->load->helper('numeroatexto_helper');
         $this->load->model('configuracion_model', 'configuracion');
@@ -53,13 +54,15 @@ class pGrupo extends CI_Controller
 
         $result = $this->grupo->showAllGruposProfesor($this->session->idprofesor);
         $unidades = $this->grupo->unidades();
-        $oportunidades=$this->grupo->showAllOportunidades($this->session->idplantel);
-
+        $oportunidades = $this->grupo->showAllOportunidades($this->session->idplantel);
+        $meses = $this->calificacion->allMeses();
+        
         $data = array(
             'datos' => $result,
             'grupos' => $result,
             'unidades' => $unidades,
-            'oportunidades'=>$oportunidades,
+            'meses'=>$meses,
+            'oportunidades' => $oportunidades,
             'controller' => $this
         );
         $this->load->view('docente/header');
@@ -84,7 +87,8 @@ class pGrupo extends CI_Controller
             $idprofesormateria = $detalle_horario->idprofesormateria;
             $idmateria = $detalle_horario->idmateria;
             $unidades_materia = $detalle_horario->unidades;
-            $alumns = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria);
+            $estatus_alumno = $detalle_horario->activo;
+            $alumns = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria, $estatus_alumno);
             $detalle = $this->grupo->detalleClase($idhorariodetalle);
 
             $nombreclase = $detalle[0]->nombreclase;
@@ -129,9 +133,10 @@ class pGrupo extends CI_Controller
             $idprofesormateria = $detalle_horario->idprofesormateria;
             $idmateria = $detalle_horario->idmateria;
             $unidades_materia = $detalle_horario->unidades;
-            $alumns = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria);
+            $estatus_alumno = $detalle_horario->activo;
+            $alumns = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria, $estatus_alumno);
             $detalle = $this->grupo->detalleClase($idhorariodetalle);
-
+            $mes = $this->calificacion->allMeses();
             $nombreclase = $detalle[0]->nombreclase;
 
             $data = array(
@@ -140,6 +145,7 @@ class pGrupo extends CI_Controller
                 'idhorariodetalle' => $idhorariodetalle,
                 'unidades' => $unidades,
                 'nombreclase' => $nombreclase,
+                'mes' => $mes,
                 'unidades_materia' => $unidades_materia,
                 'tabla' => $this->obtenerCalificacionSecu($idhorario, $idhorariodetalle),
                 'oportunidades' => $this->grupo->showAllOportunidades($this->session->idplantel),
@@ -193,6 +199,70 @@ class pGrupo extends CI_Controller
         }
     }
 
+    public function updteCalificacionSecu(){
+        $config = array(
+            
+            array(
+                'field' => 'calificacion',
+                'label' => 'Calificacion',
+                'rules' => 'trim|decimal|callback_maxNumber',
+                'errors' => array(
+                    'decimal' => 'Debe de ser Números decimales.'
+                )
+            ),
+        );
+        $this->form_validation->set_rules($config);
+        if ($this->form_validation->run() == false) {
+            $errors = validation_errors();
+            echo json_encode([
+                'error' => $errors
+            ]);
+        } else {
+            $idcalificacion = $this->input->post('idcalificacion');
+            $iddetallecalificacion = $this->input->post('iddetallecalificacion');
+            $calificacion = $this->input->post('calificacion');
+            //OPTENER LA SUMA DE CALIFICACION EXEPTO DE QUE SE VA A MODIFICAR
+            $detalle_calificacion = $this->grupo->sumaCalificacion($idcalificacion,$iddetallecalificacion);
+            if($detalle_calificacion){
+                //YA EXISTE REGISTRO
+                if($detalle_calificacion[0]->calificacion > 0){
+                    $suma_anterior = $detalle_calificacion[0]->calificacion;
+                    $suma_total = $suma_anterior + $calificacion;
+                    $meses_anteriores = $detalle_calificacion[0]->contador;
+                    $suma_total_meses = $meses_anteriores +1;
+                    $data1 = array(
+                        'calificacion'=>$calificacion
+                    );
+                    $this->grupo->updateDetalleCalificacion($iddetallecalificacion,$data1);
+                    
+                    $data2 = array(
+                        'calificacion'=>$suma_total/$suma_total_meses
+                    );
+                    $this->grupo->updateCalificacion($idcalificacion,$data2);
+                    echo json_encode([
+                        'success' => 'Ok',
+                        'mensaje' => 'Fueron modificado la calificación.'
+                    ]);
+                }else{
+                    //ES EL PRIMER REGISTRO
+                    $data1 = array(
+                        'calificacion'=>$calificacion
+                    );
+                    $this->grupo->updateDetalleCalificacion($iddetallecalificacion,$data1);
+                    
+                    $data2 = array(
+                        'calificacion'=>$calificacion
+                    );
+                    $this->grupo->updateCalificacion($idcalificacion,$data2);
+                    echo json_encode([
+                        'success' => 'Ok',
+                        'mensaje' => 'Fueron modificado la calificación.'
+                    ]);
+                }
+            } 
+        }
+    }
+
     public function addCalificacionSecu()
     {
         Permission::grant(uri_string());
@@ -206,33 +276,17 @@ class pGrupo extends CI_Controller
                 )
             ),
             array(
-                'field' => 'proyecto[]',
+                'field' => 'mes[]',
                 'label' => 'Calificacion',
-                'rules' => 'trim|decimal|callback_maxNumberSecundaria',
+                'rules' => 'trim|required',
                 'errors' => array(
-                    'decimal' => 'Debe de ser Números decimales.'
+                    'required' => 'Debe seleccionar el Mes.'
                 )
             ),
             array(
-                'field' => 'tarea[]',
+                'field' => 'calificacion[]',
                 'label' => 'Calificacion',
-                'rules' => 'trim|decimal|callback_maxNumberSecundaria',
-                'errors' => array(
-                    'decimal' => 'Debe de ser Números decimales.'
-                )
-            ),
-            array(
-                'field' => 'participacion[]',
-                'label' => 'Calificacion',
-                'rules' => 'trim|decimal|callback_maxNumberSecundaria',
-                'errors' => array(
-                    'decimal' => 'Debe de ser Números decimales.'
-                )
-            ),
-            array(
-                'field' => 'examen[]',
-                'label' => 'Calificacion',
-                'rules' => 'trim|decimal|callback_maxNumberSecundaria',
+                'rules' => 'trim|decimal|callback_maxNumber',
                 'errors' => array(
                     'decimal' => 'Debe de ser Números decimales.'
                 )
@@ -249,58 +303,24 @@ class pGrupo extends CI_Controller
             $idhorariodetalle = $this->input->post('idhorariodetalle');
             $idalumno = $this->input->post('idalumno');
             $unidad = $this->input->post('unidad');
-            $proyecto = $this->input->post('proyecto');
-            $tarea = $this->input->post('tarea');
-            $participacion = $this->input->post('participacion');
-            $examen = $this->input->post('examen');
-            $datos = array(
-                $idalumno,
-                $proyecto,
-                $tarea,
-                $participacion,
-                $examen
-            );
-            $numero_goblal = 0;
-            $numero_alumno = 0;
-            $numero_proyecto = 1;
-            $numero_tarea = 2;
-            $numero_participacion = 3;
-            $numero_examen = 4;
-            // foreach ($idalumno as $value) {
-            // $var_idalumno = $datos[$numero_alumno][$numero_goblal];
-            // $proyecto_calificacion = $datos[$numero_proyecto][$numero_goblal];
-            // $tarea_calificacion = $datos[$numero_tarea][$numero_goblal];
-            // $participacion_calificacion = $datos[$numero_participacion][$numero_goblal];
-            // $examen_calificacion = $datos[$numero_examen][$numero_goblal];
-            // $numero_goblal++;
-            // // echo 'idalumno: ' . $var_idalumno . ' Proyecto: ' . $proyecto_calificacion . ' Tarea: ' . $tarea_calificacion . ' Participacion: ' . $participacion_calificacion . ' Examen: ' . $examen_calificacion . '<br>';
-            // }
-
+            $idmes = $this->input->post('mes');
+            $calificacion = $this->input->post('calificacion');
             $detalle_oportunidad = $this->grupo->primeraOportunidad($this->session->idplantel);
             if ($detalle_oportunidad) {
                 $idopotunidad = $detalle_oportunidad[0]->idoportunidadexamen;
                 $contador_no_insertado = 0;
                 $contador_insertado = 0;
-                foreach ($idalumno as $value) {
-                    $var_idalumno = $datos[$numero_alumno][$numero_goblal];
-                    $proyecto_calificacion = $datos[$numero_proyecto][$numero_goblal];
-                    $tarea_calificacion = $datos[$numero_tarea][$numero_goblal];
-                    $participacion_calificacion = $datos[$numero_participacion][$numero_goblal];
-                    $examen_calificacion = $datos[$numero_examen][$numero_goblal];
-                    $numero_goblal ++;
-                    $validar = $this->grupo->validarAgregarCalificacion($unidad, $idhorariodetalle, '', $var_idalumno);
-                    $calificacion_real_proyecto = ($proyecto_calificacion != "") ? $proyecto_calificacion : 0;
-                    $calificacion_real_tarea = ($tarea_calificacion != "") ? $tarea_calificacion : 0;
-                    $calificacion_real_participacion = ($participacion_calificacion != "") ? $participacion_calificacion : 0;
-                    $calificacion_real_examen = ($examen_calificacion != "") ? $examen_calificacion : 0;
-                    $calificacion_antes = $calificacion_real_proyecto + $calificacion_real_tarea + $calificacion_real_participacion + $calificacion_real_examen;
-                    $calificacion_final = ($calificacion_antes > 0) ? $calificacion_antes / 10 : 0;
+                foreach ($idalumno as $key => $value) {
+                    $idalumno2 = $value;
+                    $calificacion_final = $calificacion[$key];
+                    $validar = $this->grupo->validarAgregarCalificacion($unidad, $idhorariodetalle, '', $idalumno2);
                     if ($validar == false) {
-                        if ((isset($calificacion_final) && ! empty($calificacion_final)) && ($calificacion_final > 0)) {
+                        // ES LA PRIMERA VEZ QUE SE REGISTRA LA CALIFICACION
+                        if (isset($calificacion_final) && ! empty($calificacion_final)) {
                             $data = array(
                                 'idunidad' => $unidad,
                                 'idoportunidadexamen' => $idopotunidad,
-                                'idalumno' => $var_idalumno,
+                                'idalumno' => $idalumno2,
                                 'idhorario' => $idhorario,
                                 'idhorariodetalle' => $idhorariodetalle,
                                 'calificacion' => $calificacion_final,
@@ -310,10 +330,8 @@ class pGrupo extends CI_Controller
                             $idcalificacion = $this->grupo->addCalificacion($data);
                             $data_detalle = array(
                                 'idcalificacion' => $idcalificacion,
-                                'proyecto' => $proyecto_calificacion,
-                                'tarea' => $tarea_calificacion,
-                                'participacion' => $participacion_calificacion,
-                                'examen' => $examen_calificacion,
+                                'idmes' => $idmes,
+                                'calificacion' => $calificacion_final,
                                 'idusuario' => $this->session->user_id,
                                 'fecharegistro' => date('Y-m-d H:i:s')
                             );
@@ -323,9 +341,65 @@ class pGrupo extends CI_Controller
                             $contador_no_insertado ++;
                         }
                     } else {
-                        $contador_no_insertado ++;
+                        if (isset($calificacion_final) && ! empty($calificacion_final) && $calificacion_final >= 0.00) {
+                            $idcalificacion_registrado = $validar[0]->idcalificacion;
+                            // VALIDAR SI YA EXISTE EL REGISTRO EN TABLA DE DETALLE CALIFICACION
+                            $validar_mes = $this->grupo->validarMesDetalleCalificacion($idmes, $idcalificacion_registrado);
+                            if ($validar_mes == false) {
+                                // SE AGREGA LA CALIFICACION EN LA TABLA DETALLE PORQUE EL MES NO ESTA REGISTRADO
+                                $registro_detalle = $this->grupo->showAllDetalleCalificacion($idcalificacion_registrado);
+                                $total_suma = 0;
+                                $contado = 1;
+                                foreach ($registro_detalle as $row) {
+                                    $total_suma += $row->calificacion;
+                                    $contado ++;
+                                }
+                                $suma = ($total_suma + $calificacion_final) / $contado;
+                                $data = array(
+                                    'calificacion' => $suma,
+                                    'idusuario' => $this->session->user_id,
+                                    'fecharegistro' => date('Y-m-d H:i:s')
+                                );
+                                $editar = $this->grupo->updateCalificacion($idcalificacion_registrado, $data);
+                                if ($editar) {
+                                    $data_detalle = array(
+                                        'idcalificacion' => $idcalificacion_registrado,
+                                        'idmes' => $idmes,
+                                        'calificacion' => $calificacion_final,
+                                        'idusuario' => $this->session->user_id,
+                                        'fecharegistro' => date('Y-m-d H:i:s')
+                                    );
+                                    $this->grupo->addDetalleCalificacion($data_detalle);
+                                    $contador_insertado ++;
+                                } else {
+
+                                    $contador_no_insertado ++;
+                                }
+                            } else {
+                                if (isset($calificacion_final) && ! empty($calificacion_final) && $calificacion_final >= 0.00) {
+                                    $idcalificacion2 = $validar_mes[0]->idcalificacion;
+                                    $iddetallecalificacion = $validar_mes[0]->iddetallecalificacion;
+                                    $detalle_calificacion = $this->grupo->sumaCalificacion($idcalificacion2, $iddetallecalificacion);
+                                    $suma_anterior = $detalle_calificacion[0]->calificacion;
+                                      $suma_total = $suma_anterior + $calificacion_final;
+                                    $meses_anteriores = $detalle_calificacion[0]->contador;
+                                     $suma_total_meses = $meses_anteriores + 1; 
+                                    $data2 = array(
+                                        'calificacion' =>  $suma_total / $suma_total_meses 
+                                    );
+                                    $this->grupo->updateCalificacion($idcalificacion2, $data2);
+
+                                    $data1 = array(
+                                        'calificacion' =>  $calificacion_final 
+                                    );
+                                    $this->grupo->updateDetalleCalificacion($iddetallecalificacion, $data1);
+                                    $contador_insertado ++;
+                                }
+                            }
+                        }
                     }
                 }
+
                 if ($contador_no_insertado > 0) {
                     echo json_encode([
                         'success' => 'Ok',
@@ -350,20 +424,17 @@ class pGrupo extends CI_Controller
     {
         # code...
         Permission::grant(uri_string());
-        $idhorario = $this->decode($idhorario);
-        // $idunidad = $this->input->post('unidad');
-        $idhorariodetalle = $this->decode($idhorariodetalle);
-        // $fechainicio = $this->input->post('fechainicio');
-        // $fechafin = $this->input->post('fechafin');
+        $idhorario = $this->decode($idhorario); 
+        $idhorariodetalle = $this->decode($idhorariodetalle); 
         if ((isset($idhorario) && ! empty($idhorario)) && (isset($idhorario) && ! empty($idhorario)) && (isset($fechainicio) && ! empty($fechainicio)) && (isset($fechafin) && ! empty($fechafin))) {
             $detalle_horario = $this->grupo->detalleHorarioDetalle($idhorariodetalle);
             $idprofesormateria = $detalle_horario->idprofesormateria;
             $idmateria = $detalle_horario->idmateria;
-            $alumns = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria);
+            $estatus_alumno = $detalle_horario->activo;
+            $alumns = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria,$estatus_alumno);
             $tabla = "";
             if ($alumns != false) {
-                $range = ((strtotime($fechafin) - strtotime($fechainicio)) + (24 * 60 * 60)) / (24 * 60 * 60);
-                // $range= ((strtotime($_GET["finish_at"])-strtotime($_GET["start_at"]))+(24*60*60)) /(24*60*60);
+                $range = ((strtotime($fechafin) - strtotime($fechainicio)) + (24 * 60 * 60)) / (24 * 60 * 60); 
 
                 $tabla .= '  <table id="tablageneral2" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
             <thead class="bg-teal">
@@ -377,8 +448,7 @@ class pGrupo extends CI_Controller
                         if ($domingo != '6') {
                             $tabla .= '<th>' . utf8_encode($fecha) . '</th>';
                         }
-                    }
-                    // echo date("d-M",strtotime($_GET["start_at"])+($i*(24*60*60)));
+                    } 
                 endfor
                 ;
                 $tabla .= '</thead>';
@@ -388,8 +458,7 @@ class pGrupo extends CI_Controller
                     $tabla .= '<td>' . $n ++ . '</td>';
                     $tabla .= '<td >' . $alumn->apellidop . " " . $alumn->apellidom . " " . $alumn->nombre . '</td>';
                     for ($i = 0; $i < $range; $i ++) :
-                        $date_at = date("Y-m-d", strtotime($fechainicio) + ($i * (24 * 60 * 60)));
-                        // $asist = AssistanceData::getByATD($alumn->id,$_GET["team_id"],$date_at);
+                        $date_at = date("Y-m-d", strtotime($fechainicio) + ($i * (24 * 60 * 60))); 
                         $asist = $this->grupo->listaAsistencia($alumn->idalumno, $idhorario, $date_at, $idhorariodetalle, $idunidad);
                         $domingo = date('N', strtotime($fechainicio) + ($i * (24 * 60 * 60)));
 
@@ -406,13 +475,7 @@ class pGrupo extends CI_Controller
 				                                data-idmotivo="' . $asist->idmotivo . '"
 				                                data-alumno="' . $alumn->apellidop . " " . $alumn->apellidom . " " . $alumn->nombre . '"
 				                               style = "color:blue;" title="Editar Calificación"></i> </a>';
-                                            /*
-                                             * $tabla .=' <a href="javascript:void(0)"><i class="fa fa-trash delete_button" data-toggle="modal" data-target="#myModalDelete"
-                                             * data-idasistencia="'.$asist->idasistencia.'"
-                                             * data-idmotivo="'.$asist->idmotivo.'"
-                                             * data-alumno="'.$alumn->apellidop." ".$alumn->apellidom." ".$alumn->nombre.'"
-                                             * style = "color:red;" title="Eliminar Calificación"></i> </a>';
-                                             */
+                                            
                                             break;
                                         case 2:
                                             $tabla .= '<span class="label label-warning">' . $asist->nombremotivo . '</span>';
@@ -421,14 +484,7 @@ class pGrupo extends CI_Controller
 				                                  data-idmotivo="' . $asist->idmotivo . '"
 				                                  data-alumno="' . $alumn->apellidop . " " . $alumn->apellidom . " " . $alumn->nombre . '"
 				                                 style = "color:blue;" title="Editar Calificación"></i> </a>';
-                                            /*
-                                             * $tabla .=' <a href="javascript:void(0)"><i class="fa fa-trash delete_button" data-toggle="modal" data-target="#myModalDelete"
-                                             * data-idasistencia="'.$asist->idasistencia.'"
-                                             * data-idmotivo="'.$asist->idmotivo.'"
-                                             * data-alumno="'.$alumn->apellidop." ".$alumn->apellidom." ".$alumn->nombre.'"
-                                             * style = "color:red;" title="Eliminar Calificación"></i> </a>';
-                                             */
-                                            # code...
+                                             
                                             break;
                                         case 3:
                                             $tabla .= '<span class="label label-info">' . $asist->nombremotivo . '</span>';
@@ -437,14 +493,7 @@ class pGrupo extends CI_Controller
 				                                  data-idmotivo="' . $asist->idmotivo . '"
 				                                  data-alumno="' . $alumn->apellidop . " " . $alumn->apellidom . " " . $alumn->nombre . '"
 				                                 style = "color:blue;" title="Editar Calificación"></i> </a>';
-                                            /*
-                                             * $tabla .=' <a href="javascript:void(0)"><i class="fa fa-trash delete_button" data-toggle="modal" data-target="#myModalDelete"
-                                             * data-idasistencia="'.$asist->idasistencia.'"
-                                             * data-idmotivo="'.$asist->idmotivo.'"
-                                             * data-alumno="'.$alumn->apellidop." ".$alumn->apellidom." ".$alumn->nombre.'"
-                                             * style = "color:red;" title="Eliminar Calificación"></i> </a>';
-                                             */
-                                            # code...
+                                            
                                             break;
                                         case 4:
                                             $tabla .= '<span class="label label-danger">' . $asist->nombremotivo . '</span>';
@@ -453,14 +502,7 @@ class pGrupo extends CI_Controller
 				                                  data-idmotivo="' . $asist->idmotivo . '"
 				                                  data-alumno="' . $alumn->apellidop . " " . $alumn->apellidom . " " . $alumn->nombre . '"
 				                                 style = "color:blue;" title="Editar Calificación"></i> </a>';
-                                            /*
-                                             * $tabla .=' <a href="javascript:void(0)"><i class="fa fa-trash delete_button" data-toggle="modal" data-target="#myModalDelete"
-                                             * data-idasistencia="'.$asist->idasistencia.'"
-                                             * data-idmotivo="'.$asist->idmotivo.'"
-                                             * data-alumno="'.$alumn->apellidop." ".$alumn->apellidom." ".$alumn->nombre.'"
-                                             * style = "color:red;" title="Eliminar Calificación"></i> </a>';
-                                             */
-                                            # code...
+                                            
                                             break;
 
                                         default:
@@ -487,7 +529,8 @@ class pGrupo extends CI_Controller
             $detalle_horario = $this->grupo->detalleHorarioDetalle($idhorariodetalle);
             $idprofesormateria = $detalle_horario->idprofesormateria;
             $idmateria = $detalle_horario->idmateria;
-            $alumns = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria);
+            $estatus_alumno = $detalle_horario->activo;
+            $alumns = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria,$estatus_alumno);
             $data = array(
                 'alumnos' => $alumns,
                 'motivo' => $motivo,
@@ -518,12 +561,12 @@ class pGrupo extends CI_Controller
         $detalle_horario = $this->grupo->detalleHorarioDetalle($idhorariodetalle);
         $idprofesormateria = $detalle_horario->idprofesormateria;
         $idmateria = $detalle_horario->idmateria;
-        $alumns = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria);
+        $estatus_alumno = $detalle_horario->activo;
+        $alumns = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria,$estatus_alumno);
         $tabla = "";
 
         if ($alumns != false) {
-            $range = ((strtotime($fechafin) - strtotime($fechainicio)) + (24 * 60 * 60)) / (24 * 60 * 60);
-            // $range= ((strtotime($_GET["finish_at"])-strtotime($_GET["start_at"]))+(24*60*60)) /(24*60*60);
+            $range = ((strtotime($fechafin) - strtotime($fechainicio)) + (24 * 60 * 60)) / (24 * 60 * 60); 
 
             $tabla .= '  <table id="tablageneral2" class="table table-striped  dt-responsive nowrap" cellspacing="0" width="100%">
             <thead class="bg-teal">
@@ -538,8 +581,7 @@ class pGrupo extends CI_Controller
                     if ($domingo != '6') {
                         $tabla .= '<th>' . utf8_encode($fecha) . '</th>';
                     }
-                }
-                // echo date("d-M",strtotime($_GET["start_at"])+($i*(24*60*60)));
+                } 
             endfor
             ;
             $tabla .= '</thead>';
@@ -549,8 +591,7 @@ class pGrupo extends CI_Controller
                 $tabla .= '<td>' . $n ++ . '</td>';
                 $tabla .= '<td >' . $alumn->apellidop . " " . $alumn->apellidom . " " . $alumn->nombre . '</td>';
                 for ($i = 0; $i < $range; $i ++) :
-                    $date_at = date("Y-m-d", strtotime($fechainicio) + ($i * (24 * 60 * 60)));
-                    // $asist = AssistanceData::getByATD($alumn->id,$_GET["team_id"],$date_at);
+                    $date_at = date("Y-m-d", strtotime($fechainicio) + ($i * (24 * 60 * 60))); 
                     $asist = $this->grupo->listaAsistencia($alumn->idalumno, $idhorario, $date_at, $idhorariodetalle);
 
                     $domingo = date('N', strtotime($fechainicio) + ($i * (24 * 60 * 60)));
@@ -570,13 +611,7 @@ class pGrupo extends CI_Controller
 				                                data-idmotivo="' . $asist->idmotivo . '"
 				                                data-alumno="' . $alumn->apellidop . " " . $alumn->apellidom . " " . $alumn->nombre . '"
 				                               style = "color:blue;" title="Editar Calificación"></i> </a>';
-                                        /*
-                                         * $tabla .=' <a href="javascript:void(0)"><i class="fa fa-trash delete_button" data-toggle="modal" data-target="#myModalDelete"
-                                         * data-idasistencia="'.$asist->idasistencia.'"
-                                         * data-idmotivo="'.$asist->idmotivo.'"
-                                         * data-alumno="'.$alumn->apellidop." ".$alumn->apellidom." ".$alumn->nombre.'"
-                                         * style = "color:red;" title="Eliminar Calificación"></i> </a>';
-                                         */
+                                        
 
                                         break;
                                     case 2:
@@ -586,14 +621,7 @@ class pGrupo extends CI_Controller
 				                                  data-idmotivo="' . $asist->idmotivo . '"
 				                                  data-alumno="' . $alumn->apellidop . " " . $alumn->apellidom . " " . $alumn->nombre . '"
 				                                 style = "color:blue;" title="Editar Calificación"></i> </a>';
-                                        /*
-                                         * $tabla .=' <a href="javascript:void(0)"><i class="fa fa-trash delete_button" data-toggle="modal" data-target="#myModalDelete"
-                                         * data-idasistencia="'.$asist->idasistencia.'"
-                                         * data-idmotivo="'.$asist->idmotivo.'"
-                                         * data-alumno="'.$alumn->apellidop." ".$alumn->apellidom." ".$alumn->nombre.'"
-                                         * style = "color:red;" title="Eliminar Calificación"></i> </a>';
-                                         */
-                                        # code...
+                                       
                                         break;
                                     case 3:
                                         $tabla .= '<span class="label label-info">' . $asist->nombremotivo . '</span>';
@@ -603,14 +631,7 @@ class pGrupo extends CI_Controller
 				                                  data-idmotivo="' . $asist->idmotivo . '"
 				                                  data-alumno="' . $alumn->apellidop . " " . $alumn->apellidom . " " . $alumn->nombre . '"
 				                                 style = "color:blue;" title="Editar Calificación"></i> </a>';
-                                        /*
-                                         * $tabla .=' <a href="javascript:void(0)"><i class="fa fa-trash delete_button" data-toggle="modal" data-target="#myModalDelete"
-                                         * data-idasistencia="'.$asist->idasistencia.'"
-                                         * data-idmotivo="'.$asist->idmotivo.'"
-                                         * data-alumno="'.$alumn->apellidop." ".$alumn->apellidom." ".$alumn->nombre.'"
-                                         * style = "color:red;" title="Eliminar Calificación"></i> </a>';
-                                         */
-                                        # code...
+                                        
                                         break;
                                     case 4:
                                         $tabla .= '<span class="label label-danger">' . $asist->nombremotivo . '</span>';
@@ -619,14 +640,7 @@ class pGrupo extends CI_Controller
 				                                  data-idmotivo="' . $asist->idmotivo . '"
 				                                  data-alumno="' . $alumn->apellidop . " " . $alumn->apellidom . " " . $alumn->nombre . '"
 				                                 style = "color:blue;" title="Editar Calificación"></i> </a>';
-                                        /*
-                                         * $tabla .=' <a href="javascript:void(0)"><i class="fa fa-trash delete_button" data-toggle="modal" data-target="#myModalDelete"
-                                         * data-idasistencia="'.$asist->idasistencia.'"
-                                         * data-idmotivo="'.$asist->idmotivo.'"
-                                         * data-alumno="'.$alumn->apellidop." ".$alumn->apellidom." ".$alumn->nombre.'"
-                                         * style = "color:red;" title="Eliminar Calificación"></i> </a>';
-                                         */
-                                        # code...
+                                         
                                         break;
 
                                     default:
@@ -657,7 +671,8 @@ class pGrupo extends CI_Controller
         $detalle_horario = $this->grupo->detalleHorarioDetalle($idhorariodetalle);
         $idprofesormateria = $detalle_horario->idprofesormateria;
         $idmateria = $detalle_horario->idmateria;
-        $alumnos = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria);
+        $estatus_alumno = $detalle_horario->activo;
+        $alumnos = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria,$estatus_alumno);
         $datoshorario = $this->horario->showNivelGrupo($idhorario);
 
         $idnivelestudio = $datoshorario->idnivelestudio;
@@ -671,7 +686,7 @@ class pGrupo extends CI_Controller
             $tabla .= '<th>' . $block->nombreunidad . '</th>';
         endforeach
         ;
-        $tabla .= '<th>C. FINAL</th>';
+        $tabla .= '<th>PROMEDIO</th>';
         $tabla .= '</thead>';
         $c = 1;
         $total_unidades = 0;
@@ -686,14 +701,13 @@ class pGrupo extends CI_Controller
                 }
                 $suma_calificacion = 0;
                 $total_unidades = 0;
-                foreach ($unidades as $block) :
-                    // $suma_calificacion = 0;
+                foreach ($unidades as $block) : 
                     $total_unidades += 1;
                     $val = $this->grupo->obtenerCalificacion($row->idalumno, $block->idunidad, $idhorariodetalle);
                     $tabla .= '<td>';
                     if ($val != false) {
                         $suma_calificacion = $suma_calificacion + $val->calificacion;
-                        $tabla .= '<label>' . $val->calificacion . '  </label>';
+                        $tabla .= '<label>' . numberFormatPrecision($val->calificacion,1,'.') . '  </label>';
                         $fecha_inicio = date('Y-m-d');
                         $fecha_fin = date('Y-m-d', strtotime($val->fecharegistro));
                         $total_dias = dias_pasados($fecha_inicio, $fecha_fin);
@@ -715,15 +729,15 @@ class pGrupo extends CI_Controller
                 endforeach
                 ;
                 $tabla .= '<td>';
-                $calificacion_final = number_format($suma_calificacion / $total_unidades, 2);
+                $calificacion_final = numberFormatPrecision($suma_calificacion / $total_unidades, 1,'.');
                 if (validar_calificacion($calificacion_final, $detalle_configuracion[0]->calificacion_minima)) {
                     if ($suma_calificacion > 0.0) {
-                        $tabla .= '<label style="color:red;">' . number_format($suma_calificacion / $total_unidades, 2) . '</label>';
+                        $tabla .= '<label style="color:red;">' . numberFormatPrecision($suma_calificacion / $total_unidades, 1,'.') . '</label>';
                     } else {
                         $tabla .= '<label "> </label>';
                     }
                 } else {
-                    $tabla .= '<label style="color:green;">' . number_format($suma_calificacion / $total_unidades, 2) . '</label>';
+                    $tabla .= '<label style="color:green;">' . numberFormatPrecision($suma_calificacion / $total_unidades, 1,'.') . '</label>';
                 }
                 $tabla .= '</td>';
                 $tabla .= '</tr>';
@@ -741,7 +755,8 @@ class pGrupo extends CI_Controller
         $detalle_horario = $this->grupo->detalleHorarioDetalle($idhorariodetalle);
         $idprofesormateria = $detalle_horario->idprofesormateria;
         $idmateria = $detalle_horario->idmateria;
-        $alumnos = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria);
+        $estatus_alumno = $detalle_horario->activo;
+        $alumnos = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria,$estatus_alumno);
         $datoshorario = $this->horario->showNivelGrupo($idhorario);
 
         $idnivelestudio = $datoshorario->idnivelestudio;
@@ -752,10 +767,10 @@ class pGrupo extends CI_Controller
       <th>#</th>
       <th>NOMBRE</th>';
         foreach ($unidades as $block) :
-            $tabla .= '<th>' . $block->nombreunidad . '</th>';
+            $tabla .= '<th align="center" >' . $block->nombreunidad . '</th>';
         endforeach
         ;
-        $tabla .= '<th>C. FINAL</th>';
+        $tabla .= '<th >PROMEDIO</th>';
         $tabla .= '</thead>';
         $c = 1;
         $total_unidades = 0;
@@ -770,46 +785,24 @@ class pGrupo extends CI_Controller
                 }
                 $suma_calificacion = 0;
                 $total_unidades = 0;
-                foreach ($unidades as $block) :
-                    // $suma_calificacion = 0;
+                foreach ($unidades as $block) : 
                     $total_unidades += 1;
                     $val = $this->grupo->obtenerCalificacion($row->idalumno, $block->idunidad, $idhorariodetalle);
-                    $tabla .= '<td>';
+                    $tabla .= '<td align="center">';
                     if ($val) {
                         $idcalificacion = $val->idcalificacion;
                         $detalle_calificacion = $this->grupo->detalleCalificacionSecundaria($idcalificacion);
                         $suma_calificacion = $suma_calificacion + $val->calificacion;
-                        $tabla .= '<label>' . $val->calificacion . '  </label>';
+                        $tabla .= '<label style="font-size:16px;">' . numberFormatPrecision($val->calificacion,1, '.') . '  </label>';
                         $fecha_inicio = date('Y-m-d');
                         $fecha_fin = date('Y-m-d', strtotime($val->fecharegistro));
-                        $total_dias = dias_pasados($fecha_inicio, $fecha_fin);
-                        if ($total_dias <= 3) {
-                            $tabla .= '  <a  href="javascript:void(0)"><i class="fa fa-pencil edit_button"  data-toggle="modal" data-target="#myModal"
-				                                data-idcalificacion="' . $val->idcalificacion . '"
-                                                                data-iddetallecalificacion="' . $detalle_calificacion->iddetallecalificacion . '"
-				                                data-proyecto="' . $detalle_calificacion->proyecto . '"
-                                                                data-tarea="' . $detalle_calificacion->tarea . '"
-                                                                data-participacion="' . $detalle_calificacion->participacion . '"
-                                                                data-examen="' . $detalle_calificacion->examen . '"
-                                                                data-calificacion="' . $val->calificacion . '"
-				                                data-alumno="' . $row->apellidop . " " . $row->apellidom . " " . $row->nombre . '"
-			                                   style = "color:blue;" title="Editar Calificación"></i> </a>';
-                            $tabla .= '  <a  href="javascript:void(0)"><i class="fa fa-eye detalle_button"  data-toggle="modal" data-target="#myModalDetalle"
-				                                data-idcalificacion="' . $val->idcalificacion . '"
-                                                                data-iddetallecalificacion="' . $detalle_calificacion->iddetallecalificacion . '"
-				                                data-proyecto="' . $detalle_calificacion->proyecto . '"
-                                                                data-tarea="' . $detalle_calificacion->tarea . '"
-                                                                data-participacion="' . $detalle_calificacion->participacion . '"
-                                                                data-examen="' . $detalle_calificacion->examen . '"
-                                                                data-calificacion="' . $val->calificacion . '"
-				                                data-alumno="' . $row->apellidop . " " . $row->apellidom . " " . $row->nombre . '"
-			                                   style = "color:green;" title="Ver detalle Calificación"></i> </a>';
-                            $tabla .= '  <a  href="javascript:void(0)"><i class="fa fa-trash delete_button"  data-toggle="modal" data-target="#myModalDelete"
-				                                data-idcalificacion="' . $val->idcalificacion . '"
-                                                                data-iddetallecalificacion="' . $detalle_calificacion->iddetallecalificacion . '"
-				                                data-alumno="' . $row->apellidop . " " . $row->apellidom . " " . $row->nombre . '"
-				                               style = "color:red;" title="Eliminar Calificación"></i> </a>';
-                        }
+                        $total_dias = dias_pasados($fecha_inicio, $fecha_fin); 
+                            if($detalle_calificacion){
+                                $datos = $this->encode($idcalificacion);
+                            $tabla .= '       <a   href="'.base_url().'/Pgrupo/detalleCalificacionSecu/'.$datos.'"><i class="fa fa-eye fa-lg"  style = "color:#3396FF;" title="Ver detalles de las Calificaciones"></i> </a> ';
+                         
+                            }
+                         
                     } else {
                         $tabla .= '<small>No registrado</small>';
                     }
@@ -817,15 +810,15 @@ class pGrupo extends CI_Controller
                 endforeach
                 ;
                 $tabla .= '<td>';
-                $calificacion_final = number_format($suma_calificacion / $total_unidades, 2);
+                $calificacion_final = numberFormatPrecision($suma_calificacion / $total_unidades, 1, '.');
                 if (validar_calificacion($calificacion_final, $detalle_configuracion[0]->calificacion_minima)) {
                     if ($suma_calificacion > 0.0) {
-                        $tabla .= '<label style="color:red;">' . number_format($suma_calificacion / $total_unidades, 2) . '</label>';
+                        $tabla .= '<label style="color:red;">' . $calificacion_final . '</label>';
                     } else {
                         $tabla .= '<label "> </label>';
                     }
                 } else {
-                    $tabla .= '<label style="color:green;">' . number_format($suma_calificacion / $total_unidades, 2) . '</label>';
+                    $tabla .= '<label style="color:green;">' . $calificacion_final . '</label>';
                 }
                 $tabla .= '</td>';
                 $tabla .= '</tr>';
@@ -834,7 +827,19 @@ class pGrupo extends CI_Controller
         $tabla .= '</table>';
         return $tabla;
     }
-
+    public  function detalleCalificacionSecu($idcalificacion){
+        $idcalificacion  = $this->decode($idcalificacion);
+        if (isset($idcalificacion) && !empty($idcalificacion)) {
+            $detalle = $this->grupo->detalleMateriaCalificacion($idcalificacion);
+            
+            $data = array( 
+                'detalle'=>$detalle
+            );
+            $this->load->view('docente/header');
+            $this->load->view('docente/grupo/calificacion/detalle_calificacion_secu', $data);
+            $this->load->view('docente/footer');
+        }
+    }
     public function obtenerCalificacionPree($idhorario = '')
     {
         # code...
@@ -855,7 +860,7 @@ class pGrupo extends CI_Controller
             $tabla .= '<th>' . $block->nombreunidad . '</th>';
         endforeach
         ;
-        $tabla .= '<th>C. FINAL</th>';
+        $tabla .= '<th>PROMEDIO</th>';
         $tabla .= '</thead>';
         $c = 1;
         $total_unidades = 0;
@@ -870,8 +875,7 @@ class pGrupo extends CI_Controller
                 }
                 $suma_calificacion = 0;
                 $total_unidades = 0;
-                foreach ($unidades as $block) :
-                    // $suma_calificacion = 0;
+                foreach ($unidades as $block) : 
                     $total_unidades += 1;
                     $val = $this->grupo->obtenerCalificacion($row->idalumno, $block->idunidad, $idhorariodetalle);
                     $tabla .= '<td>';
@@ -917,15 +921,15 @@ class pGrupo extends CI_Controller
                 endforeach
                 ;
                 $tabla .= '<td>';
-                $calificacion_final = number_format($suma_calificacion / $total_unidades, 2);
+                $calificacion_final = numberFormatPrecision($suma_calificacion / $total_unidades, 1,'.');
                 if (validar_calificacion($calificacion_final, $detalle_configuracion[0]->calificacion_minima)) {
                     if ($suma_calificacion > 0.0) {
-                        $tabla .= '<label style="color:red;">' . number_format($suma_calificacion / $total_unidades, 2) . '</label>';
+                        $tabla .= '<label style="color:red;">' . numberFormatPrecision($suma_calificacion / $total_unidades, 1,'.') . '</label>';
                     } else {
                         $tabla .= '<label "> </label>';
                     }
                 } else {
-                    $tabla .= '<label style="color:green;">' . number_format($suma_calificacion / $total_unidades, 2) . '</label>';
+                    $tabla .= '<label style="color:green;">' . numberFormatPrecision($suma_calificacion / $total_unidades, 1,'.') . '</label>';
                 }
                 $tabla .= '</td>';
                 $tabla .= '</tr>';
@@ -948,9 +952,10 @@ class pGrupo extends CI_Controller
         if (isset($unidades_materia) && ! empty($unidades_materia)) {
             $this->session->idplantel;
             $unidades = $this->grupo->unidades($this->session->idplantel, $unidades_materia);
-            // var_dump($unidades);
+          
         }
-        $alumnos = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria);
+        $estatus_alumno = $detalle_horario->activo;
+        $alumnos = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria,$estatus_alumno);
         $datoshorario = $this->horario->showNivelGrupo($idhorario);
 
         $idnivelestudio = $datoshorario->idnivelestudio;
@@ -966,7 +971,7 @@ class pGrupo extends CI_Controller
             endforeach
             ;
         }
-        $tabla .= '<th>C. FINAL</th>';
+        $tabla .= '<th>PROMEDIO</th>';
         $tabla .= '</thead>';
         $c = 1;
         $total_unidades = 0;
@@ -982,8 +987,7 @@ class pGrupo extends CI_Controller
                 $suma_calificacion = 0;
                 $total_unidades = 0;
                 if (isset($unidades) && ! empty($unidades)) {
-                    foreach ($unidades as $block) :
-                        // $suma_calificacion = 0;
+                    foreach ($unidades as $block) : 
                         $total_unidades += 1;
                         $val = $this->grupo->obtenerCalificacion($row->idalumno, $block->idunidad, $idhorariodetalle);
                         $tabla .= '<td>';
@@ -1013,15 +1017,15 @@ class pGrupo extends CI_Controller
                 }
                 $tabla .= '<td>';
                 if (isset($unidades) && ! empty($unidades)) {
-                    $calificacion_final = number_format($suma_calificacion / $total_unidades, 2);
+                    $calificacion_final = numberFormatPrecision($suma_calificacion / $total_unidades, 1,'.');
                     if (validar_calificacion($calificacion_final, $detalle_configuracion[0]->calificacion_minima)) {
                         if ($suma_calificacion > 0.0) {
-                            $tabla .= '<label style="color:red;">' . number_format($suma_calificacion / $total_unidades, 2) . '</label>';
+                            $tabla .= '<label style="color:red;">' . numberFormatPrecision($suma_calificacion / $total_unidades, 1,'.') . '</label>';
                         } else {
                             $tabla .= '<label "> </label>';
                         }
                     } else {
-                        $tabla .= '<label style="color:green;">' . number_format($suma_calificacion / $total_unidades, 2) . '</label>';
+                        $tabla .= '<label style="color:green;">' . numberFormatPrecision($suma_calificacion / $total_unidades, 1,'.') . '</label>';
                     }
                 }
                 $tabla .= '</td>';
@@ -1041,14 +1045,15 @@ class pGrupo extends CI_Controller
             $detalle_horario = $this->grupo->detalleHorarioDetalle($idhorariodetalle);
             $idprofesormateria = $detalle_horario->idprofesormateria;
             $idmateria = $detalle_horario->idmateria;
-            $alumns = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria);
+            $estatus_alumno = $detalle_horario->activo;
+            $alumns = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria,$estatus_alumno);
             $motivo = $this->grupo->motivoAsistencia();
             $unidades = $this->grupo->unidades($this->session->idplantel);
             $fechainicio = date("Y-m-d");
             $fechafin = date("Y-m-d");
             $table = $this->obetnerAsistencia($idhorario, $fechainicio, $fechafin, $idhorariodetalle);
             $detalle = $this->grupo->detalleClase($idhorariodetalle);
-            // var_dump($detalle);
+            
             $nombreclase = $detalle[0]->nombreclase;
             $data = array(
                 'alumnos' => $alumns,
@@ -1093,7 +1098,8 @@ class pGrupo extends CI_Controller
             $idprofesormateria = $detalle_horario->idprofesormateria;
             $idmateria = $detalle_horario->idmateria;
             $unidades_materia = $detalle_horario->idmateria;
-            $alumns = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria);
+            $estatus_alumno = $detalle_horario->activo;
+            $alumns = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria,$estatus_alumno);
             $detalle = $this->grupo->detalleClase($idhorariodetalle);
 
             $nombreclase = $detalle[0]->nombreclase;
@@ -1303,105 +1309,9 @@ class pGrupo extends CI_Controller
                     'error' => 'No esta registrado la Oportunidad.'
                 ]);
             }
-        }
-        // echo json_encode($result);
+        } 
     }
-
-    // public function addCalificacionSecundaria() {
-    // Permission::grant(uri_string());
-    // $config = array(
-    // array(
-    // 'field' => 'unidad',
-    // 'label' => 'Unidad',
-    // 'rules' => 'trim|required',
-    // 'errors' => array(
-    // 'required' => 'Seleccionar la Unidad.',
-    // ),
-    // ),
-    // array(
-    // 'field' => 'proyecto[]',
-    // 'label' => 'Calificacion',
-    // 'rules' => 'trim|decimal|callback_maxNumberSecundaria',
-    // 'errors' => array(
-    // 'decimal' => 'Debe de ser Números decimales.',
-    // ),
-    // ),
-    // array(
-    // 'field' => 'tarea[]',
-    // 'label' => 'Calificacion',
-    // 'rules' => 'trim|decimal|callback_maxNumberSecundaria',
-    // 'errors' => array(
-    // 'decimal' => 'Debe de ser Números decimales.',
-    // ),
-    // ),
-    // array(
-    // 'field' => 'participacion[]',
-    // 'label' => 'Calificacion',
-    // 'rules' => 'trim|decimal|callback_maxNumberSecundaria',
-    // 'errors' => array(
-    // 'decimal' => 'Debe de ser Números decimales.',
-    // ),
-    // ),
-    // array(
-    // 'field' => 'examen[]',
-    // 'label' => 'Calificacion',
-    // 'rules' => 'trim|decimal|callback_maxNumberSecundaria',
-    // 'errors' => array(
-    // 'decimal' => 'Debe de ser Números decimales.',
-    // ),
-    // ),
-    // );
-    // $this->form_validation->set_rules($config);
-    // if ($this->form_validation->run() == false) {
-    // $errors = validation_errors();
-    // echo json_encode(['error' => $errors]);
-    // } else {
-    // $idhorario = $this->input->post('idhorario');
-    // $idhorariodetalle = $this->input->post('idhorariodetalle');
-    // $idalumno = $this->input->post('idalumno');
-    // $unidad = $this->input->post('unidad');
-    // $calificacion = $this->input->post('calificacion');
-    // $detalle_oportunidad = $this->grupo->primeraOportunidad($this->session->idplantel);
-    // if ($detalle_oportunidad) {
-    // $idopotunidad = $detalle_oportunidad[0]->idoportunidadexamen;
-    // $contador_no_insertado = 0;
-    // $contador_insertado = 0;
-    // foreach ($idalumno as $key => $value) {
-    // $idalumno2 = $value;
-    // $calificacion_final = $calificacion[$key];
-    // $validar = $this->grupo->validarAgregarCalificacion($unidad, $idhorariodetalle, '', $idalumno2);
-    // if ($validar == false) {
-    // if (isset($calificacion_final) && !empty($calificacion_final)) {
-    // $data = array(
-    // 'idunidad' => $unidad,
-    // 'idoportunidadexamen' => $idopotunidad,
-    // 'idalumno' => $idalumno2,
-    // 'idhorario' => $idhorario,
-    // 'idhorariodetalle' => $idhorariodetalle,
-    // 'calificacion' => $calificacion_final,
-    // 'idusuario' => $this->session->user_id,
-    // 'fecharegistro' => date('Y-m-d H:i:s'),
-    // );
-    // $this->grupo->addCalificacion($data);
-    // $contador_insertado++;
-    // } else {
-    // $contador_no_insertado++;
-    // }
-    // } else {
-    // $contador_no_insertado++;
-    // }
-    // }
-    // if ($contador_no_insertado > 0) {
-    // echo json_encode(['success' => 'Ok', 'mensaje' => 'Algunas calificaciones no fueron registrados, porque ya estan registrada.']);
-    // } else {
-    // echo json_encode(['success' => 'Ok', 'mensaje' => 'Fueron registrados las calificaciones.']);
-    // }
-    // } else {
-    // echo json_encode(['error' => 'No esta registrado la Oportunidad.']);
-    // }
-    // }
-    //
-    // }
+ 
     public function addAsistencia()
     {
         Permission::grant(uri_string());
@@ -1481,8 +1391,7 @@ class pGrupo extends CI_Controller
                     'error' => 'Solo puedes trabajar en la semana actual.'
                 ]);
             }
-        }
-        // echo json_encode($result);
+        } 
     }
 
     public function updateAsistencia()
@@ -1522,8 +1431,7 @@ class pGrupo extends CI_Controller
                     'error' => 'Error... Intente mas tarde.'
                 ]);
             }
-        }
-        // echo json_encode($result);
+        } 
     }
 
     public function addTarea()
@@ -1574,8 +1482,7 @@ class pGrupo extends CI_Controller
                 'success' => 'Ok'
             ]);
         }
-
-        // echo json_encode($result);
+ 
     }
 
     public function addMensaje()
@@ -1600,8 +1507,7 @@ class pGrupo extends CI_Controller
         } else {
             $idhorario = $this->input->post('idhorario');
             $idhorariodetalle = $this->input->post('idhorariodetalle');
-            $mensaje = $this->input->post('mensaje');
-            // $fechaentrega = $this->input->post('fechaentrega');
+            $mensaje = $this->input->post('mensaje'); 
 
             $data = array(
                 'idhorario' => $idhorario,
@@ -1618,8 +1524,7 @@ class pGrupo extends CI_Controller
             echo json_encode([
                 'success' => 'Ok'
             ]);
-        }
-        // echo json_encode($result);
+        } 
     }
 
     public function updateTarea()
@@ -1667,8 +1572,7 @@ class pGrupo extends CI_Controller
             echo json_encode([
                 'success' => 'Ok'
             ]);
-        }
-        // echo json_encode($result);
+        } 
     }
 
     public function updateMensaje()
@@ -1705,8 +1609,7 @@ class pGrupo extends CI_Controller
             echo json_encode([
                 'success' => 'Ok'
             ]);
-        }
-        // echo json_encode($result);
+        } 
     }
 
     public function eliminarTarea($idhorario, $idhorariodetalle, $idtarea)
@@ -1798,9 +1701,8 @@ class pGrupo extends CI_Controller
         $fecha_fin = date('Y-m-d', strtotime($datelle->fecharegistro));
         $total_dias = dias_pasados($fecha_inicio, $fecha_fin);
         if ($total_dias <= 3) {
-            $eliminar_detalle = $this->grupo->deleteCalificacionSecu($idcalificacion_detalle);
             $value = $this->grupo->deleteCalificacion($idcalificacion);
-            if ($value && $eliminar_detalle) {
+            if ($value) {
                 echo json_encode([
                     'success' => 'Ok'
                 ]);
@@ -1845,7 +1747,7 @@ class pGrupo extends CI_Controller
 
     public function maxNumberSecundaria($num)
     {
-        if ($num >= 0.00 && $num <= 100.00) {
+        if ($num >= 0.00 && $num <= 10.00) {
             return true;
         } else {
             $this->form_validation->set_message('maxNumber', 'La Calificacion debe de ser entre 0.00 a 10.00');
@@ -1883,8 +1785,7 @@ class pGrupo extends CI_Controller
             if ($total_dias <= 3) {
                 $data = array(
                     'calificacion' => $calificacion,
-                    'idusuario' => $this->session->user_id
-                    // 'fecharegistro' => date('Y-m-d H:i:s')
+                    'idusuario' => $this->session->user_id  
                 );
                 $this->grupo->updateCalificacion($idcalificacion, $data);
 
@@ -1944,9 +1845,7 @@ class pGrupo extends CI_Controller
             ]);
         } else {
             $idcalificacion = $this->input->post('idcalificacion');
-            $iddetallecalificacion = $this->input->post('iddetallecalificacion');
-            // $calificacion = $this->input->post('calificacion');
-
+            $iddetallecalificacion = $this->input->post('iddetallecalificacion'); 
             $proyeco = $this->input->post('proyecto');
             $tarea = $this->input->post('tarea');
             $participacion = $this->input->post('participacion');
@@ -2114,6 +2013,14 @@ class pGrupo extends CI_Controller
                 'errors' => array(
                     'required' => 'Seleccionar la Unidad.'
                 )
+            ),
+            array(
+                'field' => 'meseliminar',
+                'label' => 'Mes',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Seleccionar el Mes.'
+                )
             )
         );
         $this->form_validation->set_rules($config);
@@ -2125,26 +2032,64 @@ class pGrupo extends CI_Controller
         } else {
             $detalle_oportunidad = $this->grupo->primeraOportunidad($this->session->idplantel);
             if ($detalle_oportunidad) {
-                $idopotunidad = $detalle_oportunidad[0]->idoportunidadexamen;
+                 
+                 $idopotunidad = $detalle_oportunidad[0]->idoportunidadexamen;
                 $unidad = $this->input->post('unidad');
                 $horariodetalle = $this->input->post('horariodetalle');
-                $detalle_calificacion = $this->grupo->detalleCalificacionUnidad($unidad, $horariodetalle);
-                if ($detalle_calificacion) {
+                $idmes = $this->input->post('meseliminar');
+                $detalle_calificacion1 = $this->grupo->detalleCalificacionUnidad($unidad, $horariodetalle);
+                if ($detalle_calificacion1) {
+                    
                     $fecha_inicio = date('Y-m-d');
-                    $fecha_fin = date('Y-m-d', strtotime($detalle_calificacion->fecharegistro));
+                    $fecha_fin = date('Y-m-d', strtotime($detalle_calificacion1->fecharegistro));
                     $total_dias = dias_pasados($fecha_inicio, $fecha_fin);
                     if ($total_dias <= 3) {
-                        $registros = $this->grupo->showAllCalificacionUnidad($unidad, $horariodetalle, $idopotunidad);
-                        if (isset($registros) && ! empty($registros)) {
-                            foreach ($registros as $value) {
-                                $this->grupo->eliminarDetalleCalificacionUnidadSecu($value->idcalificacion);
+                        
+                        $calificacion = $this->grupo->showAllCalificacionUnidad($unidad,$horariodetalle,$idopotunidad);
+                        if ($calificacion) {
+                            foreach ($calificacion as $row){
+                                 $idcalificacion = $row->idcalificacion;
+                                $registros_detalle = $this->grupo->showAllDetalleCalificacion($idcalificacion);
+                                if ($registros_detalle) {
+                                    foreach ($registros_detalle as $detalle) {
+                                       
+                                          $iddetallecalificacion = $detalle->iddetallecalificacion;
+                                            $detalle->idmes;
+                                        if($idmes == $detalle->idmes){ 
+                                            $detalle_calificacion = $this->grupo->sumaCalificacion($idcalificacion,$iddetallecalificacion);
+                                            if($detalle_calificacion){
+                                              
+                                                if($detalle_calificacion[0]->calificacion > 0){
+                                                      $suma_anterior = $detalle_calificacion[0]->calificacion;
+                                                    $meses_anteriores = $detalle_calificacion[0]->contador; 
+                                                    $data2 = array(
+                                                        'calificacion'=> numberFormatPrecision($suma_anterior/$meses_anteriores,1,'.')
+                                                    );
+                                                     
+                                                     $this->grupo->updateCalificacion($idcalificacion,$data2);
+                                                     $this->grupo->eliminarDetalleCalificacionXId($iddetallecalificacion);
+                                                    
+                                                    //NO ES EL PRIMER REGISTRO
+                                                }else{
+                                                   
+                                                    //ES EL PRIMER REGISTRO
+                                                     $this->grupo->eliminarDetalleCalificacionXId($iddetallecalificacion);;
+                                                    $this->grupo->deleteCalificacion($idcalificacion);
+                                                    }
+                                                }
+                                            } 
+                                        } 
+                                    }
+                                }
+                                
+                            
                             }
-                        }
-                        $this->grupo->eliminarCalificacionUnidad($unidad, $horariodetalle, $idopotunidad);
-
-                        echo json_encode([
-                            'success' => 'Ok'
-                        ]);
+                           echo json_encode([
+                                'success' => 'Ok',
+                                'mensaje' => 'Fueron Eliminados todas las calificaciones.'
+                            ]);  
+                        
+                        
                     } else {
                         echo json_encode([
                             'error' => 'Ya pasaron los 3 dias habiles.'
@@ -2177,7 +2122,7 @@ class pGrupo extends CI_Controller
             <thead class="bg-teal">
             <th>#</th>
             <th>NOMBRE</th>';
-        $tabla .= '<th>C. FINAL</th>';
+        $tabla .= '<th>PROMEDIO</th>';
         $tabla .= '</thead>';
         $c = 1;
         $total_unidades = 0;
@@ -2193,17 +2138,17 @@ class pGrupo extends CI_Controller
                         $suma_calificacion = $detalle_calificacion->calificacion;
                         $total_unidades = 1;
                         $tabla .= '<td>';
-                        $calificacion_final = number_format($suma_calificacion / $total_unidades, 2);
+                        $calificacion_final = numberFormatPrecision($suma_calificacion / $total_unidades, 1,'.');
                         if (validar_calificacion($calificacion_final, $detalle_configuracion[0]->calificacion_minima)) {
                             if ($suma_calificacion > 0.0) {
-                                $tabla .= '<label style="color:red;">' . number_format($suma_calificacion / $total_unidades, 2) . '</label>';
+                                $tabla .= '<label style="color:red;">' . numberFormatPrecision($suma_calificacion / $total_unidades, 1,'.') . '</label>';
                                 $fecha_inicio = date('Y-m-d');
                                 $fecha_fin = date('Y-m-d', strtotime($detalle_calificacion->fecharegistro));
                                 $total_dias = dias_pasados($fecha_inicio, $fecha_fin);
                                 if ($total_dias <= 3) {
                                     $tabla .= '  <a  href="javascript:void(0)"><i class="fa fa-pencil edit_button"  data-toggle="modal" data-target="#myModal"
 		                                data-idcalificacion="' . $detalle_calificacion->idcalificacion . '"
-		                                data-calificacion="' . number_format($suma_calificacion / $total_unidades, 2) . '"
+		                                data-calificacion="' . numberFormatPrecision($suma_calificacion / $total_unidades, 1,'.') . '"
 		                                data-alumno="' . $detalle_calificacion->apellidop . " " . $detalle_calificacion->apellidom . " " . $detalle_calificacion->nombre . '"
 	                                   style = "color:blue;" title="Editar Calificación"></i> </a>';
                                     $tabla .= '  <a  href="javascript:void(0)"><i class="fa fa-trash delete_button"  data-toggle="modal" data-target="#myModalDelete"
@@ -2216,13 +2161,13 @@ class pGrupo extends CI_Controller
                             }
                         } else {
                             $fecha_inicio = date('Y-m-d');
-                            $tabla .= '<label style="color:green;">' . number_format($suma_calificacion / $total_unidades, 2) . '</label>';
+                            $tabla .= '<label style="color:green;">' . numberFormatPrecision($suma_calificacion / $total_unidades, 1,'.') . '</label>';
                             $fecha_fin = date('Y-m-d', strtotime($detalle_calificacion->fecharegistro));
                             $total_dias = dias_pasados($fecha_inicio, $fecha_fin);
                             if ($total_dias <= 3) {
                                 $tabla .= '  <a  href="javascript:void(0)"><i class="fa fa-pencil edit_button"  data-toggle="modal" data-target="#myModal"
 		                                data-idcalificacion="' . $detalle_calificacion->idcalificacion . '"
-		                                data-calificacion="' . number_format($suma_calificacion / $total_unidades, 2) . '"
+		                                data-calificacion="' . numberFormatPrecision($suma_calificacion / $total_unidades, 1,'.') . '"
 		                                data-alumno="' . $detalle_calificacion->apellidop . " " . $detalle_calificacion->apellidom . " " . $detalle_calificacion->nombre . '"
 	                                   style = "color:blue;" title="Editar Calificación"></i> </a>';
                                 $tabla .= '  <a  href="javascript:void(0)"><i class="fa fa-trash delete_button"  data-toggle="modal" data-target="#myModalDelete"
@@ -2256,7 +2201,7 @@ class pGrupo extends CI_Controller
             <thead class="bg-teal">
             <th>#</th>
             <th>NOMBRE</th>';
-        $tabla .= '<th>C. FINAL</th>';
+        $tabla .= '<th>PROMEDIO</th>';
         $tabla .= '</thead>';
         $c = 1;
         $total_unidades = 0;
@@ -2272,39 +2217,17 @@ class pGrupo extends CI_Controller
                         $suma_calificacion = $detalle_calificacion->calificacion;
                         $total_unidades = 1;
                         $tabla .= '<td>';
-                        $calificacion_final = number_format($suma_calificacion / $total_unidades, 2);
+                        $calificacion_final = numberFormatPrecision($suma_calificacion / $total_unidades, 1,'.');
                         $idcalificacion = $detalle_calificacion->idcalificacion;
                         $row_calificacion = $this->grupo->detalleCalificacionSecundaria($idcalificacion);
                         if (validar_calificacion($calificacion_final, $detalle_configuracion[0]->calificacion_minima)) {
                             if ($suma_calificacion > 0.0) {
-                                $tabla .= '<label style="color:red;">' . number_format($suma_calificacion / $total_unidades, 2) . '</label>';
+                                $tabla .= '<label style="color:red;">' . numberFormatPrecision($suma_calificacion / $total_unidades, 1,'.') . '</label>';
                                 $fecha_inicio = date('Y-m-d');
                                 $fecha_fin = date('Y-m-d', strtotime($detalle_calificacion->fecharegistro));
                                 $total_dias = dias_pasados($fecha_inicio, $fecha_fin);
 
-                                if ($total_dias <= 3) {
-                                    $tabla .= '  <a  href="javascript:void(0)"><i class="fa fa-pencil edit_button"  data-toggle="modal" data-target="#myModal"
-		                                data-idcalificacion="' . $detalle_calificacion->idcalificacion . '"
-		                                data-calificacion="' . number_format($suma_calificacion / $total_unidades, 2) . '"
-                                                data-iddetallecalificacion="' . $row_calificacion->iddetallecalificacion . '"
-				                data-proyecto="' . $row_calificacion->proyecto . '"
-                                                data-tarea="' . $row_calificacion->tarea . '"
-                                                data-participacion="' . $row_calificacion->participacion . '"
-                                                data-examen="' . $row_calificacion->examen . '" 
-		                                data-alumno="' . $detalle_calificacion->apellidop . " " . $detalle_calificacion->apellidom . " " . $detalle_calificacion->nombre . '"
-	                                   style = "color:blue;" title="Editar Calificación"></i> </a>';
-
-                                    $tabla .= '  <a  href="javascript:void(0)"><i class="fa fa-eye detalle_button"  data-toggle="modal" data-target="#myModalDetalle"
-				                                data-idcalificacion="' . $detalle_calificacion->idcalificacion . '"
-                                                                data-iddetallecalificacion="' . $row_calificacion->iddetallecalificacion . '"
-				                                data-proyecto="' . $row_calificacion->proyecto . '"
-                                                                data-tarea="' . $row_calificacion->tarea . '"
-                                                                data-participacion="' . $row_calificacion->participacion . '"
-                                                                data-examen="' . $row_calificacion->examen . '"
-                                                                data-calificacion="' . number_format($suma_calificacion / $total_unidades, 2) . '"
-				                                data-alumno="' . $detalle_calificacion->apellidop . " " . $detalle_calificacion->apellidom . " " . $detalle_calificacion->nombre . '"
-			                                   style = "color:green;" title="Ver detalle Calificación"></i> </a>';
-
+                                if ($total_dias <= 3) { 
                                     $tabla .= '  <a  href="javascript:void(0)"><i class="fa fa-trash delete_button"  data-toggle="modal" data-target="#myModalDelete"
 		                                data-idcalificacion="' . $detalle_calificacion->idcalificacion . '"
                                                       data-iddetallecalificacion="' . $row_calificacion->iddetallecalificacion . '"
@@ -2316,36 +2239,15 @@ class pGrupo extends CI_Controller
                             }
                         } else {
                             $fecha_inicio = date('Y-m-d');
-                            $tabla .= '<label style="color:green;">' . number_format($suma_calificacion / $total_unidades, 2) . '</label>';
+                            $tabla .= '<label style="color:green;">' . numberFormatPrecision($suma_calificacion / $total_unidades, 1,'.') . '</label>';
                             $fecha_fin = date('Y-m-d', strtotime($detalle_calificacion->fecharegistro));
                             $total_dias = dias_pasados($fecha_inicio, $fecha_fin);
                             if ($total_dias <= 3) {
-                                $tabla .= '  <a  href="javascript:void(0)"><i class="fa fa-pencil edit_button"  data-toggle="modal" data-target="#myModal"
-		                                data-idcalificacion="' . $detalle_calificacion->idcalificacion . '"
-		                                data-calificacion="' . number_format($suma_calificacion / $total_unidades, 2) . '"
-                                                data-iddetallecalificacion="' . $row_calificacion->iddetallecalificacion . '"
-				                data-proyecto="' . $row_calificacion->proyecto . '"
-                                                data-tarea="' . $row_calificacion->tarea . '"
-                                                data-participacion="' . $row_calificacion->participacion . '"
-                                                data-examen="' . $row_calificacion->examen . '" 
-		                                data-alumno="' . $detalle_calificacion->apellidop . " " . $detalle_calificacion->apellidom . " " . $detalle_calificacion->nombre . '"
-	                                   style = "color:blue;" title="Editar Calificación"></i> </a>';
-
-                                $tabla .= '  <a  href="javascript:void(0)"><i class="fa fa-eye detalle_button"  data-toggle="modal" data-target="#myModalDetalle"
-				                                data-idcalificacion="' . $detalle_calificacion->idcalificacion . '"
-                                                                data-iddetallecalificacion="' . $row_calificacion->iddetallecalificacion . '"
-				                                data-proyecto="' . $row_calificacion->proyecto . '"
-                                                                data-tarea="' . $row_calificacion->tarea . '"
-                                                                data-participacion="' . $row_calificacion->participacion . '"
-                                                                data-examen="' . $row_calificacion->examen . '"
-                                                                data-calificacion="' . number_format($suma_calificacion / $total_unidades, 2) . '"
-				                                data-alumno="' . $detalle_calificacion->apellidop . " " . $detalle_calificacion->apellidom . " " . $detalle_calificacion->nombre . '"
-			                                   style = "color:green;" title="Ver detalle Calificación"></i> </a>';
+                               
 
                                 $tabla .= '  <a  href="javascript:void(0)"><i class="fa fa-trash delete_button"  data-toggle="modal" data-target="#myModalDelete"
 		                                data-idcalificacion="' . $detalle_calificacion->idcalificacion . '"
-                                                      data-iddetallecalificacion="' . $row_calificacion->iddetallecalificacion . '"
-		                                data-alumno="' . $detalle_calificacion->apellidop . " " . $detalle_calificacion->apellidom . " " . $detalle_calificacion->nombre . '"
+                                         data-alumno="' . $detalle_calificacion->apellidop . " " . $detalle_calificacion->apellidom . " " . $detalle_calificacion->nombre . '"
 		                               style = "color:red;" title="Eliminar Calificación"></i> </a>';
                             }
                         }
@@ -2419,8 +2321,7 @@ class pGrupo extends CI_Controller
         $numero = $this->decode($numero);
         $idplantel = $this->session->idplantel;
         if ((isset($idhorario) && ! empty($idhorario)) && (isset($idhorariodetalle) && ! empty($idhorariodetalle)) && (isset($idopotunidad) && ! empty($idopotunidad)) && (isset($numero) && ! empty($numero))) {
-            // $unidades = $this->grupo->unidades($this->session->idplantel);
-            $detalle_oportunidad_anteriot = $this->grupo->obtenerOportunidadAnterior($numero, $idplantel);
+             $detalle_oportunidad_anteriot = $this->grupo->obtenerOportunidadAnterior($numero, $idplantel);
             $idoportunidad_anterior = $detalle_oportunidad_anteriot->idoportunidadexamen;
             $detalle_horario = $this->grupo->detalleClase($idhorariodetalle);
             $idprofesormateria = $detalle_horario[0]->idprofesormateria;
@@ -2433,9 +2334,7 @@ class pGrupo extends CI_Controller
             $datoshorario = $this->horario->showNivelGrupo($idhorario);
             $idnivelestudio = $datoshorario->idnivelestudio;
             $unidades = $this->grupo->obtenerUnidadUno(1);
-            $idunidad = $unidades->idunidad;
-            // $todas_unidades = $this->grupo->obtenerUnidades(1);
-            // var_dump($todas_unidades);
+            $idunidad = $unidades->idunidad; 
             $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
             $data = array(
                 'alumnos' => $alumnos,
@@ -2446,8 +2345,7 @@ class pGrupo extends CI_Controller
                 'nombreoportunidad' => $nombre_oportunidad,
                 'calificacion_minima' => $detalle_configuracion[0]->calificacion_minima,
                 'idunidad' => $idunidad,
-                'idoportunidad' => $idopotunidad
-                // 'unidades' => $todas_unidades,
+                'idoportunidad' => $idopotunidad 
             );
             $this->load->view('docente/header');
             $this->load->view('docente/grupo/recuperacion/secundaria', $data);
@@ -2527,16 +2425,78 @@ class pGrupo extends CI_Controller
                     'mensaje' => 'Fueron registrados las calificaciones.'
                 ]);
             }
-
-            // } else {
-            // echo json_encode(['error' => 'Ya fueron registradas las calificaciones para esta unidad.']);
-            // }
+ 
         }
     }
 
     public function addCalificacionRecuperacionSecu()
     {
         Permission::grant(uri_string());
+        $config = array(
+            array(
+                'field' => 'calificacion[]',
+                'label' => 'Calificacion',
+                'rules' => 'required|trim|decimal|callback_maxNumberSecundaria',
+                'errors' => array(
+                    'decimal' => 'Debe de ser Números decimales.'
+                )
+            )
+        );
+        $this->form_validation->set_rules($config);
+        if ($this->form_validation->run() == false) {
+            $errors = validation_errors();
+            echo json_encode([
+                'error' => $errors
+            ]);
+        } else {
+            $idhorario = $this->input->post('idhorario');
+            $idhorariodetalle = $this->input->post('idhorariodetalle');
+            $idalumno = $this->input->post('idalumno');
+            $idunidad = $this->input->post('idunidad');
+            $idoportunidad = $this->input->post('idoportunidad');
+            $calificacion = $this->input->post('calificacion');
+            $contador_no_insertado = 0;
+            $contador_insertado = 0;
+            foreach ($idalumno as $key => $value) {
+                $idalumno2 = $value;
+                $calificacion_final = $calificacion[$key];
+                $validar = $this->grupo->validarAgregarCalificacion($idunidad, $idhorariodetalle, $idoportunidad, $idalumno2);
+                if ($validar == false) {
+                    if (isset($calificacion_final) && ! empty($calificacion_final)) {
+                        $data = array(
+                            'idunidad' => $idunidad,
+                            'idoportunidadexamen' => $idoportunidad,
+                            'idalumno' => $idalumno2,
+                            'idhorario' => $idhorario,
+                            'idhorariodetalle' => $idhorariodetalle,
+                            'calificacion' => $calificacion_final,
+                            'idusuario' => $this->session->user_id,
+                            'fecharegistro' => date('Y-m-d H:i:s')
+                        );
+                        $this->grupo->addCalificacion($data);
+                        $contador_insertado ++;
+                    } else {
+                        $contador_no_insertado ++;
+                    }
+                } else {
+                    $contador_no_insertado ++;
+                }
+            }
+            if ($contador_no_insertado > 0) {
+                echo json_encode([
+                    'success' => 'Ok',
+                    'mensaje' => 'Algunas calificaciones no fueron registrados, porque ya estan registrada.'
+                ]);
+            } else {
+                echo json_encode([
+                    'success' => 'Ok',
+                    'mensaje' => 'Fueron registrados las calificaciones.'
+                ]);
+            }
+            
+        }
+        
+        /* Permission::grant(uri_string());
         $config = array(
             array(
                 'field' => 'proyecto[]',
@@ -2659,7 +2619,7 @@ class pGrupo extends CI_Controller
                     'mensaje' => 'Fueron registrados las calificaciones.'
                 ]);
             }
-        }
+        } */
     }
 
     public function reporte()
@@ -2684,9 +2644,16 @@ class pGrupo extends CI_Controller
         $idhorario = $detalle->idhorario;
         $idprofesormateria = $detalle->idprofesormateria;
         $tiporeporte = $this->input->post('tiporeporte');
-
-        if ($tiporeporte == 28) {
-            $alumnos = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria);
+        $estatus_alumno = $detalle->activo;
+        $pos_mes = strpos($tiporeporte, 'm');
+        if ($pos_mes !== false) {
+            $array = explode("m", $tiporeporte);
+            $idmes = $array[1];
+            $idhorariodetalle_encriptado = $this->encode($idhorariodetalle);
+            $idmes_encriptado = $this->encode($idmes);
+            redirect('Pgrupo/calificacionMes/' . $idhorariodetalle_encriptado.'/'.$idmes_encriptado);
+        } else if ($tiporeporte == 28) {
+            $alumnos = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria,$estatus_alumno);
 
             $this->load->library('excel');
             $this->excel->setActiveSheetIndex(0);
@@ -2777,6 +2744,7 @@ class pGrupo extends CI_Controller
             $pdf->AddPage('L');
 
             $detalle_horario = $this->grupo->detalleHorarioDetalle($idhorariodetalle);
+            $estatus_alumno = $detalle_horario->activo;
             $idprofesormateria = $detalle_horario->idprofesormateria;
             $idmateria = $detalle_horario->idmateria;
             $unidades_materia = $detalle_horario->unidades;
@@ -2821,7 +2789,7 @@ class pGrupo extends CI_Controller
                     }
                 }
             }
-            $alumnos = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria);
+            $alumnos = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria,$estatus_alumno);
             $datoshorario = $this->horario->showNivelGrupo($idhorario);
 
             $idnivelestudio = $datoshorario->idnivelestudio;
@@ -2927,7 +2895,7 @@ class pGrupo extends CI_Controller
                         $tabla .= '<td  align="center">';
                         if ($val != false) {
                             $suma_calificacion = $suma_calificacion + $val->calificacion;
-                            $tabla .= '<label>' . $val->calificacion . '  </label>';
+                            $tabla .= '<label>' . numberFormatPrecision($val->calificacion,1,'.') . '  </label>';
                         } else {
                             $tabla .= '<label>No registrado</label>';
                         }
@@ -2947,7 +2915,7 @@ class pGrupo extends CI_Controller
                         $tabla .= '<td  align="center">';
                         if ($val != false) {
                             $suma_calificacion = $suma_calificacion + $val->calificacion;
-                            $tabla .= '<label>' . $val->calificacion . '  </label>';
+                            $tabla .= '<label>' . numberFormatPrecision($val->calificacion,1,'.') . '  </label>';
                         } else {
                             $tabla .= '<label>No registrado</label>';
                         }
@@ -2967,7 +2935,7 @@ class pGrupo extends CI_Controller
                         $tabla .= '<td  align="center">';
                         if ($val != false) {
                             $suma_calificacion = $suma_calificacion + $val->calificacion;
-                            $tabla .= '<label>' . $val->calificacion . '  </label>';
+                            $tabla .= '<label>' .numberFormatPrecision( $val->calificacion,1,'.') . '  </label>';
                         } else {
                             $tabla .= '<label>No registrado</label>';
                         }
@@ -3007,7 +2975,7 @@ class pGrupo extends CI_Controller
                         $tabla .= '<td  align="center">';
                         if ($val != false) {
                             $suma_calificacion = $suma_calificacion + $val->calificacion;
-                            $tabla .= '<label>' . $val->calificacion . '  </label>';
+                            $tabla .= '<label>' .numberFormatPrecision( $val->calificacion,1,'.') . '  </label>';
                         } else {
                             $tabla .= '<label>No registrado</label>';
                         }
@@ -3027,7 +2995,7 @@ class pGrupo extends CI_Controller
                         $tabla .= '<td  align="center">';
                         if ($val != false) {
                             $suma_calificacion = $suma_calificacion + $val->calificacion;
-                            $tabla .= '<label>' . $val->calificacion . '  </label>';
+                            $tabla .= '<label>' .numberFormatPrecision( $val->calificacion,1,'.') . '  </label>';
                         } else {
                             $tabla .= '<small>No registrado</small>';
                         }
@@ -3042,7 +3010,7 @@ class pGrupo extends CI_Controller
                     }
                     $tabla .= '<td  align="center">';
                     if ($suma_calificacion > 0 && $unidades_materia > 0) {
-                        $tabla .= '<label>' . number_format(($suma_calificacion / $unidades_materia), 2) . '</label>';
+                        $tabla .= '<label>' . numberFormatPrecision(($suma_calificacion / $unidades_materia), 1,'.') . '</label>';
                     } else {
                         $tabla .= '<small>SIN REGISTRAR</small>';
                     }
@@ -3170,7 +3138,7 @@ class pGrupo extends CI_Controller
             $detalle_horario = $this->grupo->detalleHorarioDetalle($idhorariodetalle);
             $idprofesormateria = $detalle_horario->idprofesormateria;
             $idmateria = $detalle_horario->idmateria;
-
+            $estatus_alumno = $detalle_horario->activo;
             $idprimera_unidad = "";
             $idsegunda_unidad = "";
             $idtercera_unidad = "";
@@ -3209,7 +3177,7 @@ class pGrupo extends CI_Controller
                 }
             }
 
-            $alumnos = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria);
+            $alumnos = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria,$estatus_alumno);
             $datoshorario = $this->horario->showNivelGrupo($idhorario);
 
             $idnivelestudio = $datoshorario->idnivelestudio;
@@ -3316,7 +3284,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                         $tabla .= '<td  align="center">';
                         if ($val != false) {
                             $suma_calificacion = $suma_calificacion + $val->calificacion;
-                            $tabla .= '<label>' . $val->calificacion . '  </label>';
+                            $tabla .= '<label>' .numberFormatPrecision( $val->calificacion,1,'.') . '  </label>';
                         } else {
                             $tabla .= '<label>No registrado</label>';
                         }
@@ -3336,7 +3304,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                         $tabla .= '<td  align="center">';
                         if ($val != false) {
                             $suma_calificacion = $suma_calificacion + $val->calificacion;
-                            $tabla .= '<label>' . $val->calificacion . '  </label>';
+                            $tabla .= '<label>' . numberFormatPrecision($val->calificacion,1,'.') . '  </label>';
                         } else {
                             $tabla .= '<label>No registrado</label>';
                         }
@@ -3356,7 +3324,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                         $tabla .= '<td  align="center">';
                         if ($val != false) {
                             $suma_calificacion = $suma_calificacion + $val->calificacion;
-                            $tabla .= '<label>' . $val->calificacion . '  </label>';
+                            $tabla .= '<label>' . numberFormatPrecision($val->calificacion,1,'.') . '  </label>';
                         } else {
                             $tabla .= '<label>No registrado</label>';
                         }
@@ -3376,7 +3344,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                         $tabla .= '<td  align="center">';
                         if ($val != false) {
                             $suma_calificacion = $suma_calificacion + $val->calificacion;
-                            $tabla .= '<label>' . $val->calificacion . '  </label>';
+                            $tabla .= '<label>' . numberFormatPrecision($val->calificacion,1,'.') . '  </label>';
                         } else {
                             $tabla .= '<label>No registrado</label>';
                         }
@@ -3396,7 +3364,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                         $tabla .= '<td  align="center">';
                         if ($val != false) {
                             $suma_calificacion = $suma_calificacion + $val->calificacion;
-                            $tabla .= '<label>' . $val->calificacion . '  </label>';
+                            $tabla .= '<label>' . numberFormatPrecision($val->calificacion,1,'.') . '  </label>';
                         } else {
                             $tabla .= '<label>No registrado</label>';
                         }
@@ -3416,7 +3384,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                         $tabla .= '<td  align="center">';
                         if ($val != false) {
                             $suma_calificacion = $suma_calificacion + $val->calificacion;
-                            $tabla .= '<label>' . $val->calificacion . '  </label>';
+                            $tabla .= '<label>' .numberFormatPrecision( $val->calificacion,1,'.') . '  </label>';
                         } else {
                             $tabla .= '<small>No registrado</small>';
                         }
@@ -3431,7 +3399,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     }
                     $tabla .= '<td  align="center">';
                     if ($suma_calificacion > 0 && $unidades_materia > 0) {
-                        $tabla .= '<label>' . number_format(($suma_calificacion / $unidades_materia), 2) . '</label>';
+                        $tabla .= '<label>' . numberFormatPrecision(($suma_calificacion / $unidades_materia), 1,'.') . '</label>';
                     } else {
                         $tabla .= '<small>SIN REGISTRAR</small>';
                     }
@@ -3563,7 +3531,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
             $detalle_horario = $this->grupo->detalleHorarioDetalle($idhorariodetalle);
             $idprofesormateria = $detalle_horario->idprofesormateria;
             $idmateria = $detalle_horario->idmateria;
-
+            $estatus_alumno = $detalle_horario->activo;
             $idprimera_unidad = "";
             $idsegunda_unidad = "";
             $idtercera_unidad = "";
@@ -3602,7 +3570,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 }
             }
 
-            $alumnos = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria);
+            $alumnos = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria,$estatus_alumno);
             $datoshorario = $this->horario->showNivelGrupo($idhorario);
 
             $idnivelestudio = $datoshorario->idnivelestudio;
@@ -3610,7 +3578,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
             $tabla = "";
             $tabla = '<style type="text/css">
                     .txttitulo{
-                       font-size:10px;
+                       font-size:8px;
                        font-weight:bold;
                        text:center;
                    } 
@@ -3631,6 +3599,10 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                        font-size:9px;
                        font-weight:bold;
                        text:center;
+                }
+                .txtalumno{
+                        font-size:8px;
+                       font-weight:bold;
                 }
                 .txtdocente{
                        font-size:9px;
@@ -3708,9 +3680,9 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     $tabla .= '<tr  class="tblborder">';
                     $tabla .= '  <td  align="center" class="txtnombre">' . $c ++ . '</td>';
                     if ($row->opcion == 0) {
-                        $tabla .= '<td  align="left"  class="txtnombre"><label style="color:red;">R:</label> ' . $row->apellidop . " " . $row->apellidom . " " . $row->nombre . '</td>';
+                        $tabla .= '<td  align="left"  class="txtalumno"><label style="color:red;">R:</label> ' . $row->apellidop . " " . $row->apellidom . " " . $row->nombre . '</td>';
                     } else {
-                        $tabla .= '<td  align="left" class="txtnombre">' . $row->apellidop . " " . $row->apellidom . " " . $row->nombre . '</td>';
+                        $tabla .= '<td  align="left" class="txtalumno">' . $row->apellidop . " " . $row->apellidom . " " . $row->nombre . '</td>';
                     }
                     if (isset($idprimera_unidad) && ! empty($idprimera_unidad)) {
                         $row1 = $this->grupo->detalleUnidad($idprimera_unidad);
@@ -3719,9 +3691,9 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                         $tabla .= '<td  align="center" class="txtnombre">';
                         if ($val != false) {
                             $suma_calificacion = $suma_calificacion + $val->calificacion;
-                            $tabla .= '<label>' . $val->calificacion . '  </label>';
+                            $tabla .= '<label>' . numberFormatPrecision($val->calificacion,1,'.') . '  </label>';
                         } else {
-                            $tabla .= '<small>No registrado</small>';
+                            $tabla .= '<small></small>';
                         }
                         $tabla .= '</td>';
                         if ($row_asistencia) {
@@ -3729,7 +3701,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                             $total_faltas = $total_faltas + $row_asistencia[0]->totalfalta;
                             $tabla .= '<td class="txtnombre" align="center">' . $row_asistencia[0]->totalfalta . '</td>';
                         } else {
-                            $tabla .= '<td class="txtnombre" align="center">0</td>';
+                            $tabla .= '<td class="txtnombre" align="center"></td>';
                         }
                     }
                     if (isset($idsegunda_unidad) && ! empty($idsegunda_unidad)) {
@@ -3739,9 +3711,9 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                         $tabla .= '<td  align="center" class="txtnombre">';
                         if ($val != false) {
                             $suma_calificacion = $suma_calificacion + $val->calificacion;
-                            $tabla .= '<label>' . $val->calificacion . '  </label>';
+                            $tabla .= '<label>' .numberFormatPrecision( $val->calificacion,1,'.') . '  </label>';
                         } else {
-                            $tabla .= '<small>No registrado</small>';
+                            $tabla .= '<small></small>';
                         }
                         $tabla .= '</td>';
                         if ($row_asistencia) {
@@ -3749,7 +3721,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                             $total_faltas = $total_faltas + $row_asistencia[0]->totalfalta;
                             $tabla .= '<td class="txtnombre" align="center">' . $row_asistencia[0]->totalfalta . '</td>';
                         } else {
-                            $tabla .= '<td class="txtnombre" align="center">0</td>';
+                            $tabla .= '<td class="txtnombre" align="center"></td>';
                         }
                     }
                     if (isset($idtercera_unidad) && ! empty($idtercera_unidad)) {
@@ -3759,9 +3731,9 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                         $tabla .= '<td class="txtnombre" align="center">';
                         if ($val != false) {
                             $suma_calificacion = $suma_calificacion + $val->calificacion;
-                            $tabla .= '<label>' . $val->calificacion . '  </label>';
+                            $tabla .= '<label>' . numberFormatPrecision($val->calificacion,1,'.') . '  </label>';
                         } else {
-                            $tabla .= '<small>No registrado</small>';
+                            $tabla .= '<small></small>';
                         }
                         $tabla .= '</td>';
                         if ($row_asistencia) {
@@ -3769,7 +3741,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                             $total_faltas = $total_faltas + $row_asistencia[0]->totalfalta;
                             $tabla .= '<td class="txtnombre" align="center">' . $row_asistencia[0]->totalfalta . '</td>';
                         } else {
-                            $tabla .= '<td class="txtnombre" align="center">0</td>';
+                            $tabla .= '<td class="txtnombre" align="center"></td>';
                         }
                     }
                     if (isset($idcuarto_unidad) && ! empty($idcuarto_unidad)) {
@@ -3781,7 +3753,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                             $suma_calificacion = $suma_calificacion + $val->calificacion;
                             $tabla .= '<label>' . $val->calificacion . '  </label>';
                         } else {
-                            $tabla .= '<small>No registrado</small>';
+                            $tabla .= '<small></small>';
                         }
                         $tabla .= '</td>';
                         if ($row_asistencia) {
@@ -3789,7 +3761,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                             $total_faltas = $total_faltas + $row_asistencia[0]->totalfalta;
                             $tabla .= '<td class="txtnombre" align="center">' . $row_asistencia[0]->totalfalta . '</td>';
                         } else {
-                            $tabla .= '<td class="txtnombre" align="center">0</td>';
+                            $tabla .= '<td class="txtnombre" align="center"></td>';
                         }
                     }
                     if (isset($idquinte_unidad) && ! empty($idquinte_unidad)) {
@@ -3801,7 +3773,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                             $suma_calificacion = $suma_calificacion + $val->calificacion;
                             $tabla .= '<label>' . $val->calificacion . '  </label>';
                         } else {
-                            $tabla .= '<small>No registrado</small>';
+                            $tabla .= '<small></small>';
                         }
                         $tabla .= '</td>';
                         if ($row_asistencia) {
@@ -3809,7 +3781,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                             $total_faltas = $total_faltas + $row_asistencia[0]->totalfalta;
                             $tabla .= '<td class="txtnombre" align="center">' . $row_asistencia[0]->totalfalta . '</td>';
                         } else {
-                            $tabla .= '<td class="txtnombre" align="center">0</td>';
+                            $tabla .= '<td class="txtnombre" align="center"></td>';
                         }
                     }
                     if (isset($idsexto_unidad) && ! empty($idsexto_unidad)) {
@@ -3821,7 +3793,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                             $suma_calificacion = $suma_calificacion + $val->calificacion;
                             $tabla .= '<label>' . $val->calificacion . '  </label>';
                         } else {
-                            $tabla .= '<small>No registrado</small>';
+                            $tabla .= '<small></small>';
                         }
                         $tabla .= '</td>';
                         if ($row_asistencia) {
@@ -3829,14 +3801,14 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                             $total_faltas = $total_faltas + $row_asistencia[0]->totalfalta;
                             $tabla .= '<td class="txtnombre" align="center">' . $row_asistencia[0]->totalfalta . '</td>';
                         } else {
-                            $tabla .= '<td class="txtnombre" align="center">0</td>';
+                            $tabla .= '<td class="txtnombre" align="center"></td>';
                         }
                     }
                     $tabla .= '<td class="txtnombre" align="center">';
                     if ($suma_calificacion > 0 && $unidades_materia > 0) {
-                        $tabla .= '<label>' . number_format(($suma_calificacion / $unidades_materia), 2) . '</label>';
+                        $tabla .= '<label>' . numberFormatPrecision(($suma_calificacion / $unidades_materia), 1,'.') . '</label>';
                     } else {
-                        $tabla .= '<small>SIN REGISTRAR</small>';
+                        $tabla .= '<small></small>';
                     }
                     $tabla .= '</td>';
                     $tabla .= '<td class="txtnombre" align="center">';
@@ -3965,6 +3937,59 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
             $this->load->view('docente/footer');
         }
     }
+    public function calificacionMes($idhorariodetalle,$idmes){
+         $idhorariodetalle = $this->decode($idhorariodetalle);
+           $idmes = $this->decode($idmes);
+        if ((isset($idhorariodetalle) && ! empty($idhorariodetalle)) && (isset($idmes) && ! empty($idmes))) {
+          
+            $tabla ="";
+            $tabla = $this->obtenerCalificacionXMes($idhorariodetalle,$idmes);
+            $data = array(
+                'tabla'=>$tabla
+            );
+            $this->load->view('docente/header');
+            $this->load->view('docente/grupo/reporte/calificaciones_alumnos', $data);
+            $this->load->view('docente/footer');
+        } 
+    
+    }
+
+    public function obtenerCalificacionXMes($idhorariodetalle, $idmes)
+    {
+        $tabla ="";
+        $detalle_horario = $this->grupo->detalleHorarioDetalle($idhorariodetalle);
+        $idhorario = $detalle_horario->idhorario;
+        $idprofesormateria = $detalle_horario->idprofesormateria;
+        $idmateria = $detalle_horario->idmateria;
+        $estatus_alumno = $detalle_horario->activo;
+        $alumnos = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria, $estatus_alumno);
+        $tabla .= '<table id="tablageneral2" class="table table-striped  dt-responsive nowrap" cellspacing="0" width="100%">
+            <thead class="bg-teal">
+                 <th>#</th>
+                 <th>NOMBRE</th>';
+        $tabla .= '<th>CALIFICACIÓN</th>';
+        $tabla .= '</thead>';
+        $c = 1;
+
+        if (isset($alumnos) && ! empty($alumnos)) {
+            foreach ($alumnos as $row) {
+                $idalumno = $row->idalumno;
+                $tabla .= '<tr>';
+                $tabla .= '<td>' . $c ++ . '</td>';
+                $tabla .= '<td>' . $row->apellidop . " " . $row->apellidom . " " . $row->nombre . '</td>';
+                $calificacion = $this->grupo->calificacionXMes($idalumno,$idhorariodetalle,$idmes);
+                if($calificacion){
+                    $tabla .= '<td align="left"><label>'.numberFormatPrecision($calificacion[0]->calificacion,1,'.').'</label></td>';
+                }else{
+                    $tabla .= '<td><small>No registrado</small></td>';
+                }
+               
+                $tabla .= '</tr>';
+            }
+        }
+        $tabla .= '</table>';
+        return $tabla;
+    } 
     public function reporteCalificacionPorOportunidad($idhorariodetalle,$idportunidad){
         $tabla = "";
         $calificaciones = $this->grupo->showAllCalificacionOportunidad($idhorariodetalle,$idportunidad);
@@ -3972,7 +3997,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
             <thead class="bg-teal">
                 <th>#</th>
                  <th>NOMBRE</th>'; 
-        $tabla .= '<th>CALIFICACION</th>';
+        $tabla .= '<th>CALIFICACIÓN</th>';
         $tabla .= '</thead>';
         $c = 1;
       
@@ -3981,7 +4006,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 $tabla .= '<tr>';
                     $tabla .= '<td>' . $c ++ . '</td>';
                     $tabla .= '<td>' . $row->apellidop . " " . $row->apellidom . " " . $row->nombre . '</td>'; 
-                    $tabla .= '<td> </td>';
+                    $tabla .= '<td>'.numberFormatPrecision($row->calificacion,1,'.').' </td>';
                 $tabla .= '</tr>';
             }
         }
@@ -4002,7 +4027,8 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 $this->session->idplantel;
                 $unidades = $this->grupo->unidades($this->session->idplantel, $unidades_materia);
             }
-            $alumnos = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria);
+            $estatus_alumno = $detalle_horario->activo;
+            $alumnos = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria,$estatus_alumno);
             $datoshorario = $this->horario->showNivelGrupo($idhorario);
             $idnivelestudio = $datoshorario->idnivelestudio;
             $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
@@ -4017,7 +4043,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 endforeach
                 ;
             }
-            $tabla .= '<th>C. FINAL</th>';
+            $tabla .= '<th>PROMEDIO</th>';
             $tabla .= '</thead>';
             $c = 1;
             $total_unidades = 0;
@@ -4039,7 +4065,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                             $tabla .= '<td>';
                             if ($val != false) {
                                 $suma_calificacion = $suma_calificacion + $val->calificacion;
-                                $tabla .= '<label>' . $val->calificacion . '  </label>';
+                                $tabla .= '<label>' . numberFormatPrecision($val->calificacion,'.') . '  </label>';
                             } else {
                                 $tabla .= '<label>No registrado</label>';
                             }
@@ -4049,15 +4075,15 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     }
                     $tabla .= '<td>';
                     if (isset($unidades) && ! empty($unidades)) {
-                        $calificacion_final = number_format($suma_calificacion / $total_unidades, 2);
+                        $calificacion_final = numberFormatPrecision($suma_calificacion / $total_unidades, 1,'.');
                         if (validar_calificacion($calificacion_final, $detalle_configuracion[0]->calificacion_minima)) {
                             if ($suma_calificacion > 0.0) {
-                                $tabla .= '<label style="color:red;">' . number_format($suma_calificacion / $total_unidades, 2) . '</label>';
+                                $tabla .= '<label style="color:red;">' . numberFormatPrecision($suma_calificacion / $total_unidades, 1,'.') . '</label>';
                             } else {
                                 $tabla .= '<label "> </label>';
                             }
                         } else {
-                            $tabla .= '<label style="color:green;">' . number_format($suma_calificacion / $total_unidades, 2) . '</label>';
+                            $tabla .= '<label style="color:green;">' . numberFormatPrecision($suma_calificacion / $total_unidades, 1,'.') . '</label>';
                         }
                     }
                     $tabla .= '</td>';
@@ -4066,13 +4092,14 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
             }
             $tabla .= '</table>';
             return $tabla;
-        } else if ((isset($this->session->idnivelestudio) && ! empty($this->session->idnivelestudio)) && ($this->session->idnivelestudio == 2)) {
+        }  else {
             $unidades = $this->grupo->unidades($this->session->idplantel);
             $detalle_horario = $this->grupo->detalleHorarioDetalle($idhorariodetalle);
             $idprofesormateria = $detalle_horario->idprofesormateria;
             $idmateria = $detalle_horario->idmateria;
             $idhorario = $detalle_horario->idhorario;
-            $alumnos = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria);
+            $estatus_alumno = $detalle_horario->activo;
+            $alumnos = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria,$estatus_alumno);
             $datoshorario = $this->horario->showNivelGrupo($idhorario);
 
             $idnivelestudio = $datoshorario->idnivelestudio;
@@ -4085,14 +4112,10 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
             foreach ($unidades as $block) :
 
                 $tabla .= '<th>' . $block->nombreunidad . '</th>';
-                $tabla .= '<th>PROYECTO</th>';
-                $tabla .= '<th>T. CASA</th>';
-                $tabla .= '<th>ASISTENCIA</th>';
-                $tabla .= '<th>EXAMEN</th>';
                 $tabla .= '<th>FALTAS</th>';
             endforeach
             ;
-            $tabla .= '<th>C. FINAL</th>';
+            $tabla .= '<th>PROMEDIO</th>';
             $tabla .= '</thead>';
             $c = 1;
             $total_unidades = 0;
@@ -4117,96 +4140,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                             $idcalificacion = $val->idcalificacion;
                             $tabla .= '<td>';
                             $suma_calificacion = $suma_calificacion + $val->calificacion;
-                            $tabla .= '<label>' . $val->calificacion . '  </label>';
-                            $tabla .= '</td>';
-                            $row_detalle = $this->grupo->detalleCalificacionSecundaria($idcalificacion);
-                            $row_faltas = $this->grupo->totalAsistencias($idunidad, $idhorariodetalle, $idalumno);
-                            if ($row_detalle) {
-                                $tabla .= '<td>' . $row_detalle->proyecto . '</td>';
-                                $tabla .= '<td>' . $row_detalle->tarea . '</td>';
-                                $tabla .= '<td>' . $row_detalle->participacion . '</td>';
-                                $tabla .= '<td>' . $row_detalle->examen . '</td>';
-                                if ($row_faltas) {
-                                    $tabla .= '<td>' . $row_faltas[0]->totalfalta . '</td>';
-                                } else {
-                                    $tabla .= '<td><small>0</small></td>';
-                                }
-                            }
-                        } else {
-                            $tabla .= '<td><small>No registrado</small></td>';
-                            $tabla .= '<td><small>No registrado</small></td>';
-                            $tabla .= '<td><small>No registrado</small></td>';
-                            $tabla .= '<td><small>No registrado</small></td>';
-                            $tabla .= '<td><small>No registrado</small></td>';
-                            $tabla .= '<td><small>No registrado</small></td>';
-                        }
-                    endforeach
-                    ;
-                    $tabla .= '<td>';
-                    $calificacion_final = number_format($suma_calificacion / $total_unidades, 2);
-                    if (validar_calificacion($calificacion_final, $detalle_configuracion[0]->calificacion_minima)) {
-                        if ($suma_calificacion > 0.0) {
-                            $tabla .= '<label style="color:red;">' . number_format($suma_calificacion / $total_unidades, 2) . '</label>';
-                        } else {
-                            $tabla .= '<label "> </label>';
-                        }
-                    } else {
-                        $tabla .= '<label style="color:green;">' . number_format($suma_calificacion / $total_unidades, 2) . '</label>';
-                    }
-                    $tabla .= '</td>';
-                    $tabla .= '</tr>';
-                }
-            }
-            $tabla .= '</table>';
-            return $tabla;
-        } else {
-            $unidades = $this->grupo->unidades($this->session->idplantel);
-            $detalle_horario = $this->grupo->detalleHorarioDetalle($idhorariodetalle);
-            $idprofesormateria = $detalle_horario->idprofesormateria;
-            $idmateria = $detalle_horario->idmateria;
-            $idhorario = $detalle_horario->idhorario;
-            $alumnos = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria);
-            $datoshorario = $this->horario->showNivelGrupo($idhorario);
-
-            $idnivelestudio = $datoshorario->idnivelestudio;
-            $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
-            $tabla = "";
-            $tabla .= ' <table id="tablageneral2" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
-      <thead class="bg-teal">
-      <th>#</th>
-      <th>NOMBRE</th>';
-            foreach ($unidades as $block) :
-
-                $tabla .= '<th>' . $block->nombreunidad . '</th>';
-                $tabla .= '<th>FALTAS</th>';
-            endforeach
-            ;
-            $tabla .= '<th>C. FINAL</th>';
-            $tabla .= '</thead>';
-            $c = 1;
-            $total_unidades = 0;
-            if (isset($alumnos) && ! empty($alumnos)) {
-                foreach ($alumnos as $row) {
-                    $tabla .= '<tr>';
-                    $tabla .= '  <td>' . $c ++ . '</td>';
-                    if ($row->opcion == 0) {
-                        $tabla .= '<td><label style="color:red;">R:</label> ' . $row->apellidop . " " . $row->apellidom . " " . $row->nombre . '</td>';
-                    } else {
-                        $tabla .= '<td>' . $row->apellidop . " " . $row->apellidom . " " . $row->nombre . '</td>';
-                    }
-                    $suma_calificacion = 0;
-                    $total_unidades = 0;
-                    foreach ($unidades as $block) :
-                        $idunidad = $block->idunidad;
-                        $idalumno = $row->idalumno;
-                        $total_unidades += 1;
-                        $val = $this->grupo->obtenerCalificacion($row->idalumno, $block->idunidad, $idhorariodetalle);
-
-                        if ($val) {
-                            $idcalificacion = $val->idcalificacion;
-                            $tabla .= '<td>';
-                            $suma_calificacion = $suma_calificacion + $val->calificacion;
-                            $tabla .= '<label>' . $val->calificacion . '  </label>';
+                            $tabla .= '<label>' . numberFormatPrecision($val->calificacion,1) . '  </label>';
                             $tabla .= '</td>';
                             $row_faltas = $this->grupo->totalAsistencias($idunidad, $idhorariodetalle, $idalumno);
 
@@ -4222,15 +4156,15 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     endforeach
                     ;
                     $tabla .= '<td>';
-                    $calificacion_final = number_format($suma_calificacion / $total_unidades, 2);
+                    $calificacion_final = numberFormatPrecision($suma_calificacion / $total_unidades, 1,'.');
                     if (validar_calificacion($calificacion_final, $detalle_configuracion[0]->calificacion_minima)) {
                         if ($suma_calificacion > 0.0) {
-                            $tabla .= '<label style="color:red;">' . number_format($suma_calificacion / $total_unidades, 2) . '</label>';
+                            $tabla .= '<label style="color:red;">' . numberFormatPrecision($suma_calificacion / $total_unidades, 1,'.') . '</label>';
                         } else {
                             $tabla .= '<label "> </label>';
                         }
                     } else {
-                        $tabla .= '<label style="color:green;">' . number_format($suma_calificacion / $total_unidades, 2) . '</label>';
+                        $tabla .= '<label style="color:green;">' . numberFormatPrecision($suma_calificacion / $total_unidades, 1,'.') . '</label>';
                     }
                     $tabla .= '</td>';
                     $tabla .= '</tr>';

@@ -4,6 +4,17 @@ $(document).ready(function () {
     if (typeof my_var_1 === "undefined") {
         var my_var_1 = 'some_default_value';
     }
+    $(document).on("click", '.edit_button_new', function (e) {
+        var idcalificacion = $(this).data('idcalificacion');
+        var iddetallecalificacion = $(this).data('iddetallecalificacion');
+        var calificacion = $(this).data('calificacion');
+        var nombre = $(this).data('alumno'); 
+
+        $(".idcalificacion").val(idcalificacion);
+        $(".calificacion").val(calificacion); 
+        $(".iddetallecalificacion").val(iddetallecalificacion);
+        $("#alumno").text(nombre);
+    });
     $(document).on("click", '.edit_button', function (e) {
         var idcalificacion = $(this).data('idcalificacion');
          var iddetallecalificacion = $(this).data('iddetallecalificacion');

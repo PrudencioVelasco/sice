@@ -50,15 +50,7 @@
                                             <div class="form-line">
                                                 <select class="form-control" name="opcion" id="opcion">
                                                     <option value="">-- OPCIÓN --</option>
-                                                    <option value="28">LISTA</option>
-                                                    <option value="29">CALIFICACIÓN FINAL</option>
-                                                     <?php
-                                                        if(isset($oportunidades) && !empty($oportunidades)){
-                                                            foreach($oportunidades as $row){
-                                                                echo '<option value="'.$row->idoportunidadexamen.'">'.$row->nombreoportunidad.'</option>';
-                                                            }
-                                                        }
-                                                    ?>
+                                                    <option value="28">LISTA</option>  
                                                 </select>
                                             </div>
                                         </div>

@@ -277,12 +277,12 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
 
             $tabla .= '<table class="table table-hover table-striped"  > ';
             $tabla .= ' <thead class="bg-teal"> ';
-            $tabla .= '<td   >Hora</td>';
-            $tabla .= '<td   >Lunes</td>';
-            $tabla .= '<td  >Martes</td>';
-            $tabla .= '<td >Miercoles</td>';
-            $tabla .= '<td  >Jueves</td>';
-            $tabla .= '<td  >Viernes</td>';
+            $tabla .= '<td>Hora</td>';
+            $tabla .= '<td>Lunes</td>';
+            $tabla .= '<td>Martes</td>';
+            $tabla .= '<td>Miercoles</td>';
+            $tabla .= '<td>Jueves</td>';
+            $tabla .= '<td>Viernes</td>';
 
             $tabla .= ' </thead>';
             $array_materias_reprobadas = array();
@@ -456,7 +456,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 $contador++;
                 $suma_calificacion += $row->calificacionxperiodo;
             }
-            $calificacion_final = number_format($suma_calificacion / $contador, 2);
+            $calificacion_final = numberFormatPrecision($suma_calificacion / $contador, 1,'.');
         }
         return $calificacion_final;
     }
@@ -847,8 +847,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
     public function obtenerCalificacionSecundaria($idhorario = '', $idalumno = '', $idperiodo)
     {
         # code...
-        Permission::grant(uri_string());
-
+        Permission::grant(uri_string()); 
         $unidades = $this->grupo->unidades($this->session->idplantel);
         $materias = $this->alumno->showAllMateriasPasadas($idhorario, $idalumno, $idperiodo);
         $datoshorario = $this->horario->showNivelGrupo($idhorario);
@@ -867,10 +866,10 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
         $tabla = "";
         $tabla .= '<table class="table  table-striped  table-hover">
         <thead class="bg-teal">
-      <th>NO.</th>
-      <th>MATERIA</th>
-         <th>CRÉDITO</th>';
-        $tabla .= '<th>CALIFICACIÓN</th>';
+             <th>NO.</th>
+             <th>MATERIA</th>
+             <th>CRÉDITO</th>';
+        $tabla .= '<th>PROMEDIO</th>';
         $tabla .= '<th></th>';
         $tabla .= '</thead>';
         $c = 1;
@@ -882,7 +881,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     $idoportunidadexamen = $oportunidad->idoportunidadexamen;
                     $detalle_calificacion = $this->alumno->calificacionSecuPrepa($idalumno, $idhorariodetalle, $idoportunidadexamen);
                     if ($detalle_calificacion && $calificacion == 0) {
-                        $calificacion .= $detalle_calificacion[0]->calificacion;
+                          $calificacion .= $detalle_calificacion[0]->calificacion;
                     }
                 }
                 $tabla .= '<tr>';
@@ -891,7 +890,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 $tabla .= '<td>' . $row->credito . '</td>';
                 $tabla .= '<td>';
                 if ($detalle_configuracion[0]->calificacion_minima < $calificacion) {
-                    $tabla .= '<label>' . number_format($calificacion, 2) . '</label>';
+                    $tabla .= '<label>' . number_format( $calificacion,2)  . '</label>';
                 } else {
                     $tabla .= '<label style="color:red;">NA</label>';
                 }
@@ -1008,7 +1007,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
             $total_unidades += 1;
             $tabla .= '<th><strong>' . $block->nombreunidad . '</strong></th>';
         endforeach;
-        $tabla .= '<th>C. FINAL</th>';
+        $tabla .= '<th>PROMEDIO</th>';
         $tabla .= '</thead>';
         $c = 1;
         if (isset($materias) && !empty($materias)) {
@@ -1031,7 +1030,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                         $detalle_calificacion = $this->grupo->detalleCalificacionSecundaria($idcalificacion);
                         $suma_calificacion = $suma_calificacion + $val->calificacion;
                         if (validar_calificacion($val->calificacion, $detalle_configuracion[0]->calificacion_minima)) {
-                            $tabla .= '<label style="color:red;">' . $val->calificacion . '</label>';
+                            $tabla .= '<label style="color:red;">' . numberFormatPrecision($val->calificacion,1,'.') . '</label>';
                             if ($this->session->idniveleducativo == 2) {
                                 $tabla .= '  <a  href="javascript:void(0)"><i class="fa fa-eye detalle_button"  data-toggle="modal" data-target="#myModalDetalle"
                                 data-idcalificacion="' . $val->idcalificacion . '"
@@ -1045,7 +1044,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                                 style = "color:#378efa;" title="Ver detalle Calificación"></i> </a>';
                             }
                         } else {
-                            $tabla .= '<label style="color:#36ad36;">' . $val->calificacion . '</label>';
+                            $tabla .= '<label style="color:#36ad36;">' .  numberFormatPrecision($val->calificacion,1,'.') . '</label>';
                             if ($this->session->idniveleducativo == 2) {
                                 $tabla .= '  <a  href="javascript:void(0)"><i class="fa fa-eye detalle_button"  data-toggle="modal" data-target="#myModalDetalle"
                                 data-idcalificacion="' . $val->idcalificacion . '"
@@ -1066,15 +1065,15 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
 
                 endforeach;
                 $tabla .= '<td>';
-                $calificacion_final = number_format($suma_calificacion / $total_unidades, 2);
+                $calificacion_final = numberFormatPrecision($suma_calificacion / $total_unidades, 1,'.');
                 if (validar_calificacion($calificacion_final, $detalle_configuracion[0]->calificacion_minima)) {
                     if ($suma_calificacion > 0.0) {
-                        $tabla .= '<label style="color:red;">' . number_format($suma_calificacion / $total_unidades, 2) . '</label>';
+                        $tabla .= '<label style="color:red;">' . numberFormatPrecision($suma_calificacion / $total_unidades, 1,'.') . '</label>';
                     } else {
                         $tabla .= '<label "> </label>';
                     }
                 } else {
-                    $tabla .= '<label style="color:green;">' . number_format($suma_calificacion / $total_unidades, 2) . '</label>';
+                    $tabla .= '<label style="color:green;">' . numberFormatPrecision($suma_calificacion / $total_unidades, 1,'.') . '</label>';
                 }
                 $tabla .= '</td>';
                 $tabla .= '</tr>';
@@ -1120,7 +1119,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
 
             $tabla .= '<th><strong>' . $block->nombreunidad . '</strong></th>';
         endforeach;
-        $tabla .= '<th>C. FINAL</th>';
+        $tabla .= '<th>PROMEDIO</th>';
         $tabla .= '</thead>';
         $c = 1;
 
@@ -1146,9 +1145,9 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
 
                         $suma_calificacion = $suma_calificacion + $val->calificacion;
                         if (validar_calificacion($val->calificacion, $detalle_configuracion[0]->calificacion_minima)) {
-                            $tabla .= '<label style="color:red;">' . $val->calificacion . '</label>';
+                            $tabla .= '<label style="color:red;">' . numberFormatPrecision($val->calificacion,1,'.') . '</label>';
                         } else {
-                            $tabla .= '<label style="color:green;">' . $val->calificacion . '</label>';
+                            $tabla .= '<label style="color:green;">' .  numberFormatPrecision($val->calificacion,1,'.') . '</label>';
                         }
                     } else {
                         $tabla .= '<small>No registrado</small>';
@@ -1157,15 +1156,15 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 }
                 $tabla .= '<td>';
                 if ($suma_calificacion > 0 && $total_unidades > 0) {
-                    $calificacion_final = number_format($suma_calificacion / $total_unidades, 2);
+                    $calificacion_final = numberFormatPrecision($suma_calificacion / $total_unidades, 1,'.');
                     if (validar_calificacion($calificacion_final, $detalle_configuracion[0]->calificacion_minima)) {
                         if ($suma_calificacion > 0.0) {
-                            $tabla .= '<label style="color:red;">' . number_format($suma_calificacion / $total_unidades, 2) . '</label>';
+                            $tabla .= '<label style="color:red;">' . numberFormatPrecision($suma_calificacion / $total_unidades, 1,'.') . '</label>';
                         } else {
                             $tabla .= '<label "> </label>';
                         }
                     } else {
-                        $tabla .= '<label style="color:green;">' . number_format($suma_calificacion / $total_unidades, 2) . '</label>';
+                        $tabla .= '<label style="color:green;">' . numberFormatPrecision($suma_calificacion / $total_unidades, 1,'.') . '</label>';
                     }
                     $tabla .= '</td>';
                 } else {
@@ -1402,7 +1401,7 @@ tblcalificacion  {border-collapse:collapse}
             <td align="right" class="promedio" >
                 Promedio: <strong>';
             if (isset($calificacion) && !empty($calificacion)) {
-                $tbl .= number_format($calificacion, 2);
+                $tbl .= numberFormatPrecision($calificacion, 1,'.');
             } else {
                 $tbl .= '<label>0.0</label>';
             }
@@ -1468,7 +1467,9 @@ tblcalificacion  {border-collapse:collapse}
                 $tabla = $this->obtenerCalificacionLicenciatura($idhorario, $idalumno);
             } elseif ($this->session->idniveleducativo == 4) {
                 $tabla = $this->obtenerCalificacionPreescolar($idhorario, $idalumno, $idnivelestudio, $idperiodo);
-            } else {
+            } elseif ($this->session->idniveleducativo == 1 || $this->session->idniveleducativo == 2){
+                $tabla = $this->obtenerCalificacionSecuNew($idhorario, $idalumno);
+            }else {
                 $tabla = $this->obtenerCalificacion2($idhorario, $idalumno);
             }
 
@@ -1544,6 +1545,134 @@ tblcalificacion  {border-collapse:collapse}
         }
     }
 
+    public function obtenerCalificacionSecuNew($idhorario, $idalumno)
+    {
+        $unidades = $this->grupo->unidades($this->session->idplantel);
+        $array_materias_reprobadas = array();
+        $materias_reprobadas = $this->alumno->obtenerTodasMateriaReprobadasActivas($idalumno);
+        if (isset($materias_reprobadas) && ! empty($materias_reprobadas)) {
+            foreach ($materias_reprobadas as $row) {
+                array_push($array_materias_reprobadas, $row->idmateriaprincipal);
+            }
+        }
+        $reprobadas = implode(",", $array_materias_reprobadas);
+
+        $materias = $this->alumno->showAllMaterias($idhorario, $reprobadas);
+        $datoshorario = $this->horario->showNivelGrupo($idhorario);
+        $idnivelestudio = $datoshorario->idnivelestudio;
+        $unidades_reales = $this->grupo->unidadesConCalificaciones($this->session->idplantel, $idhorario);
+
+        $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
+        $total_unidades = count($unidades);
+        $total_unidades_registradas = 0;
+        $total_meses = 0;
+        $total_materia = 0;
+        $total_cols = 0;
+        if ($materias) {
+            foreach ($materias as $row) {
+
+                $total_materia = $total_materia + 1;
+            }
+        }
+        $tabla = "";
+        $tabla .= '<div class="responsive">
+<table class="table  table-striped  table-hover" style="width:100%;" id="datatablebodega">
+        <thead  >
+        <th>#</th>
+        <th>MATERIA</th>';
+        if ($unidades_reales) {
+            foreach ($unidades_reales as $block) :
+                $idunidad = $block->idunidad;
+                $meses_reales = $this->grupo->mesesPorUnidad($idhorario, $idunidad);
+
+                if ($meses_reales) {
+                    foreach ($meses_reales as $row) {
+                        $total_meses += 1;
+                        $total_cols +=1;
+                        $tabla .= '<th><strong>' . $row->nombremes . '</strong></th>';
+                    }
+                    $total_unidades_registradas ++;
+                }
+                $total_cols +=1;
+                $tabla .= '<th><strong>' . $block->nombreunidad . '</strong></th>';
+            endforeach
+            ;
+        }
+        if ($total_unidades == $total_unidades_registradas) {
+            $tabla .= '<th>PROMEDIO</th>';
+            $total_cols +=1;
+        }
+        $tabla .= '</thead>';
+        $c = 1;
+        if (isset($materias) && ! empty($materias)) {
+            $suma_calificacion = 0;
+            foreach ($materias as $row) {
+                
+                $suma_calificacion = 0;
+                $tabla .= '<tr>
+                <td>' . $c ++ . '</td>
+                <td>';
+                if ($row->opcion == 0) {
+                    $tabla .= '<label style="color:red;">R: </label>';
+                }
+                $tabla .= '<strong>' . $row->nombreclase . '</strong><br><small>( ' . $row->nombre . ' ' . $row->apellidop . ' ' . $row->apellidom . '</small>)</td>';
+                if ($unidades_reales) {
+                    $suma_calificacion_mes = 0;
+                    $contador_meses = 0;
+                    foreach ($unidades_reales as $block) :
+                    $idunidad = $block->idunidad;
+                    $meses_reales = $this->grupo->mesesPorUnidad($idhorario, $idunidad);
+                    
+                    if ($meses_reales) {
+                        $suma_calificacion_mes = 0;
+                        $contador_meses = 0;
+                        foreach ($meses_reales as $rowmes) {
+                            $val = $this->grupo->obtenerCalificacion($idalumno, $block->idunidad, $row->idhorariodetalle);
+                            if($val){
+                                $idmes = $rowmes->idmes;
+                                $idcalificacion = $val->idcalificacion;
+                                $calificacion_mes = $this->grupo->obtenerCalificacionXMeses($idcalificacion, $idmes);
+                                if ($calificacion_mes) {
+                                    $suma_calificacion_mes = $suma_calificacion_mes + $calificacion_mes->calificacion;
+                                    $contador_meses ++;
+                                    $tabla .= '<td align="center"><strong><center>' . numberFormatPrecision($calificacion_mes->calificacion,1,'.') . '</center></strong></td>';
+                                } else {
+                                    $tabla .= '<td><small>No registrado</small></td>';
+                                }
+                            }else{
+                                $tabla .= '<td  ></td>';
+                            }
+                           
+                        }
+                        
+                    }
+                    
+                    if($contador_meses > 0 && $suma_calificacion_mes >0 ){
+                       
+                        $calificacion_trimestral = number_format($suma_calificacion_mes/$contador_meses,2);
+                        $suma_calificacion = $suma_calificacion + $calificacion_trimestral;
+                        $tabla .= '<td align="center"><strong><center>' .numberFormatPrecision($calificacion_trimestral,1,'.') . '</center></strong></td>';
+                    }else{
+                        $tabla .= '<td> </td>';
+                    }
+                  
+                    endforeach
+                    ;
+                }
+                if ($total_unidades == $total_unidades_registradas) {
+                if ($suma_calificacion > 0 && $total_unidades > 0) {
+                    $promedio = $suma_calificacion/ $total_unidades;
+                    $tabla .= '<td align="center"><strong>' .numberFormatPrecision( $promedio,1,'.') . '</strong></td>';
+                }else{
+                    $tabla .= '<td></td>';
+                } 
+                }
+                $tabla .= '</tr>';
+            }
+        }
+        $tabla .= '</table></div>';
+        return $tabla;
+    }
     public function calificacionFinal($idalumno)
     {
         $detalle = $this->alumno->allKardex($idalumno);
@@ -1583,13 +1712,12 @@ tblcalificacion  {border-collapse:collapse}
 
                     $calificacion = $suma_calificacion / $total_materia;
 
-                    $calificacion_periodo += number_format($calificacion, 2);
+                    $calificacion_periodo += numberFormatPrecision($calificacion, 1,'.');
                 }
             }
-        }
-        //return number_format(($calificacion_periodo/$suma_periodo),2);
+        } 
         if ($calificacion_periodo > 0 && $suma_periodo > 0) {
-            $calificacion_global = number_format(($calificacion_periodo / $suma_periodo), 2);
+            $calificacion_global = numberFormatPrecision(($calificacion_periodo / $suma_periodo), 1,'.');
         }
 
         return $calificacion_global;
@@ -1690,7 +1818,7 @@ tblcalificacion  {border-collapse:collapse}
         <thead class="bg-teal">
          <th>#</th>
         <th>MATERIA</th>';
-        $tabla .= '<th>C. FINAL</th>';
+        $tabla .= '<th>PROMEDIO</th>';
         $tabla .= '</thead>';
         $c = 1;
 

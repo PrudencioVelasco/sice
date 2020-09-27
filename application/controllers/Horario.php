@@ -21,16 +21,14 @@ class Horario extends CI_Controller
     }
 
     public function inicio()
-    {
-        // Permission::grant(uri_string());
+    { 
         $this->load->view('admin/header');
         $this->load->view('admin/horario/index');
         $this->load->view('admin/footer');
     }
 
     public function searchHorario()
-    {
-        // Permission::grant(uri_string());
+    { 
         $idplantel = $this->session->idplantel;
         $value = $this->input->post('text');
         $query = $this->horario->searchHorario($value, $idplantel);

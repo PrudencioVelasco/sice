@@ -54,6 +54,15 @@
                                                             echo '<option value="'.$row->idoportunidadexamen.'" >'.$row->nombreoportunidad.'</option>';
                                                         }
                                                     } ?>
+                                                    <?php
+                                                    if ((isset($this->session->idniveleducativo) && ! empty($this->session->idniveleducativo)) && ($this->session->idniveleducativo == 1 || $this->session->idniveleducativo == 2)) {
+                                                            if (isset($meses) && ! empty($meses)) {
+                                                            foreach ($meses as $row) {
+                                                                echo '<option value="m' . $row->idmes . '" >' . $row->nombremes . '</option>';
+                                                            }
+                                                        } 
+                                                     }
+                                                    ?>
                                                 </select>
 
                                             </div>
@@ -113,7 +122,7 @@
                                                                             <i style="color: #0b94e3;"
                                                                                class="fa fa-file-text-o"></i> Calificación</a>
                                                                     </li>
-                                                                     <?php } else if((isset($this->session->idniveleducativo) && !empty($this->session->idniveleducativo)) && $this->session->idniveleducativo == 2){ ?>
+                                                                     <?php } else if((isset($this->session->idniveleducativo) && !empty($this->session->idniveleducativo)) && ($this->session->idniveleducativo == 1|| $this->session->idniveleducativo == 2)){ ?>
                                                                          <li><a
                                                                             href="<?php echo site_url('Pgrupo/calificacionSecu/' . $controller->encode($value->idhorario) . '/' . $controller->encode($value->idhorariodetalle)) ?>">
                                                                             <i style="color: #0b94e3;"

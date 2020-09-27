@@ -30,7 +30,7 @@
                         <div class="col-md-3 col-sm-12 col-xs-12 ">
                             <div class="form-group">
                                  <select style="border-bottom: solid #ebebeb 2px;" v-model="idtipocalificacion"   :class="{'is-invalid': formValidate.idperiodo}" class="form-control">
-                                    <option value="">-- CALIFICACION --</option>
+                                    <option value="">-- CALIFICACIÓN --</option>
                                     <option   v-for="option in tiposcalificacion" v-bind:value="option.idtipocalificacion">
                                         {{ option.tipocalificacion }} 
                                     </option>
@@ -63,7 +63,7 @@
                                         	<span v-if="row.idcalificacion && row.idcalificacion == 4" >NECESITA APOYO</span>
                                         </td>
                                         <td align="right">
-                                          <button type="button" @click="eliminarMateria(row.idmateria)" class="btn btn-danger btn-sm">Quitar</button>
+                                          <button type="button" @click="eliminarMateria(row.idmateria)" class="btn btn-warning btn-sm">Quitar</button>
                                         </td>
                                        
                                     </tr>
@@ -127,7 +127,7 @@
                         <div class="col-md-3 col-sm-12 col-xs-12 ">
                             <div class="form-group">
                                  <select style="border-bottom: solid #ebebeb 2px;" v-model="idtipocalificacion"   :class="{'is-invalid': formValidate.idperiodo}" class="form-control">
-                                    <option value="">-- CALIFICACION --</option>
+                                    <option value="">-- CALIFICACIÓN --</option>
                                     <option   v-for="option in tiposcalificacion" v-bind:value="option.idtipocalificacion">
                                         {{ option.tipocalificacion }} 
                                     </option>
@@ -146,7 +146,7 @@
                             <table class=" table table-striped dt-responsive nowrap" cellspacing="0">
                                 <thead class="bg-teal">
                                 <th>CURSO</th>
-                                <th>CALIFICACION</th>
+                                <th>CALIFICACIÓN</th>
                               
                                 <th></th>
                                 </thead>
@@ -160,7 +160,7 @@
                                         	<span v-if="row.idtipocalificacion && row.idtipocalificacion == 4" >NECESITA APOYO</span>
                                         </td>
                                         <td align="right">
-                                          <button type="button" @click="eliminarMateriaAlumno(row)" class="btn btn-danger btn-sm">Quitar</button>
+                                          <button type="button" @click="eliminarMateriaAlumno(row)" class="btn btn-warning btn-sm">Quitar</button>
                                         </td>
                                        
                                     </tr>
@@ -173,7 +173,7 @@
                                         	<span v-if="row.idcalificacion && row.idcalificacion == 4" >NECESITA APOYO</span>
                                         </td>
                                         <td align="right">
-                                          <button type="button" @click="eliminarMateria(row.idmateria)" class="btn btn-danger btn-sm">Quitar</button>
+                                          <button type="button" @click="eliminarMateria(row.idmateria)" class="btn btn-warning btn-sm">Quitar</button>
                                         </td>
                                        
                                     </tr>
@@ -224,7 +224,7 @@
                             <table class=" table table-striped dt-responsive nowrap" cellspacing="0">
                                 <thead class="bg-teal">
                                 <th>CURSO</th>
-                                <th></th> 
+                                <th>CALIFICACIÓN</th> 
                                 </thead>
                                 <tbody>
                                     <tr v-for="row in calificaciones_registradas" >

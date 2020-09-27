@@ -75,7 +75,7 @@
                                     <th class="text-white" v-column-sortable:nombrealumno>NOMBRE </th>
                                     <th class="text-white">ESTATUS </th>
                                    
-                                    <th class="text-center text-white">Opción </th>
+                                    <th class="text-center text-white"> </th>
                                     </thead>
                                     <tbody  >
                                         <tr v-for="(alumno,index) in alumnos"  > 
@@ -87,10 +87,7 @@
                                              <span v-if="alumno.registrado && alumno.registrado > 0" class="label label-success" >REGISTRADO</span>
                                             </td>
                                             <td align="right">  
-												 	 <!--  <button v-if="alumno.registrado && alumno.registrado > 0 && alumno.activo == 1" type="button" @click="abrirEditModal(); seleccionarAlumnoEditar(alumno.idalumno)" class="btn btn-info btn-sm">Editar</button> -->
-												     
-												
-												<div class="btn-group" role="group"  v-if="alumno.registrado &&  alumno.activo == 1 && (alumno.registrado > 0 && alumno.faltas != null)" >
+												 <div class="btn-group" role="group"  v-if="alumno.registrado &&  alumno.activo == 1 && (alumno.registrado > 0 && alumno.faltas != null)" >
                                                     <div class="btn-group" role="group">
                                                         <button type="button" class="btn btn-info waves-effect dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                               Editar
@@ -110,7 +107,7 @@
                                                             <span class="caret"></span>
                                                         </button>
                                                         <ul class="dropdown-menu"> 
-                                                            <li ><a href="#" title="Agregar Calificacion" v-if="alumno.registrado == 0" @click="abrirAddModal();seleccionarAlumno(alumno.idalumno)">Calificacion</a></li> 
+                                                            <li ><a href="#" title="Agregar Calificacion" v-if="alumno.registrado == 0" @click="abrirAddModal();seleccionarAlumno(alumno.idalumno)">Calificación</a></li> 
                                                             <li><a href="#" title="Agregar Faltas" v-if="alumno.faltas == null" @click="abrirAddFaltasModal();seleccionarAlumno(alumno.idalumno)"> Faltas</a></li>
                                                          </ul>
                                                     </div>

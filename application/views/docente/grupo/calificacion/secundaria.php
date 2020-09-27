@@ -53,7 +53,7 @@
                                                 <label for="">
                                                     <font color="red">*</font> Unidad:
                                                 </label>
-                                                <select style="border-bottom: solid 2px #ccc;" class="form-control" name="unidad" id="">
+                                                <select style="border-bottom: solid 2px #ccc;" class="form-control" name="unidad" >
                                                     <option value="">-- SELECCIONAR --</option>
                                                     <?php
                                                     if (isset($unidades) && !empty($unidades)) {
@@ -64,6 +64,24 @@
                                                             <?php
                                                         }
                                                     }
+                                                    ?>
+                                                </select>
+                                            </div>
+                                             <div class="form-group">
+                                                <label for="">
+                                                    <font color="red">*</font> Mes:
+                                                </label>
+                                                <select style="border-bottom: solid 2px #ccc;" class="form-control" name="meseliminar"  >
+                                                    <option value="">-- SELECCIONAR --</option>
+                                                    <?php
+                                                    if (isset($mes) && !empty($mes)) {
+                                                        foreach ($mes as $row) {
+                                                            ?>
+                                                                    <option value="<?php echo $row->idmes ?>">
+                                                                        <?php echo $row->nombremes ?></option>
+                                                                    <?php
+                                                                }
+                                                            }
                                                     ?>
                                                 </select>
                                             </div>
@@ -99,7 +117,7 @@
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="col-md-12 col-sm-12 col-xs-12 ">
+                                                <div class="col-md-6 col-sm-12 col-xs-12 ">
                                                     <div class="form-group">
                                                         <label>
                                                             <font color="red">*</font> Unidad
@@ -119,6 +137,26 @@
                                                         </select>
                                                     </div>
                                                 </div>
+                                                <div class="col-md-6 col-sm-12 col-xs-12 ">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            <font color="red">*</font> Mes
+                                                        </label>
+                                                        <select style="border-bottom: solid 2px #ccc;" class="form-control" name="mes">
+                                                            <option value="">-- SELECCIONAR --</option>
+                                                            <?php
+                                                            if (isset($mes) && !empty($mes)) {
+                                                                foreach ($mes as $row) {
+                                                                    ?>
+                                                                    <option value="<?php echo $row->idmes ?>">
+                                                                        <?php echo $row->nombremes ?></option>
+                                                                    <?php
+                                                                }
+                                                            }
+                                                            ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-12 col-sm-12 col-xs-12 ">
@@ -127,11 +165,8 @@
                                                         <thead class="bg-teal">
                                                             <tr>
                                                                 <th>#</th>
-                                                                <th>Alumno</th>
-                                                                 <th>Proyecto</th>
-                                                                 <th>T. casa</th>
-                                                                 <th>Participación</th>
-                                                                 <th>Examen</th>
+                                                                <th>ALUMNO</th>
+                                                                 <th>CALIFICACION</th> 
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -157,20 +192,8 @@
                                                                     </td>
                                                                     <td>
                                                                         <input type="number" minlength="0.00"
-                                                                               maxlength="100.00" name="proyecto[]"  class="form-control"  placeholder="30.0" >
-                                                                    </td>
-                                                                    <td>
-                                                                        <input type="number" minlength="0.00"
-                                                                               maxlength="100.00"  name="tarea[]"  class="form-control"  placeholder="30.0" >
-                                                                    </td>
-                                                                    <td>
-                                                                        <input type="number" minlength="0.00"
-                                                                               maxlength="100.00"  name="participacion[]"   class="form-control"  placeholder="30.0" >
-                                                                    </td>
-                                                                    <td>
-                                                                        <input type="number" minlength="0.00"
-                                                                               maxlength="100.00"  name="examen[]"   class="form-control"  placeholder="30.0" >
-                                                                    </td>
+                                                                               maxlength="100.00" name="calificacion[]"  class="form-control"  placeholder="30.0" >
+                                                                    </td> 
                                                                 </tr>
                                                                 <?php
                                                             }

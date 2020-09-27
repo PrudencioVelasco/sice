@@ -99,11 +99,8 @@
                                                         <thead>
                                                             <tr>
                                                                 <th>#</th>
-                                                                <th>Alumno</th>
-                                                                <th>Proyecto</th>
-                                                                 <th>T. Casa</th>
-                                                                  <th>Participación</th>
-                                                                   <th>Examen</th>
+                                                                <th>ALUMNO</th>
+                                                                <th>CALIFICACIÓN</th> 
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -123,20 +120,9 @@
                                                                         </td>
                                                                          <td>
                                                                         <input type="number" minlength="0.00"
-                                                                               maxlength="100.00" name="proyecto[]"  class="form-control"  placeholder="0.0" >
+                                                                               maxlength="100.00" name="calificacion[]"  class="form-control"  placeholder="0.0" >
                                                                     </td>
-                                                                    <td>
-                                                                        <input type="number" minlength="0.00"
-                                                                               maxlength="100.00"  name="tarea[]"  class="form-control"  placeholder="0.0" >
-                                                                    </td>
-                                                                    <td>
-                                                                        <input type="number" minlength="0.00"
-                                                                               maxlength="100.00"  name="participacion[]"   class="form-control"  placeholder="0.0" >
-                                                                    </td>
-                                                                    <td>
-                                                                        <input type="number" minlength="0.00"
-                                                                               maxlength="100.00"  name="examen[]"   class="form-control"  placeholder="0.0" >
-                                                                    </td>
+                                                                     
                                                                     </tr>
                                                                     <?php
                                                                 }

@@ -62,12 +62,17 @@
                                                     foreach ($unidades as $row){
                                                         echo '<option value="u'.$row->idunidad.'">'.$row->nombreunidad.'</option>';
                                                     }
-                                                }
-                                                ?>
-                                                <?php 
+                                                } 
                                                 if(isset($oportunidades) && !empty($oportunidades)){
                                                     foreach ($oportunidades as $row){
                                                         echo '<option value="o'.$row->idoportunidadexamen.'">'.$row->nombreoportunidad.'</option>';
+                                                    }
+                                                }
+                                                if($this->session->idniveleducativo == 1 || $this->session->idniveleducativo == 2){
+                                                    if(isset($meses) && !empty($meses)){
+                                                        foreach ($meses as $row){
+                                                            echo '<option value="m'.$row->idmes.'">'.$row->nombremes.'</option>';
+                                                        }
                                                     }
                                                 }
                                                 ?>
@@ -189,7 +194,7 @@
             <form method="post" action="" id="frmeditardisciplina">
                 <div class="modal-body"> 
                     <div class="form-group">
-                        <input class="form-control iddisciplina" type="hidden" name="iddiciplina"> 
+                        <input class="form-control iddisciplina" type="hidden" name="iddisciplina"> 
                          <input class="form-control idpresentacionpersonal" type="hidden" name="idpresentacionpersonal"> 
                     </div> 
                     <div class="row">

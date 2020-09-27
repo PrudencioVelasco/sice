@@ -63,11 +63,17 @@
                                                         echo '<option value="u'.$row->idunidad.'">'.$row->nombreunidad.'</option>';
                                                     }
                                                 }
-                                                ?>
-                                                <?php 
+                                                
                                                 if(isset($oportunidades) && !empty($oportunidades)){
                                                     foreach ($oportunidades as $row){
                                                         echo '<option value="o'.$row->idoportunidadexamen.'">'.$row->nombreoportunidad.'</option>';
+                                                    }
+                                                }
+                                                if($this->session->idniveleducativo == 1 || $this->session->idniveleducativo == 2){
+                                                    if(isset($meses) && !empty($meses)){
+                                                        foreach ($meses as $row){
+                                                            echo '<option value="m'.$row->idmes.'">'.$row->nombremes.'</option>';
+                                                        }
                                                     }
                                                 }
                                                 ?>

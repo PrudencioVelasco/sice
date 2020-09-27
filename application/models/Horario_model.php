@@ -45,6 +45,7 @@ class Horario_model extends CI_Model {
         if (isset($idplantel) && !empty($idplantel)) {
             $this->db->where('h.idplantel', $idplantel);
         }
+        $this->db->where('h.activo', 1);
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();

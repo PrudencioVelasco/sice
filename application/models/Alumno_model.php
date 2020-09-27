@@ -161,6 +161,7 @@ class Alumno_model extends CI_Model
         $this->db->where('h.idgrupo = ag.idgrupo');
         $this->db->where('ta.idtutor', $idtutor);
         $this->db->where('ag.activo', 1);
+        $this->db->where('h.activo', 1);
         $this->db->order_by('a.apellidop ASC');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
@@ -172,7 +173,7 @@ class Alumno_model extends CI_Model
 
     public function showAllMateriasAlumno($idalumno = '', $activo = '')
     {
-        $this->db->select('pe.idperiodo, hd.idhorariodetalle,ma.nombreclase,p.nombre, p.apellidop, p.apellidom, g.nombregrupo,ne.nombrenivel, g.idgrupo, h.idhorario,m.nombremes as mesinicio,m2.nombremes as mesfin,y.nombreyear as yearinicio,y2.nombreyear as yearfin, pla.nombreplantel,pla.asociado, pla.direccion, pla.telefono, a.matricula, ho.idhorario,ma.unidades');
+        $this->db->select('pe.idperiodo, hd.idhorariodetalle,ma.nombreclase,p.nombre, p.apellidop, p.apellidom, g.nombregrupo,ne.nombrenivel, g.idgrupo, h.idhorario,m.nombremes as mesinicio,m2.nombremes as mesfin,y.nombreyear as yearinicio,y2.nombreyear as yearfin, pla.nombreplantel,pla.asociado, pla.direccion, pla.telefono, a.matricula, h.idhorario,ma.unidades');
         $this->db->from('tblhorario_detalle hd');
         $this->db->join('tblprofesor_materia pm', 'pm.idprofesormateria = hd.idmateria');
         $this->db->join('tblprofesor p', 'p.idprofesor = pm.idprofesor');
@@ -185,13 +186,13 @@ class Alumno_model extends CI_Model
         $this->db->join('tblmes m ', ' pe.idmesinicio = m.idmes');
         $this->db->join('tblmes m2 ', ' pe.idmesfin = m2.idmes');
         $this->db->join('tblyear y ', ' pe.idyearinicio = y.idyear');
-        $this->db->join('tblyear y2 ', ' pe.idyearfin = y2.idyear');
-        $this->db->join('tblhorario ho', 'ho.idhorario = hd.idhorario');
+        $this->db->join('tblyear y2 ', ' pe.idyearfin = y2.idyear'); 
         $this->db->join('tblalumno_grupo ag', 'ag.idgrupo = g.idgrupo');
         $this->db->join('tblalumno a', 'a.idalumno = ag.idalumno');
         $this->db->where('a.idalumno', $idalumno);
         if (isset($activo) && empty($activo)) {
-            $this->db->where('(pe.activo = 1 or ho.activo = 1)');
+            $this->db->where('pe.activo',1);
+            $this->db->where('h.activo',1);
         }
         $this->db->where('(pe.idperiodo = ag.idperiodo)');
         $this->db->group_by('ma.idmateria');
@@ -1042,7 +1043,7 @@ GROUP BY hd.idmateria) tabla");
                         WHERE
                             ag.idgrupo = h.idgrupo
                                 AND ag.idalumno = $idalumno 
-                                AND (p.activo = 0 OR h.activo = 0)
+                                AND  p.activo = 0 AND h.activo = 0
                                 ORDER BY p.idperiodo DESC");
 
         if ($query->num_rows() > 0) {
@@ -1083,7 +1084,7 @@ GROUP BY hd.idmateria) tabla");
                                     tblyear y2 ON p.idyearfin = y2.idyear
                                 WHERE
                                     p.idperiodo = ag.idperiodo
-                                AND (h.activo = 1 OR  p.activo = 1) 
+                                AND h.activo = 1 AND   p.activo = 1
                                 AND ag.activo = 1 
                                 AND  ag.idalumno = $idalumno 
                                 ORDER BY ne.idnivelestudio DESC");
@@ -1365,8 +1366,8 @@ GROUP BY hd.idmateria) tabla");
     public function calificacionSecuPrepa($idalumno = '', $idhorariodetalle = '', $oportunidad = '')
     {
         $query = $this->db->query("SELECT 
-                        FORMAT( COALESCE((COALESCE(SUM(c.calificacion), 0) / (count(c.idunidad))),
-            0),2) AS calificacion, 
+                         COALESCE((COALESCE(SUM(c.calificacion), 0) / (count(c.idunidad))),
+            0)  AS calificacion, 
                         m.nombreclase,
                         m.clave,
                         m.credito,
@@ -1381,11 +1382,12 @@ GROUP BY hd.idmateria) tabla");
                         tblprofesor_materia pm ON hd.idmateria = pm.idprofesormateria
                             INNER JOIN
                         tblmateria m ON m.idmateria = pm.idmateria
+                            INNER JOIN
+                        tbloportunidad_examen oe ON oe.idoportunidadexamen = c.idoportunidadexamen
                     WHERE
                         c.idalumno = $idalumno 
-                        AND c.idhorariodetalle = $idhorariodetalle
-                        AND c.idoportunidadexamen = $oportunidad
-                    GROUP BY hd.idmateria");
+                        AND c.idhorariodetalle = $idhorariodetalle  
+                    GROUP BY hd.idmateria ORDER BY oe.numero ASC");
         //  return $query->result();
 
         if ($query->num_rows() > 0) {
@@ -1760,7 +1762,8 @@ GROUP BY hd.idmateria) tabla");
     {
         $this->db->select('m.idmes,m.nombremes');
         $this->db->from('tblmes as m');
-
+        $this->db->where('m.numero NOT IN(7,8)');
+        $this->db->order_by('m.enumeracion ASC');
         $query = $this->db->get();
 
         if ($query->num_rows() > 0) {

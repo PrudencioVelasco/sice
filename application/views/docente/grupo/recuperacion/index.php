@@ -99,8 +99,8 @@
                                                         <thead>
                                                             <tr>
                                                                 <th>#</th>
-                                                                <th>Alumno</th>
-                                                                <th></th>
+                                                                <th>ALUMNO</th>
+                                                                <th>CALIFICACIÓN</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>

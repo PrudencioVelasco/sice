@@ -2173,7 +2173,7 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
     }
 
     public function asignarEstatusAlumno() {
-        if (Permission::grantValidar(uri_string()) == 1) {
+        if ($this->session->idpersonal == 14) {
             $config = array(
                 array(
                     'field' => 'idestatus',

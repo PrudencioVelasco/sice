@@ -96,6 +96,29 @@ class Calificacion_model extends CI_Model {
             return false;
         }
     }
+    public function detalleCalificacion($idalumno,$idhorario) {
+        $this->db->select('cd.idcalificaciondisciplina,cd.idtipoevaluacion, cd.evaluacion');
+        $this->db->from('tblcalificacion_disciplina cd');
+        $this->db->where('cd.idalumno', $idalumno);
+        $this->db->where('cd.idhorario', $idhorario);
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+    public function detalleCalificacionPorId($idcalificacion) {
+        $this->db->select('c.calificacion');
+        $this->db->from('tblcalificacion c');
+        $this->db->where('c.idcalificacion', $idcalificacion); 
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
     public function validarOtrasEvaluaciones($idalumno,$idhorario) {
         $this->db->select('cd.idcalificaciondisciplina,cd.idtipoevaluacion, cd.evaluacion');
         $this->db->from('tblcalificacion_disciplina cd');
@@ -154,6 +177,8 @@ class Calificacion_model extends CI_Model {
     public function allMeses() {
         $this->db->select('m.idmes, m.nombremes');
         $this->db->from('tblmes m');
+        $this->db->where('m.numero NOT IN(7,8)');
+        $this->db->order_by('m.enumeracion ASC');
         $query = $this->db->get();
         if ($this->db->affected_rows() > 0) {
             return $query->result();
@@ -255,6 +280,19 @@ class Calificacion_model extends CI_Model {
             return false;
         }
     }
+    public function obtenerDisciplina($idalumno,$idhorario) {
+        $this->db->select('cd.idtipoevaluacion, cd.evaluacion');
+        $this->db->from('tblcalificacion_disciplina cd'); 
+        $this->db->where('cd.idalumno', $idalumno);
+        $this->db->where('cd.idhorario', $idhorario);
+        $this->db->where('cd.idtipoevaluacion IN (3,4)');
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
     
   
     
@@ -294,6 +332,21 @@ class Calificacion_model extends CI_Model {
             return false;
         }
     }
+    public function calificacionXMes($idalumno,$idprofesormateria,$idmes){
+        $this->db->select('dc.calificacion');
+        $this->db->from('tbldetalle_calificacion dc');
+        $this->db->join('tblcalificacion c', 'c.idcalificacion = dc.idcalificacion');
+        $this->db->join('tblhorario_detalle hd', 'hd.idhorariodetalle = c.idhorariodetalle');
+        $this->db->where('c.idalumno', $idalumno); 
+        $this->db->where('hd.idmateria', $idprofesormateria); 
+        $this->db->where('dc.idmes', $idmes); 
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
     public function validarExistenciaOtrasEvaluaciones($idcalificacion,$tipoevaluacion){
         $this->db->select('dco.iddetallecalificacionotras,dco.evaluacion');
         $this->db->from('tbldetalle_calificacion_otras dco'); 
@@ -322,9 +375,12 @@ class Calificacion_model extends CI_Model {
             return false;
         }
     }
-    public function alumnosGrupo($idperiodo, $idgrupo) {
+    public function alumnosGrupo($idperiodo, $idgrupo,$idestatus = '') {
         
         $sql =  "SELECT * FROM vwalumnosgrupo WHERE idperiodo = $idperiodo AND idgrupo = $idgrupo";
+        if(isset($idestatus) && !empty($idestatus) && $idestatus == 1){
+            $sql .= " AND idalumnoestatus = 1";
+        }
         $query = $this->db->query($sql);
         
         if ($query->num_rows() > 0) {
@@ -859,6 +915,19 @@ ORDER BY    oe.numero DESC");
     public function daleteCalificacionPreescolar($idalumno = '') {
         # code...
         $this->db->where('idcalificacionpreescolar', $idalumno);
+        $this->db->delete('tblcalificacion_preescolar');
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public function daleteCalificacionPreescolarAll($idperiodo,$idgrupo,$idalumno,$idmes) {
+        # code...
+        $this->db->where('idperiodo', $idperiodo);
+        $this->db->where('idalumno', $idalumno);
+        $this->db->where('idgrupo', $idgrupo);
+        $this->db->where('idmes', $idmes);
         $this->db->delete('tblcalificacion_preescolar');
         if ($this->db->affected_rows() > 0) {
             return true;
