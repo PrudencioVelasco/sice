@@ -51,7 +51,7 @@
                                         <div class="modal-body">
                                             <div class="form-group">
                                                 <label for="">
-                                                    <font color="red">*</font> Unidad:
+                                                    <font color="red">*</font> UNIDAD:
                                                 </label>
                                                 <select style="border-bottom: solid 2px #ccc;" class="form-control" name="unidad" id="">
                                                     <option value="">-- SELECCIONAR --</option>
@@ -135,7 +135,7 @@
                                                         <thead class="bg-teal">
                                                             <tr>
                                                                 <th>#</th>
-                                                                <th>Alumno</th>
+                                                                <th>ALUMNO(A)</th>
                                                                 <th></th>
                                                             </tr>
                                                         </thead>
@@ -163,9 +163,8 @@
                                                                     <td>
                                                                         <input type="number" minlength="0.00"
                                                                                maxlength="10.00" name="calificacion[]"
-                                                                               class="form-control" placeholder="Calificación">
-                                                                        <small>Formato decimal Ej. 10.00, 9.60, etc.</small>
-                                                                    </td>
+                                                                               class="form-control" placeholder="0.0 a 10.0">
+                                                                     </td>
                                                                 </tr>
                                                                 <?php
                                                             }
@@ -241,7 +240,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h3 class="modal-title " id="myModalLabel">Alumno: <label id="alumno"></label> </h3>
+                <h3 class="modal-title " id="myModalLabel">ALUMNO(A): <label id="alumno"></label> </h3>
             </div>
             <form method="post" action="" id="frmmodificar">
                 <div class="modal-body">
@@ -276,7 +275,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h3 class="modal-title " id="myModalLabel">ALUMNO: <label id="alumnodelete"></label> </h3>
+                <h3 class="modal-title " id="myModalLabel">ALUMNO(A): <label id="alumnodelete"></label> </h3>
             </div>
             <form method="post" action="" id="frmeliminar">
                 <div class="modal-body">

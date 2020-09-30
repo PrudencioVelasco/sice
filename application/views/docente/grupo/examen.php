@@ -51,7 +51,7 @@
                                         <div class="modal-body">
                                             <div class="form-group">
                                                 <label for="">
-                                                    <font color="red">*</font> Unidad:
+                                                    <font color="red">*</font> UNIDAD:
                                                 </label>
                                                 <select style="border-bottom: solid 2px #ccc;" class="form-control" name="unidad" id="">
                                                     <option value="">-- SELECCIONAR --</option>
@@ -102,7 +102,7 @@
                                                 <div class="col-md-12 col-sm-12 col-xs-12 ">
                                                     <div class="form-group">
                                                         <label>
-                                                            <font color="red">*</font> Unidad
+                                                            <font color="red">*</font> UNIDAD
                                                         </label>
                                                         <select style="border-bottom: solid 2px #ccc;" class="form-control" name="unidad">
                                                             <option value="">-- SELECCIONAR --</option>
@@ -127,7 +127,7 @@
                                                         <thead class="bg-teal">
                                                             <tr>
                                                                 <th>#</th>
-                                                                <th>Alumno</th>
+                                                                <th>ALUMNO(A)</th>
                                                                 <th></th>
                                                             </tr>
                                                         </thead>
@@ -153,11 +153,10 @@
 
                                                                     </td>
                                                                     <td>
-                                                                        <input type="number" minlength="0.00"
+                                                                        <input type="text" minlength="0.00"
                                                                                maxlength="10.00" name="calificacion[]"
-                                                                               class="form-control" placeholder="Calificación">
-                                                                        <small>Formato decimal Ej. 10.00, 9.60, etc.</small>
-                                                                    </td>
+                                                                               class="form-control" placeholder="0.0 a 10.0" >
+                                                                     </td>
                                                                 </tr>
                                                                 <?php
                                                             }

@@ -41,8 +41,10 @@ $(document).ready(function() {
 		var nombre = $(this).data('alumno');
 		var idhorario = $(this).data('idhorario');
 		var idalumno = $(this).data('idalumno');
+		var idunidad = $(this).data('idunidad');
 		$(".idhorario").val(idhorario);
 		$(".idalumno").val(idalumno);
+		$(".idunidad").val(idunidad);
 		$("#alumno_diciplina_add").text(nombre);
 	});
 	

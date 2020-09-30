@@ -28,6 +28,7 @@ class Tutores extends CI_Controller
         $this->load->model('tutor_model', 'tutor');
         $this->load->model('planificacion_model', 'planeacion');
         $this->load->model('configuracion_model', 'configuracion');
+        $this->load->model('calificacion_model', 'calificacion');
         $this->load->model('data_model');
         $this->load->library('permission');
         $this->load->library('session');
@@ -697,11 +698,32 @@ class Tutores extends CI_Controller
         }
         $tabla .= '</thead>';
         $c = 1;
+        $mostrar = false;
+        $suma_calificacion_verificar = 0;
         if (isset($materias) && ! empty($materias)) {
             $suma_calificacion = 0;
             foreach ($materias as $row) {
                 
                 $suma_calificacion = 0;
+                
+                $validar = $this->calificacion->verificarCalificacionSiSeMuestra($idalumno, $row->idhorariodetalle);
+                if ($validar) {
+                    $suma_calificacion_verificar = 0;
+                    foreach ($validar as $rowv) {
+                        $suma_calificacion_verificar += $rowv->calificacion;
+                    }
+                    if ($suma_calificacion_verificar > 0) {
+                        $mostrar = TRUE;
+                        
+                    } else {
+                        $mostrar = FALSE;
+                        
+                    }
+                } else {
+                    $mostrar = TRUE;
+                    
+                }
+                if($mostrar){
                 $tabla .= '<tr>
                 <td>' . $c ++ . '</td>
                 <td>';
@@ -761,6 +783,7 @@ class Tutores extends CI_Controller
                 } 
                 }
                 $tabla .= '</tr>';
+                }
             }
         }
         $tabla .= '</table></div>';
@@ -815,10 +838,31 @@ class Tutores extends CI_Controller
       $tabla .= '<th>PROMEDIO</th>';
       $tabla .= '</thead>';
       $c = 1;
+      $mostrar = false;
+      $suma_calificacion_verificar = 0;
       if (isset($materias) && ! empty($materias)) {
         $suma_calificacion = 0;
         foreach ($materias as $row) { 
           $suma_calificacion = 0;
+          
+          $validar = $this->calificacion->verificarCalificacionSiSeMuestra($idalumno, $row->idhorariodetalle);
+          if ($validar) {
+              $suma_calificacion_verificar = 0;
+              foreach ($validar as $rowv) {
+                  $suma_calificacion_verificar += $rowv->calificacion;
+              }
+              if ($suma_calificacion_verificar > 0) {
+                  $mostrar = TRUE;
+                  
+              } else {
+                  $mostrar = FALSE;
+                  
+              }
+          } else {
+              $mostrar = TRUE;
+              
+          }
+          if($mostrar){
           $tabla .= '<tr>
           <td>' . $c ++ . '</td>
           <td>';
@@ -868,6 +912,7 @@ class Tutores extends CI_Controller
           }
           $tabla .= '</td>';
           $tabla .= '</tr>';
+        }
         }
       }
       $tabla .= '</table>';
@@ -3616,9 +3661,7 @@ tblcalificacion  {border-collapse:collapse}
 
     public  function  obtenerCalificacionPreescolar($idalumno = '', $idnivelestudio = '', $idperiodo = '')
     {
-
-        //Permission::grant(uri_string());
-
+ 
         //Obtener meses
         $meses = $this->alumno->obtenerMeses();
         $materias = $this->alumno->obtenerMaterias($idnivelestudio);

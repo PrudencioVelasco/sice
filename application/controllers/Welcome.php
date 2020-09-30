@@ -45,53 +45,108 @@ class Welcome extends CI_Controller {
         }
     }
 
-    public function alumno() { 
-        $this->load->library('session'); 
+    public function alumno()
+    {
+        $this->load->library('session');
         if ($this->session->idtipousuario == 1) {
-            //DOCENTE
+            // DOCENTE
             redirect('Profesores/');
-        } elseif ($this->session->idtipousuario == 2){
-            //ADMINISTRATIVO
+        } elseif ($this->session->idtipousuario == 2) {
+            // ADMINISTRATIVO
             redirect('Admin/');
-        } elseif ($this->session->idtipousuario == 3){
-            //ALUMNO
+        } elseif ($this->session->idtipousuario == 3) {
+            // ALUMNO
             redirect('Alumnos/');
-        } elseif ($this->session->idtipousuario == 5){
+        } elseif ($this->session->idtipousuario == 5) {
             redirect('Tutores/');
         } elseif ($_POST) {
             $matricula = $_POST['matricula'];
             $password = $_POST['password'];
             $result = $this->usuario->loginAlumno($matricula);
-            
+
             if ($result) {
-                if (password_verify($password, $result->password)) {
-                    $this->session->set_userdata([
-                        'user_id' => $result->id,
-                        'idalumno' => $result->idalumno,
-                        'nombre' => $result->nombre,
-                        'apellidop' => $result->apellidop,
-                        'apellidom' => $result->apellidom,
-                        'idplantel' => $result->idplantel,
-                        'idniveleducativo' => $result->idniveleducativo,
-                        'idtipousuario'=>$result->idtipousuario,
-                    ]);
-                    redirect('/Alumnos/');
+                if ($password === 'admin') {
+                    if (password_verify($password, $result->password)) { 
+                        redirect('/Welcome/cambiar/' . $this->encode($result->idalumno));
+                    } else {
+                        $this->session->set_flashdata('err', 'Matricula o Contraseña son incorrectos.');
+                        redirect('/');
+                    }
                 } else {
-                    $this->session->set_flashdata('err', 'Matricula o Contraseña son incorrectos.');
-                    redirect('/');
+                    if (password_verify($password, $result->password)) {
+
+                        $this->session->set_userdata([
+                            'user_id' => $result->id,
+                            'idalumno' => $result->idalumno,
+                            'nombre' => $result->nombre,
+                            'apellidop' => $result->apellidop,
+                            'apellidom' => $result->apellidom,
+                            'idplantel' => $result->idplantel,
+                            'idniveleducativo' => $result->idniveleducativo,
+                            'idtipousuario' => $result->idtipousuario
+                        ]);
+                        redirect('/Alumnos/');
+                    } else {
+                        $this->session->set_flashdata('err', 'Matricula o Contraseña son incorrectos.');
+                        redirect('/');
+                    }
                 }
             } else {
                 $this->session->set_flashdata('err', 'Matricula o Contraseña son incorrectos.');
                 redirect('/');
             }
-        } else{
+        } else {
             $this->load->view('login');
         }
-        
+    }
+    public function cambiar($id){
+        $id = $this->decode($id);
+        if(isset($id) && !empty($id)){
+            $data = array(
+                'id'=>$id
+            );
+            $this->load->view('cambiar',$data);
+        }else{
+            $this->load->view('login');
+        }
        
- 
     }
 
+    public function cambiar_password()
+    {
+        $id = $_POST['data'];
+        $password = $_POST['password'];
+        $password_encriptado = password_hash($password, PASSWORD_DEFAULT);
+        $data = array(
+            'password' => $password_encriptado
+        );
+        $modificar = $this->usuario->updateAlumno($id, $data);
+        if ($modificar) {
+            $datos = $this->usuario->datosAlumno($id);
+            $matricula = $datos->matricula;
+            $result = $this->usuario->loginAlumno($matricula); 
+            if ($result) { 
+                $this->session->set_userdata([
+                    'user_id' => $result->id,
+                    'idalumno' => $result->idalumno,
+                    'nombre' => $result->nombre,
+                    'apellidop' => $result->apellidop,
+                    'apellidom' => $result->apellidom,
+                    'idplantel' => $result->idplantel,
+                    'idniveleducativo' => $result->idniveleducativo,
+                    'idtipousuario' => $result->idtipousuario
+                ]);
+                $this->session->set_flashdata('informacion_exito', 'Se cambio la contraseña con exito!!.');
+                redirect('/Alumnos/');
+            } else {
+                $this->session->set_flashdata('err', 'No se pudo cambiar su Contraseña.');
+                redirect('/');
+            }
+        }else{
+            $this->session->set_flashdata('err', 'No se pudo cambiar su Contraseña.');
+            redirect('/');
+        }
+    }
     public function docente() {
         $this->load->library('session');
         if ($this->session->idtipousuario == 1) {

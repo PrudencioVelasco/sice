@@ -2717,7 +2717,136 @@ class pGrupo extends CI_Controller
             $objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5');
             // Hacemos una salida al navegador con el archivo Excel.
             $objWriter->save('php://output');
-        }
+        }       
+  /*       else if ((isset($this->session->idniveleducativo) && ! empty($this->session->idniveleducativo)) && ($tiporeporte == 29 && $this->session->idniveleducativo == 3)) {
+            $this->load->library('tcpdf');
+            $hora = date("h:i:s a");
+            $fechaactual = date('d/m/Y');
+            
+            $detalle_logo = $this->alumno->logo($this->session->idplantel);
+             
+            $logo = base_url() . '/assets/images/escuelas/' . $detalle_logo[0]->logoplantel;
+            $logo2 = base_url() . '/assets/images/escuelas/' . $detalle_logo[0]->logosegundo;
+             
+           
+            $unidades = $this->calificacion->unidades($this->session->idplantel);
+            $materias = $this->calificacion->materiasGrupo($idperiodo, $idgrupo);
+            
+            
+            $pdf = new Pdf('P', 'mm', 'A4', true, 'UTF-8', false);
+            $pdf->SetTitle('Boleta de Calificaciones.');
+            $pdf->SetHeaderMargin(30);
+            $pdf->SetTopMargin(10);
+            $pdf->setFooterMargin(20);
+            $pdf->SetAutoPageBreak(true);
+            $pdf->SetAuthor('Author');
+            $pdf->SetDisplayMode('real', 'default');
+            $pdf->setPrintHeader(false);
+            $pdf->setPrintFooter(false);
+            
+            $pdf->SetMargins(15, 15, 15);
+            $pdf->SetHeaderMargin(15);
+            $pdf->SetFooterMargin(15);
+            
+            $pdf->SetAutoPageBreak(TRUE, 15);
+            $pdf->AddPage();
+            $tabla = '
+        <style type="text/css">
+        .txtn {
+          font-size: 7px;
+          color: #365f91;
+          font-family: sans-serif;
+      }
+                
+      .clave {
+          font-size: 7px;
+          color: #365f91;
+          font-family: sans-serif;
+      }
+                
+      .slogan {
+          font-size: 6px;
+          font-family: sans-serif;
+      }
+                
+      .nombreplantel {
+          font-size: 9px;
+          font-weight: bold;
+          color: #1f497d;
+          font-family: sans-serif;
+      }
+                
+      .tipoplantel {
+          font-size: 7px;
+          padding: 0px;
+          margin: 0px;
+          color: #365f91;
+          font-family: sans-serif;
+      }
+                
+      .titulo {
+          font-size: 9px;
+          text-align: center;
+          font-family: sans-serif;
+      }
+                
+      .secondtxt {
+          font-size: 5px;
+          font-family: sans-serif;
+          vertical-align:middle;
+      }
+      .thirdtxt {
+          font-size: 7px;
+          font-family: sans-serif;
+      }
+                
+      .bg-prom {
+          background-color: #ccc;
+      }
+      tblborder  {
+          border-spacing:0.5rem;
+      }
+      tblborder {
+        border-collapse:collapse;
+      }
+       .tblhorario tr td
+       {
+        border:0px solid black;
+       }
+        .tituloalumno{
+         font-size: 7px;
+          font-family: sans-serif;
+                
+    }
+      </style>
+                
+      <body>
+      <table width="500" border="0" cellpadding="0" class="tblborder" cellspacing="0">
+      <tr>
+      <td width="120" align="center">
+      <img src="' . $logo2 . '" width="150" height="90" />
+      </td>
+      <td colspan="2" width="260" align="center">
+      <label class="slogan">"' . str_replace("INSTITUTO MORELOS", "", $detalle_logo[0]->nombreplantel) . '"</label><br />
+      <label class="nombreplantel">' . str_replace("VALOR Y CONFIANZA", "", $detalle_logo[0]->nombreplantel) . '</label><br />
+      <label class="tipoplantel">' . $detalle_logo[0]->asociado . '</label><br />
+      <label class="clave">CCT. ' . $detalle_logo[0]->clave . '</label><br />
+      <label class="txtn">Incorporado a la Dirección General del Bachillerato - Modalidad Escolarizada</label
+      ><br />
+      <label class="txtn">RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorporación y Revalidación</label>
+      </td>
+      <td width="120" align="center">
+      <img src="' . $logo . '" width="150" height="70" />
+      </td>
+      </tr>
+      
+      </table>';
+            $pdf->writeHTML($tabla, true, false, false, false, '');
+            
+            ob_end_clean();
+            
+            $pdf->Output('Boleta de Calificaciones', 'I');
+        } */
        else if ((isset($this->session->idniveleducativo) && ! empty($this->session->idniveleducativo)) && ($tiporeporte == 29 && $this->session->idniveleducativo == 5)) {
             $detalle_logo = $this->alumno->logo($this->session->idplantel);
             $detalle_horario_p = $this->horario->detalleHorario($idhorario);
@@ -4139,8 +4268,12 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                         if ($val) {
                             $idcalificacion = $val->idcalificacion;
                             $tabla .= '<td>';
-                            $suma_calificacion = $suma_calificacion + $val->calificacion;
-                            $tabla .= '<label>' . numberFormatPrecision($val->calificacion,1) . '  </label>';
+                            if($val->calificacion > 0){
+                                $suma_calificacion = $suma_calificacion + $val->calificacion;
+                                $tabla .= '<label>' . numberFormatPrecision($val->calificacion,1) . '  </label>';
+                            }else{
+                                $tabla .= '<small><strong>No lleva este curso.</strong></small>';
+                            }
                             $tabla .= '</td>';
                             $row_faltas = $this->grupo->totalAsistencias($idunidad, $idhorariodetalle, $idalumno);
 

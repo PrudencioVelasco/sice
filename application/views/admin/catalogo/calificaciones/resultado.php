@@ -155,6 +155,7 @@
                     <div class="form-group">
                         <input class="form-control idhorario" type="hidden" name="idhorario"> 
                          <input class="form-control idalumno" type="hidden" name="idalumno"> 
+                         <input class="form-control idunidad" type="hidden" name="idunidad"> 
                     </div> 
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12 ">
@@ -331,6 +332,13 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $('#tablageneralcal').DataTable({
+         "order":[],
+        "columnDefs":[
+        	{
+				"targets":'no-sort',
+				"orderable":false        	
+        	}
+        ],
             keys: true,
             "scrollX": true,
             dom: 'Bfrtip',

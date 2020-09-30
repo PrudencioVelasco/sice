@@ -2197,6 +2197,7 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
                 $idalumno = $this->input->post('idalumno');
                 $data = array(
                     'idalumnoestatus' => $idestatus,
+                    'idusuario' => $this->session->user_id,
                     'fecharegistro' => date('Y-m-d H:i:s')
                 );
                 $value = $this->alumno->updateEstatusAlumno($idalumno, $data);

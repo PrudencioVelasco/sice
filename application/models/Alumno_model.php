@@ -840,7 +840,6 @@ GROUP BY hd.idmateria) tabla");
                                         WHERE
                                             (pe.activo = 1 OR h.activo = 1))
             GROUP BY c.idhorariodetalle, c.idalumno");
-        //  return $query->result();
 
         if ($query->num_rows() > 0) {
             return $query->result();

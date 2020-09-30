@@ -192,7 +192,7 @@
                                                                     </td>
                                                                     <td>
                                                                         <input type="number" minlength="0.00"
-                                                                               maxlength="100.00" name="calificacion[]"  class="form-control"  placeholder="30.0" >
+                                                                               maxlength="10.00" name="calificacion[]"  class="form-control"  placeholder="10.0" >
                                                                     </td> 
                                                                 </tr>
                                                                 <?php

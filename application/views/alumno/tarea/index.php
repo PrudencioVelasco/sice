@@ -15,6 +15,18 @@
                         <div class="clearfix"></div>
                     </div>
                     <div class="x_content"> 
+                     <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+ 
+               <?php if (isset($_SESSION['informacion_exito'])): ?>
+                <div class="alert alert-success" role="alert">
+                    <h4 class="alert-heading">EXITO!</h4>
+                    <p>SE CAMBIO LA CONTRASEÑA CON EXITO.</p> 
+                </div>
+            <?php endif ?>
+        </div>  
+    </div>
+ 
                         <div class="row"> 
                             <div id="apptarea">
                                 <div class="container">
