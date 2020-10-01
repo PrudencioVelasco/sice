@@ -46,6 +46,7 @@
                                     </li>
                                     <li>
                                         <i class="fa fa-check-circle " style="color:#0cb62c;"></i> <label>{{alumno.nombreespecialidad}}</label>
+                                        <i class="fa fa-pencil" v-if="estatus_alumno" @click="abrirEditModalEspecialidad()" title="Modificar Beca."></i>
                                     </li>
                                     <li>
                                         <i class="fa fa-check-circle " style="color:#0cb62c;"></i> <label>Beca: 

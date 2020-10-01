@@ -144,6 +144,17 @@ class Alumno extends CI_Controller {
             echo json_encode($result);
         }
     }
+    public function especialidadAlumno() {
+        //$id = $this->input->get('idalumno');
+        $idplantel = $this->session->idplantel;
+        $query = $this->alumno->showAllEspecialidades($idplantel);
+        if ($query) {
+            $result['especialidades'] = $this->alumno->showAllEspecialidades($idplantel);
+        }
+        if (isset($result) && !empty($result)) {
+            echo json_encode($result);
+        }
+    }
 
     public function estatusAlumno(){
         $id = $this->input->get('idalumno');
@@ -2025,6 +2036,56 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
         }
     }
 
+    public function asignarEspecialidad()
+    {
+        if (Permission::grantValidar(uri_string()) == 1) {
+            $config = array(
+                array(
+                    'field' => 'idalumno',
+                    'label' => 'Ciclo Escolar',
+                    'rules' => 'trim|required',
+                    'errors' => array(
+                        'required' => 'No se encuentra el ID Alumno.'
+                    )
+                ),
+                array(
+                    'field' => 'idespecialidad',
+                    'label' => 'Seleccionar el Especialidad.',
+                    'rules' => 'trim|required',
+                    'errors' => array(
+                        'required' => 'Seleccionar la Especialidad.'
+                    )
+                )
+            );
+            $this->form_validation->set_rules($config);
+            if ($this->form_validation->run() == FALSE) {
+                $result['error'] = true;
+                $result['msg'] = array(
+                    'idalumno' => form_error('idalumno'),
+                    'idespecialidad' => form_error('idespecialidad')
+                );
+            } else {
+                $idalumno = $this->input->post('idalumno');
+                $idespecialidad = $this->input->post('idespecialidad');
+
+                $data = array(
+                    'idespecialidad' => $idespecialidad,
+                    'idusuario' => $this->session->user_id,
+                    'fecharegistro' => date('Y-m-d H:i:s')
+                );
+                $value = $this->alumno->updateAlumno($idalumno, $data);
+            }
+        } else {
+            $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
+            );
+        }
+
+        if (isset($result) && ! empty($result)) {
+            echo json_encode($result);
+        }
+    }
     public function asignarGrupo() {
         if (Permission::grantValidar(uri_string()) == 1) {
             $config = array(

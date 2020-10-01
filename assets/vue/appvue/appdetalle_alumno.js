@@ -31,6 +31,7 @@ var vede = new Vue({
         calificacion:[],
         becas:[],
         estatus:[],
+		especialidades:[],
         asignarGrupo: {
             idalumno: my_var_2,
             idcicloescolar:'',
@@ -45,6 +46,11 @@ var vede = new Vue({
         asignarEstatus:{
             idalumno: my_var_2,
             idestatus: '',
+            msgerror: ''
+        },
+		asignarEspecialidad:{
+            idalumno: my_var_2,
+            idespecialidad: '',
             msgerror: ''
         },
         
@@ -62,7 +68,7 @@ var vede = new Vue({
         this.showAllBecas();
         this.showAllEstatus();
         this.calificacionAlumno();
-        
+        this.especialidadAlumno();
     },
     methods: {
         abrirAddModalAsignarGrupo() {
@@ -85,6 +91,9 @@ var vede = new Vue({
         },
         abrirEditModalCambiarEstatus() {
             $('#editEstatus').modal('show');
+        },
+ 	 abrirEditModalEspecialidad() {
+            $('#editEspecialidad').modal('show');
         },
         selectRegistro(row) {
             vede.chooseRegistro = row;
@@ -120,6 +129,14 @@ var vede = new Vue({
                     idalumno: this.idalumno
                 }
             }).then(response => (this.beca_actual = response.data.becaactual));
+
+        },
+  	especialidadAlumno() {
+            axios.get(this.url + "Alumno/especialidadAlumno/", {
+                params: {
+                    idalumno: this.idalumno
+                }
+            }).then(response => (this.especialidades = response.data.especialidades));
 
         },
         estatusAlumno() {
@@ -241,6 +258,31 @@ var vede = new Vue({
                 }
             })
         },
+		addEspecialidad(){
+			vede.error = false;
+            vede.cargando = true;
+            var formData = v.formData(vede.asignarEspecialidad);
+            //formData.append('idalumno', vede.estatus_alumno.idalumno);
+
+            axios.post(this.url + "Alumno/asignarEspecialidad", formData).then(function (response) {
+                if (response.data.error) {
+                    vede.formValidate = response.data.msg;
+                    vede.error = true;
+                    vede.cargando = false;
+                } else {
+                    swal({
+                        position: 'center',
+                        type: 'success',
+                        title: 'Exito!',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+
+                    vede.clearAll();
+
+                }
+            })
+		},
         addEstatus() {
             vede.error = false;
             vede.cargando = true;
@@ -298,6 +340,7 @@ var vede = new Vue({
             $('#editBeca').modal('hide');
             $('#subirFoto').modal('hide');
             $('#editEstatus').modal('hide');
+			$('#editEspecialidad').modal('hide');
             vede.detalleAlumno();
             vede.grupoActual();
             vede.becaActual();
@@ -305,6 +348,7 @@ var vede = new Vue({
             vede.formValidate = false; 
             vede.error = false;
             vede.cargando = false; 
+ 			vede.especialidadAlumno(); 
             vede.asignarGrupo ={
                 idalumno: vede.idalumno,
                 idcicloescolar: '',

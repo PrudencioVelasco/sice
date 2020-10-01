@@ -76,6 +76,7 @@ class Alumno_model extends CI_Model
             return false;
         }
     }
+    
 
     public function becaAlumno($idalumno = '')
     {
@@ -805,8 +806,7 @@ GROUP BY hd.idmateria) tabla");
         $this->db->join('tblespecialidad e', 't.idespecialidad = e.idespecialidad');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
-            return $query->result();
-            //return $query->first_row();
+            return $query->result(); 
         } else {
             return false;
         }
@@ -1163,6 +1163,7 @@ GROUP BY hd.idmateria) tabla");
     public function detalleAlumno($idalumno)
     {
         $this->db->select('t.*, 
+    e.idespecialidad,
          e.nombreespecialidad,
          p.clave,
          p.nombreplantel, 
