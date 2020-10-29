@@ -14,7 +14,14 @@ class Tarea_model extends CI_Model {
     }
 
     public function showAll($idusuario = '',$idhorariodetalle = '') {
-        $this->db->select("t.idtarea, t.titulo, t.tarea,t.horaentrega as horaentregareal, DATE_FORMAT(t.horaentrega,'%h:%i %p') as horaentrega, DATE_FORMAT(t.fechaentrega,'%d/%m/%Y') as fechaentrega, t.iddocumento,t.fechaentrega as fechaentregareal");
+        $this->db->select("t.idtarea, 
+                           t.titulo, 
+                            t.tarea,
+                            t.horaentrega as horaentregareal, 
+                            DATE_FORMAT(t.horaentrega,'%h:%i %p') as horaentrega, 
+DATE_FORMAT(t.fechaentrega,'%d/%m/%Y') as fechaentrega, 
+t.iddocumento,
+t.fechaentrega as fechaentregareal");
         $this->db->from('tbltareav2 t');
         $this->db->where('t.eliminado', 0);
         if (isset($idusuario) && !empty($idusuario)) {
@@ -44,7 +51,18 @@ class Tarea_model extends CI_Model {
             return false;
         }
     }
-
+    public function validarResponderTarea($idtarea, $idalumno) {
+        $this->db->select("dt.*");
+        $this->db->from('tbldetalle_tarea dt');
+        $this->db->where('dt.idtarea', $idtarea);
+        $this->db->where('dt.idalumno', $idalumno);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
     public function validarTarea($idtarea, $idusuario) {
         $this->db->select("t.idtarea, t.titulo, t.tarea,t.horaentrega, DATE_FORMAT(t.fechaentrega,'%d/%m/%Y') as fechaentrega,t.fechaentrega as fechaentregareal");
         $this->db->from('tbltareav2 t');
@@ -98,6 +116,17 @@ class Tarea_model extends CI_Model {
             return false;
         }
     }
+    public function documentosTareaProfesor($idtarea) {
+        $this->db->select("dt.iddocumento,dt.nombredocumento");
+        $this->db->from('tbldocumento_tarea dt'); 
+        $this->db->where('dt.idtarea', $idtarea);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
     public function detalleRespuestaTareaAlumno($idtarea,$idalumno) {
          $this->db->select("dt.mensaje,dt.nombrearchivo,et.idestatustarea, dt.observacionesdocente, dt.iddocumento, dt.fecharegistro, et.nombreestatus");
         $this->db->from('tbltareav2 t');
@@ -119,9 +148,24 @@ class Tarea_model extends CI_Model {
         $insert_id = $this->db->insert_id();
         return $insert_id;
     }
-     public function addDetalleTarea($data) {
+
+    public function addDocumentTarea($data){
+        $this->db->insert('tbldocumento_tarea', $data);
+        $insert_id = $this->db->insert_id();
+        
+        return $insert_id;
+    }
+
+    public function addDetalleTarea($data) {
         $this->db->insert('tbldetalle_tarea', $data);
         $insert_id = $this->db->insert_id();
+        return $insert_id;
+    }
+
+    public function addDocumentRespuestaTarea($data){
+        $this->db->insert('tbldocumento_alumno', $data);
+        $insert_id = $this->db->insert_id();
+        
         return $insert_id;
     }
 
@@ -135,6 +179,13 @@ class Tarea_model extends CI_Model {
         }
     }
 
+    public function updateDocumentoTarea($data){ //Funcion para agregar documento al actualizar la tarea en caso de que seleccione mas docs.
+        $this->db->insert('tbldocumento_tarea', $data);
+        $insert_id = $this->db->insert_id();
+        
+        return $insert_id;
+    }
+
     public function updateDetalleTarea($id, $field) {
         $this->db->where('iddetalletarea', $id);
         $this->db->update('tbldetalle_tarea', $field);
@@ -144,9 +195,38 @@ class Tarea_model extends CI_Model {
             return false;
         }
     }
-
-    public function showAllAlumnosTarea($idhorario, $idprofesormateria = '', $idmateria, $idtarea) {
-
+    public function showAllTaresDetalleAlumno($idtarea,$idalumno)
+    {
+        $sql = "SELECT
+            	dt.iddetalletarea,
+            	dt.idtarea,
+            	dt.idalumno,
+                a.nombre,
+                a.apellidop,
+                a.apellidom,
+            	dt.iddocumento,
+            	dt.mensaje, 
+                dt.fecharegistro,
+                dt.calificacion,
+                dt.observacionesdocente,
+                SUBSTRING_INDEX(dt.nombrearchivo,'.',-1) as ext
+            FROM
+            	tbldetalle_tarea dt 
+            INNER JOIN tblalumno a ON
+                dt.idalumno = a.idalumno
+            WHERE dt.idtarea = $idtarea AND dt.idalumno = $idalumno
+            GROUP  BY dt.idalumno, dt.idtarea, dt.iddetalletarea ORDER BY dt.fecharegistro ASC ";
+ 
+        $query = $this->db->query($sql);
+        
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+    public function showAllAlumnosTarea($idhorario, $idprofesormateria = '', $idmateria, $idtarea)
+    {
         $sql = "         
 SELECT
     idalumno,
@@ -158,13 +238,7 @@ SELECT
     nombregrupo,
     opcion,
     estatustarea,
-    idestatustarea,
-    mensaje,
-    nombrearchivo,
-    iddocumento,
-    fecharegistro,
-    iddetalletarea,
-    observaciones
+FORMAT(calificacion,1) AS calificacion
 FROM
     (SELECT 
         a.idalumno,
@@ -176,14 +250,8 @@ FROM
             g.nombregrupo,
             1 AS opcion,
             hd.idmateria,
-            (SELECT nombreestatus FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS estatustarea,
-            (SELECT te.idestatustarea FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS idestatustarea,
-                  (SELECT dt.mensaje FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS mensaje,
-                (SELECT dt.observacionesdocente FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS observaciones,
-                        (SELECT dt.nombrearchivo FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS nombrearchivo,
-                              (SELECT dt.iddocumento FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS iddocumento,
-                                   (SELECT DATE_FORMAT(dt.fecharegistro,'%d/%m/%Y %h:%i %p') FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS fecharegistro,
-                                        (SELECT dt.iddetalletarea FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS iddetalletarea
+           COALESCE( (SELECT COUNT(dt.idalumno) FROM tbldetalle_tarea dt WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea),0) AS estatustarea,
+  COALESCE( (SELECT ( SUM(dt.calificacion) / COUNT(dt.idalumno)) FROM tbldetalle_tarea dt WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea),0) AS calificacion
             
     FROM
         tblalumno a
@@ -198,7 +266,7 @@ FROM
             AND (h.activo = 1 OR p.activo = 1)
             AND ag.activo = 1
             AND h.idhorario = $idhorario";
-        if (isset($idmateria) && !empty($idmateria)) {
+        if (isset($idmateria) && ! empty($idmateria)) {
             $sql .= " AND a.idalumno NOT IN (SELECT 
     ag.idalumno
 FROM
@@ -221,14 +289,8 @@ WHERE
             g.nombregrupo,
             0 AS opcion,
             hd.idmateria,
-            (SELECT nombreestatus FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS estatustarea,
-            (SELECT te.idestatustarea FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS idestatustarea,
-                  (SELECT dt.mensaje FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS mensaje,
-  (SELECT dt.observacionesdocente FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS observaciones,
-                        (SELECT dt.nombrearchivo FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS nombrearchivo,
-                              (SELECT dt.iddocumento FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS iddocumento,
-                                    (SELECT DATE_FORMAT(dt.fecharegistro,'%d/%m/%Y %h:%i %p') FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS fecharegistro,
-                                         (SELECT dt.iddetalletarea FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS iddetalletarea
+            COALESCE( (SELECT COUNT(dt.idalumno) FROM tbldetalle_tarea dt WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea),0) AS estatustarea,
+ COALESCE( (SELECT ( SUM(dt.calificacion) / COUNT(dt.idalumno)) FROM tbldetalle_tarea dt WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea),0) AS calificacion
     FROM
         tblalumno a
     INNER JOIN tblalumno_grupo ag ON a.idalumno = ag.idalumno
@@ -241,7 +303,7 @@ WHERE
     INNER JOIN tblperiodo p ON p.idperiodo = h.idperiodo
     WHERE
         (h.activo = 1 OR p.activo = 1)";
-        if (isset($idprofesormateria) && !empty($idprofesormateria)) {
+        if (isset($idprofesormateria) && ! empty($idprofesormateria)) {
             $sql .= " AND dr.idprofesormateria = $idprofesormateria";
         }
         $sql .= " AND mr.estatus = 1  AND dr.idhorario = $idhorario GROUP BY ag.idalumno) alumnos
@@ -271,12 +333,7 @@ WHERE
     nombregrupo,
     opcion,
     estatustarea,
-    idestatustarea,
-    mensaje,
-    nombrearchivo,
-    iddocumento,
-    fecharegistro,
-    iddetalletarea
+FORMAT(calificacion,1) AS calificacion
 FROM
     (SELECT 
         a.idalumno,
@@ -288,14 +345,8 @@ FROM
             g.nombregrupo,
             1 AS opcion,
             hd.idmateria,
-            (SELECT nombreestatus FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS estatustarea,
-            (SELECT te.idestatustarea FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS idestatustarea,
-                  (SELECT dt.mensaje FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS mensaje,
-                        (SELECT dt.nombrearchivo FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS nombrearchivo,
-                              (SELECT dt.iddocumento FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS iddocumento,
-                                    (SELECT DATE_FORMAT(dt.fecharegistro,'%d/%m/%Y %h:%i %p') FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS fecharegistro,
-                                        (SELECT dt.iddetalletarea FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS iddetalletarea
-            
+COALESCE( (SELECT COUNT(dt.idalumno) FROM tbldetalle_tarea dt WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea),0) AS estatustarea,
+  COALESCE( (SELECT ( SUM(dt.calificacion) / COUNT(dt.idalumno)) FROM tbldetalle_tarea dt WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea),0) AS calificacion
     FROM
         tblalumno a
     INNER JOIN tblalumno_grupo ag ON a.idalumno = ag.idalumno
@@ -333,14 +384,9 @@ WHERE
             g.nombregrupo,
             0 AS opcion,
             hd.idmateria,
-            (SELECT nombreestatus FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS estatustarea,
-            (SELECT te.idestatustarea FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS idestatustarea,
-                  (SELECT dt.mensaje FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS mensaje,
-                        (SELECT dt.nombrearchivo FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS nombrearchivo,
-                              (SELECT dt.iddocumento FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS iddocumento,
-                                    (SELECT DATE_FORMAT(dt.fecharegistro,'%d/%m/%Y %h:%i %p') FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS fecharegistro,
-                                         (SELECT dt.iddetalletarea FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea) AS iddetalletarea
-    FROM
+    COALESCE( (SELECT COUNT(dt.idalumno) FROM tbldetalle_tarea dt WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea),0) AS estatustarea,
+    COALESCE( (SELECT ( SUM(dt.calificacion) / COUNT(dt.idalumno)) FROM tbldetalle_tarea dt WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea),0) AS calificacion
+      FROM
         tblalumno a
     INNER JOIN tblalumno_grupo ag ON a.idalumno = ag.idalumno
     INNER JOIN tblmateria_reprobada mr ON mr.idalumnogrupo = ag.idalumnogrupo
@@ -367,7 +413,7 @@ WHERE
         }
     }
 
-    public function searchTareas($match, $idusuario = '',$idhorariodetalle = '') {
+    public function searchTareas($match, $idusuario = '',$idhorariodetalle = '',$fechainicio = '',$fechafin = '') {
         $field = 't.titulo,' . "' '" . ',t.fechaentrega';
 
         $this->db->select("t.idtarea, t.titulo, t.tarea,t.horaentrega as horaentregareal, DATE_FORMAT(t.horaentrega,'%h:%i %p') as horaentrega, DATE_FORMAT(t.fechaentrega,'%d/%m/%Y') as fechaentrega,t.fechaentrega as fechaentregareal");
@@ -378,6 +424,9 @@ WHERE
         }
           if (isset($idhorariodetalle) && !empty($idhorariodetalle)) {
             $this->db->where('t.idhorariodetalle', $idhorariodetalle);
+        }
+        if (!empty($fechainicio) && !empty($fechafin)) {
+            $this->db->where('t.fechaentrega BETWEEN "'. $fechainicio. '" and "'. $fechafin.'"');
         }
         $this->db->like('concat(' . $field . ')', $match);
         $query = $this->db->get();
@@ -404,8 +453,8 @@ WHERE
     t.titulo,
     DATE_FORMAT( t.fechaentrega,"%d/%m/%Y") AS fechaentrega,
     DATE_FORMAT( t.horaentrega, "%H:%i") AS horaentrega,
-     (SELECT te.nombreestatus  FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE   dt.idtarea = t.idtarea AND dt.idalumno = '.$idalumno.') AS estatus,
-      (SELECT te.idestatustarea  FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE   dt.idtarea = t.idtarea AND dt.idalumno = '.$idalumno.') AS idestatustarea
+    FORMAT( COALESCE((SELECT SUM(dt.calificacion)/COUNT(dt.calificacion)  FROM tbldetalle_tarea dt WHERE   dt.idtarea = t.idtarea AND dt.idalumno = '.$idalumno.'),0),1) AS calificacion,
+     COALESCE((SELECT COUNT(dt.calificacion) FROM tbldetalle_tarea dt WHERE   dt.idtarea = t.idtarea AND dt.idalumno = '.$idalumno.'),0) AS estatus
 FROM
     tblhorario_detalle hd
       INNER  JOIN
@@ -417,7 +466,7 @@ FROM
        INNER  JOIN
     tbltareav2 t ON t.idhorariodetalle = hd.idhorariodetalle
 WHERE
-    hd.idhorario = "'.$idhorario.'" AND t.eliminado = 0';
+    hd.idhorario = "'.$idhorario.'" AND t.eliminado = 0 ORDER BY t.fecharegistro DESC';
        $query = $this->db->query($sql);
         if ($query->num_rows() > 0) {
             return $query->result();
@@ -426,7 +475,7 @@ WHERE
         }
     }
         public function searchTareasAlumnoMateria($match,$idhorario,$idalumno) {
-        $sql = "SELECT titulo,nombreclase,idtarea,fechaentrega,horaentrega,estatus,idestatustarea FROM (SELECT 
+        $sql = "SELECT titulo,nombreclase,idtarea,fechaentrega,horaentrega,estatus,calificacion FROM (SELECT 
     t.idnotificacionalumno,
     t.idnotificaciontutor,
     hd.idhorariodetalle,
@@ -441,8 +490,8 @@ WHERE
     t.titulo,
     DATE_FORMAT( t.fechaentrega,'%d/%m/%Y') AS fechaentrega,
     DATE_FORMAT( t.horaentrega, '%H:%i') AS horaentrega,
-     (SELECT te.nombreestatus  FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE   dt.idtarea = t.idtarea AND dt.idalumno = $idalumno) AS estatus,
-      (SELECT te.idestatustarea  FROM tbldetalle_tarea dt INNER JOIN tblestatustarea te ON te.idestatustarea = dt.idestatustarea WHERE   dt.idtarea = t.idtarea AND dt.idalumno = $idalumno) AS idestatustarea
+       FORMAT( COALESCE((SELECT SUM(dt.calificacion)/COUNT(dt.calificacion)  FROM tbldetalle_tarea dt WHERE   dt.idtarea = t.idtarea AND dt.idalumno = $idalumno),0),1) AS calificacion,
+     COALESCE((SELECT COUNT(dt.calificacion) FROM tbldetalle_tarea dt WHERE   dt.idtarea = t.idtarea AND dt.idalumno = $idalumno),0) AS estatus
 FROM
     tblhorario_detalle hd
       INNER  JOIN
@@ -456,7 +505,7 @@ FROM
 WHERE
     hd.idhorario = $idhorario AND t.eliminado = 0) tabla";
         if(isset($match) && !empty($match)){
-      $sql .="  WHERE   concat( nombreclase,' ',titulo,' ',fechaentrega,' ',estatus) LIKE '%$match%'";
+      $sql .="  WHERE   concat(nombreclase,' ',titulo,' ',fechaentrega,' ',estatus) LIKE '%$match%'";
             }
        $query = $this->db->query($sql);
         if ($query->num_rows() > 0) {
@@ -465,6 +514,97 @@ WHERE
             return false;
         }
     }
-   
 
+    public function obtenerDocumentos($idtarea = ''){
+        if (!empty($idtarea)) {
+
+            $this->db->select("d.iddocumentotarea,d.iddocumento, d.nombredocumento,SUBSTRING_INDEX(d.nombredocumento,'.',-1) as extension");
+            $this->db->from('tbldocumento_tarea d');
+            $this->db->where('d.idtarea', $idtarea);
+            $query = $this->db->get();
+
+            if ($query->num_rows() > 0) {
+                return $query->result();
+            } else {
+                return false;
+            }        
+        }
+    }
+
+    public function obtenerDocumentosAlumno($iddetalletarea = ''){
+            $this->db->select("d.nombredocumento,SUBSTRING_INDEX(d.nombredocumento,'.',-1) as extension, d.iddocumento");
+            $this->db->from('tbldocumento_alumno d');
+            $this->db->where('d.iddetalletarea', $iddetalletarea);
+            $query = $this->db->get();
+            
+            if ($query->num_rows() > 0) {
+                return $query->result();
+            } else {
+                return false;
+            }
+        
+    }
+    
+    
+    public function deleteDocumentoAlumno($iddetalletarea = '') { //Funcion para el MODAL (Eliminar documentos)
+        if (!empty($iddetalletarea)) {
+            $this->db->where('iddetalletarea', $iddetalletarea);
+            $this->db->delete('tbldocumento_alumno');
+            if ($this->db->affected_rows() > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+    public function deleteDetalleTarea($iddetalletarea = '') { //Funcion para el MODAL (Eliminar documentos)
+        if (!empty($iddetalletarea)) {
+            $this->db->where('iddetalletarea', $iddetalletarea);
+            $this->db->delete('tbldetalle_tarea');
+            if ($this->db->affected_rows() > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+    public function deleteDocument($iddocumento = '') { //Funcion para el MODAL (Eliminar documentos)
+        if (!empty($iddocumento)) {
+            $this->db->where('iddocumentotarea', $iddocumento);
+            $this->db->delete('tbldocumento_tarea');
+            if ($this->db->affected_rows() > 0) {
+                return true;
+            } else {
+                return false;
+            }  
+        }
+    }
+    
+    public function deleteDocumentTarea($idtarea = '') { //Funcion para eliminar los documentos cuando se es eliminada directamente la tarea
+        if (!empty($idtarea)) {
+            $this->db->where('idtarea', $idtarea);
+            $this->db->delete('tbldocumento_tarea');
+            if ($this->db->affected_rows() > 0) {
+                return true;
+            } else {
+                return false;
+            }  
+        }
+    }
+
+ /*    public function obtenerDocumentosTareaAlumno($idtarea = ''){
+        if (!empty($idtarea)) {
+
+            $this->db->select("d.iddocumento");
+            $this->db->from('tbldocumento_alumno d');
+            $this->db->where('d.idtarea', $idtarea);
+            $query = $this->db->get();
+
+            if ($query->num_rows() > 0) {
+                return $query->result();
+            } else {
+                return false;
+            }        
+        }
+    } */
 }

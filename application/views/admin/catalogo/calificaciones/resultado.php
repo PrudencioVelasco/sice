@@ -109,8 +109,108 @@
     <!-- /footer content -->
 
 </div>
- 
 
+<div class="modal fade" id="modalAddCalificacion" tabindex="-1"
+	role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-hidden="true">&times;</button>
+				<h3 class="modal-title " id="myModalLabel">
+					ALUMNO(A): <label id="alumno_calificacion_add"></label>
+				</h3>
+			</div>
+			<form method="post" action="" id="frmaddcalificacion">
+				<div class="modal-body">
+					<div class="form-group">
+						<input class="form-control idalumno" type="hidden" name="idalumno">
+						<input class="form-control idhorario" type="hidden"
+							name="idhorario"> <input class="form-control idhorariodetalle"
+							type="hidden" name="idhorariodetalle"> <input
+							class="form-control idmes" type="hidden" name="idmes">
+					</div>
+					<div class="row">
+						<div class="col-md-6 col-sm-12 col-xs-12 ">
+							<div class="form-group">
+								<label><font color="red">*</font> Unidad</label> <select
+									class="form-control" style="border: solid 1px #ccc"
+									name="unidad">
+									<option value="">SELECCIONAR</option>
+                               		<?php
+                                if (isset($unidades) && ! empty($unidades)) {
+                                    foreach ($unidades as $unidad) {
+                                        echo '<option value="' . $unidad->idunidad . '">' . $unidad->nombreunidad . '</option>';
+                                    }
+                                }
+                                ?>
+                               </select>
+							</div>
+						</div>
+						<div class="col-md-6 col-sm-12 col-xs-12 ">
+							<div class="form-group">
+								<label><font color="red">*</font> Mes</label> <input type="text"
+									name="mes" style="border: solid 1px #ccc; padding-left: 5px;"
+									class="form-control nombremes" value="" disabled>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 col-sm-12 col-xs-12 ">
+							<div class="form-group">
+								<label><font color="red">*</font> Calificación</label> <input
+									type="text"
+									style="border-bottom: solid 1px #ccc; border-top: solid 1px #ccc; border-left: solid 1px #ccc; border-right: solid 1px #ccc; padding: 0 5px 0 5px;"
+									class="form-control" name="calificacion">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-danger" data-dismiss="modal">
+						<i class="fa fa-times"></i> CERRAR
+					</button>
+					<button type="button" id="btnaddcalificacion"
+						class="btn btn-primary">
+						<i class="fa fa-plus-circle"></i> AGREGAR
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="modalEditCalificacion" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3 class="modal-title " id="myModalLabel">ALUMNO(A): <label id="alumno_calificacion_edit"></label> </h3>
+            </div>
+            <form method="post" action="" id="frmeditarcalificacion">
+                <div class="modal-body"> 
+                    <div class="form-group">
+                        <input class="form-control idcalificacion" type="hidden" name="idcalificacion">  
+                         <input class="form-control iddetallecalificacion" type="hidden" name="iddetallecalificacion">  
+                    </div> 
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12 ">
+                            <div class="form-group">
+                                <label><font color="red">*</font> Calificación</label> 
+                                <input type="text" style="border-bottom: solid 1px #ccc; border-top: solid 1px #ccc; border-left: solid 1px #ccc; border-right: solid 1px #ccc; padding: 0 5px 0 5px;" class="form-control calificacion"   name="calificacion"> 
+                            </div>
+                        </div>  
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i>
+                        CERRAR</button>
+                    <button type="button" id="btneditarcalificacion" class="btn btn-primary"><i class="fa fa-pencil"></i>
+                        MODIFICAR</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 <div class="modal fade" id="modalAddFaltas" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">

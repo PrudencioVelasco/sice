@@ -61,7 +61,110 @@ $(document).ready(function() {
 		$("#alumno_diciplina_edit").text(nombre);
 	});
 	
+		$(document).on("click", '.add_button_calificacion', function(e) { 
+		var nombre = $(this).data('alumno');
+		var idhorario = $(this).data('idhorario');
+		var idalumno = $(this).data('idalumno');
+		var idhorariodetalle = $(this).data('idhorariodetalle'); 
+		var nombremes = $(this).data('nombremes');
+		var idmes = $(this).data('idmes'); 
+		$(".idhorariodetalle").val(idhorariodetalle);
+		$(".idalumno").val(idalumno);
+		$(".idhorario").val(idhorario); 
+		$(".nombremes").val(nombremes); 
+		$(".idmes").val(idmes); 
+		$("#alumno_calificacion_add").text(nombre);
+	});
+   $(document).on("click", '.edit_button_calificacion', function(e) { 
+		var nombre = $(this).data('alumno');
+		var calificacion = $(this).data('calificacion');
+		var idcalificacion = $(this).data('idcalificacion');
+		var iddetallecalificacion = $(this).data('iddetallecalificacion');
+		
+		$(".idcalificacion").val(idcalificacion);
+		$(".iddetallecalificacion").val(iddetallecalificacion);
+		$(".calificacion").val(calificacion);  
+		$("#alumno_calificacion_edit").text(nombre);
+	});
 	
+		$("#btnaddcalificacion").click(function () {
+        $('#btnaddcalificacion').prop("disabled", true);
+        $('#btnaddcalificacion').html(
+            `<span class="fa fa-spinner spinner-border-sm" role="status" aria-hidden="true"></span> PROCESANDO...`
+        ); 
+        $.ajax({
+            type: "POST",
+            url: my_var_1 +"Calificacion/addCalificacionAdmin",
+            data: $('#frmaddcalificacion').serialize(),
+            success: function (data) {
+                $('#btnaddcalificacion').prop("disabled", false);
+                $('#btnaddcalificacion').html(
+                    `<i class='fa fa-plus-circle'></i> AGREGAR`
+                );
+                var val = $.parseJSON(data); 
+                if ((val.success === "Ok")) {
+                    swal({
+                        position: 'center',
+                        type: 'success',
+                        title: 'Registrado!',
+                        text: 'Fue registrado las faltas con exito.',
+                        showConfirmButton: true
+                    }).then(function () {
+                        location.reload();
+                    });
+                } else {
+                    swal({
+                        type: 'info',
+                        title: 'Notificación',
+                        html: val.error,
+                        customClass: 'swal-wide',
+                        footer: ''
+                    }); 
+                }
+
+            }
+        })
+    });
+
+	 $("#btneditarcalificacion").click(function () {
+        $('#btneditarcalificacion').prop("disabled", true);
+        $('#btneditarcalificacion').html(
+            `<span class="fa fa-spinner spinner-border-sm" role="status" aria-hidden="true"></span> PROCESANDO...`
+        ); 
+        $.ajax({
+            type: "POST",
+            url: my_var_1 +"Calificacion/updteCalificacionAdmin",
+            data: $('#frmeditarcalificacion').serialize(),
+            success: function (data) {
+                $('#btneditarcalificacion').prop("disabled", false);
+                $('#btneditarcalificacion').html(
+                    `<i class='fa fa fa-pencil'></i> MODIFICAR`
+                );
+                var val = $.parseJSON(data); 
+                if ((val.success === "Ok")) {
+                    swal({
+                        position: 'center',
+                        type: 'success',
+                        title: 'Modificado!',
+                        text: 'Fue modificado los retardos con exito.',
+                        showConfirmButton: true
+                    }).then(function () {
+                        location.reload();
+                    });
+                } else {
+                    swal({
+                        type: 'info',
+                        title: 'Notificación',
+                        html: val.error,
+                        customClass: 'swal-wide',
+                        footer: ''
+                    }); 
+                }
+
+            }
+        })
+    });
+
 	  $("#btnaddfaltas").click(function () {
         $('#btnaddfaltas').prop("disabled", true);
         $('#btnaddfaltas').html(

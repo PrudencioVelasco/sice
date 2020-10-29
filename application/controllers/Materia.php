@@ -40,7 +40,7 @@ class Materia extends CI_Controller {
 
     public function showAll() {
         $query = $this->materia->showAll($this->session->idplantel);
-        //var_dump($query);
+
         if ($query) {
             $result['materias'] = $this->materia->showAll($this->session->idplantel);
         }
@@ -51,7 +51,7 @@ class Materia extends CI_Controller {
 
     public function showAllClasificaciones() {
         $query = $this->materia->showAllClasificaciones();
-        //var_dump($query);
+       
         if ($query) {
             $result['clasificaciones'] = $this->materia->showAllClasificaciones();
         }
@@ -62,7 +62,7 @@ class Materia extends CI_Controller {
 
     public function showAllNiveles() {
         $query = $this->materia->showAllNiveles();
-        //var_dump($query);
+     
         if ($query) {
             $result['niveles'] = $this->materia->showAllNiveles();
         }
@@ -73,7 +73,7 @@ class Materia extends CI_Controller {
 
     public function showAllEspecialidades() {
         $query = $this->materia->showAllEspecialidades($this->session->idplantel);
-        //var_dump($query);
+       
         if ($query) {
             $result['especialidades'] = $this->materia->showAllEspecialidades($this->session->idplantel);
             ;

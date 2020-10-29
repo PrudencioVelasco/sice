@@ -1357,12 +1357,10 @@ class pGrupo extends CI_Controller
             $fecha = $this->input->post('fecha');
             $numero_semana_enviado = date('W', strtotime($fecha));
             $semana_actual = date('W');
-            if ($semana_actual == $numero_semana_enviado) {
+            //if ($semana_actual == $numero_semana_enviado) {
                 $validar = $this->grupo->validarAgregarAsistencia($fecha, $idhorariodetalle, $idunidad);
                 if ($validar == false) {
                     foreach ($idalumno as $key => $value) {
-                        # code...
-                        // value es el idcliete
                         $idalumno2 = $value;
                         $motivo2 = $motivo[$key];
 
@@ -1386,11 +1384,11 @@ class pGrupo extends CI_Controller
                         'error' => 'Las Asistencias ya estan registradas para esta Fecha.'
                     ]);
                 }
-            } else {
+            /*} else {
                 echo json_encode([
                     'error' => 'Solo puedes trabajar en la semana actual.'
                 ]);
-            }
+            }*/
         } 
     }
 

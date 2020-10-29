@@ -11,7 +11,6 @@
                 <div class="x_panel">
                     <div class="x_title">
                         <h2><strong><i class="fa fa-book"></i> TAREAS</strong></h2>
-
                         <div class="clearfix"></div>
                     </div>
                     <div class="x_content"> 
@@ -20,8 +19,6 @@
                                 <div class="container">
                                     <div class="row"> 
                                         <div class="col-md-12  col-sm-12 col-xs-12">
-
-
                                             <div class="row">
                                                 <div class="col-md-6  col-sm-12 col-xs-12">
                                                 </div>
@@ -32,23 +29,27 @@
                                             <br>
                                             <table class="table table-hover table-striped">
                                                 <thead class="bg-teal">
-
-                                                <th class="text-white" v-column-sortable:titulo>TITULO </th>
-                                                <th class="text-white" v-column-sortable:nombreclase>ASIGNATURA </th>
-                                                <th class="text-white" v-column-sortable:estatus>ESTATUS </th>
-                                                <th class="text-white" v-column-sortable:fechaentrega>ENTREGAR ANTES DE: </th>
-                                                <th class="text-center text-white"> </th>
+                                                    <th class="text-white" v-column-sortable:titulo>TITULO </th>
+                                                    <th class="text-white" v-column-sortable:nombreclase>ASIGNATURA </th>
+                                                  <?php if(isset($this->session->idniveleducativo) && !empty($this->session->idniveleducativo) && $this->session->idniveleducativo != 2 ){ ?>
+                                            <th class="text-white" v-column-sortable:calificacion>CALIFICACIÓN </th>
+                                            <?php } ?>
+                                             <th class="text-white" v-column-sortable:estatus>ESTATUS </th>
+                                                    <th class="text-center text-white"> </th>
                                                 </thead>
                                                 <tbody class="table-light">
                                                     <tr v-for="row in tareas" class="table-default"> 
                                                         <td>{{row.titulo}}</td>
                                                         <td>{{row.nombreclase}}</td>
+                                                        <?php if(isset($this->session->idniveleducativo) && !empty($this->session->idniveleducativo) && $this->session->idniveleducativo != 2 ){ ?>
+                                                 <td>{{row.calificacion}}</td> 
+                                                  <?php } ?>
                                                         <td>
-                                                            <div v-if="!row.estatus" class="label bg-grey" >NO ENTREGADO</div>
-                                                            <div v-if="row.idestatustarea && row.idestatustarea == 1" class="label bg-green" >ENVIADO</div>
-                                                            <div v-if="row.idestatustarea && row.idestatustarea != 1" class="label bg-blue" >{{row.estatus}}</div>
-                                                        </td>
-                                                        <td>{{row.horaentrega}} {{row.fechaentrega}}</td> 
+                                                     
+                                                        <div v-if="row.estatus > 0 " class="label bg-green" >ENVIADO</div> 
+                                                        <div v-else class="label bg-grey" >NO ENTREGADO</div>
+                                                    </td>
+                                                        
                                                         <td align="right">
                                                             <a class="btn bg-cyan btn-block btn-xs waves-effect waves-black" href="#" v-bind:href="'/Tutores/detalletareav2/'+ row.idtarea+'/'+idhorario+'/'+idalumno">Detalles</a>
                                                         </td> 
@@ -60,41 +61,38 @@
                                                 <tfoot>
                                                     <tr>
                                                         <td colspan="6" align="right">
-                                                <pagination
-                                                    :current_page="currentPage"
-                                                    :row_count_page="rowCountPage"
-                                                    @page-update="pageUpdate"
-                                                    :total_users="totalTareas"
-                                                    :page_range="pageRange"
-                                                    >
-                                                </pagination>
-                                                </td>
+                                                            <pagination
+                                                            :current_page="currentPage"
+                                                            :row_count_page="rowCountPage"
+                                                            @page-update="pageUpdate"
+                                                            :total_users="totalTareas"
+                                                            :page_range="pageRange"
+                                                            >
+                                                        </pagination>
+                                                    </td>
                                                 </tr>
-                                                </tfoot>
-                                            </table>
-                                        </div>
-                                    </div>  
-                                </div>
-
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>  
                             </div>
-
-
-                        </div> 
-                    </div>
+                        </div>
+                    </div> 
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- footer content -->
-    <footer>
-        <div class="copyright-info">
-            <p class="pull-right">SICE - Sistema Integral para el Control Escolar</a>
-            </p>
-        </div>
-        <div class="clearfix"></div>
-    </footer>
-    <!-- /footer content -->
+<!-- footer content -->
+<footer>
+    <div class="copyright-info">
+        <p class="pull-right">SICE - Sistema Integral para el Control Escolar</a>
+        </p>
+    </div>
+    <div class="clearfix"></div>
+</footer>
+<!-- /footer content -->
 
 </div>
 <!-- /page content -->
@@ -109,4 +107,3 @@
     <div id="notif-group" class="tabbed_notifications"></div>
 </div>
 <script data-my_var_1="<?php echo base_url() ?>" data-my_var_2="<?php echo $controller->encode($idhorario); ?>"  data-my_var_3="<?php echo $controller->encode($idalumno); ?>" src="<?php echo base_url(); ?>/assets/vue/appvue/tutor/tarea/apptarea.js"></script> 
- 

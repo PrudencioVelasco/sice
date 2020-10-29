@@ -12,26 +12,20 @@ if (typeof my_var_3 === "undefined") {
     var my_var_3 = 'some_default_value';
 }
 Vue.config.devtools = true;
-Vue.use(CKEditor);
 var v = new Vue({
     el: '#appdetalletarea',
     data: {
-       editor: ClassicEditor,
-        editorData: '<p>Content of the editor.</p>',
-        editorConfig: {
-            // The configuration of the editor.
-              
-        },
         url: my_var_1,
         idtarea: my_var_2,
-		idalumno:my_var_3,
+        idalumno: my_var_3,
         addModal: false,
         editModal: false,
-        //deleteModal:false,
         cargando: false,
         error: false,
         tarea: [],
-        contestado:[],
+        contestado: [],
+        documentosTarea: {},
+        documentosAlumnos: {},
         emptyResult: false,
         file: '',
         responderTarea: {
@@ -42,11 +36,12 @@ var v = new Vue({
         chooseTarea: {},
         formValidate: [],
         successMSG: ''
-
     },
     created() {
         this.showTarea();
         this.showTareaContestado();
+        this.showDocumentosTarea();
+        this.showDocumentosEnviadosAlumno();
     },
     methods: {
         abrirAddModal() {
@@ -60,19 +55,30 @@ var v = new Vue({
                 params: {
                     idtarea: this.idtarea,
                 }
-            }).then(
-                    (response) => (this.tarea = response.data.tarea)
-            );
+            }).then((response) => (this.tarea = response.data.tarea));
         },
-          showTareaContestado() {
+        showTareaContestado() {
             axios.get(this.url + "Tarea/showdetalleRespuestaTareaAlumnoTutor", {
                 params: {
                     idtarea: this.idtarea,
-					idalumno: this.idalumno,
+                    idalumno: this.idalumno,
                 }
-            }).then(
-                    (response) => (this.contestado = response.data.contestado)
-            );
+            }).then((response) => (this.contestado = response.data));
+        },
+        showDocumentosEnviadosAlumno() {
+            axios.get(this.url + "Tarea/showDocumentosAlumno", {
+                params: {
+                    idtarea: this.idtarea,
+                    idalumno: this.idalumno,
+                }
+            }).then((response) => (v.documentosAlumnos = response.data.documentos));
+        },
+        showDocumentosTarea() {
+            axios.get(this.url + "Tarea/obtenerDocumentosTarea", {
+                params: {
+                    idtarea: this.idtarea,
+                }
+            }).then((response) => (v.documentosTarea = response.data.documentos));
         },
         onChangeFileUploadAdd() {
             this.file = this.$refs.fileadd.files[0];
@@ -83,8 +89,7 @@ var v = new Vue({
                 formData.append(key, obj[key]);
             }
             return formData;
-        }, 
-        
+        },
         selectTarea(tarea) {
             v.chooseTarea = tarea;
         },
@@ -96,7 +101,7 @@ var v = new Vue({
         clearAll() {
             $('#editRegister').modal('hide');
             $('#addRegister').modal('hide');
-               $("#fileadd").val(null);
+            $("#fileadd").val(null);
             v.formValidate = false;
             v.addModal = false;
             v.editModal = false;
@@ -107,8 +112,6 @@ var v = new Vue({
                 tarea: '',
                 smserror: ''
             }
-
         }
-
     }
 })

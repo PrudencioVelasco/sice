@@ -82,6 +82,17 @@ class Calificacion_model extends CI_Model {
             return false;
         }
     }
+    public  function  detalleMes($idmes){
+        $this->db->select('m.idmes, m.nombremes');
+        $this->db->from('tblmes m');
+        $this->db->where('m.idmes', $idmes); 
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
     public function detalleGrupo($idgrupo){
         $this->db->select('g.idgrupo, g.idnivelestudio');
         $this->db->from('tblgrupo g'); 
@@ -267,6 +278,7 @@ class Calificacion_model extends CI_Model {
         $this->db->join('tblunidad u', 'c.idunidad = u.idunidad');
         $this->db->where('c.idalumno', $idalumno);
         $this->db->where('c.idhorariodetalle', $idhorariodetalle); 
+       // $this->db->where('c.calificacion > 0'); 
         $query = $this->db->get();
         if ($this->db->affected_rows() > 0) {
             return $query->result();
@@ -274,14 +286,17 @@ class Calificacion_model extends CI_Model {
             return false;
         }
     }
-    public function obtenerCalificacionXUnidad($idalumno = '', $idunidad = '', $idmateria = '') {
+   
+    public function obtenerCalificacionXUnidad($idalumno = '', $idunidad = '', $idmateria = '',$idhorario) {
         $this->db->select('c.idcalificacion, c.calificacion');
         $this->db->from('tblcalificacion c');
         $this->db->join('tblunidad u', 'c.idunidad = u.idunidad');
         $this->db->join('tblhorario_detalle hd', 'hd.idhorariodetalle = c.idhorariodetalle');
+        $this->db->join('tblhorario h', 'hd.idhorario = h.idhorario');
         $this->db->where('c.idalumno', $idalumno);
         $this->db->where('hd.idmateria', $idmateria);
         $this->db->where('c.idunidad', $idunidad);
+        $this->db->where('h.idhorario', $idhorario);
         $query = $this->db->get();
         if ($this->db->affected_rows() > 0) {
             return $query->first_row();
@@ -289,6 +304,7 @@ class Calificacion_model extends CI_Model {
             return false;
         }
     }
+  
     
     public function obtenerCalificacionXOportunidad($idalumno = '', $idoportunidad = '', $idmateria = '') {
         $this->db->select('c.idcalificacion, c.calificacion');
@@ -372,14 +388,16 @@ class Calificacion_model extends CI_Model {
             return false;
         }
     }
-    public function calificacionXMes($idalumno,$idprofesormateria,$idmes){
-        $this->db->select('dc.calificacion');
+    public function calificacionXMes($idalumno,$idprofesormateria,$idmes,$idhorario){
+        $this->db->select('c.idcalificacion, dc.calificacion,dc.fecharegistro, dc.iddetallecalificacion');
         $this->db->from('tbldetalle_calificacion dc');
         $this->db->join('tblcalificacion c', 'c.idcalificacion = dc.idcalificacion');
         $this->db->join('tblhorario_detalle hd', 'hd.idhorariodetalle = c.idhorariodetalle');
+        $this->db->join('tblhorario h', 'h.idhorario = hd.idhorario');
         $this->db->where('c.idalumno', $idalumno); 
         $this->db->where('hd.idmateria', $idprofesormateria); 
         $this->db->where('dc.idmes', $idmes); 
+        $this->db->where('h.idhorario',$idhorario);
         $query = $this->db->get();
         if ($this->db->affected_rows() > 0) {
             return $query->first_row();
@@ -430,6 +448,33 @@ class Calificacion_model extends CI_Model {
             return false;
         }
     }
+    public function gradoAlumno($idalumno = '', $idperiodo = '',$idgrupo) {
+        $this->db->select('a.idespecialidad, g.idnivelestudio');
+        $this->db->from('tblalumno_grupo ag');
+        $this->db->join('tblhorario h', 'h.idperiodo = ag.idperiodo');
+        $this->db->join('tblgrupo g', 'g.idgrupo = ag.idgrupo');
+        $this->db->join('tblalumno a', 'a.idalumno = ag.idalumno');
+        $this->db->where('g.idgrupo = h.idgrupo');
+        $this->db->where('ag.idalumno', $idalumno);
+        $this->db->where('ag.idperiodo', $idperiodo);
+        $this->db->where('ag.idgrupo', $idgrupo);
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
+    public function materiasGrupoStoreProcedure($idespecialidad, $idnivelestudio, $idperiodo, $idgrupo) { 
+        $query = $this->db->query("CALL spMateriasGrupo($idespecialidad,$idnivelestudio,$idperiodo,$idgrupo)");
+        $res = $query->result();
+        //add this two line
+        $query->next_result();
+        $query->free_result();
+        //end of new code
+        return $res;
+    }
+    
     public function materiasGrupo($idperiodo, $idgrupo) {
         
         $sql =  "SELECT * FROM vwmateriasgrupo WHERE idperiodo = $idperiodo AND idgrupo = $idgrupo";
@@ -627,7 +672,7 @@ class Calificacion_model extends CI_Model {
         }
         
     }
-    public function obtenerCalificacionSumatoria($idalumno,$idmateria,$idperiodo) {
+    public function obtenerCalificacionSumatoria($idalumno,$idmateria,$idperiodo,$idhorario) {
         $this->db->select('(sum(c.calificacion)/(SELECT count(*) FROM tblunidad u WHERE u.idplantel = h.idplantel )) as calificacion, oe.numero, c.idoportunidadexamen,h.idperiodo, pm.idmateria, c.idalumno');
         $this->db->from('tblhorario_detalle hd');
         $this->db->join('tblcalificacion c', 'hd.idhorariodetalle = c.idhorariodetalle');
@@ -637,6 +682,7 @@ class Calificacion_model extends CI_Model {
         $this->db->where('hd.idmateria', $idmateria); 
         $this->db->where('c.idalumno', $idalumno); 
         $this->db->where('h.idperiodo', $idperiodo); 
+        $this->db->where('h.idhorario', $idhorario); 
         $this->db->order_by('oe.numero DESC');
         $this->db->group_by('c.idoportunidadexamen, c.idalumno,c.idhorario, pm.idmateria');
         

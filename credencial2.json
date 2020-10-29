@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "weighty-nation-288023",
+  "private_key_id": "c9f20d6e2d2e3d7758797df429200aaad8cfd5be",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCl3BhVWl2718uc\naYxCeRKbITuVOClfEv9Xxz7anz0AZm30ig0jGisIktxSeKT48Q+MjxaIotF6/4Y5\npIgxIulfjzKuxNlDNWTGdKxTO//uIyaN5KL5Dr3DkpD8rJh39wCtg1WQYH9A3/Jx\nGzylHLswRoyeeEEXVKhXAsw5KRg/dcFzgV3/afYmGOtFR5WMfASDML0vYvekVNFQ\ncjeTMk6aNAS3yjf3MNXiIwFIvoqi/hR37NUDOHvk1Onf/vnQsa9CBGkzmsAVwMMo\n8DQq6Ghn4qfwAnYCf5L2YrIMCAnFyJjPTkIb5wB5rsYXVY+tGrb1Za5NJiOUQ4+t\nclbIelZJAgMBAAECggEAEShM/htcge+HWRVUFJZItfKAouWN5g9libOLTXtWiKGP\n81GKnVx6IidrEj73tebd+Gje6GCLcgFX5cOe8RJO+Psrv4eOgBTYaW0tXGjjB0Ps\nm5YQw9niCIazZ+gE17geAlUJN2e8Ej54annqUpw/wvUxW71N4nd3+JRKAwm8v+eo\nQ6M9sb2JefmnsvoiVbwWzzQSu+36C4/3krPqX91m4iuMhPXdrXemlGhOrmvJ7qUy\n2jDy+Ba4SEeWAiDxo18br+NcOPtmI3p2iSnUaZxLRHZgdSGUNfDd/T7SrCTjl8Q4\nLBDaUtj53hKfIlS8Uoco3gcXjWVI83TXNRKaNGVX2QKBgQDgVCvOV5HXwrNbk0PH\nVi4pUO+pescOvKH1fWGaA7heGWhVI6f1KxFPFH6H/G2xhdVn4f8m17TPKQAShjmR\nQwHLCt+PA103E9erAXxs8r5pLIkG8Qn0Ja8GbtGMtfCxBznuabg1dOXsraaytXrr\nCMcP/K2hpEFMg7DFIOPS8hVQdQKBgQC9RrMjlawoJiTBzJErqAr2DVjs4x9bPlwF\nu48mObX9IaQHninm/O+DBmbAEoFIMKhOW4UTnPqNCJEH2K/zPMGUikD/tbh2EzOA\nbRHN/+4mjNUqrAI3wYxf0QAIqHuv8oEmR5C13sjcs7bEyOO82wYru1cTkgkr/67q\nuX/Vm9g0BQKBgQCpyoutjlJxAIlI0toGUpB17TC5Epj/6n6blN7+97ngX1K8vlQu\nGP7s4BI1Uzajmyy/iCrbd4D/G4VWgAmqjREaYYx8botrWLVwVZubys+cQ30jp+Vk\nyfED6XTqD/uxwkpyzcoDjAtLbNQzh3EV3Hru+s1g/zX9d9+gFRjbXSgM0QKBgHfr\nPUBEaeieEhe/NhLEyv0Ng9PCKnGy1rbDGHUNh2IzWCuDZ+TzSARpn9v9XW+RdHEA\nxxWgFZYZYVnpTcD8M2GbHodkaNRWYgDyGZ+8kPRXsg7xIA6XUAq87hqONJ9LM8w+\n905jMjuymQ+gf7l9wzEd5pN9qNX5jqckk/uQW7DJAoGBAKnSDhFZt2v1D5V2Chqs\n4dFElh8S/ENhfvAMwzX+f0Jlyz8VfFwf66WipQXrV1ZGl9nB+OvOMn7UFpDPGO7l\n8vo4YuENYIRlnXaP45Vhua80oiXP/RyK6BwZejIIteOf2UnK4iFsJj+ziIovGMUM\n8KQwwAgzYeqI7/wINnOnhlH6\n-----END PRIVATE KEY-----\n",
+  "client_email": "ftp-sice@weighty-nation-288023.iam.gserviceaccount.com",
+  "client_id": "107163332248110256161",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/ftp-sice%40weighty-nation-288023.iam.gserviceaccount.com"
+}

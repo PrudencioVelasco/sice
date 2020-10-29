@@ -366,6 +366,8 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 $hora = date('H:i', strtotime($hora_inicial));
                 $horafinal = $detalle_horario[0]->horafinal;
                 $iddia = $detalle_horario[0]->iddia;
+                $idhorario = $detalle_horario[0]->idhorario;
+                $idalumno = $this->session->idalumno;
                 $url = $detalle_horario[0]->urlvideoconferencia;
                 $numero_dia = date('N');
                 $nombre_dia = "";
@@ -397,25 +399,29 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 }
                 if ($iddia == $numero_dia) {
                     $fecha_actual = date('Y-m-d H:i:s'); 
-                    $hora_actual = strtotime('-5 minute', strtotime($hora_inicial));
+                    $hora_actual = strtotime('-3 minute', strtotime($hora_inicial));
                     $hora_actual_menos10minutos = date('H:i', $hora_actual);
                      $hora_actual_cero = date('H:i', strtotime($fecha_actual));
                     //$hora_actual_mas30minutos = date('H:i', strtotime('+30 minute', strtotime($hora)));
                     
                     $hora_termino_clase = date('H:i', strtotime($horafinal));
-                    //echo $hora_termino_clase;
-                    //echo $hora;
+                   
                     if (($hora_actual_cero >= $hora_actual_menos10minutos) && ($hora_actual_cero <= $hora_termino_clase)) {
                         // ENTRA A CLASES PORQUE ESTA EN TIEMPO
                         $data = array(
                             'opcion' => 1,
                             'url' => $url
                         );
+                        //VALIDAR SI LA ASISTENCIA YA ESTA REGISTRADA
+                        
+                        //AGREGAR LA ASISTENCIA DEL ALUMNO
+                         
+                        
                     } else {
                         // NO PUEDE ENTRAR A CLASES PORQUE ES TEMPRANO O YA ES TARDE
                         $data = array(
                             'opcion' => 2,
-                            'mensaje' => 'PUEDE ENTRAR A LA CLASE 5 MINUTOS ANTES O ANTES DE TERMINAR.'
+                            'mensaje' => 'PUEDE ENTRAR A LA CLASE 3 MINUTOS ANTES O ANTES DE TERMINAR.'
                         );
                     }
                 } else {

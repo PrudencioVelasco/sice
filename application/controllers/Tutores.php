@@ -1081,7 +1081,7 @@ class Tutores extends CI_Controller
         $idalumno = $this->decode($idalumno);
         if ((isset($idtarea) && ! empty($idtarea)) && (isset($idhorario) && ! empty($idhorario)) && (isset($idalumno) && ! empty($idalumno))) {
             $validar_tarea = $this->tarea->validarTareaAlumno($idtarea, $idhorario);
-            echo $idalumno;
+           
             if ($validar_tarea) {
                 $data = array(
                     'idtarea' => $idtarea,

@@ -85,6 +85,18 @@
                             </div>     
                             <div class="col-red" v-html="formValidate.unidades"></div>
                         </div>
+                    </div> 
+                    <div class="col-md-6 col-sm-12 col-xs-12 ">
+                        <div class="form-group">
+                                <label><font color="red">*</font> SE CALIFICA?</label>
+                                <div class="demo-radio-button" >  
+                                    <input name="group5" type="radio" id="radio_31" class="with-gap radio-col-green" v-model="newMateria.secalifica" value="1" />
+                                    <label for="radio_31">SI</label>
+                                    <input name="group5" type="radio" id="radio_32" class="with-gap radio-col-red"  v-model="newMateria.secalifica" value="0" />
+                                    <label for="radio_32">NO</label>
+                                </div>
+                                <div class="col-red" v-html="formValidate.secalifica"></div>
+                            </div>
                     </div>   
                 </div>  
             </div>
@@ -193,7 +205,19 @@
                             </div>      
                             <div class="col-red" v-html="formValidate.unidades"></div>
                         </div>
-                    </div>    
+                    </div>  
+                     <div class="col-md-6 col-sm-12 col-xs-12 ">
+                            <div class="form-group">
+                                <label for=""><font color="red">*</font> SE CALIFICA?</label><br> 
+                                <div class="demo-radio-button" >  
+                                    <input name="group5" type="radio" id="radio_31" class="with-gap radio-col-green" v-model="chooseMateria.secalifica" value="1" :checked="chooseMateria.secalifica==1" />
+                                    <label for="radio_31">SI</label>
+                                    <input name="group5" type="radio" id="radio_32" class="with-gap radio-col-red"  v-model="chooseMateria.secalifica" value="0" :checked="chooseMateria.secalifica==0" />
+                                    <label for="radio_32">NO</label>
+                                </div>
+
+                            </div>
+                        </div>  
                 </div> 
             </div>
             <div class="modal-footer">

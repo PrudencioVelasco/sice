@@ -7,26 +7,28 @@ var my_var_2 = this_js_script.attr('data-my_var_2');
 if (typeof my_var_2 === "undefined") {
     var my_var_2 = 'some_default_value';
 }
+ 
+
 Vue.config.devtools = true;
 Vue.use(VueCkeditor);
 var v = new Vue({
     el: '#appdetalletarea',
-  components: { VueCkeditor },
+    components: { VueCkeditor },
     data: {
         config: {
-        //toolbar: [
-        //  ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript']
-        //],
-        height: 300
-      },
+            height: 200
+        },
         url: my_var_1,
-        idtarea: my_var_2,
+        idtarea: my_var_2, 
         addModal: false,
         editModal: false,
         //deleteModal:false,
         cargando: false,
         error: false,
         tarea: [],
+        documentosTarea: {},
+        filesSend: [],
+        documentosAlumnos: {},
         contestado:[],
         emptyResult: false,
         file: '',
@@ -38,11 +40,11 @@ var v = new Vue({
         chooseTarea: {},
         formValidate: [],
         successMSG: ''
-
     },
     created() {
         this.showTarea();
         this.showTareaContestado();
+        this.showDocumentosTarea();  //Docs de la tarea 
     },
     methods: {
         abrirAddModal() {
@@ -56,21 +58,33 @@ var v = new Vue({
                 params: {
                     idtarea: this.idtarea,
                 }
-            }).then(
-                    (response) => (this.tarea = response.data.tarea)
-            );
+            }).then((response) => (this.tarea = response.data.tarea));
         },
-          showTareaContestado() {
+        showTareaContestado() {
             axios.get(this.url + "Tarea/showdetalleRespuestaTareaAlumno", {
+                params: {
+                    idtarea: this.idtarea 
+                }
+            }).then((response) => (this.contestado = response.data));
+        }, 
+        showDocumentosTarea() {
+            axios.get(this.url + "Tarea/obtenerDocumentosTarea", {
                 params: {
                     idtarea: this.idtarea,
                 }
-            }).then(
-                    (response) => (this.contestado = response.data.contestado)
-            );
+            }).then((response) => (v.documentosTarea = response.data));
         },
-        onChangeFileUploadAdd() {
-            this.file = this.$refs.fileadd.files[0];
+        onChangeFileUploadAdd(e) {
+            var selectedFiles = e.target.files;
+            for (let i = 0; i < selectedFiles.length; i++) {
+                this.filesSend.push(selectedFiles[i]);
+            }
+        },
+        removeElement : function(index){
+            this.filesSend.splice(index,1);
+            if (this.filesSend.length == 0) {
+                this.$refs.fileedit.value == '';
+            }
         },
         formData(obj) {
             var formData = new FormData();
@@ -80,9 +94,10 @@ var v = new Vue({
             return formData;
         }, 
         enviarTarea() { 
+			$('#btnenviartarea').prop("disabled", true);
             v.formValidate = false;
-              v.cargando = false;
-                     v.error = false;
+            v.cargando = false;
+            v.error = false;
             Swal.fire({
                 title: '¿Enviar Tarea?',
                 text: "Una vez enviado no se podra modificar o reenviar.",
@@ -93,11 +108,14 @@ var v = new Vue({
                 confirmButtonText: 'Enviar',
                 cancelButtonText: 'Cancelar'
             }).then((result) => {
-                if (result.value) { 
-                     v.cargando = true;
-                     v.error = false;
+                if (result.value) {
+                    v.cargando = true;
+                    v.error = false;
                     var formData = v.formData(v.responderTarea);
-                    formData.append('file', this.file);
+                    for( var i = 0; i < this.filesSend.length; i++ ){
+                        let file = this.filesSend[i];
+                        formData.append('files[' + i + ']', file);
+                    }
                     formData.append('idtarea', this.idtarea);
                     axios.post(this.url + "Tarea/responderTareaAlumno", formData, {
                         headers: {
@@ -105,29 +123,28 @@ var v = new Vue({
                         }
                     }).then(function (response) {
                         if (response.data.error) {
-                             v.formValidate = true;
-                            v.formValidate = response.data.msg;
-                            v.error = true;
-                            v.cargando = false;
-                        } else {
-                            swal({
-                                position: 'center',
-                                type: 'success',
-                                title: 'Enviado!',
-                                showConfirmButton: false,
-                                timer: 2000
-                            });
-                            v.showTareaContestado();
-                            v.clearAll();
-                            v.clearMSG();
-                        }
-                    }).catch((error) => {
-                        swal("Información", "No se puedo enviar tu Tarea, intente mas tarde.", "info");
-                    });
-                }
-            })
-
-
+                         v.formValidate = true;
+                         v.formValidate = response.data.msg;
+                         v.error = true;
+                         v.cargando = false;
+						 $('#btnenviartarea').prop("disabled", false);
+                     } else {
+                        swal({
+                            position: 'center',
+                            type: 'success',
+                            title: 'Enviado!',
+                            showConfirmButton: true,
+                           // timer: 2000
+                        });
+                        v.showTareaContestado(); 
+                        v.clearAll();
+                        v.clearMSG();
+                    }
+                }).catch((error) => {
+                    swal("Información", "No se puedo enviar tu Tarea, intente mas tarde.", "info");
+                });
+            }
+        })
         },
         selectTarea(tarea) {
             v.chooseTarea = tarea;
@@ -138,9 +155,11 @@ var v = new Vue({
             }, 3000); // disappearing message success in 2 sec
         },
         clearAll() {
+		    v.filesSend = [];
+			$('#btnenviartarea').prop("disabled", false);
             $('#editRegister').modal('hide');
             $('#addRegister').modal('hide');
-               $("#fileadd").val(null);
+            $("#fileadd").val(null);
             v.formValidate = false;
             v.addModal = false;
             v.editModal = false;
@@ -151,8 +170,6 @@ var v = new Vue({
                 tarea: '',
                 smserror: ''
             }
-
         }
-
     }
 })

@@ -15,7 +15,7 @@ class Materia_model extends CI_Model {
 
    
       public function showAll($idplantel = '') {
-        $this->db->select('m.idmateria, m.nombreclase, c.idclasificacionmateria, c.nombreclasificacion, e.idespecialidad, e.nombreespecialidad, n.idnivelestudio, n.nombrenivel, m.clave, m.credito, m.unidades');
+        $this->db->select('m.idmateria, m.nombreclase, m.secalifica, c.idclasificacionmateria, c.nombreclasificacion, e.idespecialidad, e.nombreespecialidad, n.idnivelestudio, n.nombrenivel, m.clave, m.credito, m.unidades');
         $this->db->from('tblmateria m'); 
         $this->db->join('tblnivelestudio n ', ' n.idnivelestudio = m.idnivelestudio'); 
         $this->db->join('tblespecialidad e ', ' m.idespecialidad = e.idespecialidad'); 

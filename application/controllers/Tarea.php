@@ -3,58 +3,94 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 date_default_timezone_set("America/Mexico_City");
 header("Access-Control-Allow-Origin: *");
-
 class Tarea extends CI_Controller {
-
+    
     function __construct() {
         parent::__construct();
-
+        
         /* if (!isset($_SESSION['user_id'])) {
-          $this->session->set_flashdata('flash_data', 'You don\'t have access! ss');
-          return redirect('welcome');
-          }
-          $this->load->model('alumno_model', 'alumno');
-          $this->load->helper('url');
-          $this->load->model('data_model');
-          $this->load->library('permission');
-          $this->load->library('session'); */
+         $this->session->set_flashdata('flash_data', 'You don\'t have access! ss');
+         return redirect('welcome');
+         }
+         $this->load->model('alumno_model', 'alumno');
+         $this->load->helper('url');
+         $this->load->model('data_model');
+         $this->load->library('permission');
+         $this->load->library('session'); */
         $this->load->model('tarea_model', 'tarea');
         $this->load->library('Autoload');
         $this->load->library('encryption');
-        $this->carpeta_primaria = "1pXEzNEKkle_1goqm5N2Pxyak9fGGdAe3";
-        $this->carpeta_secundaria= "1DONgwm3SMr6b-3zOcxQpGO5uUfiCGG6k";
-        $this->carpeta_bachillerato= "1fcRPw3xIefTfCE1nmPqxi6G7mFNhiT-m";
-        $this->carpeta_preescolar= "1jv5UT5WHznaZ5bwHs4wgM9ju_nKDOJOg";
-        $this->carpeta_licenciatura_primaria= "1FXIZVLCsc1zUtAN4k8l-JeT32whj9hgD";
-        $this->carpeta_licenciatura_preescolar= "1xRmuoTSKhOljzppjsWIblp64pLwuJL-O";
+        $this->carpeta_primaria = "1JeYjL9zZKmT_D6GW6KynxbwMbfEwjrLV";
+        $this->carpeta_secundaria= "1GEyJSWkV2B1LVkHRcC8w3xgBo7acRnwo";
+        $this->carpeta_bachillerato= "1_1HsVHaxDcv1Vc_QhqNYccJqFaPSgQEi";
+        $this->carpeta_preescolar= "1AfNpCIaNKVExssUsIVKC-FIQN612No6e";
+        $this->carpeta_licenciatura_primaria= "1nkROqzdgF0pI41EyGEOTm1XrXCq-PYGo";
+        $this->carpeta_licenciatura_preescolar= "1AHjkjzfqk9iTUG1la8uceWibNiVVNq25";
+        $this->appkey = "xrj2o8w9rc8vv4v";
+        $this->appsecret="h2dpotger3jzj6v";
+        $this->token = "c79HAsllhxMAAAAAAAAAAXUL93C-XCQ3da-PwoSQyO-c7st-LqeM4aS6Hhu9vY73";
     }
-            
-
+    
+    
     public function showAll() {
         $idhorariodetalle = $this->input->get('idhorariodetalle');
         $query = $this->tarea->showAll($this->session->user_id, $idhorariodetalle);
-        //var_dump($query);
+       
         if ($query) {
-            $result['tareas'] = $this->tarea->showAll($this->session->user_id, $idhorariodetalle);
+            
+            $result['tareas']  =   $this->tarea->showAll($this->session->user_id, $idhorariodetalle);
+        
         }
         if (isset($result) && !empty($result)) {
             echo json_encode($result);
         }
     }
 
-    public function searchTarea() {
-        $value = $this->input->post('text');
-        $idhorariodetalle = $this->input->get('idhorariodetalle');
-        $query = $this->tarea->searchTareas($value, $this->session->user_id, $idhorariodetalle);
-        //var_dump($query);
-        if ($query) {
-            $result['tareas'] = $this->tarea->searchTareas($value, $this->session->user_id, $idhorariodetalle);
+    public function searchTarea()
+    {
+        $config = array(
+            array(
+                'field' => 'fechainicio',
+                'label' => 'Fecha Inicio',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Seleccione la Fecha.'
+                )
+            ),
+            array(
+                'field' => 'fechafin',
+                'label' => 'Fecha Fin',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Seleccione la Fecha.'
+                )
+            ),
+           
+        );
+
+        $this->form_validation->set_rules($config);
+        if ($this->form_validation->run() == FALSE) {
+            $result['error'] = true;
+            $result['msg'] = array(
+                'fechainicio' => form_error('fechainicio'),
+                'fechafin' => form_error('fechafin')
+            );
+        } else {
+            $value = $this->input->post('texto');
+            $fechainicio = $this->input->post('fechainicio');
+            $fechafin = $this->input->post('fechafin');
+            $idhorariodetalle = $this->input->get('idhorariodetalle');
+            $query = $this->tarea->searchTareas($value, $this->session->user_id, $idhorariodetalle,$fechainicio,$fechafin);
+            // var_dump($query);
+            if ($query) {
+                $result['tareas'] = $this->tarea->searchTareas($value, $this->session->user_id, $idhorariodetalle,$fechainicio,$fechafin);
+            }
         }
-        if (isset($result) && !empty($result)) {
+        if (isset($result) && ! empty($result)) {
             echo json_encode($result);
         }
     }
-
+    
     public function showAllEstatusTarea() {
         $query = $this->tarea->showAllEstatusTarea();
         //var_dump($query);
@@ -65,11 +101,10 @@ class Tarea extends CI_Controller {
             echo json_encode($result);
         }
     }
-
+    
     public function showDetalleTarea() {
         $idtarea = $this->input->get('idtarea');
-        $query = $this->tarea->detalleTareaAlumno($idtarea);
-        //var_dump($query);
+        $query = $this->tarea->detalleTareaAlumno($idtarea); 
         if ($query) {
             $result['tarea'] = $this->tarea->detalleTareaAlumno($idtarea);
         }
@@ -77,32 +112,215 @@ class Tarea extends CI_Controller {
             echo json_encode($result);
         }
     }
-
-    public function showdetalleRespuestaTareaAlumno() {
+    public function documentosTareaProfesor() {
         $idtarea = $this->input->get('idtarea');
-        $idalumno = $this->session->idalumno;
-        $query = $this->tarea->detalleRespuestaTareaAlumno($idtarea, $idalumno);
-       
-        if ($query) {
-            $result['contestado'] = $this->tarea->detalleRespuestaTareaAlumno($idtarea, $idalumno);
+        $do = array();
+        $usersList_array = array();
+        $query = $this->tarea->documentosTareaProfesor($idtarea);
+        if (isset($query) && !empty($query)) {
+            foreach ($query as $row){ 
+                $do['iddocumento'] = $row->iddocumento;
+                $do['nombredocumento'] = $row->nombredocumento; 
+                if(empty($row->iddocumento) && !empty($row->nombredocumento)){
+                    $app = new Kunnu\Dropbox\DropboxApp($this->appkey, $this->appsecret,  $this->token);
+                    $dropbox = new Kunnu\Dropbox\Dropbox($app);
+                    $temporaryLink = $dropbox->getTemporaryLink("/".$row->nombredocumento);
+                    
+                    //Get File Metadata
+                    $file = $temporaryLink->getMetadata();
+                    
+                    //Get Link
+                    $temporaryLink->getLink();
+                    $do['link'] = $temporaryLink->getLink();
+                }else {
+                    $do['link'] = "";
+                }
+                array_push($usersList_array,$do);
+            }
         }
-        if (isset($result) && !empty($result)) {
-            echo json_encode($result);
+        
+        if (isset($usersList_array) && !empty($usersList_array)) {
+            
+            echo json_encode($usersList_array,JSON_PRETTY_PRINT);
         }
     }
     public function showdetalleRespuestaTareaAlumnoTutor() {
         $idtarea = $this->input->get('idtarea');
-         $idalumno =$this->input->get('idalumno');
-        $query = $this->tarea->detalleRespuestaTareaAlumno($idtarea, $idalumno);
-      
-        if ($query) {
-            $result['contestado'] = $this->tarea->detalleRespuestaTareaAlumno($idtarea, $idalumno);
+        $idalumno = $this->input->get('idalumno'); 
+        $query = $this->tarea->showAllTaresDetalleAlumno($idtarea,$idalumno);
+        
+        $usersList_array = array();
+        $user_array = array();
+        $note_array = array();
+        if($query){
+            foreach ($query as $row){
+                $user_array["iddetalletarea"] = $row->iddetalletarea;
+                $user_array["idtarea"] = $row->idtarea;
+                $user_array["idalumno"] = $row->idalumno;
+                $user_array["nombre"] = $row->nombre;
+                $user_array["apellidop"] = $row->apellidop;
+                $user_array["apellidom"] = $row->apellidom;
+                $user_array["iddocumento"] = $row->iddocumento;
+                $user_array["mensaje"] = $row->mensaje;
+                $user_array["fecharegistro"] = $row->fecharegistro;
+                $user_array["calificacion"] = $row->calificacion;
+                $user_array["observacionesdocente"] = $row->observacionesdocente;
+                $user_array["documentos"] = array();
+                $documentos = $this->tarea->obtenerDocumentosAlumno($row->iddetalletarea);
+                if ($documentos) {
+                    foreach ($documentos as $documento){
+                        $note_array["file"] = $documento->iddocumento;
+                        $note_array["extension"] = $documento->extension;
+                        if(empty($documento->iddocumento) && !empty($documento->nombredocumento)){
+                            $app = new Kunnu\Dropbox\DropboxApp($this->appkey,$this->appsecret, $this->token);
+                            $dropbox = new Kunnu\Dropbox\Dropbox($app);
+                            $temporaryLink = $dropbox->getTemporaryLink("/".$documento->nombredocumento);
+                            
+                            //Get File Metadata
+                            $file = $temporaryLink->getMetadata();
+                            
+                            //Get Link
+                            $temporaryLink->getLink();
+                            $note_array['link'] = $temporaryLink->getLink();
+                        }else {
+                            $note_array['link'] = "";
+                        }
+                        array_push($user_array['documentos'],$note_array);
+                    }
+                }
+                array_push($usersList_array,$user_array);
+            }
         }
-        if (isset($result) && !empty($result)) {
-            echo json_encode($result);
+        
+        if (isset($usersList_array) && !empty($usersList_array)) {
+            
+            echo json_encode($usersList_array,JSON_PRETTY_PRINT);
+        }
+    }
+    
+    public function showdetalleRespuestaTareaAlumno() {
+        $idtarea = $this->input->get('idtarea');
+        $idalumno = $this->session->idalumno; 
+        //$idtarea = 310;
+        //$idalumno = 883 ;
+        $query = $this->tarea->showAllTaresDetalleAlumno($idtarea,$idalumno);
+        
+        $usersList_array = array();
+        $user_array = array();
+        $note_array = array();
+        if($query){
+            foreach ($query as $row){
+                $user_array["iddetalletarea"] = $row->iddetalletarea;
+                $user_array["idtarea"] = $row->idtarea;
+                $user_array["idalumno"] = $row->idalumno;
+                $user_array["nombre"] = $row->nombre;
+                $user_array["apellidop"] = $row->apellidop;
+                $user_array["apellidom"] = $row->apellidom;
+                $user_array["iddocumento"] = $row->iddocumento;
+                $user_array["mensaje"] = $row->mensaje;
+                $user_array["fecharegistro"] = $row->fecharegistro;
+                $user_array["calificacion"] = $row->calificacion;
+                $user_array["observacionesdocente"] = $row->observacionesdocente;
+                $user_array["documentos"] = array();
+                $documentos = $this->tarea->obtenerDocumentosAlumno($row->iddetalletarea);
+                if ($documentos) {
+                    foreach ($documentos as $documento){
+                        $note_array["file"] = $documento->iddocumento;
+                        $note_array["extension"] = $documento->extension;
+                        if(empty($documento->iddocumento) && !empty($documento->nombredocumento)){
+                            $app = new Kunnu\Dropbox\DropboxApp($this->appkey, $this->appsecret,  $this->token);
+                            $dropbox = new Kunnu\Dropbox\Dropbox($app);
+                            $temporaryLink = $dropbox->getTemporaryLink("/".$documento->nombredocumento);
+                            
+                            //Get File Metadata
+                            $file = $temporaryLink->getMetadata();
+                            
+                            //Get Link
+                            $temporaryLink->getLink();
+                            $note_array['link'] = $temporaryLink->getLink();
+                        }else {
+                            $note_array['link'] = "";
+                        }
+                        array_push($user_array['documentos'],$note_array);
+                    }
+                }
+                array_push($usersList_array,$user_array);
+            }
+        }
+        
+        if (isset($usersList_array) && !empty($usersList_array)) {
+            
+           echo json_encode($usersList_array,JSON_PRETTY_PRINT);
         }
     }
 
+    public function showDocumentosAlumno() {
+        $idtarea = $this->input->get('idtarea');
+        $idalumno = $this->input->get('idalumno');
+        $query = $this->tarea->obtenerDocumentosTareaAlumno($idtarea,$idalumno);
+        
+        $result['documentos'] = $query;
+        echo json_encode($result);
+    }
+    
+  
+    //MOSTRAR TAREA EN DETALLE
+    
+    public function tareasEnvidasPorAlumno() {
+        $idtarea = $this->input->get('idtarea'); 
+        $idalumno = $this->input->get('idalumno');
+         
+        $query = $this->tarea->showAllTaresDetalleAlumno($idtarea,$idalumno);
+        $usersList_array = array();
+        $user_array = array();
+        $note_array = array();
+        if($query){
+           foreach ($query as $row){
+               $user_array["iddetalletarea"] = $row->iddetalletarea;
+               $user_array["idtarea"] = $row->idtarea;
+               $user_array["idalumno"] = $row->idalumno;
+               $user_array["nombre"] = $row->nombre;
+               $user_array["apellidop"] = $row->apellidop;
+               $user_array["apellidom"] = $row->apellidom;
+               $user_array["iddocumento"] = $row->iddocumento;
+               $user_array["mensaje"] = $row->mensaje;
+               $user_array["fecharegistro"] = $row->fecharegistro;
+               $user_array["calificacion"] = $row->calificacion;
+               $user_array["observacionesdocente"] = $row->observacionesdocente;
+               $user_array["documentos"] = array();
+               $documentos = $this->tarea->obtenerDocumentosAlumno($row->iddetalletarea);
+               if ($documentos) {
+                   foreach ($documentos as $documento){
+                       $note_array["file"] = $documento->iddocumento;
+                       $note_array["extension"] = $documento->extension;
+                       if(empty($documento->iddocumento) && !empty($documento->nombredocumento)){
+                           $app = new Kunnu\Dropbox\DropboxApp($this->appkey, $this->appsecret,  $this->token);
+                           $dropbox = new Kunnu\Dropbox\Dropbox($app);
+                           $temporaryLink = $dropbox->getTemporaryLink("/".$documento->nombredocumento);
+                           
+                           //Get File Metadata
+                           $file = $temporaryLink->getMetadata();
+                           
+                           //Get Link
+                           $temporaryLink->getLink();
+                           $note_array['link'] = $temporaryLink->getLink();
+                       }else {
+                           $note_array['link'] = "";
+                       }
+                       array_push($user_array['documentos'],$note_array);
+                   }
+               }
+               array_push($usersList_array,$user_array);
+            }
+        }
+        
+        if (isset($usersList_array) && !empty($usersList_array)) {
+            
+            echo json_encode($usersList_array,JSON_PRETTY_PRINT);
+        }
+    }
+    
+    
     public function showAllAlumnosTarea() {
         $idtarea = $this->input->get('id');
         $idhorario = $this->input->get('idhorario');
@@ -116,7 +334,7 @@ class Tarea extends CI_Controller {
             echo json_encode($result);
         }
     }
-
+    
     public function searchTareasAlumno() {
         $value = $this->input->post('text');
         $idhorario = $this->decode($this->input->get('idhorario'));
@@ -131,7 +349,7 @@ class Tarea extends CI_Controller {
             echo json_encode($result);
         }
     }
-
+    
     public function searchAllAlumnosTarea() {
         //Permission::grant(uri_string());
         $value = $this->input->post('text');
@@ -147,7 +365,7 @@ class Tarea extends CI_Controller {
             echo json_encode($result);
         }
     }
-
+    
     public function obtenerCarpeta($idplantel) {
         $carpeta = "";
         switch ($idplantel) {
@@ -163,19 +381,19 @@ class Tarea extends CI_Controller {
             case 5:
                 $carpeta .= $this->carpeta_preescolar;
                 break;
-             case 7:
+            case 7:
                 $carpeta .= $this->carpeta_licenciatura_primaria;
                 break;
-             case 8:
+            case 8:
                 $carpeta .= $this->carpeta_licenciatura_preescolar;
                 break;
-
+                
             default:
                 break;
         }
         return $carpeta;
     }
-
+    
     public function addTarea() {
         $config = array(
             array(
@@ -210,7 +428,7 @@ class Tarea extends CI_Controller {
                 )
             )
         );
-
+        
         $this->form_validation->set_rules($config);
         if ($this->form_validation->run() == FALSE) {
             $result['error'] = true;
@@ -227,109 +445,111 @@ class Tarea extends CI_Controller {
             $tarea = trim($this->input->post('tarea'));
             $fechaentrega = trim($this->input->post('fechaentrega'));
             $horaentrega = trim($this->input->post('horaentrega'));
-            if (isset($_FILES["file"]) && !empty($_FILES["file"])) {
-                $this->load->library('Autoload');
-                $archivoParaSubir = $_FILES["file"];
-                $maxsize = 15000000;
-                $allowed = array('gif', 'png', 'jpg', 'jpeg', 'gif', 'docx', 'doc', 'pdf', 'xls', 'xlsx');
-                $filename = $_FILES['file']['name'];
-                $ext = pathinfo($filename, PATHINFO_EXTENSION);
-                if (in_array($ext, $allowed)) {
-                    if (($_FILES['file']['size'] <= $maxsize)) {
-                        //$tituloDeDoc = "TEST";
-                        //$tituloDeDocPartes = explode(".", $tituloDeDoc);
-                        //array_pop($tituloDeDocPartes);
-                        //$tituloDeDoc = implode(".", $tituloDeDocPartes);
-                        //include_once '../vendor/autoload.php';
-//configurar variable de entorno
-                        putenv('GOOGLE_APPLICATION_CREDENTIALS=credencial.json');
-
-                        $client = new Google_Client();
-                        $client->useApplicationDefaultCredentials();
-                        $client->addScope(Google_Service_Drive::DRIVE);
-                        $client->setScopes(['https://www.googleapis.com/auth/drive.file']);
-                        try {
-//instanciamos el servicio
-                            $service = new Google_Service_Drive($client);
-
-                            $info = new finfo(FILEINFO_MIME);
-                            $tipoDeDoc = $info->file($archivoParaSubir["tmp_name"]);
-// $mimeType = explode(";", $tipoDeDoc)[0]; 
-                            $contenido = file_get_contents($archivoParaSubir["tmp_name"]);
-//ruta al archivo
-                            $file_name = $_FILES['file']['name'];
-                            $tmp = explode('.', $file_name);
-                            $extension_img = end($tmp);
-                            $user_img_profile = date("Y-m-dhis") . '.' . $extension_img;
-                            $config['file_name'] = $user_img_profile;
-
-//instacia de archivo
-                            $file = new Google_Service_Drive_DriveFile();
-                            $file->setName($user_img_profile);
-
-//obtenemos el mime type
-                            $finfo = finfo_open(FILEINFO_MIME_TYPE);
-                            $mime_type = finfo_file($finfo, $archivoParaSubir["tmp_name"]);
-
-//id de la carpeta donde hemos dado el permiso a la cuenta de servicio 
-                            $nombre_carpeta = $this->obtenerCarpeta($this->session->idplantel);
-                            $file->setParents(array($nombre_carpeta));
-                            $file->setDescription('archivo subido desde php');
-                            $file->setMimeType($mime_type);
-
-                            $result = $service->files->create(
-                                    $file,
-                                    array(
-                                        'data' => $contenido,
-                                        'mimeType' => $mime_type,
-                                        'uploadType' => 'media',
-                                    )
-                            );
-
-                            $data = array(
-                                'idhorario' => $idhorario,
-                                'idhorariodetalle' => $idhorariodetalle,
-                                'titulo' => mb_strtoupper($titulo),
-                                'tarea' => $tarea,
-                                'nombredocumento' => $result->name,
-                                'iddocumento' => $result->id,
-                                'fechaentrega' => $fechaentrega,
-                                'horaentrega' => $horaentrega,
-                                'idnotificacionalumno' => 1,
-                                'idnotificaciontutor' => 1,
-                                'eliminado' => 0,
-                                'idusuario' => $this->session->user_id,
-                                'fecharegistro' => date('Y-m-d H:i:s'),
-                            );
-                            $value = $this->tarea->addTarea($data);
-                            // echo '<a href="https://drive.google.com/open?id=' . $result->id . '" target="_blank">' . $result->name . '</a>';
-                        } catch (Google_Service_Exception $gs) {
-
-                            $m = json_decode($gs->getMessage());
-                            //echo $m->error->message;
+            
+            if (!empty($_FILES['files']) && count(array_filter($_FILES['files'])) > 0) {
+                
+                $dataTarea = array(
+                    'idhorario' => $idhorario,
+                    'idhorariodetalle' => $idhorariodetalle,
+                    'titulo' => mb_strtoupper($titulo),
+                    'tarea' => $tarea,
+                    'nombredocumento' => '',
+                    'iddocumento' => '',
+                    'fechaentrega' => $fechaentrega,
+                    'horaentrega' => $horaentrega,
+                    'idnotificacionalumno' => 1,
+                    'idnotificaciontutor' => 1,
+                    'eliminado' => 0,
+                    'idusuario' => $this->session->user_id,
+                    'fecharegistro' => date('Y-m-d H:i:s'),
+                );
+                
+                $idTarea = $this->tarea->addTarea($dataTarea);
+                
+                $filesCount = count($_FILES['files']['name']);
+                
+                for($i = 0; $i < $filesCount; $i++){
+                    
+                    $_FILES['file']['name']     = $_FILES['files']['name'][$i];
+                    $_FILES['file']['type']     = $_FILES['files']['type'][$i];
+                    $_FILES['file']['tmp_name'] = $_FILES['files']['tmp_name'][$i];
+                    $_FILES['file']['error']     = $_FILES['files']['error'][$i];
+                    $_FILES['file']['size']     = $_FILES['files']['size'][$i];
+                    
+                    $this->load->library('Autoload');
+                    //$tmp_dir = ini_get('upload_tmp_dir') ? ini_get('upload_tmp_dir') : sys_get_temp_dir();
+                    //sdie($tmp_dir);
+                    $maxsize = 80000000;
+                    $allowed = array('gif', 'png', 'jpg', 'jpeg', 'gif', 'docx', 'doc', 'pdf', 'xls', 'xlsx');
+                    $filename = $_FILES['file']['name'];
+                    $ext = pathinfo($filename, PATHINFO_EXTENSION);
+                    
+                    //if (in_array($ext, $allowed)) {
+                        if (($_FILES['file']['size'] <= $maxsize)) { 
+                            
+                                $file_name = $_FILES['file']['name']; //ruta al archivo
+                                $tmp = explode('.', $file_name);
+                                $extension_img = end($tmp);
+                                $user_img_profile = date("Y-m-dhis") . '.' . $extension_img;
+                                $config['file_name'] = $user_img_profile;
+                                
+                                //$filePath  = $_FILES['file'][''];
+                                $fileName = $user_img_profile;
+                                $app = new Kunnu\Dropbox\DropboxApp($this->appkey, $this->appsecret,  $this->token);
+                                
+                                //Configure Dropbox service
+                                //$dropbox = new Dropbox($app);
+                                $dropbox = new Kunnu\Dropbox\Dropbox($app);
+                                //Get File Metadata
+ 
+                                
+                                
+                                    // File to Upload
+                                    $file = $_FILES['file'];
+                                    
+                                    // File Path
+                                   // $fileName = $file['name'];
+                                    $filePath = $file['tmp_name'];
+                                    
+                                    try {
+                                        // Create Dropbox File from Path
+                                        $dropboxFile = new Kunnu\Dropbox\DropboxFile($filePath);
+                                        
+                                        // Upload the file to Dropbox
+                                        $uploadedFile = $dropbox->upload($dropboxFile, "/" . $fileName,     ['autorename' => true]);
+                                        
+                                        // File Uploaded
+                                         $uploadedFile->getPathDisplay();
+                                         
+                                         $dataDocumentos = array(
+                                             'idtarea' => $idTarea,
+                                             'nombredocumento' =>$fileName,
+                                             'iddocumento' => "",
+                                             'idusuario' => $this->session->user_id,
+                                             'fecharegistro' => date('Y-m-d H:i:s'),
+                                         );
+                                         
+                                         $value = $this->tarea->addDocumentTarea($dataDocumentos);
+                                    } catch (DropboxClientException $e) {
+                                        //echo $e->getMessage();
+                                        $result['error'] = true;
+                                        $result['msg'] = array(
+                                            'msgerror' => $e->getMessage()
+                                        );
+                                    }
+                                
+                              
+                                
+                            
+                        } else {
                             $result['error'] = true;
                             $result['msg'] = array(
-                                'msgerror' => $m->error->message
-                            );
-                        } catch (Exception $e) {
-                            //echo $e->getMessage();
-                            $result['error'] = true;
-                            $result['msg'] = array(
-                                'msgerror' => $e->getMessage()
+                                'msgerror' => "EL DOCUMENTO DEBE DE PESAR 78MB COMO MAXIMO."
                             );
                         }
-                    } else {
-                        $result['error'] = true;
-                        $result['msg'] = array(
-                            'msgerror' => "EL DOCUMENTO DEBE DE PESAR 15MB COMO MAXIMO."
-                        );
-                    }
-                } else {
-                    $result['error'] = true;
-                    $result['msg'] = array(
-                        'msgerror' => "SOLO ES PERMITDO IMAGENES, WORD, PDF Y EXCEL."
-                    );
+                
                 }
+                
             } else {
                 $data = array(
                     'idhorario' => $idhorario,
@@ -353,7 +573,7 @@ class Tarea extends CI_Controller {
             echo json_encode($result);
         }
     }
-
+    
     public function updateTarea() {
         $config = array(
             array(
@@ -388,7 +608,7 @@ class Tarea extends CI_Controller {
                 )
             )
         );
-
+        
         $this->form_validation->set_rules($config);
         if ($this->form_validation->run() == FALSE) {
             $result['error'] = true;
@@ -404,114 +624,112 @@ class Tarea extends CI_Controller {
             $tarea = trim($this->input->post('tarea'));
             $fechaentrega = trim($this->input->post('fechaentregareal'));
             $horaentrega = trim($this->input->post('horaentregareal'));
-            if (isset($_FILES["file"]) && !empty($_FILES["file"])) {
-
-                $maxsize = 15000000;
-                $allowed = array('gif', 'png', 'jpg', 'jpeg', 'gif', 'docx', 'doc', 'pdf', 'xls', 'xlsx');
-                $filename = $_FILES['file']['name'];
-                $ext = pathinfo($filename, PATHINFO_EXTENSION);
-                if (in_array($ext, $allowed)) {
-                    if (($_FILES['file']['size'] <= $maxsize)) {
-                        //Cambiara el documento
-                        $this->load->library('Autoload');
-                        $archivoParaSubir = $_FILES["file"];
-                        //$tituloDeDoc = "TEST";
-                        //$tituloDeDocPartes = explode(".", $tituloDeDoc);
-                        //array_pop($tituloDeDocPartes);
-                        //$tituloDeDoc = implode(".", $tituloDeDocPartes);
-                        //include_once '../vendor/autoload.php';
-//configurar variable de entorno
-                        putenv('GOOGLE_APPLICATION_CREDENTIALS=credencial.json');
-
-                        $client = new Google_Client();
-                        $client->useApplicationDefaultCredentials();
-                        $client->addScope(Google_Service_Drive::DRIVE);
-                        $client->setScopes(['https://www.googleapis.com/auth/drive.file']);
-                        try {
-//instanciamos el servicio
-                            $service = new Google_Service_Drive($client);
-
-                            $info = new finfo(FILEINFO_MIME);
-                            $tipoDeDoc = $info->file($archivoParaSubir["tmp_name"]);
-// $mimeType = explode(";", $tipoDeDoc)[0]; 
-                            $contenido = file_get_contents($archivoParaSubir["tmp_name"]);
-//ruta al archivo
-                            $file_name = $_FILES['file']['name'];
+            
+            if (!empty($_FILES['files']) && count(array_filter($_FILES['files'])) > 0) {
+                
+                $dataUpdateWork = array(
+                    'titulo' => mb_strtoupper($titulo),
+                    'tarea' => $tarea,
+                    'fechaentrega' => $fechaentrega,
+                    'horaentrega' => $horaentrega,
+                    'idnotificacionalumno' => 1,
+                    'idnotificaciontutor' => 1,
+                    'idusuario' => $this->session->user_id,
+                    'fecharegistro' => date('Y-m-d H:i:s'),
+                );
+                
+                $responseUpdateWork = $this->tarea->updateTarea($idtarea, $dataUpdateWork);
+                
+                
+                $filesCount = count($_FILES['files']['name']);
+                
+                for($i = 0; $i < $filesCount; $i++){
+                    
+                    $_FILES['file']['name']     = $_FILES['files']['name'][$i];
+                    $_FILES['file']['type']     = $_FILES['files']['type'][$i];
+                    $_FILES['file']['tmp_name'] = $_FILES['files']['tmp_name'][$i];
+                    $_FILES['file']['error']     = $_FILES['files']['error'][$i];
+                    $_FILES['file']['size']     = $_FILES['files']['size'][$i];
+                    
+                    $this->load->library('Autoload');
+                    
+                    $maxsize = 80000000;
+                    $allowed = array('gif', 'png', 'jpg', 'jpeg', 'gif', 'docx', 'doc', 'pdf', 'xls', 'xlsx');
+                    $filename = $_FILES['file']['name'];
+                    $ext = pathinfo($filename, PATHINFO_EXTENSION);
+                    
+                   // if (in_array($ext, $allowed)) {
+                        if (($_FILES['file']['size'] <= $maxsize)) {
+                            $file_name = $_FILES['file']['name']; //ruta al archivo
                             $tmp = explode('.', $file_name);
                             $extension_img = end($tmp);
                             $user_img_profile = date("Y-m-dhis") . '.' . $extension_img;
                             $config['file_name'] = $user_img_profile;
-
-//instacia de archivo
-                            $file = new Google_Service_Drive_DriveFile();
-                            $file->setName($user_img_profile);
-
-//obtenemos el mime type
-                            $finfo = finfo_open(FILEINFO_MIME_TYPE);
-                            $mime_type = finfo_file($finfo, $archivoParaSubir["tmp_name"]);
-
-//id de la carpeta donde hemos dado el permiso a la cuenta de servicio 
-                             $nombre_carpeta = $this->obtenerCarpeta($this->session->idplantel);
-                            $file->setParents(array($nombre_carpeta));
-                            $file->setDescription('archivo subido desde php');
-                            $file->setMimeType($mime_type);
-
-                            $result = $service->files->create(
-                                    $file,
-                                    array(
-                                        'data' => $contenido,
-                                        'mimeType' => $mime_type,
-                                        'uploadType' => 'media',
-                                    )
-                            );
-
-                            $data = array(
-                                //'idhorario' => $idhorario,
-                                //'idhorariodetalle' => $idhorariodetalle,
-                                'titulo' => mb_strtoupper($titulo),
-                                'tarea' => $tarea,
-                                'nombredocumento' => $result->name,
-                                'iddocumento' => $result->id,
-                                'fechaentrega' => $fechaentrega,
-                                'horaentrega' => $horaentrega,
-                                'idnotificacionalumno' => 1,
-                                'idnotificaciontutor' => 1,
-                                //'eliminado'=>0,
-                                'idusuario' => $this->session->user_id,
-                                'fecharegistro' => date('Y-m-d H:i:s'),
-                            );
-                            $value = $this->tarea->updateTarea($idtarea, $data);
-                            // echo '<a href="https://drive.google.com/open?id=' . $result->id . '" target="_blank">' . $result->name . '</a>';
-                        } catch (Google_Service_Exception $gs) {
-
-                            $m = json_decode($gs->getMessage());
-                            //echo $m->error->message;
+                            
+                            
+                            //$filePath  = $_FILES['file'][''];
+                            $fileName = $user_img_profile;
+                            $app = new Kunnu\Dropbox\DropboxApp($this->appkey, $this->appsecret,  $this->token);
+                            
+                            //Configure Dropbox service
+                            //$dropbox = new Dropbox($app);
+                            $dropbox = new Kunnu\Dropbox\Dropbox($app);
+                            //Get File Metadata
+                            
+                            
+                            
+                            // File to Upload
+                            $file = $_FILES['file'];
+                            
+                            // File Path
+                            // $fileName = $file['name'];
+                            $filePath = $file['tmp_name'];
+                            
+                            try {
+                                // Create Dropbox File from Path
+                                $dropboxFile = new Kunnu\Dropbox\DropboxFile($filePath);
+                                
+                                // Upload the file to Dropbox
+                                $uploadedFile = $dropbox->upload($dropboxFile, "/" . $fileName,     ['autorename' => true]);
+                                
+                                // File Uploaded
+                                $uploadedFile->getPathDisplay();
+                                
+                                $dataDocumentos = array(
+                                    'idtarea' => $idtarea,
+                                    'nombredocumento' =>$fileName,
+                                    'iddocumento' => "",
+                                    'idusuario' => $this->session->user_id,
+                                    'fecharegistro' => date('Y-m-d H:i:s'),
+                                );
+                                
+                                $value = $this->tarea->addDocumentTarea($dataDocumentos);
+                            } catch (DropboxClientException $e) {
+                                //echo $e->getMessage();
+                                $result['error'] = true;
+                                $result['msg'] = array(
+                                    'msgerror' => $e->getMessage()
+                                );
+                            }
+                                 
+                        
+                        } else {
                             $result['error'] = true;
                             $result['msg'] = array(
-                                'msgerror' => $m->error->message
-                            );
-                        } catch (Exception $e) {
-                            //echo $e->getMessage();
-                            $result['error'] = true;
-                            $result['msg'] = array(
-                                'msgerror' => $e->getMessage()
+                                'msgerror' => "EL DOCUMENTO DEBE DE PESAR 78MB COMO MAXIMO."
                             );
                         }
-                    } else {
+                  /*   } else {
                         $result['error'] = true;
                         $result['msg'] = array(
-                            'msgerror' => "EL DOCUMENTO DEBE DE PESAR 15MB COMO MAXIMO."
+                            'msgerror' => "SOLO ES PERMITDO IMAGENES, WORD, PDF Y EXCEL."
                         );
-                    }
-                } else {
-                    $result['error'] = true;
-                    $result['msg'] = array(
-                        'msgerror' => "SOLO ES PERMITDO IMAGENES, WORD, PDF Y EXCEL."
-                    );
+                    } */
                 }
+                
             } else {
-
-
+                
+                
                 $data = array(
                     'titulo' => mb_strtoupper($titulo),
                     'tarea' => $tarea,
@@ -529,14 +747,18 @@ class Tarea extends CI_Controller {
             echo json_encode($result);
         }
     }
-
+    
     public function deleteTarea() {
         $id = $this->input->get('id');
         $data = array(
             'eliminado' => 1
         );
-
+        
         $query = $this->tarea->updateTarea($id, $data);
+        
+        //Eliminar documentos de la DB
+        //$eliminarDocumentos = $this->tarea->deleteDocumentTarea($id);
+        
         if ($query) {
             $result['error'] = false;
         } else {
@@ -549,47 +771,114 @@ class Tarea extends CI_Controller {
             echo json_encode($result);
         }
     }
-
+    
+    public function obtenerDocumentosTarea() {
+        
+        $idtarea = $this->input->get('idtarea');
+        $do = array();
+        $usersList_array = array();
+        $query = $this->tarea->obtenerDocumentos($idtarea);
+        if (isset($query) && !empty($query)) {
+            foreach ($query as $row){
+                $do['iddocumentotarea'] = $row->iddocumentotarea;
+                $do['iddocumento'] = $row->iddocumento;
+                $do['nombredocumento'] = $row->nombredocumento;
+                $do['extension'] = $row->extension;
+                if(empty($row->iddocumento) && !empty($row->nombredocumento)){
+                    $app = new Kunnu\Dropbox\DropboxApp($this->appkey, $this->appsecret,  $this->token);
+                    $dropbox = new Kunnu\Dropbox\Dropbox($app);
+                    $temporaryLink = $dropbox->getTemporaryLink("/".$row->nombredocumento);
+                    
+                    //Get File Metadata
+                    $file = $temporaryLink->getMetadata();
+                    
+                    //Get Link
+                    $temporaryLink->getLink();
+                    $do['link'] = $temporaryLink->getLink();
+                }else {
+                    $do['link'] = "";
+                }
+                array_push($usersList_array,$do);
+             }
+        }
+       // $result['documentos'] = $do;
+       // echo json_encode($result);
+        echo json_encode($usersList_array,JSON_PRETTY_PRINT);
+    }
+    
+    public function obtenerDocumentosTareaRevisar() {
+        
+        $idtarea = $this->input->get('idtarea');
+        $idalumno = $this->input->get('idalumno');
+        
+        $query = $this->tarea->obtenerDocumentosTareaAlumno($idtarea,$idalumno);
+        
+        $result['documentos'] = $query;
+        echo json_encode($result);
+    }
+    
+    public function deleteDocument(){
+        $iddocumento = $this->input->get('iddocumentotarea');
+        
+        $query = $this->tarea->deleteDocument($iddocumento);
+        if ($query) {
+            $result['error'] = false;
+        } else {
+            $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => 'No se puede Elimnar el documento.'
+            );
+        }
+        
+        if (isset($result) && !empty($result)) {
+            echo json_encode($result);
+        }
+    }
+    public function maxNumber($num)
+    {
+        if ($num >= 0.00 && $num <= 10.00) {
+            return true;
+        } else {
+            $this->form_validation->set_message('maxNumber', 'La calificación debe de ser entre 0.00 a 10.00');
+            return false;
+        }
+    }
     public function calificarTareaAlumno() {
         $config = array(
             array(
-                'field' => 'idestatustarea',
-                'label' => 'Id Estatus Tarea',
-                'rules' => 'trim|required',
+                'field' => 'calificacion',
+                'label' => 'Calificacion',
+                'rules' => 'trim|decimal|callback_maxNumber|required',
                 'errors' => array(
-                    'required' => 'Campo obligatorio.'
+                    'decimal' => 'La calificación debe ser 1 entero y 1 digito.',
+                    'required'=>'Agregue la calificación.'
                 )
             )
         );
-
+        
         $this->form_validation->set_rules($config);
         if ($this->form_validation->run() == FALSE) {
             $result['error'] = true;
             $result['msg'] = array(
-                'idestatustarea' => form_error('idestatustarea'),
+                'calificacion' => form_error('calificacion'),
             );
         } else {
-            $iddetalletarea = trim($this->input->post('iddetalletarea'));
-            $idestatustarea = trim($this->input->post('idestatustarea'));
-            $observaciones = trim($this->input->post('observaciones'));
-            if($idestatustarea != 1){
-            $data = array(
-                'idestatustarea' => $idestatustarea,
-                'observacionesdocente'=>$observaciones
-            );
-            $this->tarea->updateDetalleTarea($iddetalletarea, $data);
-            }else{
-                $result['error'] = true;
-                $result['msg'] = array(
-                    'msgerror' => "SELECCIONAR LA OPCION DE CALIFICACION"
+            $iddetalletarea = trim($this->input->post('iddetalletarea')); 
+            $observaciones = trim($this->input->post('observacionesdocente'));
+            $calificacion = trim($this->input->post('calificacion'));
+            
+                $data = array( 
+                    'observacionesdocente'=>$observaciones,
+                    'calificacion'=>$calificacion
                 );
-            }
+                $this->tarea->updateDetalleTarea($iddetalletarea, $data);
+             
         }
         if (isset($result) && !empty($result)) {
             echo json_encode($result);
         }
     }
-
+    
     public function contestar() {
         $this->load->library('Autoload');
         $archivoParaSubir = $_FILES["file"];
@@ -598,53 +887,53 @@ class Tarea extends CI_Controller {
         //array_pop($tituloDeDocPartes);
         //$tituloDeDoc = implode(".", $tituloDeDocPartes);
         //include_once '../vendor/autoload.php';
-//configurar variable de entorno
+        //configurar variable de entorno
         putenv('GOOGLE_APPLICATION_CREDENTIALS=credencial.json');
-
+        
         $client = new Google_Client();
         $client->useApplicationDefaultCredentials();
         $client->setScopes(['https://www.googleapis.com/auth/drive.file']);
         try {
-//instanciamos el servicio
+            //instanciamos el servicio
             $service = new Google_Service_Drive($client);
-
+            
             $info = new finfo(FILEINFO_MIME);
             $tipoDeDoc = $info->file($archivoParaSubir["tmp_name"]);
-// $mimeType = explode(";", $tipoDeDoc)[0]; 
+            // $mimeType = explode(";", $tipoDeDoc)[0];
             $contenido = file_get_contents($archivoParaSubir["tmp_name"]);
-//ruta al archivo
+            //ruta al archivo
             $file_name = $_FILES['file']['name'];
             $tmp = explode('.', $file_name);
             $extension_img = end($tmp);
             $user_img_profile = date("Y-m-dhis") . '.' . $extension_img;
             $config['file_name'] = $user_img_profile;
-
-//instacia de archivo
+            
+            //instacia de archivo
             $file = new Google_Service_Drive_DriveFile();
             $file->setName($user_img_profile);
-
-//obtenemos el mime type
+            
+            //obtenemos el mime type
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
             $mime_type = finfo_file($finfo, $archivoParaSubir["tmp_name"]);
-
-//id de la carpeta donde hemos dado el permiso a la cuenta de servicio 
+            
+            //id de la carpeta donde hemos dado el permiso a la cuenta de servicio
             $nombre_carpeta = $this->obtenerCarpeta($this->session->idplantel);
             $file->setParents(array($nombre_carpeta));
             $file->setDescription('archivo subido desde php');
             $file->setMimeType($mime_type);
-
+            
             $result = $service->files->create(
-                    $file,
-                    array(
-                        'data' => $contenido,
-                        'mimeType' => $mime_type,
-                        'uploadType' => 'media',
-                    )
-            );
-
+                $file,
+                array(
+                    'data' => $contenido,
+                    'mimeType' => $mime_type,
+                    'uploadType' => 'media',
+                )
+                );
+            
             echo '<a href="https://drive.google.com/open?id=' . $result->id . '" target="_blank">' . $result->name . '</a>';
         } catch (Google_Service_Exception $gs) {
-
+            
             $m = json_decode($gs->getMessage());
             //echo $m->error->message;
             $result['error'] = true;
@@ -659,7 +948,7 @@ class Tarea extends CI_Controller {
             );
         }
     }
-
+    
     public function showTareasAlumno() {
         $idhorario = $this->decode($this->input->get('idhorario'));
         $idalumno = $this->decode($this->input->get('idalumno'));
@@ -673,7 +962,20 @@ class Tarea extends CI_Controller {
             echo json_encode($result);
         }
     }
-
+    public function showTareasAlumno2() {
+        $idhorario =13;
+        $idalumno =939;
+        if (isset($idhorario) && !empty($idhorario)) {
+            $query = $this->tarea->showTareasAlumnoMateria($idhorario,$idalumno);
+            if ($query) {
+                $result['tareas'] = $this->tarea->showTareasAlumnoMateria($idhorario,$idalumno);
+            }
+        }
+        if (isset($result) && !empty($result)) {
+            echo json_encode($result);
+        }
+    }
+    
     public function encode($string) {
         $encrypted = $this->encryption->encrypt($string);
         if (!empty($string)) {
@@ -681,12 +983,12 @@ class Tarea extends CI_Controller {
         }
         return $encrypted;
     }
-
+    
     public function decode($string) {
         $string = strtr($string, array('~' => '/'));
         return $this->encryption->decrypt($string);
     }
-
+    
     public function responderTareaAlumno() {
         $config = array(
             array(
@@ -694,11 +996,11 @@ class Tarea extends CI_Controller {
                 'label' => 'Redactar tarea',
                 'rules' => 'trim|required',
                 'errors' => array(
-                    'required' => 'Campo obligatorio.'
+                    'required' => 'Escriba un mensaje en la Tarea.'
                 )
             )
         );
-
+        
         $this->form_validation->set_rules($config);
         if ($this->form_validation->run() == FALSE) {
             $result['error'] = true;
@@ -709,120 +1011,126 @@ class Tarea extends CI_Controller {
             $idtarea = trim($this->input->post('idtarea'));
             $tarea = trim($this->input->post('tarea'));
             $detalle_tarea = $this->tarea->detalleTareaAlumno($idtarea);
-
+            
             $horaentraga = $detalle_tarea->horaentrega;
             $fechaentrega = $detalle_tarea->fechaentregareal;
             $fecha_antes = $detalle_tarea->fechaantes;
             $fechaactual = date('Y-m-d H:i:s');
-
+            
             if ($fechaactual <= $fecha_antes) {
-                if (isset($_FILES["file"]) && !empty($_FILES["file"])) {
-                    $maxsize = 15000000;
-                    $allowed = array('gif', 'png', 'jpg', 'jpeg', 'gif', 'docx', 'doc', 'pdf', 'xls', 'xlsx');
-                    $filename = $_FILES['file']['name'];
-                    $ext = pathinfo($filename, PATHINFO_EXTENSION);
-                    if (in_array($ext, $allowed)) {
-                        if (($_FILES['file']['size'] <= $maxsize)) {
-                            //Cambiara el documento
-                            $this->load->library('Autoload');
-                            $archivoParaSubir = $_FILES["file"];
-                            //$tituloDeDoc = "TEST";
-                            //$tituloDeDocPartes = explode(".", $tituloDeDoc);
-                            //array_pop($tituloDeDocPartes);
-                            //$tituloDeDoc = implode(".", $tituloDeDocPartes);
-                            //include_once '../vendor/autoload.php';
-//configurar variable de entorno
-                            putenv('GOOGLE_APPLICATION_CREDENTIALS=credencial.json');
+                if (!empty($_FILES['files']) && count(array_filter($_FILES['files'])) > 0) {
+                     $data = array(
+                            'idtarea' => $idtarea,
+                            'idalumno' => $this->session->idalumno,
+                            'idestatustarea' => 1,
+                            'mensaje' => $tarea,
+                            'nombrearchivo' => '',
+                            'iddocumento' => '',
+                            'eliminado' => 0,
+                            'idusuario' => $this->session->user_id,
+                            'fecharegistro' => date('Y-m-d H:i:s')
+                        );
 
-                            $client = new Google_Client();
-                            $client->useApplicationDefaultCredentials();
-                            $client->setScopes(['https://www.googleapis.com/auth/drive.file']);
-                            try {
-//instanciamos el servicio
-                                $service = new Google_Service_Drive($client);
-
-                                $info = new finfo(FILEINFO_MIME);
-                                $tipoDeDoc = $info->file($archivoParaSubir["tmp_name"]);
-// $mimeType = explode(";", $tipoDeDoc)[0]; 
-                                $contenido = file_get_contents($archivoParaSubir["tmp_name"]);
-//ruta al archivo
-                                $file_name = $_FILES['file']['name'];
-                                $tmp = explode('.', $file_name);
-                                $extension_img = end($tmp);
-                                $user_img_profile = date("Ymdhis") . '.' . $extension_img;
-                                $config['file_name'] = $user_img_profile;
-
-//instacia de archivo
-                                $file = new Google_Service_Drive_DriveFile();
-                                $file->setName($user_img_profile);
-
-//obtenemos el mime type
-                                $finfo = finfo_open(FILEINFO_MIME_TYPE);
-                                $mime_type = finfo_file($finfo, $archivoParaSubir["tmp_name"]);
-
-//id de la carpeta donde hemos dado el permiso a la cuenta de servicio 
-                                  $nombre_carpeta = $this->obtenerCarpeta($this->session->idplantel);
-                               $file->setParents(array($nombre_carpeta));
-                                $file->setDescription('archivo subido desde php');
-                                $file->setMimeType($mime_type);
-
-                                $result = $service->files->create(
-                                        $file,
-                                        array(
-                                            'data' => $contenido,
-                                            'mimeType' => $mime_type,
-                                            'uploadType' => 'media',
-                                        )
-                                );
-
-                                $data = array(
-                                    'idtarea' => $idtarea,
-                                    'idalumno' => $this->session->idalumno,
-                                    'idestatustarea' => 1,
-                                    'mensaje' => $tarea,
-                                    'nombrearchivo' => $result->name,
-                                    'iddocumento' => $result->id,
-                                    'eliminado' => 0,
-                                    'idusuario' => $this->session->user_id,
-                                    'fecharegistro' => date('Y-m-d H:i:s'),
-                                );
-                                $value = $this->tarea->addDetalleTarea($data);
-                                // echo '<a href="https://drive.google.com/open?id=' . $result->id . '" target="_blank">' . $result->name . '</a>';
-                            } catch (Google_Service_Exception $gs) {
-
-                                $m = json_decode($gs->getMessage());
-                                //echo $m->error->message;
+                        $idDetalleTarea = $this->tarea->addDetalleTarea($data);
+                     
+                        
+                        
+                        $filesCount = count($_FILES['files']['name']);
+                        
+                        for($i = 0; $i < $filesCount; $i++){
+                            
+                            $_FILES['file']['name']     = $_FILES['files']['name'][$i];
+                            $_FILES['file']['type']     = $_FILES['files']['type'][$i];
+                            $_FILES['file']['tmp_name'] = $_FILES['files']['tmp_name'][$i];
+                            $_FILES['file']['error']     = $_FILES['files']['error'][$i];
+                            $_FILES['file']['size']     = $_FILES['files']['size'][$i];
+                            
+                            $maxsize = 80000000;
+                            $allowed = array('gif', 'png', 'jpg', 'jpeg', 'gif', 'docx', 'doc', 'pdf', 'xls', 'xlsx');
+                            $filename = $_FILES['file']['name'];
+                            $ext = pathinfo($filename, PATHINFO_EXTENSION);
+                            
+                            if (in_array($ext, $allowed)) {
+                                if (($_FILES['file']['size'] <= $maxsize)) {
+                                    
+                                    
+                                        
+                                        $file_name = $_FILES['file']['name']; //ruta al archivo
+                                        $tmp = explode('.', $file_name);
+                                        $extension_img = end($tmp);
+                                        $user_img_profile = date("Ymdhis") . '.' . $extension_img;
+                                        $config['file_name'] = $user_img_profile;
+                                 
+                                        
+                                        
+                                        $fileName = $user_img_profile;
+                                        $app = new Kunnu\Dropbox\DropboxApp($this->appkey, $this->appsecret,  $this->token);
+                                        
+                                        //Configure Dropbox service
+                                        //$dropbox = new Dropbox($app);
+                                        $dropbox = new Kunnu\Dropbox\Dropbox($app);
+                                        //Get File Metadata
+                                        
+                                        
+                                        
+                                        // File to Upload
+                                        $file = $_FILES['file'];
+                                        
+                                        // File Path
+                                        // $fileName = $file['name'];
+                                        $filePath = $file['tmp_name'];
+                                        
+                                        try {
+                                            // Create Dropbox File from Path
+                                            $dropboxFile = new Kunnu\Dropbox\DropboxFile($filePath);
+                                            
+                                            // Upload the file to Dropbox
+                                            $uploadedFile = $dropbox->upload($dropboxFile, "/" . $fileName,     ['autorename' => true]);
+                                            
+                                            // File Uploaded
+                                            $uploadedFile->getPathDisplay();
+                                            
+                                            $dataDocumentos = array(
+                                                'iddetalletarea' => $idDetalleTarea,
+                                                'nombredocumento' => $fileName,
+                                                'iddocumento' => "",
+                                                'idusuario' => $this->session->user_id,
+                                                'fecharegistro' => date('Y-m-d H:i:s'),
+                                            );
+                                            
+                                            $value = $this->tarea->addDocumentRespuestaTarea($dataDocumentos);
+                                            
+                                        } catch (DropboxClientException $e) {
+                                            //Eliminar Documento Alumno
+                                            $this->tarea->deleteDocumentoAlumno($idDetalleTarea);
+                                            //Eliminar Detalle Tarea
+                                            $this->tarea->deleteDetalleTarea($idDetalleTarea);
+                                            $result['error'] = true;
+                                            $result['msg'] = array(
+                                                'msgerror' => $e->getMessage()
+                                            );
+                                        }
+                                        
+                                      
+                                        
+                                   
+                                      
+                                    
+                                } else {
+                                    $result['error'] = true;
+                                    $result['msg'] = array(
+                                        'msgerror' => "EL DOCUMENTO DEBE DE PESAR 78MB COMO MAXIMO."
+                                    );
+                                }
+                            } else {
                                 $result['error'] = true;
                                 $result['msg'] = array(
-                                    'msgerror' => $m->error->message
-                                );
-                            } catch (Exception $e) {
-                                //echo $e->getMessage();
-                                $result['error'] = true;
-                                $result['msg'] = array(
-                                    'msgerror' => $e->getMessage()
+                                    'msgerror' => "SOLO ES PERMITDO IMAGENES, WORD, PDF Y EXCEL."
                                 );
                             }
-                        } else {
-                            $result['error'] = true;
-                            $result['msg'] = array(
-                                'msgerror' => "EL DOCUMENTO DEBE DE PESAR 15MB COMO MAXIMO."
-                            );
                         }
-                    } else {
-                        $result['error'] = true;
-                        $result['msg'] = array(
-                            'msgerror' => "SOLO ES PERMITDO IMAGENES, WORD, PDF Y EXCEL."
-                        );
-                    }
-//            }else{
-//                 $result['error'] = true;
-//                    $result['msg'] = array(
-//                        'msgerror' => "YA REBASÓ EL LIMITE DE ENTREGA."
-//                    ); 
-//            }
+                  
                 } else {
-
                     $data = array(
                         'idtarea' => $idtarea,
                         'idalumno' => $this->session->idalumno,
@@ -839,7 +1147,7 @@ class Tarea extends CI_Controller {
             } else {
                 $result['error'] = true;
                 $result['msg'] = array(
-                    'msgerror' => "YA REBASÓ EL LIMITE DE ENTREGA."
+                    'msgerror' => "USTED DEBIO DE ENTRAGAR LA TAREA ANTES DE ".$fecha_antes
                 );
             }
         }
@@ -847,5 +1155,5 @@ class Tarea extends CI_Controller {
             echo json_encode($result);
         }
     }
-
+    
 }

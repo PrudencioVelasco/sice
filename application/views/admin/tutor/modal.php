@@ -144,13 +144,13 @@
                             </div>
                         </div> 
                         <div class="col-md-6 col-sm-12 col-xs-12 ">
-                            <div class="form-group">
+                            <div class="form-group" >
                                 <label><font color="red">*</font> FACTURA</label>
-                                <div class="demo-radio-button" >  
+                                <div class="demo-radio-button" style=" display:inline-block;">  
                                     <input name="group5" type="radio" id="radio_31" class="with-gap radio-col-green" v-model="newTutor.factura" value="1" />
-                                    <label for="radio_31">SI</label>
+                                    <label for="radio_31" style="display:block;">SI</label>
                                     <input name="group5" type="radio" id="radio_32" class="with-gap radio-col-red"  v-model="newTutor.factura" value="0" />
-                                    <label for="radio_32">NO</label>
+                                    <label for="radio_32" style="display:block;">NO</label>
                                 </div>
                                 <div class="col-red" v-html="formValidate.factura"></div>
                             </div>
