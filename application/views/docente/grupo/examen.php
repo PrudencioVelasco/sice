@@ -122,7 +122,7 @@
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-12 col-sm-12 col-xs-12 ">
-
+														<small>Nota: Registre la calificación de los alumnos que requiera, no es necesario que registre todas las calificaciones de los alumnos.</small>
                                                     <table class="table table-striped  ">
                                                         <thead class="bg-teal">
                                                             <tr>

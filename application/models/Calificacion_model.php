@@ -679,7 +679,7 @@ class Calificacion_model extends CI_Model {
         $this->db->join('tblprofesor_materia pm', 'hd.idmateria = pm.idprofesormateria'); 
         $this->db->join('tblhorario h', 'h.idhorario = hd.idhorario'); 
         $this->db->join('tbloportunidad_examen oe', 'oe.idoportunidadexamen = c.idoportunidadexamen');
-        $this->db->where('hd.idmateria', $idmateria); 
+        $this->db->where('pm.idmateria', $idmateria); 
         $this->db->where('c.idalumno', $idalumno); 
         $this->db->where('h.idperiodo', $idperiodo); 
         $this->db->where('h.idhorario', $idhorario); 
@@ -769,6 +769,7 @@ class Calificacion_model extends CI_Model {
         $query = $this->db->query("SELECT
             	hd.idhorariodetalle,
                 pm.idprofesormateria,
+                pm.idmateria,
                 h.idhorario,
             	m.clave ,
             	m.nombreclase

@@ -39,6 +39,7 @@
                                         </div>
                                     </div>
                                     <br>
+                                    <div class="table-responsive"> 
                                     <table class="table table-hover table-striped">
                                         <thead class="bg-teal">
                                             <th class="text-white" v-column-sortable:titulo>TITULO </th>
@@ -85,10 +86,12 @@
                                         </tr>
                                     </tfoot>
                                 </table>
+                                </div>
                             </div>
                         </div> 
                         <div class="row">
                             <div class="col-md-12  col-sm-12 col-xs-12">
+                             <div class="table-responsive"> 
                                 <table id="" class="table table-striped  datatabletarea">
                                     <thead class="bg-teal"> 
                                         <tr>
@@ -136,6 +139,7 @@
                                         ?>
                                     </tbody>
                                 </table>
+                                 </div>
                             </div>
                         </div>
                     </div>

@@ -703,7 +703,7 @@ class pGrupo extends CI_Controller
                 $total_unidades = 0;
                 foreach ($unidades as $block) : 
                     $total_unidades += 1;
-                    $val = $this->grupo->obtenerCalificacion($row->idalumno, $block->idunidad, $idhorariodetalle);
+                    $val = $this->grupo->obtenerCalificacionValidandoMateria($row->idalumno, $block->idunidad, $idhorario, $idmateria);
                     $tabla .= '<td>';
                     if ($val != false) {
                         $suma_calificacion = $suma_calificacion + $val->calificacion;
@@ -787,7 +787,7 @@ class pGrupo extends CI_Controller
                 $total_unidades = 0;
                 foreach ($unidades as $block) : 
                     $total_unidades += 1;
-                    $val = $this->grupo->obtenerCalificacion($row->idalumno, $block->idunidad, $idhorariodetalle);
+                    $val = $this->grupo->obtenerCalificacionValidandoMateria($row->idalumno, $block->idunidad, $idhorario,$idmateria);
                     $tabla .= '<td align="center">';
                     if ($val) {
                         $idcalificacion = $val->idcalificacion;
@@ -842,7 +842,7 @@ class pGrupo extends CI_Controller
     }
     public function obtenerCalificacionPree($idhorario = '')
     {
-        # code...
+        
         Permission::grant(uri_string());
         $unidades = $this->grupo->unidades($this->session->idplantel);
         $idprofesor = $this->session->idprofesor;
@@ -937,6 +937,7 @@ class pGrupo extends CI_Controller
         }
         $tabla .= '</table>';
         return $tabla;
+        
     }
 
     public function obtenerCalificacionLic($idhorario = '', $idhorariodetalle)
@@ -989,7 +990,7 @@ class pGrupo extends CI_Controller
                 if (isset($unidades) && ! empty($unidades)) {
                     foreach ($unidades as $block) : 
                         $total_unidades += 1;
-                        $val = $this->grupo->obtenerCalificacion($row->idalumno, $block->idunidad, $idhorariodetalle);
+                        $val = $this->grupo->obtenerCalificacionValidandoMateria($row->idalumno, $block->idunidad, $idhorario,$idmateria);
                         $tabla .= '<td>';
                         if ($val != false) {
                             $suma_calificacion = $suma_calificacion + $val->calificacion;
@@ -2871,6 +2872,7 @@ class pGrupo extends CI_Controller
             $pdf->AddPage('L');
 
             $detalle_horario = $this->grupo->detalleHorarioDetalle($idhorariodetalle);
+            $idhorario = $detalle_horario->idhorario;
             $estatus_alumno = $detalle_horario->activo;
             $idprofesormateria = $detalle_horario->idprofesormateria;
             $idmateria = $detalle_horario->idmateria;
@@ -3017,7 +3019,7 @@ class pGrupo extends CI_Controller
                     }
                     if (isset($idprimera_unidad) && ! empty($idprimera_unidad)) {
                         $row1 = $this->grupo->detalleUnidad($idprimera_unidad);
-                        $val = $this->grupo->obtenerCalificacion($row->idalumno, $row1->idunidad, $idhorariodetalle);
+                        $val = $this->grupo->obtenerCalificacionValidandoMateria($row->idalumno, $row1->idunidad, $idhorario,$idmateria);
                         $row_asistencia = $this->grupo->totalAsistencias($idprimera_unidad, $idhorariodetalle, $row->idalumno);
                         $tabla .= '<td  align="center">';
                         if ($val != false) {
@@ -3037,7 +3039,7 @@ class pGrupo extends CI_Controller
                     }
                     if (isset($idsegunda_unidad) && ! empty($idsegunda_unidad)) {
                         $row2 = $this->grupo->detalleUnidad($idsegunda_unidad);
-                        $val = $this->grupo->obtenerCalificacion($row->idalumno, $row2->idunidad, $idhorariodetalle);
+                        $val = $this->grupo->obtenerCalificacionValidandoMateria($row->idalumno, $row2->idunidad, $idhorario,$idmateria);
                         $row_asistencia = $this->grupo->totalAsistencias($idsegunda_unidad, $idhorariodetalle, $row->idalumno);
                         $tabla .= '<td  align="center">';
                         if ($val != false) {
@@ -3057,7 +3059,7 @@ class pGrupo extends CI_Controller
                     }
                     if (isset($idtercera_unidad) && ! empty($idtercera_unidad)) {
                         $row3 = $this->grupo->detalleUnidad($idtercera_unidad);
-                        $val = $this->grupo->obtenerCalificacion($row->idalumno, $row3->idunidad, $idhorariodetalle);
+                        $val = $this->grupo->obtenerCalificacionValidandoMateria($row->idalumno, $row3->idunidad, $idhorario,$idmateria);
                         $row_asistencia = $this->grupo->totalAsistencias($idtercera_unidad, $idhorariodetalle, $row->idalumno);
                         $tabla .= '<td  align="center">';
                         if ($val != false) {
@@ -3077,7 +3079,7 @@ class pGrupo extends CI_Controller
                     }
                     if (isset($idcuarto_unidad) && ! empty($idcuarto_unidad)) {
                         $row4 = $this->grupo->detalleUnidad($idcuarto_unidad);
-                        $val = $this->grupo->obtenerCalificacion($row->idalumno, $row4->idunidad, $idhorariodetalle);
+                        $val = $this->grupo->obtenerCalificacionValidandoMateria($row->idalumno, $row4->idunidad, $idhorario,$idmateria);
                         $row_asistencia = $this->grupo->totalAsistencias($idcuarto_unidad, $idhorariodetalle, $row->idalumno);
                         $tabla .= '<td  align="center">';
                         if ($val != false) {
@@ -3097,7 +3099,7 @@ class pGrupo extends CI_Controller
                     }
                     if (isset($idquinte_unidad) && ! empty($idquinte_unidad)) {
                         $row5 = $this->grupo->detalleUnidad($idquinte_unidad);
-                        $val = $this->grupo->obtenerCalificacion($row->idalumno, $row5->idunidad, $idhorariodetalle);
+                        $val = $this->grupo->obtenerCalificacionValidandoMateria($row->idalumno, $row5->idunidad, $idhorario,$idmateria);
                         $row_asistencia = $this->grupo->totalAsistencias($idquinte_unidad, $idhorariodetalle, $row->idalumno);
                         $tabla .= '<td  align="center">';
                         if ($val != false) {
@@ -3117,7 +3119,7 @@ class pGrupo extends CI_Controller
                     }
                     if (isset($idsexto_unidad) && ! empty($idsexto_unidad)) {
                         $row6 = $this->grupo->detalleUnidad($idsexto_unidad);
-                        $val = $this->grupo->obtenerCalificacion($row->idalumno, $row6->idunidad, $idhorariodetalle);
+                        $val = $this->grupo->obtenerCalificacionValidandoMateria($row->idalumno, $row6->idunidad, $idhorario,$idmateria);
                         $row_asistencia = $this->grupo->totalAsistencias($idsexto_unidad, $idhorariodetalle, $row->idalumno);
                         $tabla .= '<td  align="center">';
                         if ($val != false) {
@@ -3406,7 +3408,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     }
                     if (isset($idprimera_unidad) && ! empty($idprimera_unidad)) {
                         $row1 = $this->grupo->detalleUnidad($idprimera_unidad);
-                        $val = $this->grupo->obtenerCalificacion($row->idalumno, $row1->idunidad, $idhorariodetalle);
+                        $val = $this->grupo->obtenerCalificacionValidandoMateria($row->idalumno, $row1->idunidad, $idhorario,$idmateria);
                         $row_asistencia = $this->grupo->totalAsistencias($idprimera_unidad, $idhorariodetalle, $row->idalumno);
                         $tabla .= '<td  align="center">';
                         if ($val != false) {
@@ -3426,7 +3428,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     }
                     if (isset($idsegunda_unidad) && ! empty($idsegunda_unidad)) {
                         $row2 = $this->grupo->detalleUnidad($idsegunda_unidad);
-                        $val = $this->grupo->obtenerCalificacion($row->idalumno, $row2->idunidad, $idhorariodetalle);
+                        $val = $this->grupo->obtenerCalificacionValidandoMateria($row->idalumno, $row2->idunidad, $idhorario,$idmateria);
                         $row_asistencia = $this->grupo->totalAsistencias($idsegunda_unidad, $idhorariodetalle, $row->idalumno);
                         $tabla .= '<td  align="center">';
                         if ($val != false) {
@@ -3446,7 +3448,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     }
                     if (isset($idtercera_unidad) && ! empty($idtercera_unidad)) {
                         $row3 = $this->grupo->detalleUnidad($idtercera_unidad);
-                        $val = $this->grupo->obtenerCalificacion($row->idalumno, $row3->idunidad, $idhorariodetalle);
+                        $val = $this->grupo->obtenerCalificacionValidandoMateria($row->idalumno, $row3->idunidad, $idhorario,$idmateria);
                         $row_asistencia = $this->grupo->totalAsistencias($idtercera_unidad, $idhorariodetalle, $row->idalumno);
                         $tabla .= '<td  align="center">';
                         if ($val != false) {
@@ -3466,7 +3468,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     }
                     if (isset($idcuarto_unidad) && ! empty($idcuarto_unidad)) {
                         $row4 = $this->grupo->detalleUnidad($idcuarto_unidad);
-                        $val = $this->grupo->obtenerCalificacion($row->idalumno, $row4->idunidad, $idhorariodetalle);
+                        $val = $this->grupo->obtenerCalificacionValidandoMateria($row->idalumno, $row4->idunidad, $idhorario,$idmateria);
                         $row_asistencia = $this->grupo->totalAsistencias($idcuarto_unidad, $idhorariodetalle, $row->idalumno);
                         $tabla .= '<td  align="center">';
                         if ($val != false) {
@@ -3486,7 +3488,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     }
                     if (isset($idquinte_unidad) && ! empty($idquinte_unidad)) {
                         $row5 = $this->grupo->detalleUnidad($idquinte_unidad);
-                        $val = $this->grupo->obtenerCalificacion($row->idalumno, $row5->idunidad, $idhorariodetalle);
+                        $val = $this->grupo->oobtenerCalificacionValidandoMateria($row->idalumno, $row5->idunidad, $idhorario,$idmateria);
                         $row_asistencia = $this->grupo->totalAsistencias($idquinte_unidad, $idhorariodetalle, $row->idalumno);
                         $tabla .= '<td  align="center">';
                         if ($val != false) {
@@ -3506,7 +3508,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     }
                     if (isset($idsexto_unidad) && ! empty($idsexto_unidad)) {
                         $row6 = $this->grupo->detalleUnidad($idsexto_unidad);
-                        $val = $this->grupo->obtenerCalificacion($row->idalumno, $row6->idunidad, $idhorariodetalle);
+                        $val = $this->grupo->obtenerCalificacionValidandoMateria($row->idalumno, $row6->idunidad, $idhorario,$idmateria);
                         $row_asistencia = $this->grupo->totalAsistencias($idsexto_unidad, $idhorariodetalle, $row->idalumno);
                         $tabla .= '<td  align="center">';
                         if ($val != false) {
@@ -3813,7 +3815,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     }
                     if (isset($idprimera_unidad) && ! empty($idprimera_unidad)) {
                         $row1 = $this->grupo->detalleUnidad($idprimera_unidad);
-                        $val = $this->grupo->obtenerCalificacion($row->idalumno, $row1->idunidad, $idhorariodetalle);
+                        $val = $this->grupo->obtenerCalificacionValidandoMateria($row->idalumno, $row1->idunidad, $idhorario,$idmateria);
                         $row_asistencia = $this->grupo->totalAsistencias($idprimera_unidad, $idhorariodetalle, $row->idalumno);
                         $tabla .= '<td  align="center" class="txtnombre">';
                         if ($val != false) {
@@ -3833,7 +3835,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     }
                     if (isset($idsegunda_unidad) && ! empty($idsegunda_unidad)) {
                         $row2 = $this->grupo->detalleUnidad($idsegunda_unidad);
-                        $val = $this->grupo->obtenerCalificacion($row->idalumno, $row2->idunidad, $idhorariodetalle);
+                        $val = $this->grupo->obtenerCalificacionValidandoMateria($row->idalumno, $row2->idunidad, $idhorario,$idmateria);
                         $row_asistencia = $this->grupo->totalAsistencias($idsegunda_unidad, $idhorariodetalle, $row->idalumno);
                         $tabla .= '<td  align="center" class="txtnombre">';
                         if ($val != false) {
@@ -3853,7 +3855,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     }
                     if (isset($idtercera_unidad) && ! empty($idtercera_unidad)) {
                         $row3 = $this->grupo->detalleUnidad($idtercera_unidad);
-                        $val = $this->grupo->obtenerCalificacion($row->idalumno, $row3->idunidad, $idhorariodetalle);
+                        $val = $this->grupo->obtenerCalificacionValidandoMateria($row->idalumno, $row3->idunidad, $idhorario,$idmateria);
                         $row_asistencia = $this->grupo->totalAsistencias($idtercera_unidad, $idhorariodetalle, $row->idalumno);
                         $tabla .= '<td class="txtnombre" align="center">';
                         if ($val != false) {
@@ -3873,7 +3875,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     }
                     if (isset($idcuarto_unidad) && ! empty($idcuarto_unidad)) {
                         $row4 = $this->grupo->detalleUnidad($idcuarto_unidad);
-                        $val = $this->grupo->obtenerCalificacion($row->idalumno, $row4->idunidad, $idhorariodetalle);
+                        $val = $this->grupo->obtenerCalificacionValidandoMateria($row->idalumno, $row4->idunidad, $idhorario,$idmateria);
                         $row_asistencia = $this->grupo->totalAsistencias($idcuarto_unidad, $idhorariodetalle, $row->idalumno);
                         $tabla .= '<td  class="txtnombre" align="center">';
                         if ($val != false) {
@@ -3893,7 +3895,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     }
                     if (isset($idquinte_unidad) && ! empty($idquinte_unidad)) {
                         $row5 = $this->grupo->detalleUnidad($idquinte_unidad);
-                        $val = $this->grupo->obtenerCalificacion($row->idalumno, $row5->idunidad, $idhorariodetalle);
+                        $val = $this->grupo->obtenerCalificacionValidandoMateria($row->idalumno, $row5->idunidad, $idhorario,$idmateria);
                         $row_asistencia = $this->grupo->totalAsistencias($idquinte_unidad, $idhorariodetalle, $row->idalumno);
                         $tabla .= '<td class="txtnombre" align="center">';
                         if ($val != false) {
@@ -3913,7 +3915,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     }
                     if (isset($idsexto_unidad) && ! empty($idsexto_unidad)) {
                         $row6 = $this->grupo->detalleUnidad($idsexto_unidad);
-                        $val = $this->grupo->obtenerCalificacion($row->idalumno, $row6->idunidad, $idhorariodetalle);
+                        $val = $this->grupo->obtenerCalificacionValidandoMateria($row->idalumno, $row6->idunidad, $idhorario,$idmateria);
                         $row_asistencia = $this->grupo->totalAsistencias($idsexto_unidad, $idhorariodetalle, $row->idalumno);
                         $tabla .= '<td class="txtnombre" align="center">';
                         if ($val != false) {
@@ -4188,7 +4190,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     if (isset($unidades) && ! empty($unidades)) {
                         foreach ($unidades as $block) : 
                             $total_unidades += 1;
-                            $val = $this->grupo->obtenerCalificacion($row->idalumno, $block->idunidad, $idhorariodetalle);
+                            $val = $this->grupo->obtenerCalificacionValidandoMateria($row->idalumno, $block->idunidad, $idhorario,$idmateria);
                             $tabla .= '<td>';
                             if ($val != false) {
                                 $suma_calificacion = $suma_calificacion + $val->calificacion;
@@ -4261,7 +4263,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                         $idunidad = $block->idunidad;
                         $idalumno = $row->idalumno;
                         $total_unidades += 1;
-                        $val = $this->grupo->obtenerCalificacion($row->idalumno, $block->idunidad, $idhorariodetalle);
+                        $val = $this->grupo->obtenerCalificacionValidandoMateria($row->idalumno, $block->idunidad, $idhorario,$idmateria);
 
                         if ($val) {
                             $idcalificacion = $val->idcalificacion;

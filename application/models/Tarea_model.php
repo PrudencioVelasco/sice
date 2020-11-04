@@ -437,6 +437,44 @@ WHERE
         }
     }
 
+    public function showTareasAlumnoXMateria($idhorario,$idalumno,$idmateria) {
+        $sql = 'SELECT
+    t.idnotificacionalumno,
+    t.idnotificaciontutor,
+    hd.idhorariodetalle,
+    hd.idhorario,
+    hd.horainicial,
+    hd.horafinal,
+    m.nombreclase,
+    p.nombre,
+    p.apellidop,
+    p.apellidom,
+    t.idtarea,
+    t.titulo,
+    DATE_FORMAT( t.fechaentrega,"%d/%m/%Y") AS fechaentrega,
+    DATE_FORMAT( t.horaentrega, "%H:%i") AS horaentrega,
+    FORMAT( COALESCE((SELECT SUM(dt.calificacion)/COUNT(dt.calificacion)  FROM tbldetalle_tarea dt WHERE   dt.idtarea = t.idtarea AND dt.idalumno = '.$idalumno.'),0),1) AS calificacion,
+     COALESCE((SELECT COUNT(dt.calificacion) FROM tbldetalle_tarea dt WHERE   dt.idtarea = t.idtarea AND dt.idalumno = '.$idalumno.'),0) AS estatus
+FROM
+    tblhorario_detalle hd
+      INNER  JOIN
+    tblprofesor_materia pm ON hd.idmateria = pm.idprofesormateria
+       INNER JOIN
+    tblmateria m ON m.idmateria = pm.idmateria
+       INNER JOIN
+    tblprofesor p ON p.idprofesor = pm.idprofesor
+       INNER  JOIN
+    tbltareav2 t ON t.idhorariodetalle = hd.idhorariodetalle
+WHERE
+    hd.idhorario = "'.$idhorario.'" AND m.idmateria = "'.$idmateria.'" AND t.eliminado = 0 ORDER BY t.fecharegistro DESC';
+        $query = $this->db->query($sql);
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+    
     public function showTareasAlumnoMateria($idhorario,$idalumno) {
         $sql = 'SELECT 
     t.idnotificacionalumno,
@@ -474,8 +512,8 @@ WHERE
             return false;
         }
     }
-        public function searchTareasAlumnoMateria($match,$idhorario,$idalumno) {
-        $sql = "SELECT titulo,nombreclase,idtarea,fechaentrega,horaentrega,estatus,calificacion FROM (SELECT 
+    public function searchTareasAlumnoMateria($match,$idhorario,$idalumno) {
+        $sql = "SELECT titulo,nombreclase,idtarea,fechaentrega,horaentrega,estatus,calificacion FROM (SELECT
     t.idnotificacionalumno,
     t.idnotificaciontutor,
     hd.idhorariodetalle,
@@ -504,6 +542,47 @@ FROM
     tbltareav2 t ON t.idhorariodetalle = hd.idhorariodetalle
 WHERE
     hd.idhorario = $idhorario AND t.eliminado = 0) tabla";
+        if(isset($match) && !empty($match)){
+            $sql .="  WHERE   concat(nombreclase,' ',titulo,' ',fechaentrega,' ',estatus) LIKE '%$match%'";
+        }
+        $query = $this->db->query($sql);
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+    
+        public function searchTareasAlumnoXMateria($match,$idhorario,$idalumno,$idmateria) {
+        $sql = "SELECT titulo,nombreclase,idtarea,fechaentrega,horaentrega,estatus,calificacion FROM (SELECT 
+    t.idnotificacionalumno,
+    t.idnotificaciontutor,
+    hd.idhorariodetalle,
+    hd.idhorario,
+    hd.horainicial,
+    hd.horafinal,
+    m.nombreclase,
+    p.nombre,
+    p.apellidop,
+    p.apellidom,
+    t.idtarea,
+    t.titulo,
+    DATE_FORMAT( t.fechaentrega,'%d/%m/%Y') AS fechaentrega,
+    DATE_FORMAT( t.horaentrega, '%H:%i') AS horaentrega,
+       FORMAT( COALESCE((SELECT SUM(dt.calificacion)/COUNT(dt.calificacion)  FROM tbldetalle_tarea dt WHERE   dt.idtarea = t.idtarea AND dt.idalumno = $idalumno),0),1) AS calificacion,
+     COALESCE((SELECT COUNT(dt.calificacion) FROM tbldetalle_tarea dt WHERE   dt.idtarea = t.idtarea AND dt.idalumno = $idalumno),0) AS estatus
+FROM
+    tblhorario_detalle hd
+      INNER  JOIN
+    tblprofesor_materia pm ON hd.idmateria = pm.idprofesormateria
+       INNER JOIN
+    tblmateria m ON m.idmateria = pm.idmateria
+       INNER JOIN
+    tblprofesor p ON p.idprofesor = pm.idprofesor
+       INNER  JOIN
+    tbltareav2 t ON t.idhorariodetalle = hd.idhorariodetalle
+WHERE
+    hd.idhorario = $idhorario AND t.eliminado = 0 AND m.idmateria = $idmateria) tabla";
         if(isset($match) && !empty($match)){
       $sql .="  WHERE   concat(nombreclase,' ',titulo,' ',fechaentrega,' ',estatus) LIKE '%$match%'";
             }

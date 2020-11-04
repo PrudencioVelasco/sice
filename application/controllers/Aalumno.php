@@ -273,17 +273,26 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 {
                     border:0px solid black;
                 }
-
+.card1{
+border:solid #FAF9F9 2px;
+border-radius:5px;
+padding:10px 10px 10px 10px;
+-webkit-box-shadow: 1px 2px 3px -1px rgba(156,156,156,0.63);
+-moz-box-shadow: 1px 2px 3px -1px rgba(156,156,156,0.63);
+box-shadow: 1px 2px 3px -1px rgba(156,156,156,0.63);
+min-height: 160px;
+border-top:solid #33C1FF 2px;
+}
 </style>';
 
-            $tabla .= '<table class="table table-hover table-striped"  > ';
+            $tabla .= '<div class="table-responsive"><table class="table "  > ';
             $tabla .= ' <thead class="bg-teal"> ';
-            $tabla .= '<td>Hora</td>';
-            $tabla .= '<td>Lunes</td>';
-            $tabla .= '<td>Martes</td>';
-            $tabla .= '<td>Miercoles</td>';
-            $tabla .= '<td>Jueves</td>';
-            $tabla .= '<td>Viernes</td>';
+            $tabla .= '<td>HORA</td>';
+            $tabla .= '<td>LUNES</td>';
+            $tabla .= '<td>MARTES</td>';
+            $tabla .= '<td>MIERCOLES</td>';
+            $tabla .= '<td>JUEVES</td>';
+            $tabla .= '<td>VIERNES</td>';
 
             $tabla .= ' </thead>';
             $array_materias_reprobadas = array();
@@ -301,7 +310,10 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 foreach ($lunesAll as $row) {
                     $tabla .= '<tr>';
                     $tabla .= '<td  ><strong>' . $row->hora . '</strong></td>';
-                    $tabla .= '<td >' . $row->lunes . '<br>';
+                    $tabla .= '<td >';
+                    if (isset($row->lunes) && !empty($row->lunes)) {
+                    $tabla .= '<div class="card1">  
+                                ' . $row->lunes . '<br>';
                     if (isset($row->lunesurl) && !empty($row->lunesurl)) {
 
                         $tabla .= '<a href="#"  onclick="cambiar_estado(\'' . $row->lunesidhorariodetalle . '\',\'' . $base . '\')" style="color:#1e81fb;   font-weight:bolder;"><i class="fa fa-external-link"></i> ENTRAR A CLASE</a>';
@@ -309,46 +321,64 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     if (isset($row->lunesurlgrabado) && !empty($row->lunesurlgrabado)) {
                         $tabla .= '  <a target="_blank" href="' . $row->lunesurlgrabado . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> CLASE GRABADA</a>';
                     }
-                    $tabla .= '</td>';
-                    $tabla .= '<td  >' . $row->martes . '<br>';
+                    $tabla .= '</div>';
+                    }
+                   $tabla .= '</td>';
+                   $tabla .= '<td  >';
+                   if (isset($row->martes) && !empty($row->martes)) {
+                       $tabla .= '<div class="card1"> '. $row->martes . '<br>';
                     if (isset($row->martesurl) && !empty($row->martesurl)) {
                         $tabla .= '<a href="#"  onclick="cambiar_estado(\'' . $row->martesidhorariodetalle . '\',\'' . $base . '\')" style="color:#1e81fb;   font-weight:bolder;"><i class="fa fa-external-link"></i> ENTRAR A CLASE</a>';
                     }
                     if (isset($row->martesurlgrabado) && !empty($row->martesurlgrabado)) {
                         $tabla .= '  <a target="_blank" href="' . $row->martesurlgrabado . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> CLASE GRABADA</a>';
                     }
-                    $tabla .= '</td>';
-                    $tabla .= '<td >' . $row->miercoles . '<br>';
+                    $tabla .= '</div>';
+                   }
+                   $tabla .= '</td>';
+                    $tabla .= '<td >';
+                   if (isset($row->miercoles) && !empty($row->miercoles)) {
+                       $tabla .= '<div class="card1"> ' . $row->miercoles . '<br>';
                     if (isset($row->miercolesurl) && !empty($row->miercolesurl)) {
                         $tabla .= '<a href="#"  onclick="cambiar_estado(\'' . $row->miercolesidhorariodetalle . '\',\'' . $base . '\')" style="color:#1e81fb;   font-weight:bolder;"><i class="fa fa-external-link"></i> ENTRAR A CLASE</a>';
                     }
                     if (isset($row->miercolesurlgrabado) && !empty($row->miercolesurlgrabado)) {
                         $tabla .= '  <a target="_blank" href="' . $row->miercolesurlgrabado . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> CLASE GRABADA</a>';
                     }
-                    $tabla .= '</td>';
-                    $tabla .= '<td  >' . $row->jueves . '<br>';
+                    $tabla .= '</div>';
+                   }
+                   $tabla .= '</td>';
+                    $tabla .= '<td  >';
+                   if (isset($row->jueves) && !empty($row->jueves)) {
+                       $tabla .= '<div class="card1"> ' . $row->jueves . '<br>';
                     if (isset($row->juevesurl) && !empty($row->juevesurl)) {
                         $tabla .= '<a href="#"  onclick="cambiar_estado(\'' . $row->juevesidhorariodetalle . '\',\'' . $base . '\')" style="color:#1e81fb;   font-weight:bolder;"><i class="fa fa-external-link"></i> ENTRAR A CLASE</a>';
                     }
                     if (isset($row->juevesurlgrabado) && !empty($row->juevesurlgrabado)) {
                         $tabla .= '  <a target="_blank" href="' . $row->juevesurlgrabado . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> CLASE GRABADA</a>';
                     }
-                    $tabla .= '</td>';
-                    $tabla .= '<td >' . $row->viernes . '<br>';
+                    $tabla .= '</div>';
+                   }
+                   $tabla .= '</td>';
+                    $tabla .= '<td >';
+                   if (isset($row->viernes) && !empty($row->viernes)) {
+                       $tabla .= '<div class="card1"> ' . $row->viernes . '<br>';
                     if (isset($row->viernesurl) && !empty($row->viernesurl)) {
                         $tabla .= '<a href="#"  onclick="cambiar_estado(\'' . $row->viernesidhorariodetalle . '\',\'' . $base . '\')" style="color:#1e81fb;   font-weight:bolder;"><i class="fa fa-external-link"></i> ENTRAR A CLASE</a>';
                     }
                     if (isset($row->viernesurlgrabado) && !empty($row->viernesurlgrabado)) {
                         $tabla .= '  <a target="_blank" href="' . $row->viernesurlgrabado . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> CLASE GRABADA</a>';
                     }
-                    $tabla .= '</td>';
+                    $tabla .= '</div>';
+                }
+                $tabla .= '</td>';
 
                     $tabla .= '</tr>';
                 }
             } else {
                 $tabla .= '<tr><td colspan="6" align="center"><label>Sin registros</label></td></tr>';
             }
-            $tabla .= '</table>';
+            $tabla .= '</table></div>';
 
             return $tabla;
         }
@@ -519,7 +549,8 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
     {
         # code...
         $idalumno = $this->session->idalumno;
-
+        $detalle_horario = $this->horario->detalleHorarioDetalle($idhorariodetalle);
+        $idmateria = $detalle_horario[0]->idmateria;
         $unidades = $this->grupo->unidades($this->session->idplantel);
         $alumnos = $this->alumno->showAllAlumnoId($idalumno);
         $tabla = "";
@@ -540,7 +571,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
         <td>' . $c++ . '</td>
         <td>' . $row->apellidop . " " . $row->apellidom . " " . $row->nombre . '</td>';
             foreach ($unidades as $block) :
-                $val = $this->grupo->obtenerCalificacion($row->idalumno, $block->idunidad, $idhorariodetalle);
+            $val = $this->grupo->obtenerCalificacionValidandoMateria($row->idalumno, $block->idunidad, $idhorario,$idmateria);
 
                 $tabla .= '<td>';
                 if ($val != false) {
@@ -741,7 +772,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
     {
         # code...
         Permission::grant(uri_string());
-         $idalumno = $this->session->idalumno;
+        $idalumno = $this->session->idalumno;
         $grupo = $this->alumno->obtenerGrupo($idalumno);
 
         $materias = "";
@@ -757,9 +788,8 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
             }
             $reprobadas = implode(",", $array_materias_reprobadas);
 
-            $materias = $this->alumno->showAllMaterias($idhorario, $reprobadas);
-        }
-
+            $materias = $this->alumno->showAllMateriasTareas($idhorario, $reprobadas,$idalumno);
+        } 
         $data = array(
             'materias' => $materias,
             'controller' => $this,
@@ -767,6 +797,22 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
         $this->load->view('alumno/header');
         $this->load->view('alumno/calificacion/index', $data);
         $this->load->view('alumno/footer');
+    }
+   public function tareas($idhorario,$idhorariodetalle,$idmateria) {
+       $idhorario = $this->decode($idhorario);
+       $idhorariodetalle = $this->decode($idhorariodetalle);
+       $idmateria = $this->decode($idmateria);
+       if((isset($idhorario) && !empty($idhorario)) && (isset($idhorariodetalle) && !empty($idhorariodetalle)) && (isset($idmateria) && !empty($idmateria)) ){
+           $data = array(
+               'idhorario' => $this->encode($idhorario),
+               'idhorariodetalle' => $idhorariodetalle,
+               'idmateria' => $idmateria,
+               'controller' => $this,
+           );
+           $this->load->view('alumno/header');
+           $this->load->view('alumno/tarea/tareas', $data);
+           $this->load->view('alumno/footer');
+       }
     }
 
     public function calificacion($idhorario, $idhorariodetalle)
@@ -871,7 +917,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
             }
         }
         $tabla = "";
-        $tabla .= '<table class="table  table-striped  table-hover">
+        $tabla .= '<div class="table-responsive"> <table class="table  table-striped  table-hover">
         <thead class="bg-teal">
              <th>NO.</th>
              <th>MATERIA</th>
@@ -912,7 +958,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 $tabla .= '</tr>';
             }
         }
-        $tabla .= '</table>';
+        $tabla .= '</table></div>';
         return $tabla;
     }
 
@@ -927,7 +973,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
 
 
         $tabla = "";
-        $tabla .= '<table id="tblcalificacionpreescolar" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+        $tabla .= '<div class="table-responsive"> <table id="tblcalificacionpreescolar" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
         <thead class="bg-teal">
         <th>ASIGNATURA</th>';
         foreach ($meses as $mes) {
@@ -973,7 +1019,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
 
         $tabla .= '
         </tbody>
-        </table>';
+        </table></div>';
 
         return $tabla;
     }
@@ -1006,7 +1052,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
             }
         }
         $tabla = "";
-        $tabla .= '<table class="table  table-striped  table-hover">
+        $tabla .= '<div class="table-responsive"> <table class="table  table-striped  table-hover">
         <thead class="bg-teal">
         <th>#</th>
         <th>MATERIA</th>';
@@ -1024,6 +1070,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
          
             foreach ($materias as $row) {
                 $suma_calificacion = 0;
+                $idmateria = $row->idmateria;
                 $suma_unidad_concalificacion = 0;
                 $idhorariodetalle = $row->idhorariodetalle;
                 $validar = $this->calificacion->verificarCalificacionSiSeMuestra($idalumno, $idhorariodetalle);
@@ -1052,7 +1099,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 }
                 $tabla .= '<strong>' . $row->nombreclase . '</strong><br><small>( ' . $row->nombre . ' ' . $row->apellidop . ' ' . $row->apellidom . '</small>)</td>';
                 foreach ($unidades as $block) :
-                    $val = $this->grupo->obtenerCalificacion($idalumno, $block->idunidad, $row->idhorariodetalle);
+                $val = $this->grupo->obtenerCalificacionValidandoMateria($idalumno, $block->idunidad, $idhorario,$idmateria);
 
                     $tabla .= '<td>';
                     if ($val) {
@@ -1096,7 +1143,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
               }
             }
         }
-        $tabla .= '</table>';
+        $tabla .= '</table></div>';
         return $tabla;
     }
     
@@ -1128,7 +1175,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
             }
         }
         $tabla = "";
-        $tabla .= '<table class="table  table-striped  table-hover">
+        $tabla .= '<div class="table-responsive"> <table class="table  table-striped  table-hover">
         <thead class="bg-teal">
         <th>#</th>
         <th>MATERIA</th>';
@@ -1145,6 +1192,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
 
             foreach ($materias as $row) {
                 $total_unidades = $row->unidades;
+                $idmateria = $row->idmateria;
                 $suma_calificacion = 0;
                 $tabla .= '<tr>
                 <td>' . $c++ . '</td>
@@ -1155,7 +1203,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 $tabla .= '<strong>' . $row->nombreclase . '</strong><br><small>( ' . $row->nombre . ' ' . $row->apellidop . ' ' . $row->apellidom . '</small>)</td>';
                 foreach ($unidades as $block) {
 
-                    $val = $this->grupo->obtenerCalificacion($idalumno, $block->idunidad, $row->idhorariodetalle);
+                    $val = $this->grupo->obtenerCalificacionValidandoMateria($idalumno, $block->idunidad, $idhorario,$idmateria);
 
                     $tabla .= '<td>';
                     if ($val) {
@@ -1190,7 +1238,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 $tabla .= '</tr>';
             }
         }
-        $tabla .= '</table>';
+        $tabla .= '</table></div>';
         return $tabla;
     }
 
@@ -1205,7 +1253,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
         $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
         $calificaciones = $this->alumno->calificacionFinalPrimaria($idalumno, $idhorario, $idplantel);
         $tabla = "";
-        $tabla .= '<table class="table  table-striped  table-hover">
+        $tabla .= '<div class="table-responsive"> <table class="table  table-striped  table-hover">
         <thead class="bg-teal">
          <th>#</th>
         <th>MATERIA</th>';
@@ -1227,7 +1275,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
             }
         }
 
-        $tabla .= '</table>';
+        $tabla .= '</table></div>';
         return $tabla;
     }
 
@@ -1240,7 +1288,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
             $alumno = $this->alumno->detalleAlumno($idalumno);
             $grupop = $this->horario->showNivelGrupo($idhorario);
             $unidades = $this->grupo->unidades($this->session->idplantel);
-            $materias = $this->alumno->showAllMaterias($idhorario);
+           // $materias = $this->alumno->showAllMaterias($idhorario);
             $detalle_logo = $this->alumno->logo($this->session->idplantel);
             $logo = base_url() . '/assets/images/escuelas/' . $detalle_logo[0]->logoplantel;
             $logo2 = base_url() . '/assets/images/escuelas/' . $detalle_logo[0]->logosegundo;
@@ -1392,12 +1440,12 @@ tblcalificacion  {border-collapse:collapse}
             $c = 1;
             foreach ($materias as $row) {
                 //$alumn = $al->getAlumn();
-
+            $idmateria = $row->idmateria;
                 $tbl .= '<tr>
         <td width="30" class="subtitulocal">' . $c++ . '</td>
         <td width="180" class="subtitulocal">' . $row->nombreclase . '</td>';
                 foreach ($unidades as $block) :
-                    $val = $this->grupo->obtenerCalificacion($idalumno, $block->idunidad, $row->idhorariodetalle);
+                $val = $this->grupo->obtenerCalificacionValidandoMateria($idalumno, $block->idunidad, $idhorario,$idmateria);
                     //var_dump($val);
                     $tbl .= '<td class="subtitulocal">';
                     if ($val != false) {
@@ -1594,7 +1642,7 @@ tblcalificacion  {border-collapse:collapse}
             }
         }
         $tabla = "";
-        $tabla .= '<div class="responsive">
+        $tabla .= '<div class="table-responsive"> 
 <table class="table  table-striped  table-hover" style="width:100%;" id="datatablebodega">
         <thead  >
         <th>#</th>
@@ -1668,10 +1716,10 @@ tblcalificacion  {border-collapse:collapse}
                             $suma_calificacion_mes = 0;
                             $contador_meses = 0;
                             foreach ($meses_reales as $rowmes) {
-                                $val = $this->grupo->obtenerCalificacion($idalumno, $block->idunidad, $row->idhorariodetalle);
+                                $val = $this->grupo->obtenerCalificacionValidandoMateria($idalumno, $block->idunidad,$idhorario, $row->idmateria);
                                 if ($val) {
                                     $idmes = $rowmes->idmes;
-                                    $idcalificacion = $val->idcalificacion;
+                                     $idcalificacion = $val->idcalificacion;
                                     $calificacion_mes = $this->grupo->obtenerCalificacionXMeses($idcalificacion, $idmes);
                                     if ($calificacion_mes) {
                                         $suma_calificacion_mes = $suma_calificacion_mes + $calificacion_mes->calificacion;

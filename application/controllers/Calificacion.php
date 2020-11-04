@@ -950,6 +950,7 @@ class Calificacion extends CI_Controller
         $estatus_periodo = $detalle_periodo->activo;
         $alumnos = $this->calificacion->alumnosGrupo($idperiodo, $idgrupo, $estatus_periodo); 
         $materias = $this->calificacion->materiasGrupo($idperiodo, $idgrupo);
+        
         $tabla = "";
         $tabla .= ' <table  id="tablageneralcal" class=" table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
         <thead class="bg-teal">
@@ -962,7 +963,7 @@ class Calificacion extends CI_Controller
             $total_materias = 0;
             $suma_calificacion_materias = 0;
             foreach ($alumnos as $row) {
-                $idalumno = $row->idalumno;
+                 $idalumno = $row->idalumno;
                 $idhorario = $row->idhorario;
                 $tabla .= '<tr>';
                 $tabla .= '<td>' . $c ++ . '</td>';
@@ -981,8 +982,9 @@ class Calificacion extends CI_Controller
                         if ($validar_materia_reprobada) {
                             // No se le muestra la materia porque la reprobo y estaba seriada
                         } else {
+                           // echo $idalumno.'<br>';
                             $valor_calificacion = $this->calificacion->obtenerCalificacionSumatoria($idalumno, $idmateria, $idperiodo,$idhorario2);
-
+            //var_dump($valor_calificacion);
                             // Se refleja la metaria para sacar el promedio
                             if (isset($valor_calificacion) && ! empty($valor_calificacion)) {
                                 $suma_recorrido = 0;
@@ -1267,7 +1269,7 @@ class Calificacion extends CI_Controller
             $suma_unidades = 0;
             foreach ($materias as $materia) {
                 $idmateria = $materia->idmateria;
-
+                $idhorario = $materia->idhorario;
                 $idhorariodetalle = $materia->idhorariodetalle;
                 $idprofesormateria = $materia->idprofesormateria;
                 $total_falta = $this->calificacion->obtenerAsistenciaBoleta($idalumno, $idperiodo, $idprofesormateria, 4);
@@ -1304,7 +1306,7 @@ class Calificacion extends CI_Controller
                     if (isset($unidades) && ! empty($unidades)) {
                         foreach ($unidades as $unidad) {
                             $idunidad = $unidad->idunidad;
-                            $evaluar = $this->calificacion->obtenerCalificacion($idalumno, $idunidad, $idhorariodetalle);
+                            $evaluar = $this->calificacion->obtenerCalificacionValidandoMateria($idalumno, $idunidad, $idhorario,$idmateria);
                             if ($evaluar) {
                                 if($evaluar->calificacion > 0){
                                     $tabla .= '<td align="center">' . numberFormatPrecision( $evaluar->calificacion,1,'.') . '</td>';
@@ -1355,6 +1357,8 @@ class Calificacion extends CI_Controller
             $suma_calificaciones = 0;
             $suma_unidades = 0;
             foreach ($materias_a_recuperar as $row) {
+                $idmateria = $row->idmateria;
+                $idhorario = $row->idhorario;
                 $total_suma_materias ++;
                 $total_falta = $this->calificacion->obtenerAsistenciaBoleta($idalumno, $idperiodo, $row->idprofesormateria, 4);
                 $total_retardo = $this->calificacion->obtenerAsistenciaBoleta($idalumno, $idperiodo, $row->idprofesormateria, 2);
@@ -1385,7 +1389,7 @@ class Calificacion extends CI_Controller
                 if (isset($unidades) && ! empty($unidades)) {
                     foreach ($unidades as $unidad) {
                         $idunidad = $unidad->idunidad;
-                        $evaluar = $this->calificacion->obtenerCalificacion($idalumno, $idunidad, $row->idhorariodetalle);
+                        $evaluar = $this->calificacion->obtenerCalificacionValidandoMateria($idalumno, $idunidad, $idhorario,$idmateria);
                         if ($evaluar) {
                             $tabla .= '<td align="center">' . numberFormatPrecision($evaluar->calificacion,1,'.') . '</td>';
                             $suma_calificaciones += $evaluar->calificacion;

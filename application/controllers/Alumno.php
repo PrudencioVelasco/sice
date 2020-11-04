@@ -1426,12 +1426,13 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
             $suma_calificacion = 0;
             foreach ($materias as $row) {
                 //$alumn = $al->getAlumn();
+                $idmateria = $row->idmateria;
                 $suma_calificacion = 0;
                 $tabla .= '<tr>
         <td>' . $c++ . '</td>
         <td><strong>' . $row->nombreclase . '</strong><br><small>( ' . $row->nombre . ' ' . $row->apellidop . ' ' . $row->apellidom . '</small>)</td>';
                 foreach ($unidades as $block):
-                    $val = $this->grupo->obtenerCalificacion($idalumno, $block->idunidad, $row->idhorariodetalle);
+                $val = $this->grupo->obtenerCalificacionValidandoMateria($idalumno, $block->idunidad, $idhorario,$idmateria);
 
                     $tabla .= '<td>';
                     if ($val != false) {
@@ -1480,9 +1481,9 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
 
             foreach ($materias as $row) {
                 $total_materia += 1;
-
+                $idmateria = $this->idmateria;
                 foreach ($unidades as $block):
-                    $val = $this->grupo->obtenerCalificacion($idalumno, $block->idunidad, $row->idhorariodetalle);
+                $val = $this->grupo->obtenerCalificacionValidandoMateria($idalumno, $block->idunidad, $idhorario,$idmateria);
 
 
                     if ($val != false) {

@@ -45,6 +45,20 @@ class Tarea extends CI_Controller {
             echo json_encode($result);
         }
     }
+    public function showAllTareasXAsignatura(){
+        $idhorario = $this->decode( $this->input->get('idhorario'));
+        $idhorariodetalle = $this->input->get('idhorariodetalle');
+        $idmateria = $this->input->get('idmateria');
+        $idalumno = $this->session->idalumno;  
+        $query = $this->tarea->showTareasAlumnoXMateria($idhorario,$idalumno,$idmateria);
+            if ($query) {
+                $result['tareas'] = $this->tarea->showTareasAlumnoXMateria($idhorario,$idalumno,$idmateria);
+            }
+      
+        if (isset($result) && !empty($result)) {
+            echo json_encode($result);
+        }
+    }
 
     public function searchTarea()
     {
@@ -343,6 +357,21 @@ class Tarea extends CI_Controller {
             $query = $this->tarea->searchTareasAlumnoMateria($value, $idhorario,$idalumno);
             if ($query) {
                 $result['tareas'] = $this->tarea->searchTareasAlumnoMateria($value, $idhorario,$idalumno);
+            }
+        }
+        if (isset($result) && !empty($result)) {
+            echo json_encode($result);
+        }
+    }
+    public function searchTareasAlumnoXMateria() {
+        $value = $this->input->post('text');
+        $idhorario = $this->decode($this->input->get('idhorario'));
+        $idmateria = $this->input->get('idmateria');
+        $idalumno =  $this->session->idalumno;  
+        if (isset($idhorario) && !empty($idhorario)) {
+            $query = $this->tarea->searchTareasAlumnoXMateria($value, $idhorario,$idalumno,$idmateria);
+            if ($query) {
+                $result['tareas'] = $this->tarea->searchTareasAlumnoXMateria($value, $idhorario,$idalumno,$idmateria);
             }
         }
         if (isset($result) && !empty($result)) {
@@ -1050,29 +1079,20 @@ class Tarea extends CI_Controller {
                             $filename = $_FILES['file']['name'];
                             $ext = pathinfo($filename, PATHINFO_EXTENSION);
                             
-                            if (in_array($ext, $allowed)) {
-                                if (($_FILES['file']['size'] <= $maxsize)) {
-                                    
-                                    
-                                        
+                            if (in_array(strtolower($ext), $allowed)) {
+                                if (($_FILES['file']['size'] <= $maxsize)) { 
                                         $file_name = $_FILES['file']['name']; //ruta al archivo
                                         $tmp = explode('.', $file_name);
                                         $extension_img = end($tmp);
-                                        $user_img_profile = date("Ymdhis") . '.' . $extension_img;
-                                        $config['file_name'] = $user_img_profile;
-                                 
-                                        
-                                        
+                                        $user_img_profile = $this->session->user_id.'-'.date("Ymdhis") . '.' . $extension_img;
+                                        $config['file_name'] = $user_img_profile; 
                                         $fileName = $user_img_profile;
                                         $app = new Kunnu\Dropbox\DropboxApp($this->appkey, $this->appsecret,  $this->token);
                                         
                                         //Configure Dropbox service
                                         //$dropbox = new Dropbox($app);
                                         $dropbox = new Kunnu\Dropbox\Dropbox($app);
-                                        //Get File Metadata
-                                        
-                                        
-                                        
+                                        //Get File Metadata 
                                         // File to Upload
                                         $file = $_FILES['file'];
                                         

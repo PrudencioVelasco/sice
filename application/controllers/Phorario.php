@@ -58,9 +58,8 @@ class Phorario extends CI_Controller {
         $this->load->view('docente/footer');
     }
 
-    public function horarioMostrar() {
-
-
+    public function horarioMostrar()
+    {
         $tabla = '
         <style type="text/css"> 
 .txthorario{
@@ -78,11 +77,19 @@ class Phorario extends CI_Controller {
                 {
                     border:0px solid black;
                 }
- 
+ .card1{
+border:solid #FAF9F9 2px;
+border-radius:5px;
+padding:10px 10px 10px 10px;
+-webkit-box-shadow: 1px 2px 3px -1px rgba(156,156,156,0.63);
+-moz-box-shadow: 1px 2px 3px -1px rgba(156,156,156,0.63);
+box-shadow: 1px 2px 3px -1px rgba(156,156,156,0.63);
+min-height: 160px;
+border-top:solid #33C1FF 2px;
+}
 </style>';
 
-
-        $tabla .= '<table class="table table-hover table-striped"  > ';
+        $tabla .= '<div class="table-responsive"><table class="table "> ';
         $tabla .= ' <thead class="bg-teal"> ';
         $tabla .= '<td>HORA</td>';
         $tabla .= '<td>LUNES</td>';
@@ -91,24 +98,23 @@ class Phorario extends CI_Controller {
         $tabla .= '<td  >JUEVES</td>';
         $tabla .= '<td  >VIERNES</td>';
 
-
         $tabla .= ' </thead>';
-
 
         $lunesAll = $this->horario->showHorarioProfesor($this->session->idprofesor);
 
-       
         foreach ($lunesAll as $row) {
             $tabla .= '<tr>';
             $tabla .= '<td  ><strong>' . $row->hora . '</strong></td>';
-            $tabla .= '<td >' . $row->lunes . '<br>';
-            if (isset($row->lunesurl) && !empty($row->lunesurl)) {
+            $tabla .= '<td >';
+            if (isset($row->lunes) && !empty($row->lunes)) {
+                $tabla .= '<div class="card1"> '. $row->lunes . '<br>';
+            if (isset($row->lunesurl) && ! empty($row->lunesurl)) {
                 $tabla .= '  <a target="_blank" href="' . $row->lunesurl . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> IMPARTIR CLASE</a>';
             }
-             if (isset($row->lunesnumeroanfitrion) && !empty($row->lunesnumeroanfitrion)) {
-                $tabla .= '<br>Número anfitrion: '.$row->lunesnumeroanfitrion.'<br>';
+            if (isset($row->lunesnumeroanfitrion) && ! empty($row->lunesnumeroanfitrion)) {
+                $tabla .= '<br>Número anfitrion: ' . $row->lunesnumeroanfitrion . '<br>';
             }
-            if ((isset($row->lunesurlgrabado) && !empty($row->lunesurlgrabado))) {
+            if ((isset($row->lunesurlgrabado) && ! empty($row->lunesurlgrabado))) {
                 $tabla .= '<label><a  target="_blank" href=" ' . $row->lunesurlgrabado . '"><i class="fa fa-external-link"></i> Video grabado<a/></label>';
                 $tabla .= ' <a  href="javascript:void(0)"  class="delete_button_url"
                                                                 data-toggle="modal" data-target="#largeModalDelete"
@@ -120,22 +126,26 @@ class Phorario extends CI_Controller {
                                                                 data-urlvideo="' . $row->lunesurlgrabado . '">
                                                                  <i class="fa fa-pencil-square-o" style="color:blue;" ></i> </a>';
             }
-            if (isset($row->lunes) && !empty($row->lunes) && (isset($row->lunesurlgrabado) && empty($row->lunesurlgrabado))) {
+            if (isset($row->lunes) && ! empty($row->lunes) && (isset($row->lunesurlgrabado) && empty($row->lunesurlgrabado))) {
 
                 $tabla .= '<label> <a  href="javascript:void(0)"  class="add_button_url"
                                                                 data-toggle="modal" data-target="#largeModalAdd"
                                                                 data-idhorariodetalle="' . $row->lunesidhorariodetalle . '"  >
                                                                  Agregar video grabado</a></label>';
             }
+            $tabla .= '</div>';
+            }
             $tabla .= '</td>';
-            $tabla .= '<td  >' . $row->martes . '<br>';
-            if (isset($row->martesurl) && !empty($row->martesurl)) {
+            $tabla .= '<td  >';
+            if (isset($row->martes) && !empty($row->martes)) {
+                $tabla .= '<div class="card1"> '. $row->martes . '<br>';
+            if (isset($row->martesurl) && ! empty($row->martesurl)) {
                 $tabla .= '  <a target="_blank" href="' . $row->martesurl . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> IMPARTIR CLASE</a>';
             }
-              if (isset($row->martesnumeroanfitrion) && !empty($row->martesnumeroanfitrion)) {
-                $tabla .= '<br>Número anfitrion: '.$row->martesnumeroanfitrion.'<br>';
+            if (isset($row->martesnumeroanfitrion) && ! empty($row->martesnumeroanfitrion)) {
+                $tabla .= '<br>Número anfitrion: ' . $row->martesnumeroanfitrion . '<br>';
             }
-            if ((isset($row->martesurlgrabado) && !empty($row->martesurlgrabado))) {
+            if ((isset($row->martesurlgrabado) && ! empty($row->martesurlgrabado))) {
                 $tabla .= '<label><a  target="_blank" href=" ' . $row->martesurlgrabado . '"><i class="fa fa-external-link"></i> Video grabado<a/></label>';
                 $tabla .= ' <a  href="javascript:void(0)"  class="delete_button_url"
                                                                 data-toggle="modal" data-target="#largeModalDelete"
@@ -147,22 +157,27 @@ class Phorario extends CI_Controller {
                                                                 data-urlvideo="' . $row->martesurlgrabado . '">
                                                                  <i class="fa fa-pencil-square-o" style="color:blue;" ></i> </a>';
             }
-            if (isset($row->martes) && !empty($row->martes) && (isset($row->martesurlgrabado) && empty($row->martesurlgrabado))) {
+            if (isset($row->martes) && ! empty($row->martes) && (isset($row->martesurlgrabado) && empty($row->martesurlgrabado))) {
 
                 $tabla .= '<label> <a  href="javascript:void(0)"  class="add_button_url"
                                                                 data-toggle="modal" data-target="#largeModalAdd"
                                                                 data-idhorariodetalle="' . $row->martesidhorariodetalle . '"  >
                                                                  Agregar video grabado</a></label>';
             }
+            $tabla .= '</div>';
+            }
             $tabla .= '</td>';
-            $tabla .= '<td >' . $row->miercoles . '<br>';
-            if (isset($row->miercolesurl) && !empty($row->miercolesurl)) {
+            $tabla .= '<td >';
+                    if (isset($row->miercoles) && !empty($row->miercoles)) {
+                    $tabla .= '<div class="card1">  
+                                ' . $row->miercoles . '<br>';
+            if (isset($row->miercolesurl) && ! empty($row->miercolesurl)) {
                 $tabla .= '  <a target="_blank" href="' . $row->miercolesurl . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> IMPARTIR CLASE</a>';
             }
-              if (isset($row->miercolesnumeroanfitrion) && !empty($row->miercolesnumeroanfitrion)) {
-                $tabla .= '<br>Número anfitrion: '.$row->miercolesnumeroanfitrion.'<br>';
+            if (isset($row->miercolesnumeroanfitrion) && ! empty($row->miercolesnumeroanfitrion)) {
+                $tabla .= '<br>Número anfitrion: ' . $row->miercolesnumeroanfitrion . '<br>';
             }
-            if ((isset($row->miercolesurlgrabado) && !empty($row->miercolesurlgrabado))) {
+            if ((isset($row->miercolesurlgrabado) && ! empty($row->miercolesurlgrabado))) {
                 $tabla .= '<label><a  target="_blank" href=" ' . $row->miercolesurlgrabado . '"><i class="fa fa-external-link"></i> Video grabado<a/></label>';
                 $tabla .= ' <a  href="javascript:void(0)"  class="delete_button_url"
                                                                 data-toggle="modal" data-target="#largeModalDelete"
@@ -174,22 +189,27 @@ class Phorario extends CI_Controller {
                                                                 data-urlvideo="' . $row->miercolesurlgrabado . '">
                                                                  <i class="fa fa-pencil-square-o" style="color:blue;" ></i> </a>';
             }
-            if (isset($row->miercoles) && !empty($row->miercoles) && (isset($row->miercolesurlgrabado) && empty($row->miercolesurlgrabado))) {
+            if (isset($row->miercoles) && ! empty($row->miercoles) && (isset($row->miercolesurlgrabado) && empty($row->miercolesurlgrabado))) {
 
                 $tabla .= '<label> <a  href="javascript:void(0)"  class="add_button_url"
                                                                 data-toggle="modal" data-target="#largeModalAdd"
                                                                 data-idhorariodetalle="' . $row->miercolesidhorariodetalle . '"  >
                                                                  Agregar video grabado</a></label>';
             }
+            $tabla .= '</div>';
+                    }
             $tabla .= '</td>';
-            $tabla .= '<td  >' . $row->jueves . '<br>';
-            if (isset($row->juevesurl) && !empty($row->juevesurl)) {
+            $tabla .= '<td  >';
+                    if (isset($row->jueves) && !empty($row->jueves)) {
+                    $tabla .= '<div class="card1">  
+                                ' . $row->jueves . '<br>';
+            if (isset($row->juevesurl) && ! empty($row->juevesurl)) {
                 $tabla .= '  <a target="_blank" href="' . $row->juevesurl . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> IMPARTIR CLASE</a>';
             }
-              if (isset($row->juevesnumeroanfitrion) && !empty($row->juevesnumeroanfitrion)) {
-                $tabla .= '<br>Número anfitrion: '.$row->juevesnumeroanfitrion.'<br>';
+            if (isset($row->juevesnumeroanfitrion) && ! empty($row->juevesnumeroanfitrion)) {
+                $tabla .= '<br>Número anfitrion: ' . $row->juevesnumeroanfitrion . '<br>';
             }
-            if ((isset($row->juevesurlgrabado) && !empty($row->juevesurlgrabado))) {
+            if ((isset($row->juevesurlgrabado) && ! empty($row->juevesurlgrabado))) {
                 $tabla .= '<label><a  target="_blank" href=" ' . $row->juevesurlgrabado . '"><i class="fa fa-external-link"></i> Video grabado<a/></label>';
                 $tabla .= ' <a  href="javascript:void(0)"  class="delete_button_url"
                                                                 data-toggle="modal" data-target="#largeModalDelete"
@@ -201,22 +221,27 @@ class Phorario extends CI_Controller {
                                                                 data-urlvideo="' . $row->juevesurlgrabado . '">
                                                                  <i class="fa fa-pencil-square-o" style="color:blue;" ></i> </a>';
             }
-            if (isset($row->jueves) && !empty($row->jueves) && (isset($row->juevesurlgrabado) && empty($row->juevesurlgrabado))) {
+            if (isset($row->jueves) && ! empty($row->jueves) && (isset($row->juevesurlgrabado) && empty($row->juevesurlgrabado))) {
 
                 $tabla .= '<label> <a  href="javascript:void(0)"  class="add_button_url"
                                                                 data-toggle="modal" data-target="#largeModalAdd"
                                                                 data-idhorariodetalle="' . $row->juevesidhorariodetalle . '"  >
                                                                  Agregar video grabado</a></label>';
             }
+            $tabla .= '</div>';
+        }
             $tabla .= '</td>';
-            $tabla .= '<td >' . $row->viernes . '<br>';
-            if (isset($row->viernesurl) && !empty($row->viernesurl)) {
+            $tabla .= '<td >';
+                    if (isset($row->viernes) && !empty($row->viernes)) {
+                    $tabla .= '<div class="card1">  
+                                '  . $row->viernes . '<br>';
+            if (isset($row->viernesurl) && ! empty($row->viernesurl)) {
                 $tabla .= '  <a target="_blank" href="' . $row->viernesurl . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> IMPARTIR CLASE</a>';
             }
-              if (isset($row->viernesnumeroanfitrion) && !empty($row->viernesnumeroanfitrion)) {
-                $tabla .= '<br>Número anfitrion: '.$row->viernesnumeroanfitrion.'<br>';
+            if (isset($row->viernesnumeroanfitrion) && ! empty($row->viernesnumeroanfitrion)) {
+                $tabla .= '<br>Número anfitrion: ' . $row->viernesnumeroanfitrion . '<br>';
             }
-            if ((isset($row->viernesurlgrabado) && !empty($row->viernesurlgrabado))) {
+            if ((isset($row->viernesurlgrabado) && ! empty($row->viernesurlgrabado))) {
                 $tabla .= '<label><a  target="_blank" href=" ' . $row->viernesurlgrabado . '"><i class="fa fa-external-link"></i> Video grabado<a/></label>';
                 $tabla .= ' <a  href="javascript:void(0)"  class="delete_button_url"
                                                                 data-toggle="modal" data-target="#largeModalDelete"
@@ -228,7 +253,7 @@ class Phorario extends CI_Controller {
                                                                 data-urlvideo="' . $row->viernesurlgrabado . '">
                                                                  <i class="fa fa-pencil-square-o" style="color:blue;" ></i> </a>';
             }
-            if (isset($row->viernes) && !empty($row->viernes) && (isset($row->viernesurlgrabado) && empty($row->viernesurlgrabado))) {
+            if (isset($row->viernes) && ! empty($row->viernes) && (isset($row->viernesurlgrabado) && empty($row->viernesurlgrabado))) {
 
                 $tabla .= '<label> <a  href="javascript:void(0)"  class="add_button_url"
                                                                 data-toggle="modal" data-target="#largeModalAdd"
@@ -236,10 +261,11 @@ class Phorario extends CI_Controller {
                                                                  Agregar video grabado</a></label>';
             }
             $tabla .= '</td>';
-
+            $tabla .= '</div>';
+        }
             $tabla .= '</tr>';
         }
-        $tabla .= '</table>';
+        $tabla .= '</table></div>';
 
         return $tabla;
     }

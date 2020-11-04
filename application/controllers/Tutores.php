@@ -467,12 +467,13 @@ class Tutores extends CI_Controller
             $suma_calificacion = 0;
             foreach ($materias as $row) {
                 // $alumn = $al->getAlumn();
+                $idmateria = $row->idmateria;
                 $suma_calificacion = 0;
                 $tabla .= '<tr>
         <td>' . $c ++ . '</td>
         <td><strong>' . $row->nombreclase . '</strong><br><small>( ' . $row->nombre . ' ' . $row->apellidop . ' ' . $row->apellidom . '</small>)</td>';
                 foreach ($unidades as $block) :
-                    $val = $this->grupo->obtenerCalificacion($idalumno, $block->idunidad, $row->idhorariodetalle);
+                $val = $this->grupo->obtenerCalificacionValidandoMateria($idalumno, $block->idunidad, $idhorario,$idmateria);
 
                     $tabla .= '<td>';
                     if ($val != false) {
@@ -703,7 +704,7 @@ class Tutores extends CI_Controller
         if (isset($materias) && ! empty($materias)) {
             $suma_calificacion = 0;
             foreach ($materias as $row) {
-                
+                $idmateria = $row->idmateria;
                 $suma_calificacion = 0;
                 
                 $validar = $this->calificacion->verificarCalificacionSiSeMuestra($idalumno, $row->idhorariodetalle);
@@ -742,7 +743,7 @@ class Tutores extends CI_Controller
                         $suma_calificacion_mes = 0;
                         $contador_meses = 0;
                         foreach ($meses_reales as $rowmes) {
-                            $val = $this->grupo->obtenerCalificacion($idalumno, $block->idunidad, $row->idhorariodetalle);
+                            $val = $this->grupo->obtenerCalificacionValidandoMateria($idalumno, $block->idunidad, $idhorario,$idmateria);
                             if($val){
                                 $idmes = $rowmes->idmes;
                                 $idcalificacion = $val->idcalificacion;
@@ -844,7 +845,7 @@ class Tutores extends CI_Controller
         $suma_calificacion = 0;
         foreach ($materias as $row) { 
           $suma_calificacion = 0;
-          
+          $idmateria = $row->idmateria;
           $validar = $this->calificacion->verificarCalificacionSiSeMuestra($idalumno, $row->idhorariodetalle);
           if ($validar) {
               $suma_calificacion_verificar = 0;
@@ -871,7 +872,7 @@ class Tutores extends CI_Controller
           }
           $tabla .= '<strong>' . $row->nombreclase . '</strong><br><small>( ' . $row->nombre . ' ' . $row->apellidop . ' ' . $row->apellidom . '</small>)</td>';
           foreach ($unidades as $block) :
-            $val = $this->grupo->obtenerCalificacion($idalumno, $block->idunidad, $row->idhorariodetalle);
+          $val = $this->grupo->obtenerCalificacionValidandoMateria($idalumno, $block->idunidad, $idhorario,$idmateria);
 
             $tabla .= '<td>';
             if ($val != false) {
@@ -2718,9 +2719,9 @@ class Tutores extends CI_Controller
 
             foreach ($materias as $row) {
                 $total_materia += 1;
-
+                $idmateria = $row->idmateria;
                 foreach ($unidades as $block) :
-                    $val = $this->grupo->obtenerCalificacion($idalumno, $block->idunidad, $row->idhorariodetalle);
+                $val = $this->grupo->obtenerCalificacionValidandoMateria($idalumno, $block->idunidad, $idhorario,$idmateria);
 
                     if ($val != false) {
                         $suma_calificacion += $val->calificacion;
@@ -3258,11 +3259,12 @@ tblcalificacion  {border-collapse:collapse}
         $tbl .= '</tr>';
         $c = 1;
         foreach ($materias as $row) { 
+            $idmateria = $row->idmateria;
             $tbl .= '<tr>
         <td width="30" class="subtitulocal">' . $c++ . '</td>
         <td width="180" class="subtitulocal">' . $row->nombreclase . '</td>';
             foreach ($unidades as $block):
-                $val = $this->grupo->obtenerCalificacion($idalumno, $block->idunidad, $row->idhorariodetalle);
+            $val = $this->grupo->obtenerCalificacionValidandoMateria($idalumno, $block->idunidad, $idhorario,$idmateria);
                  $tbl .= '<td class="subtitulocal">';
                 if ($val != false) {
                     $tbl .= '<label>' . $val->calificacion . '</label>';
@@ -3764,6 +3766,7 @@ tblcalificacion  {border-collapse:collapse}
 
             foreach ($materias as $row) {
                 $total_unidades = $row->unidades;
+                $idmateria = $row->idmateria;
                 $suma_calificacion = 0;
                 $tabla .= '<tr>
                 <td>' . $c++ . '</td>
@@ -3774,7 +3777,7 @@ tblcalificacion  {border-collapse:collapse}
                 $tabla .= '<strong>' . $row->nombreclase . '</strong><br><small>( ' . $row->nombre . ' ' . $row->apellidop . ' ' . $row->apellidom . '</small>)</td>';
                 foreach ($unidades as $block) {
 
-                    $val = $this->grupo->obtenerCalificacion($idalumno, $block->idunidad, $row->idhorariodetalle);
+                    $val = $this->grupo->obtenerCalificacionValidandoMateria($idalumno, $block->idunidad, $idhorario,$idmateria);
 
                     $tabla .= '<td>';
                     if ($val) {

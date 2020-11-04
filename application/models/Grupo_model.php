@@ -1022,6 +1022,26 @@ WHERE
             return false;
         }
     }
+    public  function obtenerCalificacionValidandoMateria($idalumno = '', $idunidad = '', $idhorario = '',$idmateria = ''){
+        $this->db->select('c.idcalificacion, c.calificacion, date(c.fecharegistro) as fecharegistro');
+        $this->db->from('tblcalificacion c');
+        $this->db->join('tblunidad u', 'c.idunidad = u.idunidad'); 
+        $this->db->join('tblhorario_detalle hd', 'c.idhorariodetalle = hd.idhorariodetalle');
+        $this->db->join('tblprofesor_materia pm', 'pm.idprofesormateria = hd.idmateria');
+        $this->db->join('tbloportunidad_examen op', 'op.idoportunidadexamen = c.idoportunidadexamen');
+        $this->db->where('c.idalumno', $idalumno);
+        $this->db->where('op.numero',1);
+        $this->db->where('hd.idhorario', $idhorario);
+        $this->db->where('pm.idmateria', $idmateria);
+        $this->db->where('c.idunidad', $idunidad); 
+        $this->db->order_by('c.fecharegistro ASC');
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
         public function obtenerCalificacionPreescolar($idalumno = '', $idunidad = '', $idprofesor = '',$idhorario) {
         # code...
         $this->db->select('');
