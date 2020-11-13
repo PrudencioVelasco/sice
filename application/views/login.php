@@ -6,13 +6,13 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Sistema Integral para el Control Escolar</title>
+        <title>SICE®</title>
         <!-- plugins:css -->
-        <link rel="shortcut icon" href="<?php echo base_url(); ?>/assets/images/birrete.ico"> 
+        <link rel="shortcut icon" href="<?php echo base_url(); ?>/assets/images/icosice.ico"> 
         
         
         <!-- Firefox, Opera  -->
-        <link rel="icon" href="<?php echo base_url(); ?>/assets/images/birrete.ico">
+        <link rel="icon" href="<?php echo base_url(); ?>/assets/images/icosice.ico">
         <link rel="stylesheet" href="<?php echo base_url('assets/login/css/vendor.bundle.base.css'); ?>">
         <link rel="stylesheet" href="<?php echo base_url('assets/login/css/vendor.bundle.addons.css'); ?>">
         <link rel="stylesheet" href="<?php echo base_url('assets/login/css/style.css'); ?>">

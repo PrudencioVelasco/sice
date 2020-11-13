@@ -74,19 +74,20 @@ $(document).ready(function () {
         $.ajax({
             type: "POST",
             url: my_var_1 + "Pgrupo/eliminarCalificacionUnidadRecuperacion",
-            data: $('#frmeliminarcalificacion').serialize(),
+            data: $('#frmeliminarcalificacionrecuperacion').serialize(),
             success: function (data) {
                 $('#btneliminarcalificacionrecuperacion').prop("disabled", false);
                 $('#btneliminarcalificacionrecuperacion').html(
                     `<i class="fa fa-trash"></i> ELIMINAR`
                 );
                 var val = $.parseJSON(data);
+                //console.log(val);
                 if ((val.success === "Ok")) {
                     swal({
                         position: 'center',
                         type: 'success',
-                        title: 'Eliminado!',
-                        text: 'Fue eliminado la calificación con exito.',
+                        title: 'Notificación!',
+                        html:  val.mensaje,
                         showConfirmButton: true
                     }).then(function () {
                         location.reload();
@@ -119,6 +120,7 @@ $(document).ready(function () {
                     `<i class="fa fa-trash"></i> ELIMINAR`
                 );
                 var val = $.parseJSON(data);
+                console.log(val);
                 if ((val.success === "Ok")) {
                     swal({
                         position: 'center',

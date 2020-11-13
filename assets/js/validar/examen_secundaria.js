@@ -190,7 +190,7 @@ $(document).ready(function () {
     });
 
 
-    $("#btnmodificar").click(function () {
+    /*$("#btnmodificar").click(function () {
         $('#btnmodificar').prop("disabled", true);
         $('#btnmodificar').html(
                 `<span class="fa fa-spinner fa-pulse  fa-fw spinner-border-sm" role="status" aria-hidden="true"></span> PROCESANDO...`
@@ -227,5 +227,5 @@ $(document).ready(function () {
 
             }
         })
-    });
+    });*/
 });

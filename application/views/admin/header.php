@@ -7,9 +7,9 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" href="<?php echo base_url(); ?>/assets/images/birrete.ico">  
-        <link rel="icon" href="<?php echo base_url(); ?>/assets/images/birrete.ico">
-        <title>SICE  - Sistema Integral de Control Escolar </title>
+        <link rel="shortcut icon" href="<?php echo base_url(); ?>/assets/images/icosice.ico">  
+        <link rel="icon" href="<?php echo base_url(); ?>/assets/images/icosice.ico">
+        <title>SICE®</title>
 
         <!-- Bootstrap core CSS -->
 
@@ -59,16 +59,7 @@
        
         <script src="<?php echo base_url(); ?>/assets/vue/select2/vue-multiselect.min.js"></script>
 		<link rel="stylesheet" href="<?php echo base_url(); ?>/assets/vue/select2/vue-multiselect.min.css">
-        <!--       <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/vue-ctk-date-time-picker@1.4.1/dist/vue-ctk-date-time-picker.css">
-      
-    <script src="https://cdn.jsdelivr.net/npm/vue-ctk-date-time-picker@1.4.1/dist/vue-ctk-date-time-picker.umd.js" charset="utf-8"></script>
-    -->
-<!--<script src="https://cdn.jsdelivr.net/npm/vue2-datepicker@1.9.6/dist/build.min.js"></script>-->
-
-
-<!--   <script src="https://unpkg.com/vue2-timepicker@1.0.8/dist/VueTimepicker.umd.min.js"></script>
-   <link href="https://unpkg.com/vue2-timepicker@1.0.8/dist/VueTimepicker.css" rel="stylesheet" type="text/css" />-->
-
+  
         <style>
             .swal2-popup{
                 font-size: 1.4rem;
@@ -78,18 +69,7 @@
             }
 
         </style>
-        <style type="text/css">
-            .modal-mask {
-                position: fixed;
-                z-index: 9998;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0, 0, 0, .5);
-                display: table;
-                transition: opacity .3s ease;
-            }
+        <style type="text/css"> 
             .modal-wrapper {
                 display: table-cell;
                 vertical-align: middle;
@@ -108,8 +88,10 @@
                 left: 50%;
                 top: 50%;
                 transform: translate(-50%,-50%)
-            };
-
+            }
+            .imglogo{
+            width: 100px;
+            }
 
         </style>
     </head>
@@ -125,8 +107,9 @@
                 <div class="col-md-3 left_col">
                     <div class="left_col scroll-view">
 
-                        <div class="navbar nav_title" style="border: 0;">
-                            <a href="#" class="site_title"><i class="fa fa-graduation-cap"></i> <span>SICE</span></a>
+                    <div class="navbar nav_title" style="border: 0; padding-right:20px;"  align="center">
+                            <a href="#" class="site_title"> <img class="imglogo" src="<?php echo base_url(); ?>/assets/images/sicelogo.png" alt=""> </a>
+
                         </div>
                         <div class="clearfix"></div>
 
@@ -210,6 +193,7 @@
                                        
                                         if (isset($this->session->planteles) && !empty($this->session->planteles)) {
                                             foreach ($this->session->planteles as $row) {
+                                               
                                                 if ($this->session->user_id == 2230) {
                                                         if($row->idplantel == 7){ ?>
                                                        <li><a href="<?= base_url('/welcome/plantel/' . $row->idplantel) ?>">LICENCIATURA PRIMARIA</a></li>  

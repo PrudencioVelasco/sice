@@ -26,6 +26,7 @@ class pGrupo extends CI_Controller
         $this->load->model('horario_model', 'horario');
         $this->load->library('excel');
         date_default_timezone_set("America/Mexico_City");
+        $this->dias = 3;
     }
 
     public function encode($string)
@@ -234,9 +235,10 @@ class pGrupo extends CI_Controller
                         'calificacion'=>$calificacion
                     );
                     $this->grupo->updateDetalleCalificacion($iddetallecalificacion,$data1);
-                    
+                    $nueva_calificacion = $suma_total/$suma_total_meses;
+
                     $data2 = array(
-                        'calificacion'=>$suma_total/$suma_total_meses
+                        'calificacion'=>floordec($nueva_calificacion)
                     );
                     $this->grupo->updateCalificacion($idcalificacion,$data2);
                     echo json_encode([
@@ -306,14 +308,19 @@ class pGrupo extends CI_Controller
             $idmes = $this->input->post('mes');
             $calificacion = $this->input->post('calificacion');
             $detalle_oportunidad = $this->grupo->primeraOportunidad($this->session->idplantel);
+            $detalle_horario = $this->horario->detalleHorarioDetalle($idhorariodetalle);
+            $idmateria = $detalle_horario[0]->idmateria;
+            $idprofesor = $this->session->idprofesor;
+            $validar_profesor_materia = $this->grupo->validarSiLePerteneceLaMateria($idmateria,$idprofesor,$idhorario);
+           if($validar_profesor_materia){
             if ($detalle_oportunidad) {
                 $idopotunidad = $detalle_oportunidad[0]->idoportunidadexamen;
                 $contador_no_insertado = 0;
                 $contador_insertado = 0;
                 foreach ($idalumno as $key => $value) {
                     $idalumno2 = $value;
-                    $calificacion_final = $calificacion[$key];
-                    $validar = $this->grupo->validarAgregarCalificacion($unidad, $idhorariodetalle, '', $idalumno2);
+                    $calificacion_final =  floordec($calificacion[$key]);
+                    $validar = $this->grupo->validarAgregarCalificacionXMateria($unidad, $idhorario,$idmateria, '', $idalumno2);
                     if ($validar == false) {
                         // ES LA PRIMERA VEZ QUE SE REGISTRA LA CALIFICACION
                         if (isset($calificacion_final) && ! empty($calificacion_final)) {
@@ -356,7 +363,7 @@ class pGrupo extends CI_Controller
                                 }
                                 $suma = ($total_suma + $calificacion_final) / $contado;
                                 $data = array(
-                                    'calificacion' => $suma,
+                                    'calificacion' =>floordec($suma),
                                     'idusuario' => $this->session->user_id,
                                     'fecharegistro' => date('Y-m-d H:i:s')
                                 );
@@ -378,22 +385,32 @@ class pGrupo extends CI_Controller
                             } else {
                                 if (isset($calificacion_final) && ! empty($calificacion_final) && $calificacion_final >= 0.00) {
                                     $idcalificacion2 = $validar_mes[0]->idcalificacion;
-                                    $iddetallecalificacion = $validar_mes[0]->iddetallecalificacion;
-                                    $detalle_calificacion = $this->grupo->sumaCalificacion($idcalificacion2, $iddetallecalificacion);
-                                    $suma_anterior = $detalle_calificacion[0]->calificacion;
-                                      $suma_total = $suma_anterior + $calificacion_final;
-                                    $meses_anteriores = $detalle_calificacion[0]->contador;
-                                     $suma_total_meses = $meses_anteriores + 1; 
-                                    $data2 = array(
-                                        'calificacion' =>  $suma_total / $suma_total_meses 
-                                    );
-                                    $this->grupo->updateCalificacion($idcalificacion2, $data2);
+                                    $fecharegistro = $validar_mes[0]->fecharegistro;
+                                    $fecha_inicio = date('Y-m-d');
+                                    $fecha_fin = date('Y-m-d', strtotime($fecharegistro));
+                                    $total_dias = dias_pasados($fecha_inicio, $fecha_fin);
+                                    if ($total_dias <= $this->dias) {
+                                        $iddetallecalificacion = $validar_mes[0]->iddetallecalificacion;
+                                        $detalle_calificacion = $this->grupo->sumaCalificacion($idcalificacion2, $iddetallecalificacion);
+                                        $suma_anterior = $detalle_calificacion[0]->calificacion;
+                                        $suma_total = $suma_anterior + $calificacion_final;
+                                        $meses_anteriores = $detalle_calificacion[0]->contador;
+                                        $suma_total_meses = $meses_anteriores + 1; 
+                                        $suma_total2 = $suma_total / $suma_total_meses;
+                                        //floordec($suma_total2);
+                                        $data2 = array(
+                                            'calificacion' =>   floordec($suma_total2)
+                                        );
+                                        $this->grupo->updateCalificacion($idcalificacion2, $data2);
 
-                                    $data1 = array(
-                                        'calificacion' =>  $calificacion_final 
-                                    );
-                                    $this->grupo->updateDetalleCalificacion($iddetallecalificacion, $data1);
-                                    $contador_insertado ++;
+                                        $data1 = array(
+                                            'calificacion' => $calificacion_final 
+                                        );
+                                        $this->grupo->updateDetalleCalificacion($iddetallecalificacion, $data1);
+                                        $contador_insertado ++;
+                                    }else{
+                                        $contador_no_insertado ++;
+                                    }
                                 }
                             }
                         }
@@ -416,9 +433,16 @@ class pGrupo extends CI_Controller
                     'error' => 'No esta registrado la Oportunidad.'
                 ]);
             }
+        }else{
+            echo json_encode([
+                'error' => 'Esta Asignatura no le pertenece a Usted.'
+            ]);
+        }
         }
     }
-
+public function test(){
+    echo floordec(9.9);
+}
     // FIN EXAMEN SECUNDARIA
     public function buscarAsistencia($idhorario, $idhorariodetalle, $fechainicio, $fechafin, $idunidad)
     {
@@ -707,11 +731,15 @@ class pGrupo extends CI_Controller
                     $tabla .= '<td>';
                     if ($val != false) {
                         $suma_calificacion = $suma_calificacion + $val->calificacion;
-                        $tabla .= '<label>' . numberFormatPrecision($val->calificacion,1,'.') . '  </label>';
+                        if (validar_calificacion($val->calificacion, $detalle_configuracion[0]->calificacion_minima)) {
+                            $tabla .= '<label style="color:red;">' . numberFormatPrecision($val->calificacion,1,'.') . '  </label>';
+                        }else{
+                            $tabla .= '<label style="color:green;">' . numberFormatPrecision($val->calificacion,1,'.') . '  </label>';
+                        }
                         $fecha_inicio = date('Y-m-d');
                         $fecha_fin = date('Y-m-d', strtotime($val->fecharegistro));
                         $total_dias = dias_pasados($fecha_inicio, $fecha_fin);
-                        if ($total_dias <= 3) {
+                        if ($total_dias <= $this->dias) {
                             $tabla .= '  <a  href="javascript:void(0)"><i class="fa fa-pencil edit_button"  data-toggle="modal" data-target="#myModal"
 				                                data-idcalificacion="' . $val->idcalificacion . '"
 				                                data-calificacion="' . $val->calificacion . '"
@@ -788,12 +816,13 @@ class pGrupo extends CI_Controller
                 foreach ($unidades as $block) : 
                     $total_unidades += 1;
                     $val = $this->grupo->obtenerCalificacionValidandoMateria($row->idalumno, $block->idunidad, $idhorario,$idmateria);
+                    
                     $tabla .= '<td align="center">';
                     if ($val) {
                         $idcalificacion = $val->idcalificacion;
                         $detalle_calificacion = $this->grupo->detalleCalificacionSecundaria($idcalificacion);
-                        $suma_calificacion = $suma_calificacion + $val->calificacion;
-                        $tabla .= '<label style="font-size:16px;">' . numberFormatPrecision($val->calificacion,1, '.') . '  </label>';
+                        $suma_calificacion = $suma_calificacion + $val->calificaciondetalle;
+                        $tabla .= '<label style="font-size:16px;">' . numberFormatPrecision($val->calificaciondetalle,1, '.') . '  </label>';
                         $fecha_inicio = date('Y-m-d');
                         $fecha_fin = date('Y-m-d', strtotime($val->fecharegistro));
                         $total_dias = dias_pasados($fecha_inicio, $fecha_fin); 
@@ -887,7 +916,7 @@ class pGrupo extends CI_Controller
                         $fecha_inicio = date('Y-m-d');
                         $fecha_fin = date('Y-m-d', strtotime($val->fecharegistro));
                         $total_dias = dias_pasados($fecha_inicio, $fecha_fin);
-                        if ($total_dias <= 3) {
+                        if ($total_dias <= $this->dias) {
                             $tabla .= '  <a  href="javascript:void(0)"><i class="fa fa-pencil edit_button"  data-toggle="modal" data-target="#myModal"
 				                                data-idcalificacion="' . $val->idcalificacion . '"
                                                                 data-iddetallecalificacion="' . $detalle_calificacion->iddetallecalificacion . '"
@@ -998,7 +1027,7 @@ class pGrupo extends CI_Controller
                             $fecha_inicio = date('Y-m-d');
                             $fecha_fin = date('Y-m-d', strtotime($val->fecharegistro));
                             $total_dias = dias_pasados($fecha_inicio, $fecha_fin);
-                            if ($total_dias <= 3) {
+                            if ($total_dias <= $this->dias) {
                                 $tabla .= '  <a  href="javascript:void(0)"><i class="fa fa-pencil edit_button"  data-toggle="modal" data-target="#myModal"
 				                                data-idcalificacion="' . $val->idcalificacion . '"
 				                                data-calificacion="' . $val->calificacion . '"
@@ -1264,7 +1293,12 @@ class pGrupo extends CI_Controller
             $idalumno = $this->input->post('idalumno');
             $unidad = $this->input->post('unidad');
             $calificacion = $this->input->post('calificacion');
+            $detalle_horario = $this->horario->detalleHorarioDetalle($idhorariodetalle);
+            $idmateria = $detalle_horario[0]->idmateria;
             $detalle_oportunidad = $this->grupo->primeraOportunidad($this->session->idplantel);
+            $idprofesor = $this->session->idprofesor;
+            $validar_profesor_materia = $this->grupo->validarSiLePerteneceLaMateria($idmateria,$idprofesor,$idhorario);
+           if($validar_profesor_materia){
             if ($detalle_oportunidad) {
                 $idopotunidad = $detalle_oportunidad[0]->idoportunidadexamen;
                 $contador_no_insertado = 0;
@@ -1272,7 +1306,7 @@ class pGrupo extends CI_Controller
                 foreach ($idalumno as $key => $value) {
                     $idalumno2 = $value;
                     $calificacion_final = $calificacion[$key];
-                    $validar = $this->grupo->validarAgregarCalificacion($unidad, $idhorariodetalle, '', $idalumno2);
+                    $validar = $this->grupo->validarAgregarCalificacionXMateria($unidad, $idhorario,$idmateria, '', $idalumno2);
                     if ($validar == false) {
                         if (isset($calificacion_final) && ! empty($calificacion_final)) {
                             $data = array(
@@ -1310,6 +1344,11 @@ class pGrupo extends CI_Controller
                     'error' => 'No esta registrado la Oportunidad.'
                 ]);
             }
+        }else{
+             echo json_encode([
+                'error' => 'Esta Asignatura no le pertenece a Usted.'
+            ]);
+        }
         } 
     }
  
@@ -1359,7 +1398,9 @@ class pGrupo extends CI_Controller
             $numero_semana_enviado = date('W', strtotime($fecha));
             $semana_actual = date('W');
             //if ($semana_actual == $numero_semana_enviado) {
-                $validar = $this->grupo->validarAgregarAsistencia($fecha, $idhorariodetalle, $idunidad);
+                $detalle_horario = $this->horario->detalleHorarioDetalle($idhorariodetalle);
+                $idmateria = $detalle_horario[0]->idmateria;
+                $validar = $this->grupo->validarAgregarAsistenciaXMateria($fecha, $idhorario,$idmateria);
                 if ($validar == false) {
                     foreach ($idalumno as $key => $value) {
                         $idalumno2 = $value;
@@ -1671,7 +1712,7 @@ class pGrupo extends CI_Controller
         $fecha_inicio = date('Y-m-d');
         $fecha_fin = date('Y-m-d', strtotime($datelle->fecharegistro));
         $total_dias = dias_pasados($fecha_inicio, $fecha_fin);
-        if ($total_dias <= 3) {
+        if ($total_dias <= $this->dias) {
             $value = $this->grupo->deleteCalificacion($idcalificacion);
             if ($value) {
                 echo json_encode([
@@ -1699,7 +1740,7 @@ class pGrupo extends CI_Controller
         $fecha_inicio = date('Y-m-d');
         $fecha_fin = date('Y-m-d', strtotime($datelle->fecharegistro));
         $total_dias = dias_pasados($fecha_inicio, $fecha_fin);
-        if ($total_dias <= 3) {
+        if ($total_dias <= $this->dias) {
             $value = $this->grupo->deleteCalificacion($idcalificacion);
             if ($value) {
                 echo json_encode([
@@ -1781,7 +1822,7 @@ class pGrupo extends CI_Controller
             $fecha_inicio = date('Y-m-d');
             $fecha_fin = date('Y-m-d', strtotime($detalle_calificacion->fecharegistro));
             $total_dias = dias_pasados($fecha_inicio, $fecha_fin);
-            if ($total_dias <= 3) {
+            if ($total_dias <= $this->dias) {
                 $data = array(
                     'calificacion' => $calificacion,
                     'idusuario' => $this->session->user_id  
@@ -1799,7 +1840,7 @@ class pGrupo extends CI_Controller
         }
     }
 
-    public function updateCalificacionSecu()
+   /* public function updateCalificacionSecu()
     {
         Permission::grant(uri_string());
         $config = array(
@@ -1877,7 +1918,7 @@ class pGrupo extends CI_Controller
                 ]);
             }
         }
-    }
+    }*/
 
     public function eliminarCalificacionUnidadRecuperacion()
     {
@@ -1885,26 +1926,62 @@ class pGrupo extends CI_Controller
         $unidad = $this->input->post('idunidad');
         $idoportunidad = $this->input->post('idoportunidad');
         $horariodetalle = $this->input->post('horariodetalle');
-        $detalle_calificacion = $this->grupo->detalleCalificacionUnidad($unidad, $horariodetalle);
+        $detalle_horario = $this->horario->detalleHorarioDetalle($horariodetalle);
+        $idhorario = $detalle_horario[0]->idhorario;
+        $idmateria = $detalle_horario[0]->idmateria;
+        $detalle_calificacion = $this->grupo->detalleCalificacionUnidadXMateriaOportunidad($unidad, $idhorario,$idmateria,$idoportunidad);
+        $eliminado = 0;
+        $no_eliminado = 0;
         if ($detalle_calificacion) {
-            $fecha_inicio = date('Y-m-d');
-            $fecha_fin = date('Y-m-d', strtotime($detalle_calificacion->fecharegistro));
-            $total_dias = dias_pasados($fecha_inicio, $fecha_fin);
-            if ($total_dias <= 3) {
-                $this->grupo->eliminarCalificacionUnidad($unidad, $horariodetalle, $idoportunidad);
-
+            if(isset($detalle_calificacion) && !empty($detalle_calificacion)){
+                foreach($detalle_calificacion as $row){
+                    $fecha_inicio = date('Y-m-d');
+                    $fecha_fin = date('Y-m-d', strtotime($row->fecharegistro));
+                    $total_dias = dias_pasados($fecha_inicio, $fecha_fin);
+                    $idhorariodetalle = $row->idhorariodetalle;
+                    if ($total_dias <= $this->dias) {
+                        $this->grupo->eliminarCalificacionUnidad($unidad, $idhorariodetalle, $idoportunidad);
+                        $eliminado = $eliminado + 1;
+                        /*echo json_encode([
+                            'success' => 'Ok'
+                        ]);*/
+                    } else {
+                        $no_eliminado = $no_eliminado + 1;
+                       /* echo json_encode([
+                            'error' => 'Ya pasaron los 3 dias habiles. 2'
+                        ]);*/
+                    }
+                }
+                if($eliminado > 0 && $no_eliminado == 0){
+                    echo json_encode([
+                        'success' => 'Ok',
+                        'mensaje' => 'Fueron eliminados las calificaciones con exito.'
+                    ]);
+                }
+                if($eliminado > 0 && $no_eliminado > 0){
+                    echo json_encode([
+                        'success' => 'Ok',
+                        'mensaje' => 'Algunas calificaciones no fueron eliminadas.'
+                    ]);
+                }
+                if($eliminado == 0 && $no_eliminado > 0){
+                    echo json_encode([
+                        'success' => 'Ok',
+                        'mensaje' => 'No fueron eliminadas las calificaciones.'
+                    ]);
+                }
+            }else{
                 echo json_encode([
-                    'success' => 'Ok'
-                ]);
-            } else {
-                echo json_encode([
-                    'error' => 'Ya pasaron los 3 dias habiles.'
+                    'success' => 'Ok',
+                    'mensaje' => 'No hay calificaciones que eliminar.'
                 ]);
             }
+
+
         } else {
             echo json_encode([
-                'success' => 'vacio',
-                'mensaje' => 'Ya pasaron los 3 dias habiles.'
+                'success' => 'OK',
+                'mensaje' => 'Ya pasaron los 3 dias habiles. 1'
             ]);
         }
     }
@@ -1970,14 +2047,22 @@ class pGrupo extends CI_Controller
                 $idopotunidad = $detalle_oportunidad[0]->idoportunidadexamen;
                 $unidad = $this->input->post('unidad');
                 $horariodetalle = $this->input->post('horariodetalle');
-                $detalle_calificacion = $this->grupo->detalleCalificacionUnidad($unidad, $horariodetalle);
+                $detalle_horario = $this->horario->detalleHorarioDetalle($horariodetalle);
+                $idmateria = $detalle_horario[0]->idmateria;
+                $idhorario = $detalle_horario[0]->idhorario;
+                $detalle_calificacion = $this->grupo->detalleCalificacionUnidadXMateria($unidad, $idhorario, $idmateria);
                 if ($detalle_calificacion) {
                     $fecha_inicio = date('Y-m-d');
-                    $fecha_fin = date('Y-m-d', strtotime($detalle_calificacion->fecharegistro));
+                    $fecha_fin = date('Y-m-d', strtotime($detalle_calificacion[0]->fecharegistro));
                     $total_dias = dias_pasados($fecha_inicio, $fecha_fin);
-                    if ($total_dias <= 3) {
-
-                        $this->grupo->eliminarCalificacionUnidad($unidad, $horariodetalle, $idopotunidad);
+                    if ($total_dias <= $this->dias) {
+                        if(isset($detalle_calificacion) && !empty($detalle_calificacion)){
+                            foreach($detalle_calificacion  as $row){
+                                    $idhorariodetalle = $row->idhorariodetalle;
+                                    $this->grupo->eliminarCalificacionUnidad($unidad, $idhorariodetalle, $idopotunidad);
+                            }
+                        }
+                       
 
                         echo json_encode([
                             'success' => 'Ok'
@@ -2032,19 +2117,22 @@ class pGrupo extends CI_Controller
             $detalle_oportunidad = $this->grupo->primeraOportunidad($this->session->idplantel);
             if ($detalle_oportunidad) {
                  
-                 $idopotunidad = $detalle_oportunidad[0]->idoportunidadexamen;
+                $idopotunidad = $detalle_oportunidad[0]->idoportunidadexamen;
                 $unidad = $this->input->post('unidad');
                 $horariodetalle = $this->input->post('horariodetalle');
+                $detalle_horario = $this->horario->detalleHorarioDetalle($horariodetalle);
+                $idmateria = $detalle_horario[0]->idmateria;
+                $idhorario = $detalle_horario[0]->idhorario;
                 $idmes = $this->input->post('meseliminar');
-                $detalle_calificacion1 = $this->grupo->detalleCalificacionUnidad($unidad, $horariodetalle);
+                $detalle_calificacion1 = $this->grupo->detalleCalificacionUnidadXMes($unidad, $idhorario,$idmateria,$idmes);
                 if ($detalle_calificacion1) {
                     
                     $fecha_inicio = date('Y-m-d');
                     $fecha_fin = date('Y-m-d', strtotime($detalle_calificacion1->fecharegistro));
                     $total_dias = dias_pasados($fecha_inicio, $fecha_fin);
-                    if ($total_dias <= 3) {
+                    if ($total_dias <= $this->dias) {
                         
-                        $calificacion = $this->grupo->showAllCalificacionUnidad($unidad,$horariodetalle,$idopotunidad);
+                        $calificacion = $this->grupo->showAllCalificacionUnidadXMateria($unidad,$idhorario,$idmateria,$idopotunidad);
                         if ($calificacion) {
                             foreach ($calificacion as $row){
                                  $idcalificacion = $row->idcalificacion;
@@ -2112,6 +2200,7 @@ class pGrupo extends CI_Controller
     {
         $detalle_horario = $this->grupo->detalleClase($idhorariodetalle);
         $idprofesormateria = $detalle_horario[0]->idprofesormateria;
+        $idmateria = $detalle_horario[0]->idmateria; 
         $alumnos = $this->grupo->obtenerAlumnoRecuperar($idhorariodetalle, $idoportunidad_anterior, $idprofesormateria);
         $datoshorario = $this->horario->showNivelGrupo($idhorario);
         $idnivelestudio = $datoshorario->idnivelestudio;
@@ -2126,7 +2215,25 @@ class pGrupo extends CI_Controller
         $c = 1;
         $total_unidades = 0;
         if (isset($alumnos) && ! empty($alumnos)) {
+            $suma_calificacion_verificar = 0;
+            $mostrar = false;
             foreach ($alumnos as $row) {
+
+                $validar = $this->calificacion->verificarCalificacionSiSeMuestraXMateria($row->idalumno, $idhorario, $idmateria);
+                if ($validar) {
+                    $suma_calificacion_verificar = 0;
+                    foreach ($validar as $rowv) {
+                        $suma_calificacion_verificar += $rowv->calificacion;
+                    }
+                    if ($suma_calificacion_verificar > 0) {
+                        $mostrar = TRUE;
+                    } else {
+                        $mostrar = FALSE;
+                    }
+                } else {
+                    $mostrar = TRUE;
+                }
+                if($mostrar){
                 if (validar_calificacion($row->calificacion, $detalle_configuracion[0]->calificacion_minima)) {
                     $tabla .= '<tr>';
                     $tabla .= '  <td>' . $c ++ . '</td>';
@@ -2144,7 +2251,7 @@ class pGrupo extends CI_Controller
                                 $fecha_inicio = date('Y-m-d');
                                 $fecha_fin = date('Y-m-d', strtotime($detalle_calificacion->fecharegistro));
                                 $total_dias = dias_pasados($fecha_inicio, $fecha_fin);
-                                if ($total_dias <= 3) {
+                                if ($total_dias <= $this->dias) {
                                     $tabla .= '  <a  href="javascript:void(0)"><i class="fa fa-pencil edit_button"  data-toggle="modal" data-target="#myModal"
 		                                data-idcalificacion="' . $detalle_calificacion->idcalificacion . '"
 		                                data-calificacion="' . numberFormatPrecision($suma_calificacion / $total_unidades, 1,'.') . '"
@@ -2163,7 +2270,7 @@ class pGrupo extends CI_Controller
                             $tabla .= '<label style="color:green;">' . numberFormatPrecision($suma_calificacion / $total_unidades, 1,'.') . '</label>';
                             $fecha_fin = date('Y-m-d', strtotime($detalle_calificacion->fecharegistro));
                             $total_dias = dias_pasados($fecha_inicio, $fecha_fin);
-                            if ($total_dias <= 3) {
+                            if ($total_dias <= $this->dias) {
                                 $tabla .= '  <a  href="javascript:void(0)"><i class="fa fa-pencil edit_button"  data-toggle="modal" data-target="#myModal"
 		                                data-idcalificacion="' . $detalle_calificacion->idcalificacion . '"
 		                                data-calificacion="' . numberFormatPrecision($suma_calificacion / $total_unidades, 1,'.') . '"
@@ -2181,6 +2288,7 @@ class pGrupo extends CI_Controller
                     $tabla .= '</td>';
                     $tabla .= '</tr>';
                 }
+            }
             }
         }
         $tabla .= '</table>';
@@ -2226,7 +2334,7 @@ class pGrupo extends CI_Controller
                                 $fecha_fin = date('Y-m-d', strtotime($detalle_calificacion->fecharegistro));
                                 $total_dias = dias_pasados($fecha_inicio, $fecha_fin);
 
-                                if ($total_dias <= 3) { 
+                                if ($total_dias <= $this->dias) { 
                                     $tabla .= '  <a  href="javascript:void(0)"><i class="fa fa-trash delete_button"  data-toggle="modal" data-target="#myModalDelete"
 		                                data-idcalificacion="' . $detalle_calificacion->idcalificacion . '"
                                                       data-iddetallecalificacion="' . $row_calificacion->iddetallecalificacion . '"
@@ -2241,7 +2349,7 @@ class pGrupo extends CI_Controller
                             $tabla .= '<label style="color:green;">' . numberFormatPrecision($suma_calificacion / $total_unidades, 1,'.') . '</label>';
                             $fecha_fin = date('Y-m-d', strtotime($detalle_calificacion->fecharegistro));
                             $total_dias = dias_pasados($fecha_inicio, $fecha_fin);
-                            if ($total_dias <= 3) {
+                            if ($total_dias <= $this->dias) {
                                
 
                                 $tabla .= '  <a  href="javascript:void(0)"><i class="fa fa-trash delete_button"  data-toggle="modal" data-target="#myModalDelete"
@@ -2367,7 +2475,7 @@ class pGrupo extends CI_Controller
             array(
                 'field' => 'calificacion[]',
                 'label' => 'Calificacion',
-                'rules' => 'required|trim|decimal|callback_maxNumberSecundaria',
+                'rules' => 'trim|decimal|callback_maxNumberSecundaria',
                 'errors' => array(
                     'decimal' => 'Debe de ser Números decimales.'
                 )
@@ -2388,10 +2496,12 @@ class pGrupo extends CI_Controller
             $calificacion = $this->input->post('calificacion');
             $contador_no_insertado = 0;
             $contador_insertado = 0;
+            $detalle_horario = $this->horario->detalleHorarioDetalle($idhorariodetalle);
+            $idmateria = $detalle_horario[0]->idmateria;
             foreach ($idalumno as $key => $value) {
                 $idalumno2 = $value;
                 $calificacion_final = $calificacion[$key];
-                $validar = $this->grupo->validarAgregarCalificacion($idunidad, $idhorariodetalle, $idoportunidad, $idalumno2);
+                $validar = $this->grupo->validarAgregarCalificacionXMateria($idunidad, $idhorario, $idmateria, $idoportunidad, $idalumno2);
                 if ($validar == false) {
                     if (isset($calificacion_final) && ! empty($calificacion_final)) {
                         $data = array(

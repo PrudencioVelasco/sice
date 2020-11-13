@@ -7,9 +7,9 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="shortcut icon" href="<?php echo base_url(); ?>/assets/images/birrete.ico">  
-        <link rel="icon" href="<?php echo base_url(); ?>/assets/images/birrete.ico">
-    <title>Sistema Integral para el Control Escolar</title>
+  <link rel="shortcut icon" href="<?php echo base_url(); ?>/assets/images/icosice.ico">  
+        <link rel="icon" href="<?php echo base_url(); ?>/assets/images/icosice.ico">
+    <title>SICE®</title>
 
     <!-- Bootstrap core CSS -->
 
@@ -66,7 +66,7 @@
                         <?php endif ?>
                     </div>
                     <form method="POST" action="<?= base_url('welcome/admin') ?>">
-                         <h1><strong>S I C E</strong></h1>
+                         <h1><strong>Bienvenido</strong></h1>
                         <div>
 
                             <input type="text" class="form-control" name="usuario" placeholder="Usuario" required="" />
@@ -83,7 +83,10 @@
                     <div class="separator">
 
                         <br />
-                        <div>
+                        <div align="center">
+                            
+                            <img  width="180" src="<?php echo base_url().'assets/images/sicelogo.png' ?>" class="img-responsive" alt="Image">
+                            
                             <h2>
                                 <p>Sistema Integral para el Control Escolar</p>
                             </h2>

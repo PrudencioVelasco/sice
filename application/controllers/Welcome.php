@@ -65,14 +65,14 @@ class Welcome extends CI_Controller {
             $result = $this->usuario->loginAlumno($matricula);
 
             if ($result) {
-                if ($password === 'admin') {
+                /*if ($password === 'admin') {
                     if (password_verify($password, $result->password)) { 
                         redirect('/Welcome/cambiar/' . $this->encode($result->idalumno));
                     } else {
                         $this->session->set_flashdata('err', 'Matricula o Contraseña son incorrectos.');
                         redirect('/');
                     }
-                } else {
+                } else {*/
                     if (password_verify($password, $result->password)) {
 
                         $this->session->set_userdata([
@@ -83,14 +83,16 @@ class Welcome extends CI_Controller {
                             'apellidom' => $result->apellidom,
                             'idplantel' => $result->idplantel,
                             'idniveleducativo' => $result->idniveleducativo,
-                            'idtipousuario' => $result->idtipousuario
+                            'idtipousuario' => $result->idtipousuario, 
                         ]);
+                        $this->session->set_flashdata('saludar',$this->saludar());
+                        $this->session->set_flashdata('nombre_saludar',$result->nombre);
                         redirect('/Alumnos/');
                     } else {
                         $this->session->set_flashdata('err', 'Matricula o Contraseña son incorrectos.');
                         redirect('/');
                     }
-                }
+                //}
             } else {
                 $this->session->set_flashdata('err', 'Matricula o Contraseña son incorrectos.');
                 redirect('/');
@@ -182,6 +184,8 @@ class Welcome extends CI_Controller {
                         'idtipousuario'=>$value->idtipousuario,
                         'planteles' => $escuelas
                     ]);
+                    $this->session->set_flashdata('saludar',$this->saludar());
+                    $this->session->set_flashdata('nombre_saludar',$value->nombre);
                     redirect('/Profesores');
                 }
             }
@@ -232,6 +236,8 @@ class Welcome extends CI_Controller {
                             'idtipousuario' => $value->idtipousuario,
                             'planteles' => $escuelas
                         ]);
+                        $this->session->set_flashdata('saludar',$this->saludar());
+                        $this->session->set_flashdata('nombre_saludar',$value->nombre);
                         redirect('/Tutores');
                     } else {
                         $this->session->set_flashdata('err2', 'Correo o Contraseña son incorrectos.');
@@ -289,6 +295,8 @@ class Welcome extends CI_Controller {
 
                     $this->session->set_userdata($data_session);
                     if (! empty($escuelas)) {}
+                    $this->session->set_flashdata('saludar',$this->saludar());
+                    $this->session->set_flashdata('nombre_saludar',$result->nombre);
                     redirect('/Admin');
                 } else {
                     $this->session->set_flashdata('err', 'Usuario o Contraseña son incorrectos.');
@@ -382,4 +390,20 @@ class Welcome extends CI_Controller {
         redirect('/Tutores');
     }
 
+    public function saludar()
+    {
+        $date = date ("H"); 
+
+        if($date < 12) { 
+        $mjs = "Buenos Días!";
+        }
+        else if ($date < 18){ 
+        $mjs = "Buenas Tardes!";
+        }
+        else {
+         
+        $mjs = "Buenas Noches!";
+        }
+        return $mjs;
+    }
 }

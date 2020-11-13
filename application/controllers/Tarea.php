@@ -18,8 +18,10 @@ class Tarea extends CI_Controller {
          $this->load->library('permission');
          $this->load->library('session'); */
         $this->load->model('tarea_model', 'tarea');
+        $this->load->model('horario_model', 'horario');
         $this->load->library('Autoload');
         $this->load->library('encryption');
+        $this->load->helper('numeroatexto_helper');
         $this->carpeta_primaria = "1JeYjL9zZKmT_D6GW6KynxbwMbfEwjrLV";
         $this->carpeta_secundaria= "1GEyJSWkV2B1LVkHRcC8w3xgBo7acRnwo";
         $this->carpeta_bachillerato= "1_1HsVHaxDcv1Vc_QhqNYccJqFaPSgQEi";
@@ -334,7 +336,105 @@ class Tarea extends CI_Controller {
         }
     }
     
-    
+    public function reporteCalificacionAlumnosXTarea(){
+        $idtarea = $this->input->get('id');
+        $idhorario = $this->input->get('idhorario');
+        $idmateria = $this->input->get('idmateria');
+        $idprofesormateria = $this->input->get('idprofesormateria');
+        $query = $this->tarea->showAllAlumnosTareaReporte($idhorario, $idprofesormateria, $idmateria, $idtarea);
+        if ($query) {
+            $result['reporte'] = $this->tarea->showAllAlumnosTareaReporte($idhorario, $idprofesormateria, $idmateria, $idtarea);
+        }
+        if (isset($result) && !empty($result)) {
+            echo json_encode($result);
+        }
+    }
+    public function reporteCalificaciones()
+    {
+        $config = array(
+            array(
+                'field' => 'fechainicio',
+                'label' => 'Fecha Inicio',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Seleccione la Fecha.'
+                )
+            ),
+            array(
+                'field' => 'fechafin',
+                'label' => 'Fecha Fin',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Seleccione la Fecha.'
+                )
+            ),
+           
+        );
+
+        $this->form_validation->set_rules($config);
+        if ($this->form_validation->run() == FALSE) {
+            $result['error'] = true;
+            $result['msg'] = array(
+                'fechainicio' => form_error('fechainicio'),
+                'fechafin' => form_error('fechafin')
+            );
+        } else {
+            $value = $this->input->post('texto');
+            $fechainicio = $this->input->post('fechainicio');
+            $fechafin = $this->input->post('fechafin');
+            $idhorariodetalle = $this->input->get('idhorariodetalle'); 
+            $detalle_horario = $this->horario->detalleHorarioDetalle($idhorariodetalle);
+             $idhorario = $detalle_horario[0]->idhorario;
+             $idmateria = $detalle_horario[0]->idmateria;
+             $fecha_inicio=strtotime($fechainicio);
+             $fecha_fin=strtotime( $fechafin );
+            // echo $idhorario."<br>";
+            // echo $idmateria."<br>";
+           // $range = ((strtotime($fechafin) - strtotime($fechainicio)) + (24 * 60 * 60)) / (24 * 60 * 60); 
+            $usersList_array = array();
+            $user_array = array();
+            $note_array = array();
+            $alumnos = $this->tarea->showAlumnosGrupo($idhorario);
+            if(isset($alumnos) && !empty($alumnos)){
+                $contador = 1;
+                foreach($alumnos as $alumno){
+                    //$user_array["idalumno"] = $alumno->idalumno;
+                    $user_array["Numero"] = $contador++;  
+                    $user_array["Nombre"] = $alumno->apellidop." ".$alumno->apellidom." ".$alumno->nombre;
+                    $idalumno = $alumno->idalumno;
+                    $suma_calificacion  = 0;
+                    $suma_total = 0;
+                    for($i=$fecha_inicio; $i<=$fecha_fin; $i+=86400){
+                        $fecha = date("Y-m-d",$i );
+                        $fecha_formateada = date("d/m/Y",$i );
+                        //$user_array[$fecha] = $fecha;
+                        //array_push($usersList_array,$user_array);
+                      
+                        $calificaciones = $this->tarea->obtenerCalificacionXId($idhorario,$idmateria,$idalumno,$fecha);
+                        if(isset($calificaciones) && !empty($calificaciones)){
+                            foreach($calificaciones as $calificacion){
+                                $user_array[$fecha_formateada] =  numberFormatPrecision($calificacion->calificacion, 1,'.');
+                                $suma_total ++;
+                                $suma_calificacion = $suma_calificacion + $calificacion->calificacion;
+                            }
+                        }
+                    }
+                    $user_array["Promedio"] = ($suma_calificacion > 0)?  numberFormatPrecision($suma_calificacion / $suma_total, 1,'.') :0;
+                    array_push($usersList_array,$user_array);
+                }
+               
+
+                if (isset($usersList_array) && !empty($usersList_array)) {
+            
+                    echo json_encode($usersList_array,JSON_PRETTY_PRINT);
+                }
+            }
+        }
+        if (isset($result) && ! empty($result)) {
+            echo json_encode($result);
+        }
+        
+    }
     public function showAllAlumnosTarea() {
         $idtarea = $this->input->get('id');
         $idhorario = $this->input->get('idhorario');

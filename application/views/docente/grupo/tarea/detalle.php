@@ -43,6 +43,9 @@
                             <div id="appplanificacion">
                                 <div class="row">
                                     <div class="col-md-6">
+                                    
+                                    <button type="button" @click="exportExcel()" class="btn btn-default"><i class="fa fa-file-excel-o" ></i> Calificaciones</button>
+                                    
                                     </div>
                                     <div class="col-md-6">
                                         <input placeholder="Buscar" type="search" class="form-control btn-round" :autofocus="'autofocus'"  v-model="search.text" @keyup="searchAlumnosTareas" name="search">
@@ -135,7 +138,7 @@
 </div>
 <script src="//cdn.ckeditor.com/4.15.0/standard/ckeditor.js"></script>
 <script src="//unpkg.com/vue-ckeditor2"></script>
-<!-- <script src="<?php //echo base_url().'assets/vue/ckeditor/' ?>ckeditor.js"></script>
+ <!--<script src="<?php //echo base_url().'assets/vue/ckeditor/' ?>ckeditor.js"></script>
 <script src="<?php //echo base_url().'assets/vue/ckeditor/' ?>vue-ckeditor2.umd.js"></script>-->
 
 <script data-my_var_1="<?php echo base_url() ?>" data-my_var_2="<?php echo $idtarea; ?>"  data-my_var_3="<?php echo $idhorario; ?>"  data-my_var_4="<?php echo $idmateria; ?>"  data-my_var_5="<?php echo $idprofesormateria; ?>"  src="<?php echo base_url(); ?>/assets/vue/appvue/docente/tarea/apptarea_detalle.js"></script> 

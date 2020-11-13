@@ -36,6 +36,7 @@ var vu = new Vue({
 		error: false,
 		tareas: [],
 		documentos: {},
+		reporte:[],
 		grupos: [],
 		filesSend: [],
 		file: '',
@@ -123,6 +124,30 @@ var vu = new Vue({
 				}
 			})
 		},
+		generarReporte() {
+			var formData = vu.formData(vu.buscarRegistros);
+			axios.post(this.url + "Tarea/reporteCalificaciones", formData, {
+				params: {
+					idhorariodetalle: this.idhorariodetalle,
+				}
+			}).then(function(response) {
+				if (response.data.error) {
+					vu.formValidate = response.data.msg;
+					vu.error = true; 
+				} else { 
+					vu.error = false;
+					vu.reporte = response.data;
+					vu.exportExcel();
+				}
+			})
+		},
+		exportExcel: function () {
+			let data = XLSX.utils.json_to_sheet(this.reporte)
+			const workbook = XLSX.utils.book_new()
+			const filename = 'Reporte de Calificaciones'
+			XLSX.utils.book_append_sheet(workbook, data, filename)
+			XLSX.writeFile(workbook, `${filename}.xlsx`)
+		  },
 		addTarea() {
 			vu.cargando = true;
 			vu.error = false;

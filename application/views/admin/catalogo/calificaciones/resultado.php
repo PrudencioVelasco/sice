@@ -421,6 +421,41 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="myModalDelete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3 class="modal-title " id="myModalLabel">ALUMNO: <label id="alumnodelete"></label> </h3>
+            </div>
+            <form method="post" action="" id="frmeliminar">
+                <div class="modal-body">
+                    <div class="alert alert-danger print-error-msg" style="display:none"></div>
+                    <div class="alert alert-success print-success-msg" style="display:none"></div>
+                    <div class="form-group">
+                         <input class="form-control idcalificacion" type="hidden" name="idcalificacion">
+                         <input class="iddetallecalificacion" type="hidden" name="iddetallecalificacion"/>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <h3>Esta seguro de Eliminar la Calificación?</h3>
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i>
+                        Cerrar</button>
+                    <button type="button" id="btneliminar" class="btn btn-primary"><i class="fa fa-trash"></i>
+                        Eliminar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
 <script data-my_var_1="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/js/validar/Administrar/calificacion.js"></script>
 
 <div id="custom_notifications" class="custom-notifications dsp_none">

@@ -51,7 +51,7 @@
                                         <h2 class="modal-title " id="myModalLabel">ELIMINAR CALIFICACIÓN
                                         </h2>
                                     </div>
-                                    <form method="post" action="" id="frmeliminarcalificacion">
+                                    <form method="post" action="" id="frmeliminarcalificacionrecuperacion">
                                         <div class="modal-body">
                                             <div class="form-group">
                                                 <label for="">
@@ -96,7 +96,7 @@
                                                 <div class="col-md-12 col-sm-12 col-xs-12 ">
 
                                                     <table class="table">
-                                                        <thead>
+                                                        <thead class="bg-teal">
                                                             <tr>
                                                                 <th>#</th>
                                                                 <th>ALUMNO</th>
@@ -121,8 +121,7 @@
                                                                         <td>
                                                                             <input type="number" minlength="0.00"
                                                                                    maxlength="10.00" name="calificacion[]"
-                                                                                   class="form-control" placeholder="Calificación">
-                                                                            <small>Formato decimal Ej. 10.00, 9.60, etc.</small>
+                                                                                   class="form-control" placeholder="0.0 a 10.0"> 
                                                                         </td>
                                                                     </tr>
                                                                     <?php
@@ -217,7 +216,7 @@
                         <label>
                             <font color="red">*</font> Calificación
                         </label><br>
-                        <input type="text" name="calificacion" class="form-control calificacion">
+                        <input type="text" name="calificacion" style="border-bottom: solid #ccc 2px;" class="form-control calificacion">
                     </div>
                 </div>
                 <div class="modal-footer">

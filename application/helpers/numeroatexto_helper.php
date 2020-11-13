@@ -18,6 +18,17 @@
  * 
  * @return string La cantidad convertida a letras
  */
+  
+function floordec($zahl,$decimals=1){  
+    $numero ="";
+    if (is_float($zahl)){
+    $numero =  floor($zahl*pow(10,$decimals))/pow(10,$decimals);
+    }
+    else{
+    $numero = $zahl;
+    }
+    return $numero;
+}
 function mostrarReprovado($idnivel, $niveleducativo, $total_materia, $total_aprovado, $total_reprovado, $reprobado_permitido, $calificacion_optenida, $calificacion_minima)
 {
     $mensaje = false;

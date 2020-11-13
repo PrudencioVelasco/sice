@@ -115,6 +115,36 @@
       });
       <?php } ?>
 
+      <?php 
+        if (isset($_SESSION['nombre_saludar'])){ 
+            $saludar = $_SESSION['saludar'];
+            $nombre = $_SESSION['nombre_saludar'];
+             ?>
+        new PNotify({
+          
+            title:  <?php  echo  '"'.$saludar.'"' ;  ?>,
+            text:  <?php  echo  '"Bienvenido(a) <strong>'.$nombre.'</strong>"' ;  ?>,
+            type: 'success',
+            delay:4000,
+            hide: true,
+      
+
+        before_close: function(PNotify) {
+          // You can access the notice's options with this. It is read only.
+          //PNotify.options.text;
+
+          // You can change the notice's options after the timer like this:
+          PNotify.update({
+            title: PNotify.options.title + " - Enjoy your Stay",
+            before_close: null
+          });
+          PNotify.queueRemove();
+          return false;
+        }
+      });
+      <?php  } ?>
+      
+
     });
   </script>
 <script>

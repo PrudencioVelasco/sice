@@ -37,7 +37,7 @@ $(document).ready(function() {
 		$("#alumno_retardo_edit").text(nombre);
 	});
 	
-		$(document).on("click", '.add_button_diciplina', function(e) { 
+	$(document).on("click", '.add_button_diciplina', function(e) { 
 		var nombre = $(this).data('alumno');
 		var idhorario = $(this).data('idhorario');
 		var idalumno = $(this).data('idalumno');
@@ -85,8 +85,59 @@ $(document).ready(function() {
 		$(".iddetallecalificacion").val(iddetallecalificacion);
 		$(".calificacion").val(calificacion);  
 		$("#alumno_calificacion_edit").text(nombre);
-	});
-	
+    });
+    
+    $(document).on("click", '.delete_button_calificacion', function(e) { 
+		var nombre = $(this).data('alumno');
+		var calificacion = $(this).data('calificacion');
+		var idcalificacion = $(this).data('idcalificacion');
+		var iddetallecalificacion = $(this).data('iddetallecalificacion');
+		
+		$(".idcalificacion").val(idcalificacion);
+		$(".iddetallecalificacion").val(iddetallecalificacion);
+		//$(".calificacion").val(calificacion);  
+		$("#alumnodelete").text(nombre);
+    });
+    
+    $("#btneliminar").click(function () {
+    $('#btneliminar').prop("disabled", true);
+    $('#btneliminar').html(
+        `<span class="fa fa-spinner spinner-border-sm" role="status" aria-hidden="true"></span> PROCESANDO...`
+    ); 
+    $.ajax({
+        type: "POST",
+        url: my_var_1 +"Calificacion/deleteCalificacionAdmin",
+        data: $('#frmeliminar').serialize(),
+        success: function (data) {
+            $('#btneliminar').prop("disabled", false);
+            $('#btneliminar').html(
+                `<i class='fa fa-trash'></i> ELIMINAR`
+            );
+            var val = $.parseJSON(data); 
+            if ((val.success === "Ok")) {
+                swal({
+                    position: 'center',
+                    type: 'success',
+                    title: 'Eliminado!',
+                    text: 'Fue eliminado la calificación con exito.',
+                    showConfirmButton: true
+                }).then(function () {
+                    location.reload();
+                });
+            } else {
+                swal({
+                    type: 'info',
+                    title: 'Notificación',
+                    html: val.error,
+                    customClass: 'swal-wide',
+                    footer: ''
+                }); 
+            }
+
+        }
+    })
+});
+
 		$("#btnaddcalificacion").click(function () {
         $('#btnaddcalificacion').prop("disabled", true);
         $('#btnaddcalificacion').html(
@@ -107,7 +158,7 @@ $(document).ready(function() {
                         position: 'center',
                         type: 'success',
                         title: 'Registrado!',
-                        text: 'Fue registrado las faltas con exito.',
+                        text: 'Fue registrado la calificación con exito.',
                         showConfirmButton: true
                     }).then(function () {
                         location.reload();

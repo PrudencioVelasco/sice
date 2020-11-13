@@ -8,9 +8,9 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>SICE - Sistema Integral de Control Escolar </title>
-    <link rel="shortcut icon" href="<?php echo base_url(); ?>/assets/images/birrete.ico">  
-        <link rel="icon" href="<?php echo base_url(); ?>/assets/images/birrete.ico">
+        <title>SICE®</title>
+    <link rel="shortcut icon" href="<?php echo base_url(); ?>/assets/images/icosice.ico">  
+        <link rel="icon" href="<?php echo base_url(); ?>/assets/images/icosice.ico">
         <!-- Bootstrap core CSS -->
 
         <link href="<?php echo base_url(); ?>/assets/plugins/bootstrap/css/bootstrap.css" rel="stylesheet">
@@ -30,7 +30,7 @@
         <script src="<?php echo base_url() ?>/assets/vue/axios/axios.min.js"></script>
         <script src="<?php echo base_url(); ?>/assets/vue/pagination/pagination.js"></script>
         <script src="<?php echo base_url(); ?>/assets/vue/vue-column-sortable.js"></script>
-
+        <script src="<?php echo base_url(); ?>/assets/vue/exportarexcel/xlsx.full.min.js"></script>
 
         <!-- select2 -->
         <link href="<?php echo base_url(); ?>/assets/css/select/select2.min.css" rel="stylesheet"> 
@@ -61,8 +61,9 @@
                 <div class="col-md-3 left_col">
                     <div class="left_col scroll-view">
 
-                        <div class="navbar nav_title" style="border: 0;">
-                            <a href="#" class="site_title"><i class="fa fa-graduation-cap"></i> <span>SICE</span></a>
+                    <div class="navbar nav_title" style="border: 0; "  align="center">
+                            <a href="#" class="site_title"> <img class="imglogo" src="<?php echo base_url(); ?>/assets/images/sicelogo.png" alt=""> </a>
+
                         </div>
                         <div class="clearfix"></div>
 

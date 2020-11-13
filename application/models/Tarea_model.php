@@ -195,6 +195,37 @@ t.fechaentrega as fechaentregareal");
             return false;
         }
     }
+    public function showAlumnosGrupo($idhorario)
+    {
+        $sql = "SELECT * FROM vwalumnosgrupo a WHERE a.idhorario = $idhorario ORDER BY apellidop ASC";
+        $query = $this->db->query($sql);
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+    public function obtenerCalificacionXId ($idhorario,$idmateria,$idalumno,$fecha){
+        $sql = "SELECT
+                    COUNT(t.idtarea) AS totaltarea,
+                    COALESCE((SELECT SUM(dt.calificacion) / COUNT(dt.idtarea)  FROM tbldetalle_tarea dt WHERE dt.idtarea = t.idtarea AND dt.idalumno = $idalumno),0) as calificacion
+                FROM
+                    tbltareav2 t
+                INNER JOIN tblhorario_detalle hd ON
+                    t.idhorariodetalle = hd.idhorariodetalle
+                INNER JOIN tblprofesor_materia pm ON
+                    hd.idmateria = pm.idprofesormateria 
+                WHERE pm.idmateria = $idmateria
+                AND hd.idhorario = $idhorario
+                AND t.fechaentrega = '$fecha' 
+                GROUP BY t.idtarea, pm.idmateria, hd.idhorario";
+        $query = $this->db->query($sql);
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
     public function showAllTaresDetalleAlumno($idtarea,$idalumno)
     {
         $sql = "SELECT
@@ -225,6 +256,97 @@ t.fechaentrega as fechaentregareal");
             return false;
         }
     }
+    public function showAllAlumnosTareaReporte($idhorario, $idprofesormateria = '', $idmateria, $idtarea)
+    {
+        $sql = "         
+SELECT 
+    curp,
+    nombre,
+    apellidop,
+    apellidom, 
+FORMAT(calificacion,1) AS calificacion,
+CASE
+    WHEN estatustarea > 30 THEN 'ENVIADO'
+    ELSE 'NO ENVIADO'
+END as estatus
+FROM
+    (SELECT 
+        a.idalumno,
+            a.nombre,
+            a.apellidop,
+            a.apellidom,
+            a.curp,
+            ne.nombrenivel,
+            g.nombregrupo,
+            1 AS opcion,
+            hd.idmateria,
+           COALESCE( (SELECT COUNT(dt.idalumno) FROM tbldetalle_tarea dt WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea),0) AS estatustarea,
+  COALESCE( (SELECT ( SUM(dt.calificacion) / COUNT(dt.idalumno)) FROM tbldetalle_tarea dt WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea),0) AS calificacion
+            
+    FROM
+        tblalumno a
+    INNER JOIN tblalumno_grupo ag ON a.idalumno = ag.idalumno
+    INNER JOIN tblgrupo g ON g.idgrupo = ag.idgrupo
+    INNER JOIN tblnivelestudio ne ON ne.idnivelestudio = g.idnivelestudio
+    INNER JOIN tblhorario h ON ag.idgrupo = h.idgrupo
+    INNER JOIN tblhorario_detalle hd ON hd.idhorario = h.idhorario
+    INNER JOIN tblperiodo p ON p.idperiodo = h.idperiodo
+    WHERE
+        p.idperiodo = ag.idperiodo
+            AND (h.activo = 1 OR p.activo = 1)
+            AND ag.activo = 1
+            AND h.idhorario = $idhorario";
+        if (isset($idmateria) && ! empty($idmateria)) {
+            $sql .= " AND a.idalumno NOT IN (SELECT 
+    ag.idalumno
+FROM
+    tblalumno_grupo ag
+        INNER JOIN
+    tblmateria_reprobada mr ON ag.idalumnogrupo = mr.idalumnogrupo
+        INNER JOIN
+    tblmateria_seriada ms ON ms.idmateriasecundaria = mr.idmateria
+WHERE
+    ms.idmateriaprincipal = $idmateria AND mr.estatus = 1)   GROUP BY   ag.idalumno ";
+        }
+        $sql .= "
+                UNION ALL SELECT 
+        a.idalumno,
+            a.nombre,
+            a.apellidop,
+            a.apellidom,
+            a.curp,
+            ne.nombrenivel,
+            g.nombregrupo,
+            0 AS opcion,
+            hd.idmateria,
+            COALESCE( (SELECT COUNT(dt.idalumno) FROM tbldetalle_tarea dt WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea),0) AS estatustarea,
+ COALESCE( (SELECT ( SUM(dt.calificacion) / COUNT(dt.idalumno)) FROM tbldetalle_tarea dt WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea),0) AS calificacion
+    FROM
+        tblalumno a
+    INNER JOIN tblalumno_grupo ag ON a.idalumno = ag.idalumno
+    INNER JOIN tblmateria_reprobada mr ON mr.idalumnogrupo = ag.idalumnogrupo
+    INNER JOIN tbldetalle_reprobada dr ON dr.idreprobada = mr.idreprobada
+    INNER JOIN tblhorario h ON dr.idhorario = h.idhorario
+     INNER JOIN tblhorario_detalle hd ON hd.idhorario = h.idhorario
+    INNER JOIN tblgrupo g ON g.idgrupo = h.idgrupo
+    INNER JOIN tblnivelestudio ne ON ne.idnivelestudio = g.idnivelestudio
+    INNER JOIN tblperiodo p ON p.idperiodo = h.idperiodo
+    WHERE
+        (h.activo = 1 OR p.activo = 1)";
+        if (isset($idprofesormateria) && ! empty($idprofesormateria)) {
+            $sql .= " AND dr.idprofesormateria = $idprofesormateria";
+        }
+        $sql .= " AND mr.estatus = 1  AND dr.idhorario = $idhorario GROUP BY ag.idalumno) alumnos
+            ORDER BY apellidop ASC";
+        $query = $this->db->query($sql);
+
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+
     public function showAllAlumnosTarea($idhorario, $idprofesormateria = '', $idmateria, $idtarea)
     {
         $sql = "         
@@ -251,7 +373,7 @@ FROM
             1 AS opcion,
             hd.idmateria,
            COALESCE( (SELECT COUNT(dt.idalumno) FROM tbldetalle_tarea dt WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea),0) AS estatustarea,
-  COALESCE( (SELECT ( SUM(dt.calificacion) / COUNT(dt.idalumno)) FROM tbldetalle_tarea dt WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea),0) AS calificacion
+          COALESCE( (SELECT ( SUM(dt.calificacion) / COUNT(dt.idalumno)) FROM tbldetalle_tarea dt WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea),0) AS calificacion
             
     FROM
         tblalumno a

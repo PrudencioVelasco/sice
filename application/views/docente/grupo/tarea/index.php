@@ -25,8 +25,7 @@
                                         @click=" abrirAddModal()"><i class='fa fa-plus'></i> Agregar Tarea</button>
                                     </div>
                                 </div>
-								<div class="row" aling="right">
-								<div class="col-md-1 col-sm-12 col-xs-12 "></div>
+								<div class="row" aling="right"> 
 									<div class="col-md-2 col-sm-12 col-xs-12 "  align="right">
 										<div class="form-group">
 											<label class="form-label"><font color="red">*</font> De: </label>
@@ -48,7 +47,7 @@
 											<div class="col-red" v-html="formValidate.fechafin"></div>
 										</div>
 									</div>
-									<div class="col-md-5 col-sm-12 col-xs-12 "  >
+									<div class="col-md-4 col-sm-12 col-xs-12 "  >
 										<div class="form-group" align="right">
 											<label class="form-label"></label>
 											<input type="text" style="border: solid 1px #ccc; margin-top: 5px;padding-left:10px;"
@@ -57,9 +56,10 @@
 											<div class="col-red" v-html="formValidate.texto"></div>
 										</div>
 									</div>
-									<div class="col-md-2 col-sm-12 col-xs-12 " align="right" >
+									<div class="col-md-4 col-sm-12 col-xs-12 " align="right" >
 										<div class="form-group">
 										<button class="btn btn-info" @click="searchTarea()" style="margin-top: 25px;"><i class="fa fa-search"></i> Buscar</button>
+                                        <button class="btn btn-default" @click="generarReporte()" style="margin-top: 25px;"><i class="fa fa-file-excel-o"></i> Calificaciones</button>
 										</div>
 									</div>
 									
@@ -146,7 +146,8 @@
 <script src="//cdn.ckeditor.com/4.15.0/standard/ckeditor.js"></script>
 <script src="//unpkg.com/vue-ckeditor2"></script>
  
-
+<!--<script src="<?php //echo base_url().'assets/vue/ckeditor/ckeditor.js' ?>" ></script>
+<script src="<?php //echo base_url().'assets/vue/ckeditor/vue-ckeditor2.umd.js' ?>" ></script>-->
 <script data-my_var_1="<?php echo base_url() ?>" data-my_var_2="<?php echo $idhorario; ?>"
     data-my_var_3="<?php echo $idhorariodetalle ?>"
     src="<?php echo base_url(); ?>/assets/vue/appvue/docente/tarea/apptarea_principal.js"></script>

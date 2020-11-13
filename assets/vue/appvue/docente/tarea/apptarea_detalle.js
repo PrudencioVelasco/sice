@@ -49,6 +49,7 @@ var vu = new Vue({
 		//PRUDENCIO
 		detalletarea: [],
 		tarea: [],
+		reportes:[],
 		documentosdelprofesor: [],
 		documentosdelalumno: [], 
 		search: { text: '' },
@@ -120,6 +121,18 @@ var vu = new Vue({
 			}).finally(() => {
 				vu.loading = false
 			});
+
+			axios.get(this.url + "Tarea/reporteCalificacionAlumnosXTarea/", {
+				params: {
+					id: this.idtarea,
+					idhorario: this.idhorario,
+					idmateria: this.idmateria,
+					idprofesormateria: this.idprofesormateria
+				},
+			}).then(
+					(response) => (this.reportes = response.data.reporte)
+				);
+
 		},
 		reset() {
 			this.success = false;
@@ -241,6 +254,24 @@ var vu = new Vue({
 				vu.successMSG = ''
 			}, 3000); // disappearing message success in 2 sec
 		},
+		exportExcel: function () {
+			let data = XLSX.utils.json_to_sheet(
+				this.reportes,
+				{
+				  header: ['curp', 'apellidop', 'apellidom','nombre', 'calificacion', 'estatus']
+				}
+			   );
+			   data['A1'].v = 'CURP'
+			   data['B1'].v = 'Apellido Paterno'
+			   data['C1'].v = 'Apellido Materno'
+			   data['D1'].v = 'Nombre'
+			   data['E1'].v = 'Calificación'
+			   data['F1'].v = 'Evidencia'
+			const workbook = XLSX.utils.book_new()
+			const filename = 'Reporte-de-Calificacion'
+			XLSX.utils.book_append_sheet(workbook, data, filename)
+			XLSX.writeFile(workbook, `${filename}.xlsx`)
+		  },
 		cerrarModalSecundario(){
 			$("#addCalificacion").modal("hide")
 			$("#editRegister").modal({backdrop:'static',keyboard:false});

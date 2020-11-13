@@ -339,6 +339,7 @@ class User_model extends CI_Model {
     public function searchUser($match, $idrol = '', $idplantel = '') {
         $field = array(
             'p.usuario',
+            'p.nombre',
             'p.apellidop',
             'p.apellidom',
             'r.rol'

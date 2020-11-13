@@ -2235,7 +2235,7 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
     }
 
     public function asignarEstatusAlumno() {
-        if ($this->session->idpersonal == 14) {
+        if ($this->session->idpersonal == 14 || $this->session->idpersonal == 29) {
             $config = array(
                 array(
                     'field' => 'idestatus',
