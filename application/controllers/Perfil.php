@@ -7,7 +7,7 @@ class Perfil extends CI_Controller
     public function __construct()
     {
         parent::__construct();
- if (!isset($_SESSION['user_id'])) {
+        if (!isset($_SESSION['user_id'])) {
             $this->session->set_flashdata('flash_data', 'You don\'t have access! ss');
             return redirect('welcome');
         }
@@ -15,23 +15,22 @@ class Perfil extends CI_Controller
         $this->load->model('user_model', 'usuario');
         $this->load->model('alumno_model', 'alumno');
         $this->load->model('tutor_model', 'tutor');
-      $this->load->library('permission');
+        $this->load->library('permission');
         $this->load->library('session');
         $this->load->library('encryption');
-
     }
     public function tutor()
     {
-         if (isset($this->session->idtutor) && !empty($this->session->idtutor)) { 
-        $idtutor = $this->session->idtutor;
-        $datos_tutor = $this->usuario->datosTutor($idtutor);
-        $data = array(
-            'tutor' => $datos_tutor,
-        );
-        $this->load->view('tutor/header');
-        $this->load->view('tutor/perfil/index', $data);
-        $this->load->view('tutor/footer');
-         } else {
+        if (isset($this->session->idtutor) && !empty($this->session->idtutor)) {
+            $idtutor = $this->session->idtutor;
+            $datos_tutor = $this->usuario->datosTutor($idtutor);
+            $data = array(
+                'tutor' => $datos_tutor,
+            );
+            $this->load->view('tutor/header');
+            $this->load->view('tutor/perfil/index', $data);
+            $this->load->view('tutor/footer');
+        } else {
             $data = array(
                 'heading' => 'Error',
                 'message' => 'Error intente mas tarde.',
@@ -39,8 +38,9 @@ class Perfil extends CI_Controller
             $this->load->view('errors/html/error_general', $data);
         }
     }
-       public function alumno() {
-        if (isset($this->session->idalumno) && !empty($this->session->idalumno)) { 
+    public function alumno()
+    {
+        if (isset($this->session->idalumno) && !empty($this->session->idalumno)) {
             $this->load->view('alumno/header');
             $this->load->view('alumno/perfil/index');
             $this->load->view('alumno/footer');
@@ -52,22 +52,37 @@ class Perfil extends CI_Controller
             $this->load->view('errors/html/error_general', $data);
         }
     }
+    public function docente()
+    {
+        if (isset($this->session->idprofesor) && !empty($this->session->idprofesor)) {
+            $this->load->view('docente/header');
+            $this->load->view('docente/perfil/index');
+            $this->load->view('docente/footer');
+        } else {
+            $data = array(
+                'heading' => 'Error',
+                'message' => 'Error intente mas tarde.',
+            );
+            $this->load->view('errors/html/error_general', $data);
+        }
+    }
 
     public function showDatosTutor()
     {
-       
-        if(isset($this->session->idtutor) && !empty($this->session->idtutor)){
-             $idtutor = $this->session->idtutor;
-        $datos_tutor = $this->usuario->datosTutor($idtutor);
-        if ($datos_tutor) {
-            $result['datos_tutor'] = $this->usuario->datosTutor($idtutor);
-        }
+
+        if (isset($this->session->idtutor) && !empty($this->session->idtutor)) {
+            $idtutor = $this->session->idtutor;
+            $datos_tutor = $this->usuario->datosTutor($idtutor);
+            if ($datos_tutor) {
+                $result['datos_tutor'] = $this->usuario->datosTutor($idtutor);
+            }
         }
         if (isset($result) && !empty($result)) {
             echo json_encode($result);
         }
     }
-        public function showDatosAlumno() {
+    public function showDatosAlumno()
+    {
         if ((isset($this->session->idalumno) && !empty($this->session->idalumno))) {
             $idalumno = $this->session->idalumno;
             $datos_tutor = $this->usuario->datosAlumno($idalumno);
@@ -80,29 +95,43 @@ class Perfil extends CI_Controller
         }
     }
 
+    public function showDatosProfesor()
+    {
+        if ((isset($this->session->idprofesor) && !empty($this->session->idprofesor))) {
+            $idprofesor = $this->session->idprofesor;
+            $datos_profesor = $this->usuario->datosProfesor($idprofesor);
+            if ($datos_profesor) {
+                $result['profesor'] = $this->usuario->datosProfesor($idprofesor);
+            }
+        }
+        if (isset($result) && !empty($result)) {
+            echo json_encode($result);
+        }
+    }
+
     public function showAllAlumnoTutor()
     {
-         if(isset($this->session->idtutor) && !empty($this->session->idtutor)){
-        $idtutor = $this->session->idtutor;
-        $datos_tutor = $this->usuario->showAllAlumnosTutor($idtutor);
-        if ($datos_tutor) {
-            $result['alumnos'] = $this->usuario->showAllAlumnosTutor($idtutor);
+        if (isset($this->session->idtutor) && !empty($this->session->idtutor)) {
+            $idtutor = $this->session->idtutor;
+            $datos_tutor = $this->usuario->showAllAlumnosTutor($idtutor);
+            if ($datos_tutor) {
+                $result['alumnos'] = $this->usuario->showAllAlumnosTutor($idtutor);
+            }
         }
-         }
         if (isset($result) && !empty($result)) {
             echo json_encode($result);
         }
     }
     public function searchAlumnosTutor()
     {
-         if(isset($this->session->idtutor) && !empty($this->session->idtutor)){
-        $value = $this->input->post('text');
-        $idtutor = $this->session->idtutor;
-        $query = $this->usuario->searchAlumnosTutor($value, $idtutor);
-        if ($query) {
-            $result['alumnos'] = $query;
+        if (isset($this->session->idtutor) && !empty($this->session->idtutor)) {
+            $value = $this->input->post('text');
+            $idtutor = $this->session->idtutor;
+            $query = $this->usuario->searchAlumnosTutor($value, $idtutor);
+            if ($query) {
+                $result['alumnos'] = $query;
+            }
         }
-         }
         if (isset($result) && !empty($result)) {
             echo json_encode($result);
         }
@@ -232,8 +261,7 @@ class Perfil extends CI_Controller
                 'errors' => array(
                     'required' => 'Campo obligatorio.',
                 ),
-            )
-            ,
+            ),
             array(
                 'field' => 'telefono',
                 'label' => 'Telefono',
@@ -242,8 +270,7 @@ class Perfil extends CI_Controller
                     'regex_match' => 'Formato invalido.',
 
                 ),
-            )
-            ,
+            ),
             array(
                 'field' => 'telefonoemergencia',
                 'label' => 'Telefono',
@@ -277,7 +304,6 @@ class Perfil extends CI_Controller
                 'telefono' => form_error('telefono'),
                 'telefonoemergencia' => form_error('telefonoemergencia'),
             );
-
         } else {
             $idalumno = $this->input->post('idalumno');
             //$matricula = trim($this->input->post('matricula'));
@@ -310,13 +336,11 @@ class Perfil extends CI_Controller
 
             );
             $this->alumno->updateAlumno($idalumno, $data);
-
         }
 
         if (isset($result) && !empty($result)) {
             echo json_encode($result);
         }
-
     }
     public function updateDatosTutor()
     {
@@ -411,14 +435,12 @@ class Perfil extends CI_Controller
 
                 );
                 $this->tutor->updateTutor($idtutor, $data);
-
             } else {
                 $result['error'] = true;
                 $result['msg'] = array(
                     'msgerror' => "El correo electrico ya esta registrado.",
                 );
             }
-
         }
 
         if (isset($result) && !empty($result)) {
@@ -486,24 +508,30 @@ class Perfil extends CI_Controller
             );
         } else {
             if ($this->input->post('passwordnueva') == $this->input->post('passwordrepita')) {
-                if(isset($this->session->idtutor) && !empty($this->session->idtutor)){
-                $id = $this->session->idtutor;
-                $detalle_tutor = $this->tutor->detalleTutor($id);
-                if ($detalle_tutor) {
-                    if (password_verify($this->input->post('passwordanterior'), $detalle_tutor->password)) {
-                        $password_encrypted = password_hash(trim($this->input->post('passwordrepita')), PASSWORD_BCRYPT);
+                if (isset($this->session->idtutor) && !empty($this->session->idtutor)) {
+                    $id = $this->session->idtutor;
+                    $detalle_tutor = $this->tutor->detalleTutor($id);
+                    if ($detalle_tutor) {
+                        if (password_verify($this->input->post('passwordanterior'), $detalle_tutor->password)) {
+                            $password_encrypted = password_hash(trim($this->input->post('passwordrepita')), PASSWORD_BCRYPT);
 
-                        $data = array(
-                            'password' => $password_encrypted,
-                            'idusuario' => $this->session->user_id,
-                            'fecharegistro' => date('Y-m-d H:i:s'),
+                            $data = array(
+                                'password' => $password_encrypted,
+                                'idusuario' => $this->session->user_id,
+                                'fecharegistro' => date('Y-m-d H:i:s'),
 
-                        );
-                        $this->tutor->updateTutor($id, $data);
+                            );
+                            $this->tutor->updateTutor($id, $data);
+                        } else {
+                            $result['error'] = true;
+                            $result['msg'] = array(
+                                'msgerror' => "La contraseña anterior es incorrecto.",
+                            );
+                        }
                     } else {
                         $result['error'] = true;
                         $result['msg'] = array(
-                            'msgerror' => "La contraseña anterior es incorrecto.",
+                            'msgerror' => "Error... Intente mas tarde.",
                         );
                     }
                 } else {
@@ -512,14 +540,6 @@ class Perfil extends CI_Controller
                         'msgerror' => "Error... Intente mas tarde.",
                     );
                 }
-                
-                } else {
-                        $result['error'] = true;
-                        $result['msg'] = array(
-                            'msgerror' => "Error... Intente mas tarde.",
-                        );
-                    }
-                    
             } else {
                 $result['error'] = true;
                 $result['msg'] = array(
@@ -532,7 +552,7 @@ class Perfil extends CI_Controller
             echo json_encode($result);
         }
     }
-      public function updatePasswordAlumno()
+    public function updatePasswordAlumno()
     {
         $config = array(
             array(
@@ -571,24 +591,30 @@ class Perfil extends CI_Controller
             );
         } else {
             if ($this->input->post('passwordnueva') == $this->input->post('passwordrepita')) {
-                if(isset($this->session->idalumno) && !empty($this->session->idalumno)){
-                $id = $this->session->idalumno;
-                $detalle_alumno = $this->usuario->datosAlumno($id);
-                if ($detalle_alumno) {
-                    if (password_verify($this->input->post('passwordanterior'), $detalle_alumno->password)) {
-                        $password_encrypted = password_hash(trim($this->input->post('passwordrepita')), PASSWORD_BCRYPT);
+                if (isset($this->session->idalumno) && !empty($this->session->idalumno)) {
+                    $id = $this->session->idalumno;
+                    $detalle_alumno = $this->usuario->datosAlumno($id);
+                    if ($detalle_alumno) {
+                        if (password_verify($this->input->post('passwordanterior'), $detalle_alumno->password)) {
+                            $password_encrypted = password_hash(trim($this->input->post('passwordrepita')), PASSWORD_BCRYPT);
 
-                        $data = array(
-                            'password' => $password_encrypted,
-                            'idusuario' => $this->session->user_id,
-                            'fecharegistro' => date('Y-m-d H:i:s'),
+                            $data = array(
+                                'password' => $password_encrypted,
+                                'idusuario' => $this->session->user_id,
+                                'fecharegistro' => date('Y-m-d H:i:s'),
 
-                        );
-                        $this->usuario->updateAlumno($id, $data);
+                            );
+                            $this->usuario->updateAlumno($id, $data);
+                        } else {
+                            $result['error'] = true;
+                            $result['msg'] = array(
+                                'msgerror' => "La contraseña anterior es incorrecto.",
+                            );
+                        }
                     } else {
                         $result['error'] = true;
                         $result['msg'] = array(
-                            'msgerror' => "La contraseña anterior es incorrecto.",
+                            'msgerror' => "Error... Intente mas tarde.",
                         );
                     }
                 } else {
@@ -597,14 +623,91 @@ class Perfil extends CI_Controller
                         'msgerror' => "Error... Intente mas tarde.",
                     );
                 }
-                
-                } else {
+            } else {
+                $result['error'] = true;
+                $result['msg'] = array(
+                    'msgerror' => "La Contraseña no coinciden.",
+                );
+            }
+        }
+
+        if (isset($result) && !empty($result)) {
+            echo json_encode($result);
+        }
+    }
+    public function updatePasswordProfesor()
+    {
+        $config = array(
+            array(
+                'field' => 'passwordanterior',
+                'label' => 'Nombre',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.',
+                ),
+            ),
+            array(
+                'field' => 'passwordnueva',
+                'label' => 'Nombre',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.',
+                ),
+            ),
+            array(
+                'field' => 'passwordrepita',
+                'label' => 'Nombre',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => 'Campo obligatorio.',
+                ),
+            ),
+        );
+
+        $this->form_validation->set_rules($config);
+        if ($this->form_validation->run() == false) {
+            $result['error'] = true;
+            $result['msg'] = array(
+                'passwordanterior' => form_error('passwordanterior'),
+                'passwordnueva' => form_error('passwordnueva'),
+                'passwordrepita' => form_error('passwordrepita'),
+            );
+        } else {
+
+            if ($this->input->post('passwordnueva') == $this->input->post('passwordrepita')) {
+                if (isset($this->session->idprofesor) && !empty($this->session->idprofesor)) {
+                    $id = $this->session->idprofesor;
+                    $detalle_alumno = $this->usuario->datosProfesor($id);
+                    $correo = $detalle_alumno->correo;
+                    if ($detalle_alumno && isset($correo) && !empty($correo)) {
+                        if (password_verify($this->input->post('passwordanterior'), $detalle_alumno->password)) {
+                            $password_encrypted = password_hash(trim($this->input->post('passwordrepita')), PASSWORD_BCRYPT);
+
+                            $data = array(
+                                'password' => $password_encrypted,
+                                'idusuario' => $this->session->user_id,
+                                'fecharegistro' => date('Y-m-d H:i:s'),
+
+                            );
+                            $this->usuario->updateProfesorXCorreo($correo, $data);
+                        } else {
+                            $result['error'] = true;
+                            $result['msg'] = array(
+                                'msgerror' => "La contraseña anterior es incorrecto.",
+                            );
+                        }
+                    } else {
                         $result['error'] = true;
                         $result['msg'] = array(
                             'msgerror' => "Error... Intente mas tarde.",
                         );
                     }
-                    
+                } else {
+                    $result['error'] = true;
+                    $result['msg'] = array(
+                        'msgerror' => "Error... Intente mas tarde.",
+                    );
+                }
             } else {
                 $result['error'] = true;
                 $result['msg'] = array(

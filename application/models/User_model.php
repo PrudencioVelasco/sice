@@ -278,6 +278,17 @@ class User_model extends CI_Model {
             return false;
         }
     }
+    public function datosProfesor($idprofesor) { 
+        $this->db->select("p.idprofesor, p.foto, p.cedula, p.nombre, p.apellidop, p.apellidom,p.correo,p.password");
+        $this->db->from('tblprofesor p');
+        $this->db->where('p.idprofesor', $idprofesor);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
     public function datosTutor($idtutor) {
         # code...
         $this->db->select("t.idtutor, t.foto, t.nombre, t.apellidop, t.apellidom, t.escolaridad,t.ocupacion, t.dondetrabaja,
@@ -319,6 +330,15 @@ class User_model extends CI_Model {
         public function updateAlumno($id, $field) {
         $this->db->where('idalumno', $id);
         $this->db->update('tblalumno', $field);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public function updateProfesorXCorreo($id, $field) {
+        $this->db->where('correo', $id);
+        $this->db->update('tblprofesor', $field);
         if ($this->db->affected_rows() > 0) {
             return true;
         } else {

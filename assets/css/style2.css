@@ -6658,6 +6658,7 @@ section.content {
   width: 100%;
   margin-bottom: 25px;
 }
+/*COMANTADO PARA QUE APARECIERA EL BORDER A LOS IMPUT*/
 .form-group .form-control {
   width: 100%;
   border: none;

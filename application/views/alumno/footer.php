@@ -26,6 +26,7 @@
 <script src="<?php echo base_url(); ?>/assets/js/datatables/responsive.bootstrap.min.js"></script>
 <script src="<?php echo base_url(); ?>/assets/js/datatables/dataTables.scroller.min.js"></script>
 
+<script src="<?php echo base_url(); ?>/assets/js/lightbox/ekko-lightbox.js"></script>
 
 <!-- image cropping -->
 <script src="<?php echo base_url(); ?>/assets/js/cropping/cropper.min.js"></script>
@@ -40,19 +41,22 @@
 <script type="text/javascript" src="<?php echo base_url(); ?>/assets/js/notify/pnotify.core.js"></script>
 <script type="text/javascript" src="<?php echo base_url(); ?>/assets/js/notify/pnotify.buttons.js"></script>
 <script type="text/javascript" src="<?php echo base_url(); ?>/assets/js/notify/pnotify.nonblock.js"></script>
-
+<script>
+    $(document).on('click', '[data-toggle="lightbox"]', function(event) {
+        event.preventDefault();
+        $(this).ekkoLightbox();
+    });
+</script>
 <script type="text/javascript">
- $(document).ready(function () {
+    $(document).ready(function() {
         $('#tblcalificacion').DataTable({
-        "order":[],
-        "columnDefs":[
-        	{
-				"targets":'no-sort',
-				"orderable":false        	
-        	}
-        ],
-             keys: true,
-             responsive: true,
+            "order": [],
+            "columnDefs": [{
+                "targets": 'no-sort',
+                "orderable": false
+            }],
+            keys: true,
+            responsive: true,
             "scrollX": true,
             dom: 'Pfrtip',
             "language": {
@@ -81,17 +85,15 @@
             }
         });
     });
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('#tblcalificacionpreescolar').DataTable({
-        "order":[],
-        "columnDefs":[
-        	{
-				"targets":'no-sort',
-				"orderable":false        	
-        	}
-        ],
-             keys: true,
-             responsive: true,
+            "order": [],
+            "columnDefs": [{
+                "targets": 'no-sort',
+                "orderable": false
+            }],
+            keys: true,
+            responsive: true,
             "scrollX": true,
             dom: 'Pfrtip',
             "language": {
@@ -123,37 +125,37 @@
 </script>
 
 <script>
-    $(function () {
+    $(function() {
         var cnt = 10; //$("#custom_notifications ul.notifications li").length + 1;
-        TabbedNotification = function (options) {
+        TabbedNotification = function(options) {
             var message = "<div id='ntf" + cnt + "' class='text alert-" + options.type +
-                    "' style='display:none'><h2><i class='fa fa-bell'></i> " + options.title +
-                    "</h2><div class='close'><a href='javascript:;' class='notification_close'><i class='fa fa-close'></i></a></div><p>" +
-                    options.text + "</p></div>";
+                "' style='display:none'><h2><i class='fa fa-bell'></i> " + options.title +
+                "</h2><div class='close'><a href='javascript:;' class='notification_close'><i class='fa fa-close'></i></a></div><p>" +
+                options.text + "</p></div>";
 
             if (document.getElementById('custom_notifications') == null) {
                 alert('doesnt exists');
             } else {
                 $('#custom_notifications ul.notifications').append("<li><a id='ntlink" + cnt +
-                        "' class='alert-" + options.type + "' href='#ntf" + cnt +
-                        "'><i class='fa fa-bell animated shake'></i></a></li>");
+                    "' class='alert-" + options.type + "' href='#ntf" + cnt +
+                    "'><i class='fa fa-bell animated shake'></i></a></li>");
                 $('#custom_notifications #notif-group').append(message);
                 cnt++;
                 CustomTabs(options);
             }
         }
 
-        CustomTabs = function (options) {
+        CustomTabs = function(options) {
             $('.tabbed_notifications > div').hide();
             $('.tabbed_notifications > div:first-of-type').show();
             $('#custom_notifications').removeClass('dsp_none');
-            $('.notifications a').click(function (e) {
+            $('.notifications a').click(function(e) {
                 e.preventDefault();
                 var $this = $(this),
-                        tabbed_notifications = '#' + $this.parents('.notifications').data(
+                    tabbed_notifications = '#' + $this.parents('.notifications').data(
                         'tabbed_notifications'),
-                        others = $this.closest('li').siblings().children('a'),
-                        target = $this.attr('href');
+                    others = $this.closest('li').siblings().children('a'),
+                    target = $this.attr('href');
                 others.removeClass('active');
                 $this.addClass('active');
                 $(tabbed_notifications).children('div').hide();
@@ -164,7 +166,7 @@
         CustomTabs();
 
         var tabid = idname = '';
-        $(document).on('click', '.notification_close', function (e) {
+        $(document).on('click', '.notification_close', function(e) {
             idname = $(this).parent().parent().attr("id");
             tabid = idname.substr(-2);
             $('#ntf' + tabid).remove();
@@ -176,70 +178,70 @@
 </script>
 <script type="text/javascript">
     var permanotice, tooltip, _alert;
-    $(function () {
-        <?php 
-        if (isset($_SESSION['nombre_saludar'])){ 
+    $(function() {
+        <?php
+        if (isset($_SESSION['nombre_saludar'])) {
             $saludar = $_SESSION['saludar'];
             $nombre = $_SESSION['nombre_saludar'];
-             ?>
-        new PNotify({
-          
-            title:  <?php  echo  '"'.$saludar.'"' ;  ?>,
-            text:  <?php  echo  '"Bienvenido(a) <strong>'.$nombre.'</strong>"' ;  ?>,
-            type: 'success',
-            delay:4000,
-            hide: true,
-      
+        ?>
+            new PNotify({
 
-        before_close: function(PNotify) {
-          // You can access the notice's options with this. It is read only.
-          //PNotify.options.text;
+                title: <?php echo  '"' . $saludar . '"';  ?>,
+                text: <?php echo  '"Bienvenido(a) <strong>' . $nombre . '</strong>"';  ?>,
+                type: 'success',
+                delay: 4000,
+                hide: true,
 
-          // You can change the notice's options after the timer like this:
-          PNotify.update({
-            title: PNotify.options.title + " - Enjoy your Stay",
-            before_close: null
-          });
-          PNotify.queueRemove();
-          return false;
-        }
-      });
-      <?php  } ?>
 
-<?php
-if (isset($tareas) && !empty($tareas)) {
+                before_close: function(PNotify) {
+                    // You can access the notice's options with this. It is read only.
+                    //PNotify.options.text;
 
-    foreach ($tareas as $value) {
-        if ($value->idnotificacionalumno == 1) {
-            setlocale(LC_ALL, 'es_ES');
-            $date = new Datetime($value->fechaentrega);
-            $fecha = strftime("%A, %d de %B", $date->getTimestamp());
-            ?>
+                    // You can change the notice's options after the timer like this:
+                    PNotify.update({
+                        title: PNotify.options.title + " - Enjoy your Stay",
+                        before_close: null
+                    });
+                    PNotify.queueRemove();
+                    return false;
+                }
+            });
+        <?php  } ?>
+
+        <?php
+        if (isset($tareas) && !empty($tareas)) {
+
+            foreach ($tareas as $value) {
+                if ($value->idnotificacionalumno == 1) {
+                    setlocale(LC_ALL, 'es_ES');
+                    $date = new Datetime($value->fechaentrega);
+                    $fecha = strftime("%A, %d de %B", $date->getTimestamp());
+        ?>
                     new TabbedNotification({
                         title: 'TAREA',
                         text: <?php echo "'Usted tiene una nueva tarea de: $value->nombreclase.<br/>Fecha de entrega: $fecha'"; ?>,
                         type: 'info',
                         sound: true
                     });
-            <?php
+                <?php
+                }
+            }
         }
-    }
-}
-if (isset($mensajes) && !empty($mensajes)) {
+        if (isset($mensajes) && !empty($mensajes)) {
 
-    foreach ($mensajes as $value) {
-        if ($value->idnotificacionalumno == 1) { ?>
+            foreach ($mensajes as $value) {
+                if ($value->idnotificacionalumno == 1) { ?>
                     new TabbedNotification({
                         title: 'MENSAJE',
                         text: <?php echo "'Usted tiene una nuevo mensaje de: $value->nombreclase'"; ?>,
                         type: 'info',
                         sound: true
                     });
-            <?php
+        <?php
+                }
+            }
         }
-    }
-}
-?>
+        ?>
 
 
 
@@ -247,7 +249,7 @@ if (isset($mensajes) && !empty($mensajes)) {
 </script>
 
 <script type="text/javascript">
-    $(function () {
+    $(function() {
         //CKEditor
         CKEDITOR.replace('ckeditor');
         CKEDITOR.config.height = 200;
@@ -255,7 +257,7 @@ if (isset($mensajes) && !empty($mensajes)) {
 </script>
 
 <script type="text/javascript">
-    $(function () {
+    $(function() {
         //CKEditor
         CKEDITOR.replace('ckeditoredit');
         CKEDITOR.config.height = 200;
@@ -264,14 +266,14 @@ if (isset($mensajes) && !empty($mensajes)) {
 
 
 <script type="text/javascript">
-    $(document).ready(function () {
-        $('#tablageneral2').DataTable({ 
-             keys: true,
+    $(document).ready(function() {
+        $('#tablageneral2').DataTable({
+            keys: true,
             "scrollX": true,
             dom: 'Bfrtip',
-           buttons: [
-        'excelHtml5'
-        ],
+            buttons: [
+                'excelHtml5'
+            ],
             "language": {
                 "sProcessing": "Procesando...",
                 "sLengthMenu": "Mostrar _MENU_ registros",
@@ -302,44 +304,42 @@ if (isset($mensajes) && !empty($mensajes)) {
 
     });
 </script>
- <script>
-  $('#datatablebodega').DataTable(
-                {
-                    paging:false,
-                   
-                    scrollY:400,
-                    scrollX:"100%", 
-                    "columnDefs": [ {
-                    "targets": 0,
-                    "orderable": false
-                    } ],
-                    "language": {
-                        "sProcessing": "Procesando...",
-                        "sLengthMenu": "Mostrar _MENU_ registros",
-                        "sZeroRecords": "No se encontraron resultados",
-                        "sEmptyTable": "Ningún dato disponible en esta tabla",
-                        "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-                        "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
-                        "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
-                        "sInfoPostFix": "",
-                        "sSearch": "Buscar:",
-                        "sUrl": "",
-                        "sInfoThousands": ",",
-                        "sLoadingRecords": "Cargando...",
-                        "oPaginate": {
-                            "sFirst": "Primero",
-                            "sLast": "Último",
-                            "sNext": "Siguiente",
-                            "sPrevious": "Anterior"
-                        },
-                        "oAria": {
-                            "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
-                            "sSortDescending": ": Activar para ordenar la columna de manera descendente"
-                        }
-                    }
-                }
-        );
- </script>
+<script>
+    $('#datatablebodega').DataTable({
+        paging: false,
+
+        scrollY: 400,
+        scrollX: "100%",
+        "columnDefs": [{
+            "targets": 0,
+            "orderable": false
+        }],
+        "language": {
+            "sProcessing": "Procesando...",
+            "sLengthMenu": "Mostrar _MENU_ registros",
+            "sZeroRecords": "No se encontraron resultados",
+            "sEmptyTable": "Ningún dato disponible en esta tabla",
+            "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+            "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+            "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+            "sInfoPostFix": "",
+            "sSearch": "Buscar:",
+            "sUrl": "",
+            "sInfoThousands": ",",
+            "sLoadingRecords": "Cargando...",
+            "oPaginate": {
+                "sFirst": "Primero",
+                "sLast": "Último",
+                "sNext": "Siguiente",
+                "sPrevious": "Anterior"
+            },
+            "oAria": {
+                "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+                "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+            }
+        }
+    });
+</script>
 </body>
 
 </html>

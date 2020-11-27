@@ -199,10 +199,11 @@ public function deleteMateria($idmateria='')
                  'e.nombreespecialidad',
                  'n.nombrenivel'
         );
-       $this->db->select('m.idmateria, m.nombreclase, e.idespecialidad, e.nombreespecialidad, n.idnivelestudio, n.nombrenivel, m.clave, m.credito, m.unidades');
+       $this->db->select('m.idmateria, m.nombreclase, e.idespecialidad, e.nombreespecialidad, n.idnivelestudio, n.nombrenivel, m.clave, m.credito, m.unidades, m.secalifica, c.idclasificacionmateria, c.nombreclasificacion');
         $this->db->from('tblmateria m'); 
         $this->db->join('tblnivelestudio n ', ' n.idnivelestudio = m.idnivelestudio'); 
         $this->db->join('tblespecialidad e ', ' m.idespecialidad = e.idespecialidad');  
+        $this->db->join('tblclasificacion_materia c ', ' m.idclasificacionmateria = c.idclasificacionmateria');  
        if (isset($idplantel) && !empty($idplantel)) {
         $this->db->where('m.idplantel',$idplantel); 
         }    

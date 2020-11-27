@@ -1,13 +1,13 @@
 <style>
-#lista li {
-	float: left;
-}
+	#lista li {
+		float: left;
+	}
 
-#lista li img {
-	float: left;
-	padding: 5px;
-	margin: 85px;
-}
+	#lista li img {
+		float: left;
+		padding: 5px;
+		margin: 85px;
+	}
 </style>
 <div class="modal fade" id="editRegister" tabindex="-1" role="dialog">
 	<div class="modal-dialog  modal-lg " role="document">
@@ -27,21 +27,14 @@
 							<div v-if="tarea.tarea" v-html="tarea.tarea"></div>
 						</div>
 						<div class="col-md-4 col-sm-12 col-xs-12 " align="right">
-							<a v-if="tarea.iddocumento"
-								v-bind:href="'https://drive.google.com/uc?export=download&id='+ tarea.iddocumento"><i
-								class="fa fa-download"></i> DESCARGAR DOCUMENTO</a>
-								
-							<div v-for="file in documentosdelprofesor"
-								:key="file.iddocumento">
-								
-								<a v-if="file.link !=''"
-									v-bind:href="file.link"
-									target="_blank"><i class="fa fa-cloud-download"></i> DESCARGAR
+							<a v-if="tarea.iddocumento" v-bind:href="'https://drive.google.com/uc?export=download&id='+ tarea.iddocumento"><i class="fa fa-download"></i> DESCARGAR DOCUMENTO</a>
+
+							<div v-for="file in documentosdelprofesor" :key="file.iddocumento">
+
+								<a v-if="file.link !=''" v-bind:href="file.ligapreview" target="_blank"><i class="fa fa-cloud-eye"></i> DESCARGAR
 									DOCUMENTO</a>
-								<a v-else
-									v-bind:href="'https://drive.google.com/uc?export=download&id='+ file.iddocumento"
-									target="_blank"><i class="fa fa-cloud-download"></i> DESCARGAR
-									DOCUMENTO</a>	
+								<a v-else v-bind:href="'https://drive.google.com/uc?export=download&id='+ file.iddocumento" target="_blank"><i class="fa fa-cloud-download"></i> DESCARGAR
+									DOCUMENTO</a>
 							</div>
 						</div>
 					</div>
@@ -58,8 +51,7 @@
 								<span class="label label-default">Entega: {{row.fecharegistro}}</span><br>
 								<span class="label label-info">Calificación :
 									{{row.calificacion}}</span> <br> <br>
-								<button @click="abrirModalSecundario(row)"
-									class="btn  btn-primary  waves-effect waves-float">Calificar</button>
+								<button @click="abrirModalSecundario(row)" class="btn  btn-primary  waves-effect waves-float">Calificar</button>
 							</div>
 
 						</div>
@@ -67,27 +59,15 @@
 							<div class="col-md-12 col-sm-12 col-xs-12 " align="right">
 
 
-								<!--<a v-if="row.iddocumento"
-									v-bind:href="'https://drive.google.com/uc?export=download&id='+ row.iddocumento"
-									target="_blank"><i class="fa fa-cloud-download"></i> DESCARGAR
-									DOCUMENTO</a>-->
-
 								<div class="col-md-55" v-if="row.iddocumento">
 									<div class="thumbnail">
 										<div class="image view view-first">
-											<img
-												v-if="file.ext == 'jpg' || file.ext == 'jpeg' || file.ext == 'png'"
-												style="width: 100%; display: block;"
-												v-bind:src="'https://drive.google.com/thumbnail?id'+ row.iddocumento"
-												alt="Archivo" /> <img v-else alt="Archivo"
-												v-bind:src="'https://drive.google.com/thumbnail?id'+ row.iddocumento"
-												style="width: 100%; display: block;">
+											<img v-if="file.ext == 'jpg' || file.ext == 'jpeg' || file.ext == 'png'" style="width: 100%; display: block;" v-bind:src="'https://drive.google.com/thumbnail?id'+ row.iddocumento" alt="Archivo" />
+											<img v-else alt="Archivo" v-bind:src="'https://drive.google.com/thumbnail?id'+ row.iddocumento" style="width: 100%; display: block;">
 											<div class="mask">
 
 												<div class="tools tools-bottom">
-													<a
-														v-bind:href="'https://drive.google.com/uc?export=download&id='+ row.iddocumento"
-														target="_blank"><i class="fa fa-download"></i></a>
+													<a v-bind:href="'https://drive.google.com/uc?export=download&id='+ row.iddocumento" target="_blank"><i class="fa fa-download"></i></a>
 												</div>
 											</div>
 										</div>
@@ -98,38 +78,20 @@
 									<div class="col-md-55">
 										<div class="thumbnail">
 											<div class="image view view-first">
-												<img v-if="file.link != ''"
-													style="width: 100%; display: block;" v-bind:src="file.link"
-													alt="No se puede previsualizar el archivo" /> <img v-else
-													alt="Archivo"
-													v-bind:src="'https://drive.google.com/thumbnail?id='+ file.file"
-													style="width: 100%; display: block;">
+												<img v-if="file.link != ''" style="width: 100%; display: block;" v-bind:src="file.link" alt="No se puede previsualizar el archivo" />
+												<img v-else alt="Archivo" v-bind:src="'https://drive.google.com/thumbnail?id='+ file.file" style="width: 100%; display: block;">
 
 
 												<div class="mask">
 
 													<div class="tools tools-bottom">
-														<a v-if="file.link !=''" v-bind:href="file.link"
-															target="_blank"><i class="fa fa-download"></i></a> <a
-															v-else
-															v-bind:href="'https://drive.google.com/uc?export=download&id='+ file.file"
-															target="_blank"><i class="fa fa-download"></i></a>
+														<a v-if="file.link !=''" v-bind:href="file.ligapreview" target="_blank"><i class="fa fa-eye"></i></a>
+														<a v-else v-bind:href="'https://drive.google.com/uc?export=download&id='+ file.file" target="_blank"><i class="fa fa-download"></i></a>
 													</div>
 												</div>
 											</div>
 										</div>
 									</div>
-
-
-									<!--  <a target="_blank"
-											v-bind:href="'https://drive.google.com/uc?export=view&id='+ file.file"
-											v-if="file.extension == 'jpg' || file.extension == 'jpeg' || file.extension == 'png'"><img
-												v-bind:src="'https://drive.google.com/uc?export=view&id='+ file.file"
-												style="width: 100px; max-width: 100%; height: auto"
-												title="Click for the larger version." /></a> <a v-else
-											v-bind:href="'https://drive.google.com/uc?export=download&id='+ file.file"
-											target="_blank"><i class="fa fa-cloud-download"></i>
-												DESCARGAR DOCUMENTO</a>-->
 								</div>
 
 
@@ -141,51 +103,21 @@
 
 
 					<hr>
-					<!--<div class="row">
-                        <div class="col-md-6 col-sm-12 col-xs-12 "> 
-                            <div class="form-group"> 
-                                <label><font color="red">*</font> SELECCIONE EL TIPO DE CALIFICACION</label>
-                                <select class=" form-control" v-model="chooseAlumnosTareas.idestatustarea" style="border-bottom: solid #ccc 1px; "> 
 
-                                  <option   v-for="option in estatustarea"  :selected="option.idestatustarea == chooseAlumnosTareas.idestatustarea ? 'selected' : ''" :value="option.idestatustarea" >
-                                    {{ option.nombreestatus }}   
-                                </option>
-                            </select>
-                            <div class="col-red" v-html="formValidate.idnivelestudio"></div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-sm-12 col-xs-12 "> 
-                        <strong>Documento(s) enviados.</strong>
-                        <div v-for="file in documentos" :key="file.iddocumento">
-                            <a v-if="file.iddocumento" v-bind:href="'https://drive.google.com/uc?export=download&id='+ file.iddocumento" target="_blank"><i class="fa fa-cloud-download"></i> DESCARGAR DOCUMENTO</a>
-                        </div>
-                        <a v-if="chooseAlumnosTareas.iddocumento"  v-bind:href="'https://drive.google.com/uc?export=download&id='+ chooseAlumnosTareas.iddocumento"><i class="fa fa-download"></i> DESCARGAR DOCUMENTO</a>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12 col-sm-12 col-xs-12 ">
-                        <label>Observaciones</label>
-                        <vue-ckeditor  v-model="chooseAlumnosTareas.observaciones"  :config="config"  />
-                        <div class="col-red" v-html="formValidate.observacionesa"></div>
-                    </div>
-                </div>-->
 				</div>
 			</div>
 			<div class="modal-footer">
 				<div class="row">
 					<div class="col-md-6 col-sm-12 col-xs-12 " align="center">
 						<div v-if="cargando">
-							<img style="width: 50px;"
-								src="<?php echo base_url() . '/assets/loader/pagos.gif' ?>"
-								alt=""> <strong>Procesando...</strong>
+							<img style="width: 50px;" src="<?php echo base_url() . '/assets/loader/pagos.gif' ?>" alt=""> <strong>Procesando...</strong>
 						</div>
 						<div v-if="error" align="left">
 							<label class="col-red">*Corrija los errores en el formulario.</label>
 						</div>
 					</div>
 					<div class="col-md-6 col-sm-12 col-xs-12 " align="right">
-						<button class="btn btn-danger waves-effect waves-black"
-							@click="clearAll">
+						<button class="btn btn-danger waves-effect waves-black" @click="clearAll">
 							<i class='fa fa-ban'></i> Cerrar
 						</button>
 					</div>
@@ -210,19 +142,16 @@
 					</div>
 					<div class="row">
 						<div class="col-md-12 col-sm-12 col-xs-12 ">
-							<label> <font color="red">*</font> Calificación
-							</label> <input type="text"
-								v-model="chooseTareaCalificar.calificacion" minlength="0.00"
-								maxlength="10.00" name="calificacion" class="form-control"
-								placeholder="0.0 a 10.0">
+							<label>
+								<font color="red">*</font> Calificación
+							</label> <input type="text" v-model="chooseTareaCalificar.calificacion" minlength="0.00" maxlength="10.00" name="calificacion" class="form-control" placeholder="0.0 a 10.0">
 							<div class="col-red" v-html="formValidate.calificacion"></div>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-md-12 col-sm-12 col-xs-12 ">
 							<label>Observaciones</label>
-							<vue-ckeditor v-model="chooseTareaCalificar.observacionesdocente"
-								:config="config" />
+							<vue-ckeditor v-model="chooseTareaCalificar.observacionesdocente" :config="config" />
 							<div class="col-red" v-html="formValidate.observacionesdocente"></div>
 						</div>
 					</div>
@@ -232,21 +161,17 @@
 				<div class="row">
 					<div class="col-md-6 col-sm-12 col-xs-12 " align="center">
 						<div v-if="cargando">
-							<img style="width: 50px;"
-								src="<?php echo base_url() . '/assets/loader/pagos.gif' ?>"
-								alt=""> <strong>Procesando...</strong>
+							<img style="width: 50px;" src="<?php echo base_url() . '/assets/loader/pagos.gif' ?>" alt=""> <strong>Procesando...</strong>
 						</div>
 						<div v-if="error" align="left">
 							<label class="col-red">*Corrija los errores en el formulario.</label>
 						</div>
 					</div>
 					<div class="col-md-6 col-sm-12 col-xs-12 " align="right">
-						<button class="btn btn-danger waves-effect waves-black"
-							@click="cerrarModalSecundario()">
+						<button class="btn btn-danger waves-effect waves-black" @click="cerrarModalSecundario()">
 							<i class='fa fa-ban'></i> Cancelar
 						</button>
-						<button class="btn btn-primary waves-effect waves-black"
-							@click="updateAlumnosTareas()">
+						<button class="btn btn-primary waves-effect waves-black" @click="updateAlumnosTareas()">
 							<i class='fa fa-check'></i> Calificar
 						</button>
 					</div>
@@ -255,4 +180,3 @@
 		</div>
 	</div>
 </div>
-

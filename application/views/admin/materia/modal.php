@@ -210,10 +210,10 @@
                             <div class="form-group">
                                 <label for=""><font color="red">*</font> SE CALIFICA?</label><br> 
                                 <div class="demo-radio-button" >  
-                                    <input name="group5" type="radio" id="radio_31" class="with-gap radio-col-green" v-model="chooseMateria.secalifica" value="1" :checked="chooseMateria.secalifica==1" />
-                                    <label for="radio_31">SI</label>
-                                    <input name="group5" type="radio" id="radio_32" class="with-gap radio-col-red"  v-model="chooseMateria.secalifica" value="0" :checked="chooseMateria.secalifica==0" />
-                                    <label for="radio_32">NO</label>
+                                    <input name="group5" type="radio" id="radio_33" class="with-gap radio-col-green" v-model="chooseMateria.secalifica" value="1" :checked="chooseMateria.secalifica==1" />
+                                    <label for="radio_33">SI</label>
+                                    <input name="group5" type="radio" id="radio_34" class="with-gap radio-col-red"   v-model="chooseMateria.secalifica" value="0" :checked="chooseMateria.secalifica==0" />
+                                    <label for="radio_34">NO</label>
                                 </div>
 
                             </div>

@@ -28,7 +28,7 @@ var v = new Vue({
             clave: '',
             credito: '',
             unidades:'',
- 			secalifica:'',
+            secalifica:'',
             smserror: ''},
         chooseMateria: {},
         formValidate: [],

@@ -197,6 +197,8 @@
                                                                 </tr>
                                                                 <?php
                                                             }
+                                                        }else{
+                                                            echo '<tr><td colspan="3" align="center">Sin alumnos</td></tr>';
                                                         }
                                                         ?>
 

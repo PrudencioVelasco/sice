@@ -1,17 +1,17 @@
 <!-- page content -->
 <div class="right_col" role="main">
 
-    <div class=""> 
+    <div class="">
 
         <div class="row">
             <div class="col-md-12">
                 <div class="x_panel">
                     <div class="x_title">
                         <h2><strong>ASISTENCIA DE LOS ALUMNOS - <?php
-                                if (isset($nombreclase) && !empty($nombreclase)) {
-                                    echo $nombreclase;
-                                }
-                                ?> </strong></h2>
+                                                                if (isset($nombreclase) && !empty($nombreclase)) {
+                                                                    echo $nombreclase;
+                                                                }
+                                                                ?> </strong></h2>
 
                         <div class="clearfix"></div>
                     </div>
@@ -26,7 +26,7 @@
                                             <div class="modal-header">
                                                 <h4 class="modal-title" id="largeModalLabel">REGISTRAR ASISTENCIA</h4>
                                             </div>
-                                            <form id="frmasistencia" >
+                                            <form id="frmasistencia">
                                                 <div class="modal-body">
                                                     <div class="row">
                                                         <div class="col-md-12 col-sm-12 col-xs-12 ">
@@ -37,22 +37,26 @@
                                                     <div class="row">
                                                         <div class="col-md-6 col-sm-12 col-xs-12 ">
                                                             <div class="form-group">
-                                                                <label><font color="red">*</font> Fecha</label>
-                                                                <input type="date" style="border-bottom: solid 1px #ccc;"   name="fecha" class="form-control">
+                                                                <label>
+                                                                    <font color="red">*</font> Fecha
+                                                                </label>
+                                                                <input type="date" style="border-bottom: solid 1px #ccc;" name="fecha" class="form-control">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6 col-sm-12 col-xs-12 ">
                                                             <div class="form-group">
-                                                                <label><font color="red">*</font> Unidad</label>
+                                                                <label>
+                                                                    <font color="red">*</font> Unidad
+                                                                </label>
                                                                 <select name="unidad" required="" style="border-bottom: solid 1px #ccc;" class="form-control">
                                                                     <option value="">-- SELECCIONAR --</option>
                                                                     <?php
                                                                     if (isset($unidades) && !empty($unidades)) {
                                                                         foreach ($unidades as $value) {
-                                                                            ?>
+                                                                    ?>
                                                                             <option value="<?php echo $value->idunidad ?>"><?php echo $value->nombreunidad; ?></option>
 
-                                                                            <?php
+                                                                    <?php
                                                                         }
                                                                     }
                                                                     ?>
@@ -61,12 +65,12 @@
                                                         </div>
                                                     </div>
                                                     <div class="row">
-                                                        <div class="col-md-12 col-sm-12 col-xs-12 " >
+                                                        <div class="col-md-12 col-sm-12 col-xs-12 ">
                                                             <table class="table">
-                                                                <thead>
+                                                                <thead class="bg-teal">
                                                                     <tr>
                                                                         <th>#</th>
-                                                                        <th>ALUMNO</th> 
+                                                                        <th>ALUMNO</th>
                                                                         <th></th>
                                                                     </tr>
                                                                 </thead>
@@ -75,42 +79,44 @@
                                                                     if (isset($alumnos) && !empty($alumnos)) {
                                                                         $i = 1;
                                                                         foreach ($alumnos as $value) {
-                                                                            ?>
-                                                                        <input type="hidden" name="idalumno[]" value="<?php echo $value->idalumno ?>">
-                                                                        <tr>
-                                                                            <td><?php echo $i++ ?></td>
-                                                                            <td>
-        <?php echo $value->apellidop . ' ' . $value->apellidom . ' ' . $value->nombre ?>
+                                                                    ?>
+                                                                            <input type="hidden" name="idalumno[]" value="<?php echo $value->idalumno ?>">
+                                                                            <tr>
+                                                                                <td><?php echo $i++ ?></td>
+                                                                                <td>
+                                                                                    <?php echo $value->apellidop . ' ' . $value->apellidom . ' ' . $value->nombre ?>
 
-                                                                            </td> 
-                                                                            <td>
-                                                                                <select name="motivo[]" required="" class="form-control">
-                                                                                    <option value="">-- SELECCIONAR --</option>
-                                                                                    <?php
-                                                                                    if (isset($motivo) && !empty($motivo)) {
-                                                                                        foreach ($motivo as $value) {
-                                                                                            ?>
-                                                                                            <option value="<?php echo $value->idmotivo ?>"><?php echo $value->nombremotivo ?></option>
-                                                                                            <?php
+                                                                                </td>
+                                                                                <td>
+                                                                                    <select name="motivo[]" required="" class="form-control">
+                                                                                        <option value="">-- SELECCIONAR --</option>
+                                                                                        <?php
+                                                                                        if (isset($motivo) && !empty($motivo)) {
+                                                                                            foreach ($motivo as $value) {
+                                                                                        ?>
+                                                                                                <option value="<?php echo $value->idmotivo ?>"><?php echo $value->nombremotivo ?></option>
+                                                                                        <?php
+                                                                                            }
                                                                                         }
-                                                                                    }
-                                                                                    ?>
-                                                                                </select>
-                                                                            </td>
-                                                                        </tr>
-                                                                        <?php
+                                                                                        ?>
+                                                                                    </select>
+                                                                                </td>
+                                                                            </tr>
+                                                                    <?php
+                                                                        }
+                                                                    } else {
+                                                                        echo '<tr><td colspan="3" align="center">Sin registros</td></tr>';
                                                                     }
-                                                                }
-                                                                ?>
+                                                                    ?>
 
                                                                 </tbody>
                                                             </table>
-                                                        </div> 
+                                                        </div>
                                                     </div>
 
 
                                                 </div>
-                                                <div class="modal-footer"> 
+                                                <div class="modal-footer">
                                                     <input type="hidden" name="idhorario" value="<?php echo $idhorario ?>">
                                                     <input type="hidden" name="idhorariodetalle" value="<?php echo $idhorariodetalle ?>">
                                                     <button type="button" id="btnguardar" class="btn btn-primary waves-effect"><i class='fa fa-floppy-o'></i> GUARDAR</button>
@@ -123,7 +129,7 @@
 
                             </div>
                         </div>
-                        <hr/>
+                        <hr />
                         <div class="row">
                             <div class="col-md-3 col-sm-12 col-xs-12 "></div>
                             <div class="col-md-9 col-sm-12 col-xs-12 " align="right">
@@ -131,17 +137,17 @@
                                 <form id="frmbuscar">
                                     <div class="row clearfix">
                                         <div class="col-md-4 col-sm-12 col-xs-12 ">
-                                            <div class="form-group"> 
-                                                <select name="unidad" style="border-bottom: solid 1px #ccc;" required="" id="unidad"  class="form-control">
+                                            <div class="form-group">
+                                                <select name="unidad" style="border-bottom: solid 1px #ccc;" required="" id="unidad" class="form-control">
                                                     <option value="">-- UNIDAD --</option>
                                                     <option value="0">TODOS</option>
                                                     <?php
                                                     if (isset($unidades) && !empty($unidades)) {
                                                         foreach ($unidades as $value) {
-                                                            ?>
+                                                    ?>
                                                             <option value="<?php echo $value->idunidad ?>"><?php echo $value->nombreunidad; ?></option>
 
-                                                            <?php
+                                                    <?php
                                                         }
                                                     }
                                                     ?>
@@ -158,7 +164,7 @@
                                         <div class="col-lg-3 col-md-4 col-sm-4 col-xs-6">
                                             <div class="form-group">
                                                 <div class="form-line">
-                                                    <input type="date" class="form-control"  style="border-bottom: solid 1px #ccc;" name="fechafin" placeholder="Fecha fin" required="" id="fechafin">
+                                                    <input type="date" class="form-control" style="border-bottom: solid 1px #ccc;" name="fechafin" placeholder="Fecha fin" required="" id="fechafin">
                                                 </div>
                                             </div>
                                         </div>
@@ -171,15 +177,15 @@
                                 </form>
 
 
-                            </div>  
-                        </div>  
-                        <div class="row"> 
+                            </div>
+                        </div>
+                        <div class="row">
                             <div class="col-lg-12 col-md-12 col-sm-4 col-xs-6">
                                 <div id="tblalumnos">
                                     <?php
                                     echo $tabla;
                                     ?>
-                                </div> 
+                                </div>
                             </div>
 
                         </div>
@@ -214,11 +220,13 @@
                 <h2 class="modal-title " id="myModalLabel">ELIMINAR ASISTENCIA POR FECHA </h2>
             </div>
             <form method="post" action="" id="frmeliminarasistencia">
-                <div class="modal-body"> 
+                <div class="modal-body">
                     <div class="form-group">
-                        <label for=""> <font color="red">*</font> Fecha:</label>
-                        <input class="form-control " type="date" name="fechaeliminar" id="fechaeliminar"/> 
-                    </div> 
+                        <label for="">
+                            <font color="red">*</font> Fecha:
+                        </label>
+                        <input class="form-control" style=" border-bottom:solid #ccc 2px; " type="date" name="fechaeliminar" id="fechaeliminar" />
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <input type="hidden" name="horariodetalle" value="<?php echo $idhorariodetalle; ?>">
@@ -243,23 +251,25 @@
                     <div class="alert alert-danger print-error-msg" style="display:none"></div>
                     <div class="alert alert-success print-success-msg" style="display:none"></div>
                     <div class="form-group">
-                        <input class="form-control idasistencia" type="hidden" name="idasistencia"> 
+                        <input class="form-control idasistencia" type="hidden" name="idasistencia">
                     </div>
                     <div class="form-group">
-                        <label ><font color="red">*</font> Opción</label><br>
+                        <label>
+                            <font color="red">*</font> Opción
+                        </label><br>
                         <select name="motivo" style="border-bottom: solid 1px #ccc;" required="" class="form-control">
                             <option value="">-- SELECCIONAR --</option>
                             <?php
                             if (isset($motivo) && !empty($motivo)) {
                                 foreach ($motivo as $value) {
-                                    ?>
+                            ?>
                                     <option value="<?php echo $value->idmotivo ?>"><?php echo $value->nombremotivo ?></option>
-                                    <?php
+                            <?php
                                 }
                             }
                             ?>
                         </select>
-                    </div> 
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> CERRAR</button>
@@ -283,11 +293,13 @@
                     <div class="alert alert-danger print-error-msg" style="display:none"></div>
                     <div class="alert alert-success print-success-msg" style="display:none"></div>
                     <div class="form-group">
-                        <input class="form-control idasistencia" type="hidden" name="idasistencia"> 
+                        <input class="form-control idasistencia" type="hidden" name="idasistencia">
                     </div>
                     <div class="form-group">
-                        <label ><h3>Esta seguro de Eliminar la Asistencia?</h3></label> 
-                    </div> 
+                        <label>
+                            <h3>Esta seguro de Eliminar la Asistencia?</h3>
+                        </label>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> CERRAR</button>
@@ -305,13 +317,12 @@
     </ul>
     <div class="clearfix"></div>
     <div id="notif-group" class="tabbed_notifications"></div>
-</div> 
-<script data-my_var_1="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/js/validar/tutor_asistencia.js"></script> 
+</div>
+<script data-my_var_1="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/js/validar/tutor_asistencia.js"></script>
 
 
 <script type="text/javascript">
-
-    $("#btnbuscar").click(function () {
+    $("#btnbuscar").click(function() {
 
         var fechainicio = $("#fechainicio").val();
         var fechafin = $("#fechafin").val();
@@ -333,13 +344,10 @@
 
 
     });
-
-
-
 </script>
 
 <script type="text/javascript">
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('#tablageneral2').DataTable({
             keys: true,
             "scrollX": true,
@@ -375,4 +383,3 @@
 
     });
 </script>
-

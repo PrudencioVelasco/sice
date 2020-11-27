@@ -134,6 +134,14 @@ class Materia extends CI_Controller {
                         'required' => 'Campo obligatorio.'
                     )
                 ),
+                array(
+                    'field' => 'secalifica',
+                    'label' => 'Se califica',
+                    'rules' => 'trim|required',
+                    'errors' => array(
+                        'required' => 'Campo obligatorio.'
+                    )
+                ),
                  array(
                     'field' => 'unidades',
                     'label' => 'Total de unidades',
@@ -154,6 +162,7 @@ class Materia extends CI_Controller {
                     'clave' => form_error('clave'),
                     'credito' => form_error('credito'),
                      'unidades' => form_error('unidades'),
+                     'secalifica' => form_error('secalifica'),
                     'idclasificacionmateria' => form_error('idclasificacionmateria')
                 );
             } else {
@@ -164,7 +173,8 @@ class Materia extends CI_Controller {
                 $nombreclase = trim($this->input->post('nombreclase'));
                 $credito = trim($this->input->post('credito'));
                 $clave = trim($this->input->post('clave'));
-                 $unidades = trim($this->input->post('unidades'));
+                $unidades = trim($this->input->post('unidades'));
+                $secalifica = trim($this->input->post('secalifica'));
                 $validar = $this->materia->validarAddMateria($idnivelestudio, $idespecialidad, $nombreclase, $this->session->idplantel, $clave);
                 if ($validar == FALSE) {
 
@@ -177,6 +187,7 @@ class Materia extends CI_Controller {
                         'clave' => mb_strtoupper($clave),
                         'credito' => $credito,
                         'unidades'=> (isset($unidades) && !empty($unidades))? $unidades:0,
+                        'secalifica' => $secalifica,
                         'idusuario' => $this->session->user_id,
                         'fecharegistro' => date('Y-m-d H:i:s')
                     );
@@ -333,6 +344,7 @@ class Materia extends CI_Controller {
                 $clave = trim($this->input->post('clave'));
                 $credito = trim($this->input->post('credito'));
                 $unidades = trim($this->input->post('unidades'));
+                $secalifica = trim($this->input->post('secalifica'));
                 $idclasificacionmateria = trim($this->input->post('idclasificacionmateria'));
                 $validar = $this->materia->validarUpdateMateria($idmateria, $idnivelestudio, $idespecialidad, $nombreclase, $this->session->idplantel, $clave);
                 if ($validar == FALSE) {
@@ -344,7 +356,8 @@ class Materia extends CI_Controller {
                         'nombreclase' => mb_strtoupper($nombreclase),
                         'clave' => mb_strtoupper($clave),
                         'credito' => $credito,
-                         'unidades'=> (isset($unidades) && !empty($unidades))? $unidades:0,
+                        'unidades'=> (isset($unidades) && !empty($unidades))? $unidades:0,
+                        'secalifica'=>$secalifica,
                         'idusuario' => $this->session->user_id,
                         'fecharegistro' => date('Y-m-d H:i:s')
                     );

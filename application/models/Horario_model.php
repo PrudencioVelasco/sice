@@ -181,6 +181,22 @@ class Horario_model extends CI_Model {
         }
     }
 
+    //Nuevo metodos la obtener Horario de Clases por dia.
+    public function horarioClasesXDia($idhorario,$idalumno,$reprobadas) {
+        $reprobadas_in ="";
+        if(isset($reprobadas) && empty($reprobadas)){
+            $reprobadas_in .= "''";
+        }
+        $query = $this->db->query("CALL spObtenerHorarioClases ($idhorario, $idalumno,$reprobadas_in)");
+        $res = $query->result();
+        //add this two line
+        $query->next_result();
+        $query->free_result();
+        //end of new code
+        return $res;
+    }
+    //Fin de codigo
+
     public function showAllDiaHorario($idhorario, $iddia) {
         $query = $this->db->query("SELECT * FROM vhorarioclases WHERE idhorario= $idhorario AND (iddia = $iddia OR iddia ='Todos') ORDER BY horainicial ASC");
         if ($query->num_rows() > 0) {

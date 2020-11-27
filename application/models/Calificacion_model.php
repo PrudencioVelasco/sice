@@ -504,6 +504,21 @@ class Calificacion_model extends CI_Model {
             return false;
         }
     }
+    public function obtenerMateriaTaller($idalumno = '',$idprofesormateria = '', $idhorario='') {
+        $this->db->select('hdc.*');
+        $this->db->from('tblhorario_detalle_cursos hdc');
+        $this->db->join('tblhorario_detalle hd', 'hd.idhorario = hdc.idhorario'); 
+        $this->db->where('hd.idmateria = hdc.idprofesormateria');
+        $this->db->where('hdc.idalumno', $idalumno);
+        $this->db->where('hdc.idhorario', $idhorario);
+        $this->db->where('hd.idmateria', $idprofesormateria);
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
     public function materiasGrupoStoreProcedure($idespecialidad, $idnivelestudio, $idperiodo, $idgrupo) { 
         $query = $this->db->query("CALL spMateriasGrupo($idespecialidad,$idnivelestudio,$idperiodo,$idgrupo)");
         $res = $query->result();
@@ -718,10 +733,10 @@ class Calificacion_model extends CI_Model {
         $this->db->join('tblprofesor_materia pm', 'hd.idmateria = pm.idprofesormateria'); 
         $this->db->join('tblhorario h', 'h.idhorario = hd.idhorario'); 
         $this->db->join('tbloportunidad_examen oe', 'oe.idoportunidadexamen = c.idoportunidadexamen');
-        $this->db->where('pm.idmateria', $idmateria); 
+        $this->db->where('hd.idmateria', $idmateria); 
         $this->db->where('c.idalumno', $idalumno); 
-        $this->db->where('h.idperiodo', $idperiodo); 
-        $this->db->where('h.idhorario', $idhorario); 
+        //$this->db->where('h.idperiodo', $idperiodo); 
+        $this->db->where('hd.idhorario', $idhorario); 
         $this->db->order_by('oe.numero DESC');
         $this->db->group_by('c.idoportunidadexamen, c.idalumno,c.idhorario, pm.idmateria');
         

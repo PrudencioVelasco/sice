@@ -251,7 +251,156 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
             }
         }
     }
+    public function horarioClasesAlumno($idhorario = '', $idalumno = '')
+    {
+        if ((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno))) {
 
+            $tabla = '
+        <style type="text/css">
+.txthorario{
+   font-size:12px;
+}
+.txttutor{
+   font-size:10px;
+}
+.txtdia{
+  font-size:14px;
+   font-weight: bold;
+   background-color:#ccc;
+}
+  .tblhorario tr td
+                {
+                    border:0px solid black;
+                }
+.card1{
+border:solid #FAF9F9 2px;
+border-radius:5px;
+padding:10px 10px 10px 10px;
+-webkit-box-shadow: 1px 2px 3px -1px rgba(156,156,156,0.63);
+-moz-box-shadow: 1px 2px 3px -1px rgba(156,156,156,0.63);
+box-shadow: 1px 2px 3px -1px rgba(156,156,156,0.63);
+min-height: 160px;
+border-top:solid #33C1FF 2px;
+}
+</style>';
+
+            $tabla .= '<div class="table-responsive"><table class="table "  > ';
+            $tabla .= ' <thead class="bg-teal"> ';
+            $tabla .= '<td>HORA</td>';
+            $tabla .= '<td>LUNES</td>';
+            $tabla .= '<td>MARTES</td>';
+            $tabla .= '<td>MIERCOLES</td>';
+            $tabla .= '<td>JUEVES</td>';
+            $tabla .= '<td>VIERNES</td>';
+
+            $tabla .= ' </thead>';
+            $array_materias_reprobadas = array();
+            $materias_reprobadas = $this->alumno->obtenerTodasMateriaReprobadasActivas($idalumno);
+            if (isset($materias_reprobadas) && !empty($materias_reprobadas)) {
+                foreach ($materias_reprobadas as $row) {
+                    array_push($array_materias_reprobadas, $row->idmateriaprincipal);
+                }
+            }
+            $base = base_url();
+            $reprobadas = implode(",", $array_materias_reprobadas);
+            $lunesAll = $this->horario->horarioClasesXDia($idhorario, $idalumno, $reprobadas);
+
+            if (isset($lunesAll) && !empty($lunesAll)) {
+                foreach ($lunesAll as $row) {
+                    $tabla .= '<tr>';
+                    $tabla .= '<td  ><strong>' . $row->hora . '</strong></td>';
+                    $tabla .= '<td >';
+                    if (isset($row->lunes) && !empty($row->lunes)) {
+                        $tabla .= '<div class="card1"> <strong><i class="fa fa-book" style="color:#ff7e00;" ></i>  
+                                ' . $row->lunes . '</strong><hr>';
+                        if (isset($row->lunesprofesor) && !empty($row->lunesprofesor)) {
+                            $tabla .= '<small><i class="fa fa-user" style="color:#3db828;" ></i> ' . $row->lunesprofesor . '</small><br>';
+                        }
+                        if (isset($row->lunesurl) && !empty($row->lunesurl)) {
+
+                            $tabla .= '<a href="#"  onclick="cambiar_estado(\'' . $row->lunesidhorariodetalle . '\',\'' . $base . '\')" style="color:#1e81fb;   font-weight:bolder;"><i class="fa fa-external-link"></i> ENTRAR A CLASE</a><br>';
+                        }
+                        if (isset($row->lunesurlgrabado) && !empty($row->lunesurlgrabado)) {
+                            $tabla .= '  <a target="_blank" href="' . $row->lunesurlgrabado . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> CLASE GRABADA</a>';
+                        }
+                        $tabla .= '</div>';
+                    }
+                    $tabla .= '</td>';
+                    $tabla .= '<td  >';
+                    if (isset($row->martes) && !empty($row->martes)) {
+                        $tabla .= '<div class="card1"> <strong><i class="fa fa-book" style="color:#ff7e00;"></i>  
+                                ' . $row->martes . '</strong><hr>';
+                        if (isset($row->martesprofesor) && !empty($row->martesprofesor)) {
+                            $tabla .= '<small><i class="fa fa-user" style="color:#3db828;"></i> ' . $row->martesprofesor . '</small><br>';
+                        }
+                        if (isset($row->martesurl) && !empty($row->martesurl)) {
+                            $tabla .= '<a href="#"  onclick="cambiar_estado(\'' . $row->martesidhorariodetalle . '\',\'' . $base . '\')" style="color:#1e81fb;   font-weight:bolder;"><i class="fa fa-external-link"></i> ENTRAR A CLASE</a><br>';
+                        }
+                        if (isset($row->martesurlgrabado) && !empty($row->martesurlgrabado)) {
+                            $tabla .= '  <a target="_blank" href="' . $row->martesurlgrabado . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> CLASE GRABADA</a>';
+                        }
+                        $tabla .= '</div>';
+                    }
+                    $tabla .= '</td>';
+                    $tabla .= '<td >';
+                    if (isset($row->miercoles) && !empty($row->miercoles)) {
+                        $tabla .= '<div class="card1"> <strong><i class="fa fa-book" style="color:#ff7e00;"></i>  
+                                ' . $row->miercoles . '</strong><hr>';
+                        if (isset($row->miercolesprofesor) && !empty($row->miercolesprofesor)) {
+                            $tabla .= '<small><i class="fa fa-user" style="color:#3db828;" ></i> ' . $row->miercolesprofesor . '</small><br>';
+                        }
+                        if (isset($row->miercolesurl) && !empty($row->miercolesurl)) {
+                            $tabla .= '<a href="#"  onclick="cambiar_estado(\'' . $row->miercolesidhorariodetalle . '\',\'' . $base . '\')" style="color:#1e81fb;   font-weight:bolder;"><i class="fa fa-external-link"></i> ENTRAR A CLASE</a><br>';
+                        }
+                        if (isset($row->miercolesurlgrabado) && !empty($row->miercolesurlgrabado)) {
+                            $tabla .= '  <a target="_blank" href="' . $row->miercolesurlgrabado . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> CLASE GRABADA</a>';
+                        }
+                        $tabla .= '</div>';
+                    }
+                    $tabla .= '</td>';
+                    $tabla .= '<td  >';
+                    if (isset($row->jueves) && !empty($row->jueves)) {
+                        $tabla .= '<div class="card1"> <strong><i class="fa fa-book" style="color:#ff7e00;"></i>  
+                                ' . $row->jueves . '</strong><hr>';
+                        if (isset($row->juevesprofesor) && !empty($row->juevesprofesor)) {
+                            $tabla .= '<small><i class="fa fa-user" style="color:#3db828;"></i> ' . $row->juevesprofesor . '</small><br>';
+                        }
+                        if (isset($row->juevesurl) && !empty($row->juevesurl)) {
+                            $tabla .= '<a href="#"  onclick="cambiar_estado(\'' . $row->juevesidhorariodetalle . '\',\'' . $base . '\')" style="color:#1e81fb;   font-weight:bolder;"><i class="fa fa-external-link"></i> ENTRAR A CLASE</a><br>';
+                        }
+                        if (isset($row->juevesurlgrabado) && !empty($row->juevesurlgrabado)) {
+                            $tabla .= '  <a target="_blank" href="' . $row->juevesurlgrabado . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> CLASE GRABADA</a>';
+                        }
+                        $tabla .= '</div>';
+                    }
+                    $tabla .= '</td>';
+                    $tabla .= '<td >';
+                    if (isset($row->viernes) && !empty($row->viernes)) {
+                        $tabla .= '<div class="card1"> <strong><i class="fa fa-book" style="color:#ff7e00;"></i>  
+                                ' . $row->viernes . '</strong><hr>';
+                        if (isset($row->viernesprofesor) && !empty($row->viernesprofesor)) {
+                            $tabla .= '<small><i class="fa fa-user" style="color:#3db828;" ></i> ' . $row->viernesprofesor . '</small><br>';
+                        }
+                        if (isset($row->viernesurl) && !empty($row->viernesurl)) {
+                            $tabla .= '<a href="#"  onclick="cambiar_estado(\'' . $row->viernesidhorariodetalle . '\',\'' . $base . '\')" style="color:#1e81fb;   font-weight:bolder;"><i class="fa fa-external-link"></i> ENTRAR A CLASE</a><br>';
+                        }
+                        if (isset($row->viernesurlgrabado) && !empty($row->viernesurlgrabado)) {
+                            $tabla .= '  <a target="_blank" href="' . $row->viernesurlgrabado . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> CLASE GRABADA</a>';
+                        }
+                        $tabla .= '</div>';
+                    }
+                    $tabla .= '</td>';
+
+                    $tabla .= '</tr>';
+                }
+            } else {
+                $tabla .= '<tr><td colspan="6" align="center"><label>Sin registros</label></td></tr>';
+            }
+            $tabla .= '</table></div>';
+
+            return $tabla;
+        }
+    }
     public function horarioMostrar($idhorario = '', $idalumno = '')
     {
         if ((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno))) {
@@ -519,17 +668,87 @@ border-top:solid #33C1FF 2px;
         $this->load->view('alumno/footer');
     }
 
+    //Nuevo metodo par obtener los horario de los alumnos
+
+    public function horariov2()
+    {
+        $idalumno = $this->session->idalumno;
+        $idhorario = "";
+        $lunes = "";
+        $materias_taller  = "";
+        $materia_taller_seleccionada = "";
+        $grupo = $this->alumno->obtenerGrupo($idalumno);
+        $mostrar = FALSE;
+        if ($this->session->idniveleducativo == 3) {
+            $mostrar = TRUE;
+        } else {
+            $mostrar = FALSE;
+        }
+        if ($grupo != false) {
+            $idhorario = $grupo->idhorario;
+            $array_materias_reprobadas = array();
+            $materias_reprobadas = $this->alumno->obtenerTodasMateriaReprobadasActivas($idalumno);
+            if (isset($materias_reprobadas) && !empty($materias_reprobadas)) {
+                foreach ($materias_reprobadas as $row) {
+                    array_push($array_materias_reprobadas, $row->idmateriaprincipal);
+                }
+            }
+            $reprobadas = implode(",", $array_materias_reprobadas);
+            $tabla = $this->horarioClasesAlumno($idhorario, $idalumno);
+            $materias_repetir = $this->horario->materiasARepetir($idalumno);
+            $materias_taller = $this->alumno->materiasTallerHorario($idhorario);
+            $materia_taller_seleccionada = $this->alumno->materiaTallerSeleccionada($idhorario, $idalumno);
+        }
+        //var_dump($materia_taller_seleccionada);
+
+        $data = array(
+            'idhorario' => $idhorario,
+            'idalumno' => $idalumno,
+            'controller' => $this,
+            'tabla' => $tabla,
+            'lunes' => $lunes,
+            'mostrar' => $mostrar,
+            'materia_seleccionada' => $materia_taller_seleccionada,
+            'materias_taller' => $materias_taller,
+            'materias_repetir' => $materias_repetir,
+        );
+        $this->load->view('alumno/header');
+        $this->load->view('alumno/horario/horariov2', $data);
+        $this->load->view('alumno/footer');
+    }
+    public function seleccionarTaller($idhorario  = '', $idalumno = '', $idprofesormateria = '', $idmateria = '')
+    {
+        if ((isset($idhorario) && !empty($idhorario)) &&
+            (isset($idalumno) && !empty($idalumno)) &&
+            (isset($idprofesormateria) && !empty($idprofesormateria)) &&
+            (isset($idmateria) && !empty($idmateria))
+        ) {
+            //ELIMINAR LA CLASE DE TALLER QUE TENGA REGISTRADO
+            $eliminar = $this->alumno->deleteClaseTaller($idalumno, $idhorario);
+            $data = array(
+                'idalumno' => $idalumno,
+                'idhorario' => $idhorario,
+                'idmateria' => $idmateria,
+                'idprofesormateria' => $idprofesormateria,
+                'idusuario' => $this->session->user_id,
+                'fecharegistro' => date('Y-m-d H:i:s')
+            );
+            $agregar = $this->alumno->addClaseTaller($data);
+            $this->session->set_flashdata('exito_taller_clase', "Se agrego la clase de taller con exito.");
+            redirect('Aalumno/horariov2');
+        }
+    }
     public function horario()
     {
         # code...
         Permission::grant(uri_string());
 
-        $idalumno = $this->session->idalumno;
+        echo $idalumno = $this->session->idalumno;
         $idhorario = "";
 
         $grupo = $this->alumno->obtenerGrupo($idalumno);
         if ($grupo != false) {
-            $idhorario = $grupo->idhorario;
+            echo $idhorario = $grupo->idhorario;
         }
         $tabla = $this->horarioMostrar($idhorario, $idalumno);
         $materias_repetir = $this->horario->materiasARepetir($idalumno);
@@ -1039,7 +1258,7 @@ border-top:solid #33C1FF 2px;
         }
         $reprobadas = implode(",", $array_materias_reprobadas);
 
-        $materias = $this->alumno->showAllMaterias($idhorario, $reprobadas);
+        $materias = $this->alumno->showAllMaterias($idhorario, $reprobadas, $idalumno);
         $datoshorario = $this->horario->showNivelGrupo($idhorario);
         $idnivelestudio = $datoshorario->idnivelestudio;
 
@@ -1074,8 +1293,8 @@ border-top:solid #33C1FF 2px;
                 $idmateria = $row->idmateria;
                 $suma_unidad_concalificacion = 0;
                 $idhorariodetalle = $row->idhorariodetalle;
-                $validar = $this->calificacion->verificarCalificacionSiSeMuestraXMateria($idalumno, $idhorario,$idmateria);
-                
+                $validar = $this->calificacion->verificarCalificacionSiSeMuestraXMateria($idalumno, $idhorario, $idmateria);
+
                 if ($validar) {
                     $suma_calificacion_verificar = 0;
                     foreach ($validar as $rowv) {
@@ -1624,7 +1843,7 @@ tblcalificacion  {border-collapse:collapse}
         }
         $reprobadas = implode(",", $array_materias_reprobadas);
 
-        $materias = $this->alumno->showAllMaterias($idhorario, $reprobadas);
+        $materias = $this->alumno->showAllMaterias($idhorario, $reprobadas, $idalumno);
         $datoshorario = $this->horario->showNivelGrupo($idhorario);
         $idnivelestudio = $datoshorario->idnivelestudio;
         $unidades_reales = $this->grupo->unidadesConCalificaciones($this->session->idplantel, $idhorario);
