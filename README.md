@@ -1,2 +1,2 @@
-# appwoori
-Aplicacion web para leer codigo de barras.
+# appsice
+Aplicacion web para el Control Escolar
