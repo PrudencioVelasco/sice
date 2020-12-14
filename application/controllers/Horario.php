@@ -8,7 +8,7 @@ class Horario extends CI_Controller
     function __construct()
     {
         parent::__construct();
-        if (! isset($_SESSION['user_id'])) {
+        if (!isset($_SESSION['user_id'])) {
             $this->session->set_flashdata('flash_data', 'You don\'t have access! ss');
             return redirect('welcome');
         }
@@ -21,21 +21,21 @@ class Horario extends CI_Controller
     }
 
     public function inicio()
-    { 
+    {
         $this->load->view('admin/header');
         $this->load->view('admin/horario/index');
         $this->load->view('admin/footer');
     }
 
     public function searchHorario()
-    { 
+    {
         $idplantel = $this->session->idplantel;
         $value = $this->input->post('text');
         $query = $this->horario->searchHorario($value, $idplantel);
         if ($query) {
             $result['horarios'] = $query;
         }
-        if (isset($result) && ! empty($result)) {
+        if (isset($result) && !empty($result)) {
             echo json_encode($result);
         }
     }
@@ -47,7 +47,7 @@ class Horario extends CI_Controller
         if ($query) {
             $result['horarios'] = $this->horario->showAll($this->session->idplantel);
         }
-        if (isset($result) && ! empty($result)) {
+        if (isset($result) && !empty($result)) {
             echo json_encode($result);
         }
     }
@@ -173,14 +173,14 @@ class Horario extends CI_Controller
 </style>
 <div id="areaimprimir">  
           <table width="600" border="0" >';
-        if ((isset($this->session->idniveleducativo) && ! empty($this->session->idniveleducativo)) && ($this->session->idniveleducativo == 5)) {
+        if ((isset($this->session->idniveleducativo) && !empty($this->session->idniveleducativo)) && ($this->session->idniveleducativo == 5)) {
             $tabla .= '<tr>
     <td width="150" align="center" valing="top"><img width="100" src="' . $logo2 . '" /></td>
     <td colspan="2" width="230" align="center">
             <label class="nombreplantel" >"VALOR Y CONFIANZA"</label><br>
             <label class="txtn"style="color:#0c4d9e;" >INSTITUTO MORELOS</label><br>
             <label class="direccion" style="color:#0c4d9e;">C.C.T.' . $detalle_logo[0]->clave . '</label><br>';
-            $tabla .= ' <label class="telefono" style="color:#0c4d9e;">TURNO '.$detalle_horario->nombreturno.'</label><br/>';
+            $tabla .= ' <label class="telefono" style="color:#0c4d9e;">TURNO ' . $detalle_horario->nombreturno . '</label><br/>';
             $tabla .= '<label class="telefono" style="color:#49950c;">136 años educando a la niñez y juventud</label>
     </td>
     <td width="150" align="center"><img  width="120"   src="' . $logo . '" /></td>';
@@ -190,7 +190,7 @@ class Horario extends CI_Controller
     <td colspan="2"  width="230" align="center">  </td>
     <td width="150" align="center" style="font-size:10px;"> ' . $detalle_horario->nombrenivel . ' ' . $detalle_horario->nombregrupo . '</td>';
             $tabla .= '</tr>';
-        } else if ((isset($this->session->idniveleducativo) && ! empty($this->session->idniveleducativo)) && ($this->session->idniveleducativo == 3)) {
+        } else if ((isset($this->session->idniveleducativo) && !empty($this->session->idniveleducativo)) && ($this->session->idniveleducativo == 3)) {
             $tabla .= '<tr>
     <td width="150" align="center" valing="top"><img  src="' . $logo2 . '" /></td>
     <td colspan="2" width="230" align="center">
@@ -266,7 +266,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
         if ($query) {
             $result['horarios'] = $this->horario->showAllDiaHorario($idhorario, $iddia);
         }
-        if (isset($result) && ! empty($result)) {
+        if (isset($result) && !empty($result)) {
             echo json_encode($result);
         }
     }
@@ -277,7 +277,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
         if ($query) {
             $result['dias'] = $this->horario->showAllDias();
         }
-        if (isset($result) && ! empty($result)) {
+        if (isset($result) && !empty($result)) {
             echo json_encode($result);
         }
     }
@@ -288,7 +288,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
         if ($query) {
             $result['periodos'] = $this->horario->showAllPeriodos($this->session->idplantel);
         }
-        if (isset($result) && ! empty($result)) {
+        if (isset($result) && !empty($result)) {
             echo json_encode($result);
         }
     }
@@ -299,7 +299,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
         if ($query) {
             $result['grupos'] = $this->horario->showAllGrupos($this->session->idplantel);
         }
-        if (isset($result) && ! empty($result)) {
+        if (isset($result) && !empty($result)) {
             echo json_encode($result);
         }
     }
@@ -310,7 +310,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
         if ($query) {
             $result['materias'] = $this->horario->showAllMaterias($this->session->idplantel);
         }
-        if (isset($result) && ! empty($result)) {
+        if (isset($result) && !empty($result)) {
             echo json_encode($result);
         }
     }
@@ -335,10 +335,10 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
             $config = array(
                 array(
                     'field' => 'idmateria',
-                    'label' => 'Materia',
+                    'label' => 'Asignatura/Curso',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
@@ -346,7 +346,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     'label' => 'Dia',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
@@ -354,7 +354,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     'label' => 'Hora inicial',
                     'rules' => 'trim|required|min_length[3]|max_length[5]|callback_validate_time',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
@@ -362,7 +362,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     'label' => 'Hora final',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
@@ -375,10 +375,10 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 ),
                 array(
                     'field' => 'numeroanfitrion',
-                    'label' => 'Hora final',
+                    'label' => 'Número de anfitrion',
                     'rules' => 'trim|integer',
                     'errors' => array(
-                        'integer' => 'Debe de ser numero.'
+                        'integer' => '%s debe  ser número.'
                     )
                 )
             );
@@ -427,7 +427,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
             );
         }
-        if (isset($result) && ! empty($result)) {
+        if (isset($result) && !empty($result)) {
             echo json_encode($result);
         }
     }
@@ -441,7 +441,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     'label' => 'Titulo',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
@@ -449,7 +449,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     'label' => 'Hora inicial',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
@@ -457,7 +457,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     'label' => 'Hora final',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 )
             );
@@ -487,7 +487,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
             );
         }
-        if (isset($result) && ! empty($result)) {
+        if (isset($result) && !empty($result)) {
             echo json_encode($result);
         }
     }
@@ -498,10 +498,10 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
             $config = array(
                 array(
                     'field' => 'iddia',
-                    'label' => 'Titulo',
+                    'label' => 'Dia',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
@@ -509,7 +509,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     'label' => 'Hora inicial',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
@@ -517,7 +517,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     'label' => 'Hora final',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 )
             );
@@ -547,7 +547,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
             );
         }
-        if (isset($result) && ! empty($result)) {
+        if (isset($result) && !empty($result)) {
             echo json_encode($result);
         }
     }
@@ -561,7 +561,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     'label' => 'Titulo',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
@@ -569,7 +569,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     'label' => 'Hora inicial',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
@@ -577,7 +577,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     'label' => 'Hora final',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 )
             );
@@ -605,7 +605,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
             );
         }
-        if (isset($result) && ! empty($result)) {
+        if (isset($result) && !empty($result)) {
             echo json_encode($result);
         }
     }
@@ -616,10 +616,10 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
             $config = array(
                 array(
                     'field' => 'idperiodo',
-                    'label' => 'Periodo',
+                    'label' => 'Periodo Escolar',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
@@ -627,7 +627,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     'label' => 'Grupo',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 )
             );
@@ -642,12 +642,14 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
             } else {
                 $idperiodo = $this->input->post('idperiodo');
                 $idgrupo = $this->input->post('idgrupo');
+                $descripcion = $this->input->post('descripcion');
                 $validar = $this->horario->validarAddHorario($idperiodo, $idgrupo, $this->session->idplantel);
                 if ($validar == FALSE) {
                     $data = array(
                         'idplantel' => $this->session->idplantel,
                         'idperiodo' => $this->input->post('idperiodo'),
                         'idgrupo' => $this->input->post('idgrupo'),
+                        'descripcion' => $descripcion,
                         'activo' => 1
                     );
                     $this->horario->addHorario($data);
@@ -664,7 +666,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
             );
         }
-        if (isset($result) && ! empty($result)) {
+        if (isset($result) && !empty($result)) {
             echo json_encode($result);
         }
     }
@@ -675,10 +677,10 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
             $config = array(
                 array(
                     'field' => 'idperiodo',
-                    'label' => 'Periodo',
+                    'label' => 'Periodo Escolar',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
@@ -686,7 +688,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     'label' => 'Grupo',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 )
             );
@@ -708,6 +710,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                         'idplantel' => $this->session->idplantel,
                         'idperiodo' => $this->input->post('idperiodo'),
                         'idgrupo' => $this->input->post('idgrupo'),
+                        'descripcion' => $this->input->post('descripcion'),
                         'activo' => $this->input->post('activo')
                     );
                     $this->horario->updateHorario($id, $data);
@@ -724,7 +727,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
             );
         }
-        if (isset($result) && ! empty($result)) {
+        if (isset($result) && !empty($result)) {
             echo json_encode($result);
         }
     }
@@ -735,10 +738,10 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
             $config = array(
                 array(
                     'field' => 'idmateria',
-                    'label' => 'Materia',
+                    'label' => 'Asignatura/Curso',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
@@ -746,7 +749,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     'label' => 'Dia',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
@@ -754,7 +757,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     'label' => 'Hora inicial',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
@@ -762,7 +765,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     'label' => 'Hora final',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
@@ -778,7 +781,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     'label' => 'Numero anfitrion',
                     'rules' => 'trim|integer',
                     'errors' => array(
-                        'integer' => 'Debe de ser numero.'
+                        'integer' => '%s debe ser numero.'
                     )
                 )
             );
@@ -796,20 +799,53 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 );
             } else {
                 $id = $this->input->post('idhorariodetalle');
-                $data = array(
-                    'idhorario' => $this->input->post('idhorario'),
-                    'idmateria' => strtoupper($this->input->post('idprofesormateria')),
-                    'iddia' => strtoupper($this->input->post('iddia')),
-                    'horainicial' => strtoupper($this->input->post('horainicial')),
-                    'horafinal' => $this->input->post('horafinal'),
-                    'urlvideoconferencia' => $this->input->post('urlvideoconferencia'),
-                    'numeroanfitrion' => $this->input->post('numeroanfitrion'),
-                    'idusuario' => $this->session->user_id,
-                    'fecharegistro' => date('Y-m-d H:i:s')
-                );
-                $this->horario->updateHorarioMateria($id, $data);
-                $result['error'] = false;
-                $result['success'] = 'User updated successfully';
+                $validar_calificacion = $this->horario->validarCalificacionHorarioDetalle($id);
+                $validar_asistencia = $this->horario->validarAsistenciaHorarioDetalle($id);
+                $validar_tarea = $this->horario->validarTareaHorarioDetalle($id);
+                $validar_mensaje = $this->horario->validarMensajeHorarioDetalle($id);
+                if (!$validar_calificacion) {
+                    if (!$validar_asistencia) {
+                        if (!$validar_tarea) {
+                            if (!$validar_mensaje) {
+                                $data = array(
+                                    'idhorario' => $this->input->post('idhorario'),
+                                    'idmateria' => strtoupper($this->input->post('idprofesormateria')),
+                                    'iddia' => strtoupper($this->input->post('iddia')),
+                                    'horainicial' => strtoupper($this->input->post('horainicial')),
+                                    'horafinal' => $this->input->post('horafinal'),
+                                    'urlvideoconferencia' => $this->input->post('urlvideoconferencia'),
+                                    'numeroanfitrion' => $this->input->post('numeroanfitrion'),
+                                    'idusuario' => $this->session->user_id,
+                                    'fecharegistro' => date('Y-m-d H:i:s')
+                                );
+
+                                $this->horario->updateHorarioMateria($id, $data);
+                                $result['error'] = false;
+                                $result['success'] = 'User updated successfully';
+                            } else {
+                                $result['error'] = true;
+                                $result['msg'] = array(
+                                    'msgerror' => 'No puede modificar, porque existe mensajes registrados.'
+                                );
+                            }
+                        } else {
+                            $result['error'] = true;
+                            $result['msg'] = array(
+                                'msgerror' => 'No puede modificar, porque existe tareas registradas.'
+                            );
+                        }
+                    } else {
+                        $result['error'] = true;
+                        $result['msg'] = array(
+                            'msgerror' => 'No puede modificar, porque existe asistencias registradas.'
+                        );
+                    }
+                } else {
+                    $result['error'] = true;
+                    $result['msg'] = array(
+                        'msgerror' => 'No puede modificar, porque existe calificaciones registradas.'
+                    );
+                }
             }
         } else {
             $result['error'] = true;
@@ -817,7 +853,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
             );
         }
-        if (isset($result) && ! empty($result)) {
+        if (isset($result) && !empty($result)) {
             echo json_encode($result);
         }
     }
@@ -831,7 +867,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     'label' => 'Titulo',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
@@ -839,7 +875,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     'label' => 'Hora inicial',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
@@ -847,7 +883,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     'label' => 'Hora final',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 )
             );
@@ -877,7 +913,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
             );
         }
-        if (isset($result) && ! empty($result)) {
+        if (isset($result) && !empty($result)) {
             echo json_encode($result);
         }
     }
@@ -901,7 +937,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
             );
         }
-        if (isset($result) && ! empty($result)) {
+        if (isset($result) && !empty($result)) {
             echo json_encode($result);
         }
     }
@@ -925,7 +961,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
             );
         }
-        if (isset($result) && ! empty($result)) {
+        if (isset($result) && !empty($result)) {
             echo json_encode($result);
         }
     }
@@ -941,7 +977,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
         } else {
             $result['horarios'] = false;
         }
-        if (isset($result) && ! empty($result)) {
+        if (isset($result) && !empty($result)) {
             echo json_encode($result);
         }
     }
@@ -965,7 +1001,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
             );
         }
-        if (isset($result) && ! empty($result)) {
+        if (isset($result) && !empty($result)) {
             echo json_encode($result);
         }
     }

@@ -345,26 +345,26 @@ class Alumno extends CI_Controller {
             $config = array(
                 array(
                     'field' => 'idespecialidad',
-                    'label' => 'Nombre',
+                    'label' => 'Especialidad',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
                     'field' => 'curp',
-                    'label' => 'Nombre',
+                    'label' => 'CURP',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
                     'field' => 'matricula',
-                    'label' => 'Nombre',
+                    'label' => 'Matricula',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
@@ -372,7 +372,7 @@ class Alumno extends CI_Controller {
                     'label' => 'Nombre',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
@@ -380,7 +380,7 @@ class Alumno extends CI_Controller {
                     'label' => 'A. Paterno',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
 //                array(
@@ -393,18 +393,18 @@ class Alumno extends CI_Controller {
 //                ),
                 array(
                     'field' => 'nacionalidad',
-                    'label' => 'Nombre',
+                    'label' => 'Nacionalidad',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
                     'field' => 'domicilio',
-                    'label' => 'Nombre',
+                    'label' => 'Domicilio',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
 //                array(
@@ -417,10 +417,10 @@ class Alumno extends CI_Controller {
 //                ),
                 array(
                     'field' => 'idtiposanguineo',
-                    'label' => 'Nombre',
+                    'label' => 'Tipo sanguineo',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
 //                array(
@@ -454,7 +454,7 @@ class Alumno extends CI_Controller {
                     'label' => 'Fecha nacimiento',
                     'rules' => 'trim|required|callback_validarFecha',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
 //                array(
@@ -471,7 +471,7 @@ class Alumno extends CI_Controller {
                     'label' => 'Sexo',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 )
                 ,
@@ -480,18 +480,18 @@ class Alumno extends CI_Controller {
                     'label' => 'Telefono',
                     'rules' => 'trim|regex_match[/^[0-9]{10}$/]|required',
                     'errors' => array(
-                        'regex_match' => 'Formato incorrecto.',
-                        'required' => 'Campo obligatorio.'
+                        'regex_match' => '%s tiene formato incorrecto.',
+                        'required' => '%s es obligatorio.'
                     )
                 )
                 ,
                 array(
                     'field' => 'telefonoemergencia',
-                    'label' => 'Telefono',
+                    'label' => 'Telefono emergencia',
                     'rules' => 'trim|regex_match[/^[0-9]{10}$/]|required',
                     'errors' => array(
-                        'regex_match' => 'Formato incorrecto.',
-                        'required' => 'Campo obligatorio.'
+                        'regex_match' => '%s  tiene formato incorrecto.',
+                        'required' => '%s es obligatorio.'
                     )
                 )
             );
@@ -673,26 +673,26 @@ class Alumno extends CI_Controller {
             $config = array(
                 array(
                     'field' => 'idespecialidad',
-                    'label' => 'Nombre',
+                    'label' => 'Especialidad',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
                     'field' => 'curp',
-                    'label' => 'Nombre',
+                    'label' => 'CURP',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
                     'field' => 'matricula',
-                    'label' => 'Nombre',
+                    'label' => 'Matricula',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
@@ -700,7 +700,7 @@ class Alumno extends CI_Controller {
                     'label' => 'Nombre',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
@@ -708,7 +708,7 @@ class Alumno extends CI_Controller {
                     'label' => 'A. Paterno',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
 //                array(
@@ -721,18 +721,18 @@ class Alumno extends CI_Controller {
 //                ),
                 array(
                     'field' => 'nacionalidad',
-                    'label' => 'Nombre',
+                    'label' => 'Nacionalidad',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
                     'field' => 'domicilio',
-                    'label' => 'Nombre',
+                    'label' => 'Domicilio',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
 //                array(
@@ -745,10 +745,10 @@ class Alumno extends CI_Controller {
 //                ),
                 array(
                     'field' => 'idtiposanguineo',
-                    'label' => 'Nombre',
+                    'label' => 'Tipo sanguineo',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
 //                array(
@@ -781,7 +781,7 @@ class Alumno extends CI_Controller {
                     'label' => 'Fecha nacimiento',
                     'rules' => 'trim|required|callback_validarFecha',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
@@ -789,7 +789,7 @@ class Alumno extends CI_Controller {
                     'label' => 'Sexo',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 )
                 , array(
@@ -797,7 +797,7 @@ class Alumno extends CI_Controller {
                     'label' => 'Estatus Alumno',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 )
                 ,
@@ -806,16 +806,16 @@ class Alumno extends CI_Controller {
                     'label' => 'Telefono',
                     'rules' => 'trim|regex_match[/^[0-9]{10}$/]',
                     'errors' => array(
-                        'regex_match' => 'Formato invalido.',
+                        'regex_match' => '%s tiene formato invalido.',
                     )
                 )
                 ,
                 array(
                     'field' => 'telefonoemergencia',
-                    'label' => 'Telefono',
+                    'label' => 'Telefono emergencia',
                     'rules' => 'trim|regex_match[/^[0-9]{10}$/]',
                     'errors' => array(
-                        'regex_match' => 'Formato invalido.',
+                        'regex_match' => '%s es tiene formato invalido.',
                     )
                 )
             );

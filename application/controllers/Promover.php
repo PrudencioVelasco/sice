@@ -1,11 +1,13 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 date_default_timezone_set("America/Mexico_City");
 
-class Promover extends CI_Controller {
+class Promover extends CI_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         if (!isset($_SESSION['user_id'])) {
             $this->session->set_flashdata('flash_data', 'You don\'t have access! ss');
@@ -17,6 +19,7 @@ class Promover extends CI_Controller {
         $this->load->model('grupo_model', 'grupo');
         $this->load->model('horario_model', 'horario');
         $this->load->model('cicloescolar_model', 'cicloescolar');
+        $this->load->model('promover_model', 'promover');
         $this->load->model('data_model');
         $this->load->library('permission');
         $this->load->library('session');
@@ -39,7 +42,8 @@ class Promover extends CI_Controller {
         //
     }
 
-    public function index() {
+    public function index()
+    {
         Permission::grant(uri_string());
         $cicloescolar_activo = $this->cicloescolar->showAllCicloEscolarActivo($this->session->idplantel);
         $data = array(
@@ -51,7 +55,8 @@ class Promover extends CI_Controller {
         $this->load->view('admin/footer');
     }
 
-    public function buscar() {
+    public function buscar()
+    {
         $config = array(
             array(
                 'field' => 'grupo',
@@ -85,17 +90,18 @@ class Promover extends CI_Controller {
                       <tr> 
                         <th>#</th>
                         <th></th>
-                        <th>ALUMNO</th>
-                        <th>PROMEDIO</th>
-                        <th>ESTATUS</th>
-                        <th align="center">M. REPROBADAS</th>
+                        <th>Alumno</th>
+                        <th>Promedio</th>
+                        <th>Estatus</th>
+                        <th>Unidades</th>
+                        <th align="center">M. Reprobadas</th>
                         <th></th>
                       </tr>
                     </thead>
                     <tbody> ';
                 $contador = 1;
                 foreach ($alumnos as $value) {
-                    $datos_calificacion = $this->alumno->calificacionAlumnoParaPromover($value->idalumno, $idgrupo,$value->idhorario);
+                    $datos_calificacion = $this->promover->calificacionAlumnoParaPromover($value->idalumno, $idgrupo, $value->idhorario);
 
                     $tabla .= '<tr>';
                     $tabla .= '<td>' . $contador++ . '</td>';
@@ -116,9 +122,8 @@ class Promover extends CI_Controller {
                         $total_materia_reprobada = 0;
                         $maximo_reprobados = 0;
                         $calificacion_minima = 0;
-                        //var_dump($datos_calificacion);
                         foreach ($datos_calificacion as $row) {
-                            $idnivelestudio = $row->idnivelestudio;
+                            $idnivelestudio = $this->session->idnivelestudio;
                             $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
 
                             if ($idmateria != $row->idmateria) {
@@ -149,6 +154,9 @@ class Promover extends CI_Controller {
                             $tabla .= '<label style="color:green;" >APROBADO</label>';
                         }
                         $tabla .= '</td>';
+                        $tabla .= '<td>';
+                        $tabla .= '<label>0</label>';
+                        $tabla .= '</td>';
                         $tabla .= '<td align="center">';
                         $tabla .= '<label>' . $total_materia_reprobada . '</label>';
                         $tabla .= '</td>';
@@ -170,18 +178,21 @@ class Promover extends CI_Controller {
                     'success' => 'Ok',
                     'tabla' => $tabla,
                     'idgrupo' => $idgrupo,
-                    'idcicloescolar' => $idclicloescolar]);
+                    'idcicloescolar' => $idclicloescolar
+                ]);
             } else {
                 // $tabla = '
                 // <table><tr><td>ddd</td></tr></table>';
                 echo json_encode([
                     'success' => 'Error',
-                    'error' => 'No existe registros de Alumnos para el Grupo.']);
+                    'error' => 'No existe registros de Alumnos para el Grupo.'
+                ]);
             }
         }
     }
 
-    public function calificaciones() {
+    public function calificaciones()
+    {
         $idalumno = $this->input->post('idalumno');
         $idhorario = $this->input->post('idhorario');
         $detalle_horario = $this->horario->detalleHorario($idhorario);
@@ -194,7 +205,7 @@ class Promover extends CI_Controller {
         $tabla .= '<th>CALIFICACIÓN</th>';
         $tabla .= '</thead>';
         $c = 1;
-        $datos_calificacion = $this->alumno->calificacionAlumnoParaPromover($idalumno, $idgrupo,$idhorario);
+        $datos_calificacion = $this->alumno->calificacionAlumnoParaPromover($idalumno, $idgrupo, $idhorario);
         if (isset($datos_calificacion) && !empty($datos_calificacion)) {
             //$suma_calificacion = 0;
             foreach ($datos_calificacion as $row) {
@@ -213,10 +224,10 @@ class Promover extends CI_Controller {
                     $idmateria = $row->idmateria;
                     $calificacion_materia += $row->calificacion;
 
-                    if ($calificacion_materia < $detalle_configuracion[0]->calificacion_minima ) {
-                        $tabla .= '<td style="color:red;">' . number_format($calificacion_materia,2) . '</td>';
+                    if ($calificacion_materia < $detalle_configuracion[0]->calificacion_minima) {
+                        $tabla .= '<td style="color:red;">' . number_format($calificacion_materia, 2) . '</td>';
                     } else {
-                        $tabla .= '<td  style="color:GREEN;">' .  number_format($calificacion_materia,2) . '</td>';
+                        $tabla .= '<td  style="color:GREEN;">' .  number_format($calificacion_materia, 2) . '</td>';
                     }
                 }
 
@@ -227,5 +238,4 @@ class Promover extends CI_Controller {
         // return $tabla;
         echo json_encode(['success' => 'Ok', 'tabla' => $tabla]);
     }
-
 }

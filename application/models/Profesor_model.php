@@ -34,7 +34,7 @@ class Profesor_model extends CI_Model {
       if (isset($idplantel) && !empty($idplantel)) {
         $this->db->where('m.idplantel',$idplantel); 
         }  
-       // $this->db->order_by('m.nombreclase ASC');
+       $this->db->order_by('m.nombreclase ASC');
          $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();
@@ -277,6 +277,7 @@ class Profesor_model extends CI_Model {
         $this->db->from('tblmateria m');
         $this->db->join('tblprofesor_materia pm', 'pm.idmateria = m.idmateria');
         $this->db->where('pm.idprofesor', $idprofesor); 
+        $this->db->order_by('m.nombreclase ASC');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();

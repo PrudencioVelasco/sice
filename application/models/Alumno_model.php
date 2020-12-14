@@ -187,7 +187,14 @@ class Alumno_model extends CI_Model
 
     public function showAllAlumnosTutorActivos($idtutor = '')
     {
-        $this->db->select('a.idalumno, h.idhorario, a.nombre, a.apellidop, a.apellidom,ne.nombrenivel, ne.idnivelestudio, g.nombregrupo, g.idgrupo, ag.idperiodo, p.idniveleducativo');
+        $this->db->select("a.idalumno, h.idhorario, a.nombre, a.apellidop, a.apellidom,ne.nombrenivel, ne.idnivelestudio, g.nombregrupo, g.idgrupo, ag.idperiodo, p.idniveleducativo, CASE niv.idniveleducativo 
+        WHEN 3 THEN ne.numeroromano
+        WHEN 5 THEN ne.numeroromano
+        WHEN 1 THEN ne.numeroordinaria
+        WHEN 2 THEN ne.numeroordinaria
+        WHEN 4 THEN ne.numeroordinaria
+        ELSE ''
+    END AS nivelgrupo");
         $this->db->from('tblalumno a');
         $this->db->join('tbltutoralumno ta', 'a.idalumno=ta.idalumno');
         $this->db->join('tblalumno_grupo ag', 'ag.idalumno=a.idalumno');
@@ -195,6 +202,7 @@ class Alumno_model extends CI_Model
         $this->db->join('tblnivelestudio ne', 'g.idnivelestudio=ne.idnivelestudio');
         $this->db->join('tblhorario h', 'h.idperiodo = ag.idperiodo');
         $this->db->join('tblplantel p', 'a.idplantel = p.idplantel');
+        $this->db->join('tblniveleducativo niv', 'p.idniveleducativo = niv.idniveleducativo');
         $this->db->where('h.idgrupo = ag.idgrupo');
         $this->db->where('ta.idtutor', $idtutor);
         $this->db->where('ag.activo', 1);
@@ -1451,6 +1459,7 @@ GROUP BY hd.idmateria) tabla");
         );
         $this->db->select('t.*');
         $this->db->from('tbltutor t');
+
         $this->db->join('tbltutoralumno ta', 'ta.idtutor = t.idtutor');
         $this->db->where('ta.idalumno', $idalumno);
         $this->db->like('concat(' . implode(',', $field) . ')', $match);
@@ -1572,11 +1581,20 @@ GROUP BY hd.idmateria) tabla");
 
     public function detalleGrupoActual($idalumno)
     {
-        $this->db->select('ag.idalumnogrupo, g.idgrupo, g.nombregrupo, n.nombrenivel, t.nombreturno');
+        $this->db->select("ag.idalumnogrupo, g.idgrupo, g.nombregrupo, n.nombrenivel, t.nombreturno, CASE niv.idniveleducativo 
+        WHEN 3 THEN n.numeroromano
+        WHEN 5 THEN n.numeroromano
+        WHEN 1 THEN n.numeroordinaria
+        WHEN 2 THEN n.numeroordinaria
+        WHEN 4 THEN n.numeroordinaria
+        ELSE ''
+    END AS nivelgrupo");
         $this->db->from('tblalumno_grupo ag');
         $this->db->join('tblgrupo g', 'ag.idgrupo = g.idgrupo');
         $this->db->join('tblnivelestudio n', 'g.idnivelestudio = n.idnivelestudio');
         $this->db->join('tblturno t', 't.idturno = g.idturno');
+        $this->db->join('tblplantel pla', 'pla.idplantel = g.idplantel');
+        $this->db->join('tblniveleducativo niv', 'pla.idniveleducativo = niv.idniveleducativo');
         $this->db->where('ag.idalumno', $idalumno);
         $this->db->order_by("n.nombrenivel", "asc");
         $query = $this->db->get();
@@ -2055,8 +2073,8 @@ GROUP BY hd.idmateria) tabla");
     public function calificacionAlumnoParaPromover($idalumno, $idgrupo, $idhorario)
     {
         $sql = " SELECT
-                    FORMAT((SUM(c.calificacion) / COUNT(c.idunidad)),
-                        2) AS calificacion,
+                    FORMAT((COALESCE(SUM(c.calificacion),0) / (SELECT  COALESCE(COUNT(u.idunidad),0) FROM tblunidad u WHERE u.idplantel = a.idplantel)),
+                        1) AS calificacion,
                     c.idoportunidadexamen,
                     oe.numero,
                     h.idgrupo,
@@ -2067,7 +2085,9 @@ GROUP BY hd.idmateria) tabla");
                     m.nombreclase,
                     pro.nombre,
                     pro.apellidop,
-                    pro.apellidom
+                    pro.apellidom,
+                    COALESCE(COUNT(c.calificacion),0) AS totalunidadesregistradas,
+                    COALESCE((SELECT COUNT(u2.idunidad) FROM tblunidad u2 WHERE u2.idplantel = a.idplantel),0) AS totalunidades
                     
                 FROM
                     tblhorario h
@@ -2085,6 +2105,8 @@ GROUP BY hd.idmateria) tabla");
                     tblmateria m ON m.idmateria = pm.idmateria
                         INNER JOIN
                     tblprofesor pro  ON pro.idprofesor = pm.idprofesor
+                    INNER JOIN
+                    tblalumno a   ON a.idalumno = c.idalumno
                     
                 WHERE
                     h.idgrupo = $idgrupo AND c.idalumno = $idalumno AND h.idhorario = $idhorario

@@ -18,14 +18,24 @@ class Grupo_model extends CI_Model
 
     public function showAllGrupos($idplantel = '')
     {
-        $this->db->select('g.idgrupo,g.idplantel, g.idespecialidad, g.nombregrupo,e.nombreespecialidad, t.idturno, t.nombreturno, n.idnivelestudio, n.nombrenivel');
+        $this->db->select("g.idgrupo,g.idplantel, g.idespecialidad, g.nombregrupo,e.nombreespecialidad, t.idturno, t.nombreturno, n.idnivelestudio, n.nombrenivel, CASE niv.idniveleducativo 
+        WHEN 3 THEN n.numeroromano
+        WHEN 5 THEN n.numeroromano
+        WHEN 1 THEN n.numeroordinaria
+        WHEN 2 THEN n.numeroordinaria
+        WHEN 4 THEN n.numeroordinaria
+        ELSE ''
+    END AS nivelgrupo");
         $this->db->from('tblgrupo g');
         $this->db->join('tblturno t', 't.idturno = g.idturno');
         $this->db->join('tblespecialidad e', 'e.idespecialidad = g.idespecialidad');
         $this->db->join('tblnivelestudio n', 'n.idnivelestudio = g.idnivelestudio');
+        $this->db->join('tblplantel pla', 'pla.idplantel = g.idplantel');
+        $this->db->join('tblniveleducativo niv', 'pla.idniveleducativo = niv.idniveleducativo');
         if (isset($idplantel) && !empty($idplantel)) {
             $this->db->where('g.idplantel', $idplantel);
         }
+        $this->db->order_by('n.nombrenivel ASC');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();
@@ -141,7 +151,7 @@ class Grupo_model extends CI_Model
 
     public function showAllNiveles()
     {
-        $this->db->select('n.*');
+        $this->db->select('n.idnivelestudio,n.nombrenivel,n.numeroordinaria,n.numeroromano');
         $this->db->from('tblnivelestudio n');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
@@ -246,11 +256,20 @@ class Grupo_model extends CI_Model
             'n.nombrenivel',
             'e.nombreespecialidad'
         );
-        $this->db->select('g.idgrupo, g.nombregrupo, t.idturno,e.idespecialidad,e.nombreespecialidad, t.nombreturno, n.idnivelestudio, n.nombrenivel');
+        $this->db->select("g.idgrupo, g.nombregrupo, t.idturno,e.idespecialidad,e.nombreespecialidad, t.nombreturno, n.idnivelestudio, n.nombrenivel, CASE niv.idniveleducativo 
+        WHEN 3 THEN n.numeroromano
+        WHEN 5 THEN n.numeroromano
+        WHEN 1 THEN n.numeroordinaria
+        WHEN 2 THEN n.numeroordinaria
+        WHEN 4 THEN n.numeroordinaria
+        ELSE ''
+    END AS nivelgrupo");
         $this->db->from('tblgrupo g');
         $this->db->join('tblturno t', 't.idturno = g.idturno');
         $this->db->join('tblespecialidad e', 'e.idespecialidad = g.idespecialidad');
         $this->db->join('tblnivelestudio n', 'n.idnivelestudio = g.idnivelestudio');
+        $this->db->join('tblplantel pla', 'pla.idplantel = g.idplantel');
+        $this->db->join('tblniveleducativo niv', 'pla.idniveleducativo = niv.idniveleducativo');
         if (isset($idplantel) && !empty($idplantel)) {
             $this->db->where('g.idplantel', $idplantel);
         }
@@ -275,7 +294,8 @@ class Grupo_model extends CI_Model
     nombregrupo,
     nombrenivel,
     idgrupo,
-    opcion
+    opcion,
+    nivelgrupo
 FROM
     (SELECT 
         de.idhorariodetalle,
@@ -287,7 +307,15 @@ FROM
             CONCAT(p.nombre, ' ', p.apellidop, ' ', p.apellidom) profesor,
             g.nombregrupo,
             ne.nombrenivel,
-               1 as opcion
+            1 as opcion,
+               CASE niv.idniveleducativo 
+                WHEN 3 THEN ne.numeroromano
+                WHEN 5 THEN ne.numeroromano
+                WHEN 1 THEN ne.numeroordinaria
+                WHEN 2 THEN ne.numeroordinaria
+                WHEN 4 THEN ne.numeroordinaria
+					ELSE ''
+				END AS nivelgrupo
     FROM
         tblhorario_detalle de
     JOIN tbldia d ON de.iddia = d.iddia
@@ -298,6 +326,8 @@ FROM
     JOIN tblperiodo pe ON h.idperiodo = pe.idperiodo
     JOIN tblgrupo g ON g.idgrupo = h.idgrupo
     JOIN tblnivelestudio ne ON ne.idnivelestudio = g.idnivelestudio
+    JOIN tblplantel pla ON pla.idplantel = g.idplantel
+    JOIN tblniveleducativo niv ON pla.idniveleducativo = niv.idniveleducativo
     WHERE
          pe.activo = 1 AND h.activo = 1 
             AND p.idprofesor = $idprofesor 
@@ -445,7 +475,7 @@ ORDER BY nombrenivel ASC");
     public function detalleHorarioDetalle($idhorariodetalle)
     {
         # code...
-        $this->db->select('hd.idmateria as idprofesormateria, pe.activo, t.nombreturno, n.numeroordinaria,h.idhorario,m.idclasificacionmateria, m.nombreclase, pm.idmateria,h.idgrupo,h.idperiodo, m.unidades,p.nombre, p.apellidop, p.apellidom');
+        $this->db->select('m.idmateria as idmateriareal,g.idgrupo,n.nombrenivel,m.clave, hd.idmateria as idprofesormateria, pm.idprofesormateria as profesormateria, pe.activo, t.nombreturno, n.numeroordinaria,h.idhorario,m.idclasificacionmateria,m.secalifica, m.nombreclase, pm.idmateria,h.idgrupo,h.idperiodo, m.unidades,p.nombre, p.apellidop, p.apellidom');
         $this->db->from('tblhorario_detalle hd');
         $this->db->join('tblprofesor_materia pm', 'hd.idmateria = pm.idprofesormateria');
         $this->db->join('tblhorario h', 'h.idhorario  = hd.idhorario');
@@ -1511,14 +1541,43 @@ WHERE
         }
     }
 
-    public function obtenerAlumnoRecuperar($idhorariodetalle, $idoportunidad, $idprofesormateria)
+    public function obtenerCalificacionRecuperadoXMateria($idalumno = '', $idoportunidad = '', $idhorario = '', $idprofesormateria = '')
+    {
+        # code...
+        $this->db->select('a.nombre, a.apellidop, a.apellidom, c.idcalificacion, (SUM(c.calificacion)/(( COUNT(c.idunidad) ))) as calificacion, date(c.fecharegistro) as fecharegistro');
+        $this->db->from('tblcalificacion c');
+        $this->db->join('tblunidad u', 'c.idunidad = u.idunidad');
+        $this->db->join('tblalumno a', 'a.idalumno = c.idalumno');
+        $this->db->join('tblhorario_detalle hd', 'hd.idhorariodetalle = c.idhorariodetalle');
+        $this->db->join('tblprofesor_materia pm', 'pm.idprofesormateria = hd.idmateria');
+        $this->db->join('tblhorario h', 'h.idhorario = hd.idhorario');
+        $this->db->where('c.idalumno', $idalumno);
+        $this->db->where('hd.idhorario', $idhorario);
+        $this->db->where('pm.idprofesormateria', $idprofesormateria);
+        $this->db->where('c.idoportunidadexamen', $idoportunidad);
+        $this->db->group_by('c.idalumno');
+        $this->db->group_by('c.idhorariodetalle');
+        $this->db->group_by('c.idoportunidadexamen');
+        $this->db->order_by('c.fecharegistro ASC');
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
+
+
+    public function obtenerAlumnoRecuperar($idhorario, $idoportunidad, $idprofesormateria)
     {
         $query = $this->db->query("SELECT 
     a.idalumno,
     a.nombre,
     a.apellidop,
     a.apellidom,
-    FORMAT((SUM(c.calificacion) / (COUNT(c.idunidad))),
+    COUNT(c.idunidad) AS unidadesregistradas,
+    (SELECT COUNT(u.idunidad) FROM tblunidad u WHERE u.idplantel  = h.idplantel) AS totalunidades,
+    FORMAT((SUM(c.calificacion) / (SELECT COUNT(u.idunidad) FROM tblunidad u WHERE u.idplantel  = h.idplantel)),
         2) AS calificacion
 FROM
     tblalumno a
@@ -1534,8 +1593,9 @@ FROM
     tblcalificacion c ON c.idhorariodetalle = hd.idhorariodetalle
         JOIN
     tbloportunidad_examen oe ON oe.idoportunidadexamen = c.idoportunidadexamen
+    
 WHERE
-    hd.idhorariodetalle = $idhorariodetalle
+    hd.idmateria = $idprofesormateria
         AND a.idalumno = c.idalumno
         AND a.idalumno NOT IN (SELECT 
     ag.idalumno
@@ -1548,7 +1608,8 @@ FROM
 WHERE
     dr.idprofesormateria = $idprofesormateria AND mr.estatus = 1)
         AND oe.idoportunidadexamen = $idoportunidad
-GROUP BY a.idalumno , hd.idmateria , hd.idhorariodetalle");
+        AND h.idhorario = $idhorario        
+GROUP BY a.idalumno , hd.idmateria , hd.idhorario ORDER BY a.apellidop ASC");
         if ($this->db->affected_rows() > 0) {
             return $query->result();
         } else {

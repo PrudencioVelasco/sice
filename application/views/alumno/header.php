@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="<?php echo base_url(); ?>/assets/images/birrete.ico">
     <link rel="icon" href="<?php echo base_url(); ?>/assets/images/birrete.ico">
-    <title>SICE - Sistema Integral de Control Escolar </title>
+    <title>SICE - Sistema Integral para el Control Escolar </title>
 
     <!-- Bootstrap core CSS -->
 

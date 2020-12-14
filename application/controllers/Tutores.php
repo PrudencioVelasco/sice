@@ -928,10 +928,10 @@ class Tutores extends CI_Controller
 
                             if (validar_calificacion($val->calificacion, $detalle_configuracion[0]->calificacion_minima)) {
 
-                                $tabla .= '<label style="color:red;">' . numberFormatPrecision($val->calificacion, 1, '.') . '</label>';
+                                $tabla .= '<label style="color:red;">' . eliminarDecimalCero($val->calificacion) . '</label>';
                             } else {
 
-                                $tabla .= '<label style="color:green;">' . numberFormatPrecision($val->calificacion, 1, '.') . '</label>';
+                                $tabla .= '<label style="color:green;">' . eliminarDecimalCero($val->calificacion) . '</label>';
                             }
                         } else {
                             $tabla .= '<small>No registrado</small>';
@@ -939,15 +939,15 @@ class Tutores extends CI_Controller
                         $tabla .= '</td>';
                     endforeach;
                     $tabla .= '<td>';
-                    $calificacion_final = numberFormatPrecision($suma_calificacion / $total_unidades, 1, '.');
+                    $calificacion_final = eliminarDecimalCero($suma_calificacion / $total_unidades);
                     if (validar_calificacion($calificacion_final, $detalle_configuracion[0]->calificacion_minima)) {
                         if ($suma_calificacion > 0.0) {
-                            $tabla .= '<label style="color:red;">' . numberFormatPrecision($suma_calificacion / $total_unidades, 1, '.') . '</label>';
+                            $tabla .= '<label style="color:red;">' . eliminarDecimalCero($suma_calificacion / $total_unidades) . '</label>';
                         } else {
                             $tabla .= '<label "> </label>';
                         }
                     } else {
-                        $tabla .= '<label style="color:green;">' . numberFormatPrecision($suma_calificacion / $total_unidades, 1, '.') . '</label>';
+                        $tabla .= '<label style="color:green;">' . eliminarDecimalCero($suma_calificacion / $total_unidades) . '</label>';
                     }
                     $tabla .= '</td>';
                     $tabla .= '</tr>';

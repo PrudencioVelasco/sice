@@ -1,11 +1,13 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 date_default_timezone_set("America/Mexico_City");
 
-class Tutor extends CI_Controller {
+class Tutor extends CI_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         if (!isset($_SESSION['user_id'])) {
             $this->session->set_flashdata('flash_data', 'You don\'t have access! ss');
@@ -20,14 +22,16 @@ class Tutor extends CI_Controller {
         $this->load->library('session');
     }
 
-    public function inicio() {
+    public function inicio()
+    {
         Permission::grant(uri_string());
         $this->load->view('admin/header');
         $this->load->view('admin/tutor/index');
         $this->load->view('admin/footer');
     }
 
-    public function showAll() {
+    public function showAll()
+    {
         //Permission::grant(uri_string()); 
         $idplantel = $this->session->idplantel;
         $query = $this->tutor->showAll();
@@ -39,7 +43,8 @@ class Tutor extends CI_Controller {
         }
     }
 
-    public function showDetalleTutor() {
+    public function showDetalleTutor()
+    {
 
         $idtutor = $this->input->get('idtutor');
         $query = $this->tutor->detalleTutor($idtutor);
@@ -51,7 +56,8 @@ class Tutor extends CI_Controller {
         }
     }
 
-    public function subirFoto() {
+    public function subirFoto()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             if (isset($_FILES['file']['name']) && !empty($_FILES['file']['name'])) {
                 $mi_archivo = 'file';
@@ -108,7 +114,8 @@ class Tutor extends CI_Controller {
         }
     }
 
-    public function showAllAlumnos() {
+    public function showAllAlumnos()
+    {
         //Permission::grant(uri_string()); 
         $idplantel = $this->session->idplantel;
         $query = $this->tutor->showAllAlumnos();
@@ -120,7 +127,8 @@ class Tutor extends CI_Controller {
         }
     }
 
-    public function showAllTutorAlumnos($idtutor) {
+    public function showAllTutorAlumnos($idtutor)
+    {
         //Permission::grant(uri_string()); 
         $query = $this->tutor->showAllTutorAlumnos($idtutor);
         if ($query) {
@@ -131,7 +139,8 @@ class Tutor extends CI_Controller {
         }
     }
 
-    public function addTutor() {
+    public function addTutor()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $config = array(
                 array(
@@ -139,7 +148,7 @@ class Tutor extends CI_Controller {
                     'label' => 'Nombre',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
@@ -147,7 +156,7 @@ class Tutor extends CI_Controller {
                     'label' => 'A. Paterno',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
@@ -155,14 +164,14 @@ class Tutor extends CI_Controller {
                     'label' => 'Fecha nacimiento',
                     'rules' => 'trim|required|callback_validarFecha',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es  obligatorio.'
                     )
                 ), array(
                     'field' => 'direccion',
                     'label' => 'Dirección',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es  obligatorio.'
                     )
                 ),
                 array(
@@ -170,9 +179,9 @@ class Tutor extends CI_Controller {
                     'label' => 'Telefono',
                     'rules' => 'trim|required|integer|exact_length[10]|regex_match[/^[0-9]{10}$/]',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.',
-                        'integer' => 'Debe de ser solo número.',
-                        'exact_length' => 'Debe de ser 10 digitos.'
+                        'required' => '%s es  obligatorio.',
+                        'integer' => '%s debe ser solo número.',
+                        'exact_length' => '%s debe tener 10 digitos.'
                     )
                 ),
                 array(
@@ -180,8 +189,8 @@ class Tutor extends CI_Controller {
                     'label' => 'Correo',
                     'rules' => 'trim|required|valid_email',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.',
-                        'valid_email' => 'Correo no valido.'
+                        'required' => '%s es  obligatorio.',
+                        'valid_email' => '%s no es valido.'
                     )
                 ),
                 array(
@@ -189,7 +198,7 @@ class Tutor extends CI_Controller {
                     'label' => 'Contraseña',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es  obligatorio.'
                     )
                 ),
                 array(
@@ -197,7 +206,7 @@ class Tutor extends CI_Controller {
                     'label' => 'RFC',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es  obligatorio.'
                     )
                 ),
                 array(
@@ -205,7 +214,7 @@ class Tutor extends CI_Controller {
                     'label' => 'Factura',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es  obligatorio.'
                     )
                 )
             );
@@ -281,7 +290,8 @@ class Tutor extends CI_Controller {
         }
     }
 
-    public function updateTutor() {
+    public function updateTutor()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $config = array(
                 array(
@@ -289,7 +299,7 @@ class Tutor extends CI_Controller {
                     'label' => 'Nombre',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es  obligatorio.'
                     )
                 ),
                 array(
@@ -297,7 +307,7 @@ class Tutor extends CI_Controller {
                     'label' => 'A. Paterno',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
@@ -305,14 +315,14 @@ class Tutor extends CI_Controller {
                     'label' => 'Fecha nacimiento',
                     'rules' => 'trim|required|callback_validarFecha',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es  obligatorio.'
                     )
                 ), array(
                     'field' => 'direccion',
                     'label' => 'Dirección',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es  obligatorio.'
                     )
                 ),
                 array(
@@ -320,7 +330,7 @@ class Tutor extends CI_Controller {
                     'label' => 'RFC',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es  obligatorio.'
                     )
                 ),
                 array(
@@ -328,9 +338,9 @@ class Tutor extends CI_Controller {
                     'label' => 'Telefono',
                     'rules' => 'trim|required|integer|exact_length[10]',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.',
-                        'integer' => 'Debe de ser solo número.',
-                        'exact_length' => 'Debe de ser 10 digitos.'
+                        'required' => '%s es  obligatorio.',
+                        'integer' => '%s debe ser solo número.',
+                        'exact_length' => '%s debe tener 10 digitos.'
                     )
                 ),
                 array(
@@ -338,7 +348,7 @@ class Tutor extends CI_Controller {
                     'label' => 'Contraseña',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es  obligatorio.'
                     )
                 )
             );
@@ -363,14 +373,14 @@ class Tutor extends CI_Controller {
                 if ($validar == FALSE) {
                     $data = array(
                         'idplantel' => $this->session->idplantel,
-                        'nombre' => strtoupper($this->input->post('nombre')),
-                        'apellidop' => strtoupper($this->input->post('apellidop')),
-                        'apellidom' => strtoupper($this->input->post('apellidom')),
-                        'escolaridad' => strtoupper($this->input->post('escolaridad')),
-                        'ocupacion' => strtoupper($this->input->post('ocupacion')),
-                        'dondetrabaja' => strtoupper($this->input->post('dondetrabaja')),
+                        'nombre' => mb_strtoupper($this->input->post('nombre')),
+                        'apellidop' => mb_strtoupper($this->input->post('apellidop')),
+                        'apellidom' => mb_strtoupper($this->input->post('apellidom')),
+                        'escolaridad' => mb_strtoupper($this->input->post('escolaridad')),
+                        'ocupacion' => mb_strtoupper($this->input->post('ocupacion')),
+                        'dondetrabaja' => mb_strtoupper($this->input->post('dondetrabaja')),
                         'fnacimiento' => $this->input->post('fnacimiento'),
-                        'direccion' => strtoupper($this->input->post('direccion')),
+                        'direccion' => mb_strtoupper($this->input->post('direccion')),
                         'telefono' => $this->input->post('telefono'),
                         'correo' => $this->input->post('correo'),
                         'rfc' => $this->input->post('rfc'),
@@ -398,28 +408,30 @@ class Tutor extends CI_Controller {
         }
     }
 
-    function validarFecha($fecha) {
+    function validarFecha($fecha)
+    {
         $parts = explode("/", $fecha);
         if (count($parts) == 3) {
             if (checkdate($parts[1], $parts[0], $parts[2])) {
                 return true;
             } else {
                 $this->form_validation->set_message(
-                        'validarFecha',
-                        'Formato no valido.'
+                    'validarFecha',
+                    'Formato no valido.'
                 );
                 return false;
             }
         } else {
             $this->form_validation->set_message(
-                    'validarFecha',
-                    'Formato no valido.'
+                'validarFecha',
+                'Formato no valido.'
             );
             return false;
         }
     }
 
-    public function searchTutor() {
+    public function searchTutor()
+    {
         //Permission::grant(uri_string());
         $value = $this->input->post('text');
         $idplantel = $this->session->idplantel;
@@ -432,7 +444,8 @@ class Tutor extends CI_Controller {
         }
     }
 
-    public function alumnos($id) {
+    public function alumnos($id)
+    {
         Permission::grant(uri_string());
         # code...
         $data = array(
@@ -444,7 +457,8 @@ class Tutor extends CI_Controller {
         $this->load->view('admin/footer');
     }
 
-    public function addTutorAlumno() {
+    public function addTutorAlumno()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $config = array(
                 array(
@@ -493,7 +507,8 @@ class Tutor extends CI_Controller {
         }
     }
 
-    public function deleteAlumno() {
+    public function deleteAlumno()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $id = $this->input->get('id');
             $query = $this->tutor->deleteAlumno($id);
@@ -516,7 +531,8 @@ class Tutor extends CI_Controller {
         }
     }
 
-    public function deleteTutor() {
+    public function deleteTutor()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $idtutor = $this->input->get('idtutor');
             $query = $this->tutor->deleteTutor($idtutor);
@@ -539,7 +555,8 @@ class Tutor extends CI_Controller {
         }
     }
 
-    public function updatePassword() {
+    public function updatePassword()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $config = array(
                 array(
@@ -595,5 +612,4 @@ class Tutor extends CI_Controller {
             echo json_encode($result);
         }
     }
-
 }

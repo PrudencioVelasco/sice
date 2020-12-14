@@ -1,5 +1,7 @@
 <?php
 
+use Kunnu\Dropbox\Exceptions\DropboxClientException;
+
 defined('BASEPATH') or exit('No direct script access allowed');
 date_default_timezone_set("America/Mexico_City");
 header("Access-Control-Allow-Origin: *");
@@ -39,12 +41,16 @@ class Tarea extends CI_Controller
     public function showAll()
     {
         $idhorariodetalle = $this->input->get('idhorariodetalle');
+        $detalle_horario = $this->horario->detalleHorarioDetalle($idhorariodetalle);
+        $idmateria = $detalle_horario[0]->idmateria;
+        $idprofesor = $detalle_horario[0]->idprofesor;
+        $idhorario = $detalle_horario[0]->idhorario;
+        $query = $this->tarea->showAll($this->session->user_id, '', $idprofesor, $idmateria, $idhorario);
 
-        $query = $this->tarea->showAll($this->session->user_id, $idhorariodetalle);
 
         if ($query) {
 
-            $result['tareas']  =   $this->tarea->showAll($this->session->user_id, $idhorariodetalle);
+            $result['tareas']  =   $this->tarea->showAll($this->session->user_id, '', $idprofesor, $idmateria, $idhorario);
         }
         if (isset($result) && !empty($result)) {
             echo json_encode($result);
@@ -100,10 +106,13 @@ class Tarea extends CI_Controller
             $fechainicio = $this->input->post('fechainicio');
             $fechafin = $this->input->post('fechafin');
             $idhorariodetalle = $this->input->get('idhorariodetalle');
-            $query = $this->tarea->searchTareas($value, $this->session->user_id, $idhorariodetalle, $fechainicio, $fechafin);
+            $detalle_horario = $this->horario->detalleHorarioDetalle($idhorariodetalle);
+            $idprofesormateria = $detalle_horario[0]->idprofesormateria;
+            $idhorario = $detalle_horario[0]->idhorario;
+            $query = $this->tarea->searchTareas($value, $this->session->user_id, '', $fechainicio, $fechafin, $idprofesormateria, $idhorario);
             // var_dump($query);
             if ($query) {
-                $result['tareas'] = $this->tarea->searchTareas($value, $this->session->user_id, $idhorariodetalle, $fechainicio, $fechafin);
+                $result['tareas'] = $this->tarea->searchTareas($value, $this->session->user_id, '', $fechainicio, $fechafin, $idprofesormateria, $idhorario);
             }
         }
         if (isset($result) && !empty($result)) {
@@ -360,6 +369,7 @@ class Tarea extends CI_Controller
                             $note_array['ligapreview'] = $liga;
                         } else {
                             $note_array['link'] = "";
+                            $note_array['ligapreview'] = "";
                         }
                         array_push($user_array['documentos'], $note_array);
                     }
@@ -822,7 +832,7 @@ class Tarea extends CI_Controller
                     $this->load->library('Autoload');
 
                     $maxsize = 80000000;
-                    $allowed = array('gif', 'png', 'jpg', 'jpeg', 'gif', 'docx', 'doc', 'pdf', 'xls', 'xlsx', 'fla', 'pptx', 'ppt', 'mov', 'mp4', 'avi', 'vfw', 'm4v', 'wmv', 'mkv', 'flv');
+                    $allowed = array('gif', 'png', 'jpg', 'jpeg', 'gif', 'docx', 'doc', 'pdf', 'xls', 'xlsx', 'fla', 'pptx', 'ppt', 'mov', 'mp4', 'avi', 'vfw', 'm4v', 'wmv', 'mkv', 'flv','accdb','mdb','swf');
                     $filename = $_FILES['file']['name'];
                     $ext = pathinfo($filename, PATHINFO_EXTENSION);
 
@@ -1184,111 +1194,12 @@ class Tarea extends CI_Controller
             $idtarea = trim($this->input->post('idtarea'));
             $tarea = trim($this->input->post('tarea'));
             $detalle_tarea = $this->tarea->detalleTareaAlumno($idtarea);
-
             $horaentraga = $detalle_tarea->horaentrega;
             $fechaentrega = $detalle_tarea->fechaentregareal;
             $fecha_antes = $detalle_tarea->fechaantes;
             $fechaactual = date('Y-m-d H:i:s');
-
-            //if ($fechaactual <= $fecha_antes) {
-            if (!empty($_FILES['files']) && count(array_filter($_FILES['files'])) > 0) {
-                $data = array(
-                    'idtarea' => $idtarea,
-                    'idalumno' => $this->session->idalumno,
-                    'idestatustarea' => 1,
-                    'mensaje' => $tarea,
-                    'nombrearchivo' => '',
-                    'iddocumento' => '',
-                    'eliminado' => 0,
-                    'idusuario' => $this->session->user_id,
-                    'fecharegistro' => date('Y-m-d H:i:s')
-                );
-
-                $idDetalleTarea = $this->tarea->addDetalleTarea($data);
-
-
-
-                $filesCount = count($_FILES['files']['name']);
-
-                for ($i = 0; $i < $filesCount; $i++) {
-
-                    $_FILES['file']['name']     = $_FILES['files']['name'][$i];
-                    $_FILES['file']['type']     = $_FILES['files']['type'][$i];
-                    $_FILES['file']['tmp_name'] = $_FILES['files']['tmp_name'][$i];
-                    $_FILES['file']['error']     = $_FILES['files']['error'][$i];
-                    $_FILES['file']['size']     = $_FILES['files']['size'][$i];
-
-                    $maxsize = 80000000;
-                    $allowed = array('gif', 'png', 'jpg', 'jpeg', 'gif', 'docx', 'doc', 'pdf', 'xls', 'xlsx', 'fla', 'pptx', 'ppt', 'mov', 'mp4', 'avi', 'vfw', 'm4v', 'wmv', 'mkv', 'flv');
-                    $filename = $_FILES['file']['name'];
-                    $ext = pathinfo($filename, PATHINFO_EXTENSION);
-
-                    if (in_array(strtolower($ext), $allowed)) {
-                        if (($_FILES['file']['size'] <= $maxsize)) {
-                            $file_name = $_FILES['file']['name']; //ruta al archivo
-                            $tmp = explode('.', $file_name);
-                            $extension_img = end($tmp);
-                            $user_img_profile = $this->session->user_id . '-' . date("Ymdhis") . '.' . $extension_img;
-                            $config['file_name'] = $user_img_profile;
-                            $fileName = $user_img_profile;
-                            $app = new Kunnu\Dropbox\DropboxApp($this->appkey, $this->appsecret,  $this->token);
-
-                            //Configure Dropbox service
-                            //$dropbox = new Dropbox($app);
-                            $dropbox = new Kunnu\Dropbox\Dropbox($app);
-                            //Get File Metadata 
-                            // File to Upload
-                            $file = $_FILES['file'];
-
-                            // File Path
-                            // $fileName = $file['name'];
-                            $filePath = $file['tmp_name'];
-
-                            try {
-                                // Create Dropbox File from Path
-                                $dropboxFile = new Kunnu\Dropbox\DropboxFile($filePath);
-
-                                // Upload the file to Dropbox
-                                $uploadedFile = $dropbox->upload($dropboxFile, "/" . $fileName,     ['autorename' => true]);
-
-                                // File Uploaded
-                                $uploadedFile->getPathDisplay();
-
-                                $dataDocumentos = array(
-                                    'iddetalletarea' => $idDetalleTarea,
-                                    'nombredocumento' => $fileName,
-                                    'iddocumento' => "",
-                                    'idusuario' => $this->session->user_id,
-                                    'fecharegistro' => date('Y-m-d H:i:s'),
-                                );
-
-                                $value = $this->tarea->addDocumentRespuestaTarea($dataDocumentos);
-                            } catch (Kunnu\Dropbox\Exceptions\DropboxClientException $e) {
-                                //Eliminar Documento Alumno
-                                $this->tarea->deleteDocumentoAlumno($idDetalleTarea);
-                                //Eliminar Detalle Tarea
-                                $this->tarea->deleteDetalleTarea($idDetalleTarea);
-                                //$dropboxFile = new Kunnu\Dropbox\Exceptions\DropboxClientException;
-                                $result['error'] = true;
-                                $result['msg'] = array(
-                                    'msgerror' => $e->getMessage()
-                                );
-                            }
-                        } else {
-                            $result['error'] = true;
-                            $result['msg'] = array(
-                                'msgerror' => "EL DOCUMENTO DEBE DE PESAR 78MB COMO MAXIMO."
-                            );
-                        }
-                    } else {
-                        $result['error'] = true;
-                        $result['msg'] = array(
-                            'msgerror' => "SOLO ES PERMITDO IMAGENES, WORD, PDF Y EXCEL."
-                        );
-                    }
-                }
-            } else {
-                if (isset($tarea) && !empty($tarea)) {
+            if ($fechaactual <= $fecha_antes) {
+                if (!empty($_FILES['files']) && count(array_filter($_FILES['files'])) > 0) {
                     $data = array(
                         'idtarea' => $idtarea,
                         'idalumno' => $this->session->idalumno,
@@ -1298,22 +1209,104 @@ class Tarea extends CI_Controller
                         'iddocumento' => '',
                         'eliminado' => 0,
                         'idusuario' => $this->session->user_id,
-                        'fecharegistro' => date('Y-m-d H:i:s'),
+                        'fecharegistro' => date('Y-m-d H:i:s')
                     );
-                    $value = $this->tarea->addDetalleTarea($data);
+                    $idDetalleTarea = $this->tarea->addDetalleTarea($data);
+                    $filesCount = count($_FILES['files']['name']);
+                    for ($i = 0; $i < $filesCount; $i++) {
+                        $_FILES['file']['name']     = $_FILES['files']['name'][$i];
+                        $_FILES['file']['type']     = $_FILES['files']['type'][$i];
+                        $_FILES['file']['tmp_name'] = $_FILES['files']['tmp_name'][$i];
+                        $_FILES['file']['error']     = $_FILES['files']['error'][$i];
+                        $_FILES['file']['size']     = $_FILES['files']['size'][$i];
+                        $maxsize = 80000000;
+                        $allowed = array('gif', 'png', 'jpg', 'jpeg', 'gif', 'docx', 'doc', 'pdf', 'xls', 'xlsx', 'fla', 'pptx', 'ppt', 'mov', 'mp4', 'avi', 'vfw', 'm4v', 'wmv', 'mkv', 'flv','accdb','mdb','swf');
+                        $filename = $_FILES['file']['name'];
+                        $ext = pathinfo($filename, PATHINFO_EXTENSION);
+                        if (in_array(strtolower($ext), $allowed)) {
+                            if (($_FILES['file']['size'] <= $maxsize)) {
+                                $file_name = $_FILES['file']['name']; //ruta al archivo
+                                $tmp = explode('.', $file_name);
+                                $extension_img = end($tmp);
+                                $user_img_profile = $this->session->user_id . '-' . date("Ymdhis") . '.' . $extension_img;
+                                $config['file_name'] = $user_img_profile;
+                                $fileName = $user_img_profile;
+                                $app = new Kunnu\Dropbox\DropboxApp($this->appkey, $this->appsecret,  $this->token);
+                                //Configure Dropbox service
+                                //$dropbox = new Dropbox($app);
+                                $dropbox = new Kunnu\Dropbox\Dropbox($app);
+                                //Get File Metadata 
+                                // File to Upload
+                                $file = $_FILES['file'];
+                                // File Path
+                                // $fileName = $file['name'];
+                                $filePath = $file['tmp_name'];
+                                try {
+                                    // Create Dropbox File from Path
+                                    $dropboxFile = new Kunnu\Dropbox\DropboxFile($filePath);
+                                    // Upload the file to Dropbox
+                                    $uploadedFile = $dropbox->upload($dropboxFile, "/" . $fileName,     ['autorename' => true]);
+                                    // File Uploaded
+                                    $uploadedFile->getPathDisplay();
+                                    $dataDocumentos = array(
+                                        'iddetalletarea' => $idDetalleTarea,
+                                        'nombredocumento' => $fileName,
+                                        'iddocumento' => "",
+                                        'idusuario' => $this->session->user_id,
+                                        'fecharegistro' => date('Y-m-d H:i:s'),
+                                    );
+                                    $value = $this->tarea->addDocumentRespuestaTarea($dataDocumentos);
+                                } catch (Kunnu\Dropbox\Exceptions\DropboxClientException $e) {
+                                    //Eliminar Documento Alumno
+                                    $this->tarea->deleteDocumentoAlumno($idDetalleTarea);
+                                    //Eliminar Detalle Tarea
+                                    $this->tarea->deleteDetalleTarea($idDetalleTarea);
+                                    //$dropboxFile = new Kunnu\Dropbox\Exceptions\DropboxClientException;
+                                    $result['error'] = true;
+                                    $result['msg'] = array(
+                                        'msgerror' => $e->getMessage()
+                                    );
+                                }
+                            } else {
+                                $result['error'] = true;
+                                $result['msg'] = array(
+                                    'msgerror' => "EL DOCUMENTO DEBE DE PESAR 78MB COMO MAXIMO."
+                                );
+                            }
+                        } else {
+                            $result['error'] = true;
+                            $result['msg'] = array(
+                                'msgerror' => "SOLO ES PERMITDO IMAGENES, WORD, PDF Y EXCEL."
+                            );
+                        }
+                    }
                 } else {
-                    $result['error'] = true;
-                    $result['msg'] = array(
-                        'msgerror' => "Escriba en mensaje de la tarea."
-                    );
+                    if (isset($tarea) && !empty($tarea)) {
+                        $data = array(
+                            'idtarea' => $idtarea,
+                            'idalumno' => $this->session->idalumno,
+                            'idestatustarea' => 1,
+                            'mensaje' => $tarea,
+                            'nombrearchivo' => '',
+                            'iddocumento' => '',
+                            'eliminado' => 0,
+                            'idusuario' => $this->session->user_id,
+                            'fecharegistro' => date('Y-m-d H:i:s'),
+                        );
+                        $value = $this->tarea->addDetalleTarea($data);
+                    } else {
+                        $result['error'] = true;
+                        $result['msg'] = array(
+                            'msgerror' => "Escriba en mensaje de la tarea."
+                        );
+                    }
                 }
-            }
-            /* } else {
+            } else {
                 $result['error'] = true;
                 $result['msg'] = array(
                     'msgerror' => "USTED DEBIO DE ENTRAGAR LA TAREA ANTES DE " . $fecha_antes
                 );
-            }*/
+            }
         }
         if (isset($result) && !empty($result)) {
             echo json_encode($result);

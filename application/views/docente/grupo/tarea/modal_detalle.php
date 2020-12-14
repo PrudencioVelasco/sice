@@ -8,6 +8,8 @@
 		padding: 5px;
 		margin: 85px;
 	}
+
+  
 </style>
 <div class="modal fade" id="editRegister" tabindex="-1" role="dialog">
 	<div class="modal-dialog  modal-lg " role="document">
@@ -15,7 +17,9 @@
 			<div class="modal-header">
 				<h4 class="modal-title" id="smallModalLabel">{{tarea.titulo}}</h4>
 			</div>
-			<div class="modal-body">
+			<div class="modal-body"> 
+			<div id="axiosForm"> 
+ 
 				<div style="padding-right: 15px;">
 					<div class="row">
 						<div class="col-md-12 col-sm-12 col-xs-12 ">
@@ -78,6 +82,7 @@
 									<div class="col-md-55">
 										<div class="thumbnail">
 											<div class="image view view-first">
+
 												<img v-if="file.link != ''" style="width: 100%; display: block;" v-bind:src="file.link" alt="No se puede previsualizar el archivo" />
 												<img v-else alt="Archivo" v-bind:src="'https://drive.google.com/thumbnail?id='+ file.file" style="width: 100%; display: block;">
 
@@ -85,8 +90,9 @@
 												<div class="mask">
 
 													<div class="tools tools-bottom">
-														<a v-if="file.link !=''" v-bind:href="file.ligapreview" target="_blank"><i class="fa fa-eye"></i></a>
-														<a v-else v-bind:href="'https://drive.google.com/uc?export=download&id='+ file.file" target="_blank"><i class="fa fa-download"></i></a>
+														<a v-if="file.ligapreview !=''" v-bind:href="file.ligapreview" target="_blank"><i class="fa fa-eye"></i></a>
+														<a v-if="file.ligapreview =='' && file.link != ''" v-bind:href="file.link" target="_blank"><i class="fa fa-download"></i></a>
+														<a v-if="file.file != ''" v-bind:href="'https://drive.google.com/uc?export=download&id='+ file.file" target="_blank"><i class="fa fa-download"></i></a>
 													</div>
 												</div>
 											</div>
@@ -105,6 +111,7 @@
 					<hr>
 
 				</div>
+														</div>
 			</div>
 			<div class="modal-footer">
 				<div class="row">

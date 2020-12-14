@@ -1,11 +1,11 @@
 <div class="modal fade" id="addRegister" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title" id="smallModalLabel">AGREGAR TUTOR</h4>
             </div>
             <div class="modal-body">
-                <div style=" height: 200px; padding-right:15px; overflow-x: hidden; overflow-y: scroll;">
+                <div style="padding-right:15px;">
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12 ">
                             <label style="color: red" v-html="formValidate.msgerror"></label>
@@ -13,7 +13,7 @@
                     </div>
                     <br/>
                     <div class="row clearfix">
-                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                        <div class="col-md-4 col-sm-12 col-xs-12 ">
                             <div class="form-group form-float">
                                 <div class="form-line"  >
                                     <label  class="form-label"><font color="red">*</font> NOMBRE</label>
@@ -22,7 +22,7 @@
                                 <div class="col-red" v-html="formValidate.nombre"></div>
                             </div>
                         </div> 
-                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                        <div class="col-md-4 col-sm-12 col-xs-12 ">
                             <div class="form-group form-float">
                                 <div class="form-line"  >
                                     <label  class="form-label"><font color="red">*</font> A. PATERNO</label>
@@ -31,10 +31,7 @@
                                 <div class="col-red" v-html="formValidate.apellidop"></div>
                             </div>
                         </div> 
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                        <div class="col-md-4 col-sm-12 col-xs-12 ">
                             <div class="form-group form-float">
                                 <div class="form-line"  >
                                     <label  class="form-label">A. MATERNO</label>
@@ -43,30 +40,32 @@
                                 <div class="col-red" v-html="formValidate.apellidom"></div>
                             </div>
                         </div> 
-                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                    </div>
+
+                    <div class="row">
+                       
+                        <div class="col-md-4 col-sm-12 col-xs-12 ">
                             <div class="form-group form-float">
                                 <div class="form-line"  >
-                                    <label  class="form-label">ESCOLARIDAD</label>
+                                    <label  class="form-label"> ESCOLARIDAD</label>
                                     <input type="text" v-model="newTutor.escolaridad" class="form-control"  :class="{'is-invalid': formValidate.escolaridad}" name="po"> 
                                 </div>      
                                 <div class="col-red" v-html="formValidate.escolaridad"></div>
                             </div>
-                        </div> 
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                        </div>  
+                        <div class="col-md-4 col-sm-12 col-xs-12 ">
                             <div class="form-group form-float">
                                 <div class="form-line"  >
-                                    <label  class="form-label">OCUPACIÓN</label>
+                                    <label  class="form-label">  OCUPACIÓN</label>
                                     <input type="text" v-model="newTutor.ocupacion" class="form-control"  :class="{'is-invalid': formValidate.ocupacion}" name="po"> 
                                 </div>      
                                 <div class="col-red" v-html="formValidate.ocupacion"></div>
                             </div>
                         </div> 
-                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                        <div class="col-md-4 col-sm-12 col-xs-12 ">
                             <div class="form-group form-float">
                                 <div class="form-line"  >
-                                    <label  class="form-label">DONDE TRABAJA</label>
+                                    <label  class="form-label"> DONDE TRABAJA</label>
                                     <input type="text" v-model="newTutor.dondetrabaja" class="form-control"  :class="{'is-invalid': formValidate.dondetrabaja}" name="po"> 
                                 </div>      
                                 <div class="col-red" v-html="formValidate.dondetrabaja"></div>
@@ -78,7 +77,7 @@
                         <div class="col-md-12 col-sm-12 col-xs-12 ">
                             <div class="form-group form-float">
                                 <div class="form-line"  >
-                                    <label  class="form-label"><font color="red">*</font>DIRECCIÓN</label>
+                                    <label  class="form-label"><font color="red">*</font> DIRECCIÓN</label>
                                     <input type="text" v-model="newTutor.direccion" class="form-control"  :class="{'is-invalid': formValidate.direccioni}" name="po"> 
                                 </div>     
                                 <div class="col-red" v-html="formValidate.direccion"></div>
@@ -89,7 +88,7 @@
                         </div> 
                     </div>
                     <div class="row">
-                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                        <div class="col-md-4 col-sm-12 col-xs-12 ">
                             <div class="form-group form-float">
                                 <div class="form-line"  >
                                     <label  class="form-label"><font color="red">*</font> F. NACIMIENTO</label>
@@ -99,7 +98,7 @@
                                 <div class="col-red" v-html="formValidate.fnacimiento"></div>
                             </div>
                         </div> 
-                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                        <div class="col-md-4 col-sm-12 col-xs-12 ">
                             <div class="form-group form-float">
                                 <div class="form-line"  >
                                     <label  class="form-label"><font color="red">*</font> TELEFONO</label>
@@ -109,11 +108,7 @@
                                 <div class="col-red" v-html="formValidate.telefono"></div>
                             </div>
                         </div> 
-                    </div>
-
-
-                    <div class="row">
-                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                        <div class="col-md-4 col-sm-12 col-xs-12 ">
                             <div class="form-group form-float">
                                 <div class="form-line"  >
                                     <label  class="form-label"><font color="red">*</font> CORREO ELECTRONICO</label>
@@ -122,7 +117,12 @@
                                 <div class="col-red" v-html="formValidate.correo"></div>
                             </div>
                         </div> 
-                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                    </div>
+
+
+                    <div class="row">
+                        
+                        <div class="col-md-4 col-sm-12 col-xs-12 ">
                             <div class="form-group form-float">
                                 <div class="form-line"  >
                                     <label  class="form-label"><font color="red">*</font> CONTRASEÑA</label>
@@ -131,10 +131,8 @@
                                 <div class="col-red" v-html="formValidate.password"></div>
                             </div>
                         </div> 
-                    </div>
 
-                    <div class="row">
-                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                        <div class="col-md-4 col-sm-12 col-xs-12 ">
                             <div class="form-group form-float">
                                 <div class="form-line"  >
                                     <label  class="form-label"><font color="red">*</font> RFC</label>
@@ -143,10 +141,12 @@
                                 <div class="col-red" v-html="formValidate.rfc"></div>
                             </div>
                         </div> 
-                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                         
+                        
+                        <div class="col-md-4 col-sm-12 col-xs-12 ">
                             <div class="form-group" >
                                 <label><font color="red">*</font> FACTURA</label>
-                                <div class="demo-radio-button" style=" display:inline-block;">  
+                                <div  >  
                                     <input name="group5" type="radio" id="radio_31" class="with-gap radio-col-green" v-model="newTutor.factura" value="1" />
                                     <label for="radio_31" style="display:block;">SI</label>
                                     <input name="group5" type="radio" id="radio_32" class="with-gap radio-col-red"  v-model="newTutor.factura" value="0" />
@@ -184,13 +184,13 @@
 
 
 <div class="modal fade" id="editRegister" tabindex="-1" role="dialog">
-    <div class="modal-dialog " role="document">
+    <div class="modal-dialog  modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title" id="smallModalLabel">EDITAR TUTOR</h4>
             </div>
             <div class="modal-body">
-                <div style=" height: 200px; padding-right:15px;  overflow-x: hidden; overflow-y: scroll;">
+                <div style="padding-right:15px;">
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12 ">
                             <label style="color: red" v-html="formValidate.msgerror"></label>
@@ -198,7 +198,7 @@
                     </div>
                     <br/>
                     <div class="row">
-                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                        <div class="col-md-4 col-sm-12 col-xs-12 ">
                             <div class="form-group form-float">
                                 <div class="form-line focused"  > 
                                     <label  class="form-label"><font color="red">*</font> NOMBRE</label>
@@ -207,7 +207,7 @@
                                 <div class="col-red" v-html="formValidate.nombre"></div>
                             </div>
                         </div> 
-                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                        <div class="col-md-4 col-sm-12 col-xs-12 ">
                             <div class="form-group form-float">
                                 <div class="form-line focused"  > 
                                     <label  class="form-label"><font color="red">*</font> A. PATERNO</label>
@@ -216,10 +216,7 @@
                                 <div class="col-red" v-html="formValidate.apellidop"></div>
                             </div>
                         </div> 
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                        <div class="col-md-4 col-sm-12 col-xs-12 ">
                             <div class="form-group form-float">
                                 <div class="form-line focused"  > 
                                     <label  class="form-label">A. MATERNO</label>
@@ -228,7 +225,11 @@
                                 <div class="col-red" v-html="formValidate.apellidom"></div>
                             </div>
                         </div> 
-                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                    </div>
+
+                    <div class="row">
+                       
+                        <div class="col-md-4 col-sm-12 col-xs-12 ">
                             <div class="form-group form-float">
                                 <div class="form-line focused"  > 
                                     <label  class="form-label">ESCOLARIDAD</label>
@@ -237,9 +238,7 @@
                                 <div class="col-red" v-html="formValidate.escolaridad"></div>
                             </div>
                         </div> 
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                        <div class="col-md-4 col-sm-12 col-xs-12 ">
                             <div class="form-group form-float">
                                 <div class="form-line focused"  > 
                                     <label  class="form-label">OCUPACIÓN</label>
@@ -248,7 +247,7 @@
                                 <div class="col-red" v-html="formValidate.ocupacion"></div>
                             </div>
                         </div> 
-                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                        <div class="col-md-4 col-sm-12 col-xs-12 ">
                             <div class="form-group form-float">
                                 <div class="form-line focused"  > 
                                     <label  class="form-label">DONDE TRABAJA</label>
@@ -274,7 +273,7 @@
                         </div> 
                     </div>
                     <div class="row">
-                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                        <div class="col-md-4 col-sm-12 col-xs-12 ">
                             <div class="form-group form-float">
                                 <div class="form-line focused"  > 
                                     <label  class="form-label"><font color="red">*</font> F. NACIMIENTO</label>
@@ -283,7 +282,7 @@
                                 <div class="col-red" v-html="formValidate.fnacimiento"></div>
                             </div>
                         </div> 
-                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                        <div class="col-md-4 col-sm-12 col-xs-12 ">
                             <div class="form-group form-float">
                                 <div class="form-line focused"  > 
                                     <label  class="form-label"><font color="red">*</font> TELEFONO</label>
@@ -292,11 +291,7 @@
                                 <div class="col-red" v-html="formValidate.telefono"></div>
                             </div>
                         </div> 
-                    </div>
-
-
-                    <div class="row">
-                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                        <div class="col-md-4 col-sm-12 col-xs-12 ">
                             <div class="form-group form-float">
                                 <div class="form-line focused"  > 
                                     <label  class="form-label"><font color="red">*</font> CORREO ELECTRONICO</label>
@@ -305,6 +300,11 @@
                                 <div class="col-red" v-html="formValidate.correo"></div>
                             </div>
                         </div> 
+                    </div>
+
+
+                    <div class="row">
+                       
                         <div class="col-md-6 col-sm-12 col-xs-12 ">
                             <div class="form-group form-float">
                                 <div class="form-line focused"  > 
@@ -313,13 +313,11 @@
                                 </div>      
                                 <div class="col-red" v-html="formValidate.rfc"></div>
                             </div>
-                        </div> 
-                    </div>
-                    <div class="row">
-                        <div class="col-md-7 col-sm-12 col-xs-12 ">
+                        </div>  
+                        <div class="col-md-6 col-sm-12 col-xs-12 ">
                             <div class="form-group">
                                 <label for=""><font color="red">*</font> FACTURA</label><br> 
-                                <div class="demo-radio-button" >  
+                                <div class="" >  
                                     <input name="group5" type="radio" id="radio_31" class="with-gap radio-col-green" v-model="chooseTutor.factura" value="1" :checked="chooseTutor.factura==1" />
                                     <label for="radio_31">SI</label>
                                     <input name="group5" type="radio" id="radio_32" class="with-gap radio-col-red"  v-model="chooseTutor.factura" value="0" :checked="chooseTutor.factura==0" />
@@ -361,7 +359,7 @@
                 <h4 class="modal-title" id="smallModalLabel">CAMBIAR CONTRASEÑA</h4>
             </div>
             <div class="modal-body">
-                <div style="padding-right:15px;  height: 100px;overflow-x: hidden; overflow-y: scroll;">
+                <div style="padding-right:15px;">
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12 ">
                             <div class="col-red" v-html="formValidate.msgerror"></div>

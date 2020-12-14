@@ -32,10 +32,18 @@
               <label>CICLO ESCOLAR: </label><br><label style="color: #000"> <?php echo $datoshorario->mesinicio.' '.$datoshorario->yearinicio.' - '.$datoshorario->mesfin.' '.$datoshorario->yearfin ?></label>
             </div>
             <div class="col-md-4 col-sm-12 col-xs-12 " align="center">
-             <label>GRUPO</label><br>
+             <label>GRUPO:</label><br>
              <label style="color: #000">
               <?php 
-              echo $datoshorario->nombrenivel.' '.$datoshorario->nombregrupo.' - '.$datoshorario->nombreturno;
+              $nombrenivel = "";
+              if(isset($datoshorario) && !empty($datoshorario)){
+                if($datoshorario->idniveleducativo == 1 || $datoshorario->idniveleducativo == 2 || $datoshorario->idniveleducativo == 4 ){
+                  $nombrenivel = $datoshorario->numeroordinaria;
+                }else{
+                  $nombrenivel = $datoshorario->numeroromano;
+                }
+              }
+              echo $nombrenivel.' '.$datoshorario->nombregrupo.' - '.$datoshorario->nombreturno;
               ?>
             </label>
           </div>

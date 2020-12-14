@@ -30,7 +30,7 @@
                                                         foreach ($grupos as $value) {
                                                             ?>
                                                             <option value="<?php echo $value->idhorariodetalle ?>">
-                                                                <?php echo $value->nombrenivel . ' ' . $value->nombregrupo . ' - ' . $value->nombreclase; ?>
+                                                                <?php echo $value->nivelgrupo . ' - ' . $value->nombregrupo . ' - ' . $value->nombreclase; ?>
 
                                                             </option>
 
@@ -97,7 +97,7 @@
                                                     <th scope="row"><?php echo $i++; ?></th>
 
                                                     <td scope="row">
-                                                        <strong><?php echo $value->nombrenivel . " - " . $value->nombregrupo ?></strong>
+                                                        <strong><?php echo $value->nivelgrupo . " - " . $value->nombregrupo ?></strong>
                                                     </td>
                                                     <td><strong><?php echo $value->nombreclase; ?></strong></td>
                                                     <td><?php

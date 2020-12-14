@@ -19,13 +19,16 @@ var v = new Vue({
     grupos: [],
     meses: [],
     years: [],
-    search: { text: "" },
+    search: {
+      text: ""
+    },
     emptyResult: false,
     newHorario: {
       idperiodo: "",
       idgrupo: "",
+      descripcion: "",
       activo: "",
-      smserror: "",
+      smserror: ""
     },
     chooseHorario: {},
     formValidate: [],
@@ -36,7 +39,9 @@ var v = new Vue({
     rowCountPage: 10,
     totalHorarios: 0,
     pageRange: 2,
-    directives: { columnSortable },
+    directives: {
+      columnSortable
+    }
   },
   created() {
     this.showAll();
@@ -74,119 +79,84 @@ var v = new Vue({
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
         confirmButtonText: "Eliminar",
-        cancelButtonText: "Cancelar",
-      }).then((result) => {
+        cancelButtonText: "Cancelar"
+      }).then(result => {
         if (result.value) {
-          axios
-            .get(this.url + "Horario/deleteHorario", {
-              params: {
-                idhorario: id,
-              },
-            })
-            .then(function (response) {
-              if (response.data.error == false) {
-                //v.noResult()
-                swal({
-                  position: "center",
-                  type: "success",
-                  title: "Eliminado!",
-                  showConfirmButton: false,
-                  timer: 3000,
-                });
-                v.clearAll();
-                v.clearMSG();
-              } else {
-                swal("Información", response.data.msg.msgerror, "info");
-              }
-              //console.log(response);
-            })
-            .catch((error) => {
-              swal("Información", "No se puede eliminar el Horario", "info");
-            });
+          axios.get(this.url + "Horario/deleteHorario", {
+            params: {
+              idhorario: id
+            }
+          }).then(function (response) {
+            if (response.data.error == false) {
+              //v.noResult()
+              swal({position: "center", type: "success", title: "Eliminado!", showConfirmButton: false, timer: 3000});
+              v.clearAll();
+              v.clearMSG();
+            } else {
+              swal("Información", response.data.msg.msgerror, "info");
+            }
+            //console.log(response);
+          }).catch(error => {
+            swal("Información", "No se puede eliminar el Horario", "info");
+          });
         }
       });
     },
     showAllMeses() {
-      axios
-        .get(this.url + "CicloEscolar/showAllMeses/")
-        .then((response) => (this.meses = response.data.meses));
+      axios.get(this.url + "CicloEscolar/showAllMeses/").then(response => (this.meses = response.data.meses));
     },
     showAllYears() {
-      axios
-        .get(this.url + "CicloEscolar/showAllYears/")
-        .then((response) => (this.years = response.data.years));
+      axios.get(this.url + "CicloEscolar/showAllYears/").then(response => (this.years = response.data.years));
     },
     showAllPeriodos() {
-      axios
-        .get(this.url + "Horario/showAllPeriodos/")
-        .then((response) => (this.periodos = response.data.periodos));
+      axios.get(this.url + "Horario/showAllPeriodos/").then(response => (this.periodos = response.data.periodos));
     },
     showAllGrupos() {
-      axios
-        .get(this.url + "Horario/showAllGrupos/")
-        .then((response) => (this.grupos = response.data.grupos));
+      axios.get(this.url + "Horario/showAllGrupos/").then(response => (this.grupos = response.data.grupos));
     },
     searchHorario() {
       var formData = v.formData(v.search);
-      axios
-        .post(this.url + "Horario/searchHorario", formData)
-        .then(function (response) {
-          if (response.data.horarios == null) {
-            v.noResult();
-          } else {
-            v.getData(response.data.horarios);
-          }
-        });
+      axios.post(this.url + "Horario/searchHorario", formData).then(function (response) {
+        if (response.data.horarios == null) {
+          v.noResult();
+        } else {
+          v.getData(response.data.horarios);
+        }
+      });
     },
     addHorario() {
       v.cargando = true;
       v.error = false;
       var formData = v.formData(v.newHorario);
-      axios
-        .post(this.url + "Horario/addHorario", formData)
-        .then(function (response) {
-          if (response.data.error) {
-            v.formValidate = response.data.msg;
-            v.error = true;
-            v.cargando = false;
-          } else {
-            swal({
-              position: "center",
-              type: "success",
-              title: "Exito!",
-              showConfirmButton: false,
-              timer: 3000,
-            });
+      axios.post(this.url + "Horario/addHorario", formData).then(function (response) {
+        if (response.data.error) {
+          v.formValidate = response.data.msg;
+          v.error = true;
+          v.cargando = false;
+        } else {
+          swal({position: "center", type: "success", title: "Exito!", showConfirmButton: false, timer: 3000});
 
-            v.clearAll();
-            v.clearMSG();
-          }
-        });
+          v.clearAll();
+          v.clearMSG();
+        }
+      });
     },
     updateHorario() {
       v.cargando = true;
       v.error = false;
       var formData = v.formData(v.chooseHorario);
-      axios
-        .post(this.url + "Horario/updateHorario", formData)
-        .then(function (response) {
-          if (response.data.error) {
-            v.formValidate = response.data.msg;
-            v.error = true;
-            v.cargando = false;
-          } else {
-            //v.successMSG = response.data.success;
-            swal({
-              position: "center",
-              type: "success",
-              title: "Modificado!",
-              showConfirmButton: false,
-              timer: 3000,
-            });
-            v.clearAll();
-            v.clearMSG();
-          }
-        });
+      axios.post(this.url + "Horario/updateHorario", formData).then(function (response) {
+        if (response.data.error) {
+          v.formValidate = response.data.msg;
+          v.error = true;
+          v.cargando = false;
+        } else {
+          //v.successMSG = response.data.success;
+          swal({position: "center", type: "success", title: "Modificado!", showConfirmButton: false, timer: 3000});
+          v.clearAll();
+          v.clearMSG();
+        }
+      });
     },
     formData(obj) {
       var formData = new FormData();
@@ -198,10 +168,7 @@ var v = new Vue({
     getData(horarios) {
       v.emptyResult = false; // become false if has a record
       v.totalHorarios = horarios.length; //get total of user
-      v.horarios = horarios.slice(
-        v.currentPage * v.rowCountPage,
-        v.currentPage * v.rowCountPage + v.rowCountPage
-      ); //slice the result for pagination
+      v.horarios = horarios.slice(v.currentPage * v.rowCountPage, v.currentPage * v.rowCountPage + v.rowCountPage); //slice the result for pagination
 
       // if the record is empty, go back a page
       if (v.horarios.length == 0 && v.currentPage > 0) {
@@ -224,8 +191,9 @@ var v = new Vue({
       v.newHorario = {
         idnivelestudio: "",
         idgrupo: "",
+        descripcion: "",
         activo: "",
-        smserror: "",
+        smserror: ""
       };
       v.formValidate = false;
       v.addModal = false;
@@ -247,7 +215,9 @@ var v = new Vue({
       v.refresh();
     },
     refresh() {
-      v.search.text ? v.searchHorario() : v.showAll(); //for preventing
-    },
-  },
+      v.search.text
+        ? v.searchHorario()
+        : v.showAll(); //for preventing
+    }
+  }
 });

@@ -307,13 +307,13 @@
 <script>
     $('#datatablebodega').DataTable({
         paging: false,
-
         scrollY: 400,
         scrollX: "100%",
         "columnDefs": [{
             "targets": 0,
             "orderable": false
         }],
+
         "language": {
             "sProcessing": "Procesando...",
             "sLengthMenu": "Mostrar _MENU_ registros",

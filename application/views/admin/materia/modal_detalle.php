@@ -6,7 +6,7 @@
                 <h4 class="modal-title" id="smallModalLabel">AGREGAR ASIGNATURA/CURSO SERIADA</h4>
             </div>
             <div class="modal-body">
-                <div style="padding-top:13px; padding-right:15px; height: 100px; overflow-x: hidden; overflow-y: scroll;">
+                <div style="padding-top:13px; padding-right:15px;">
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12 ">
                             <label  class="col-red" v-html="formValidate.msgerror"></label>
@@ -58,7 +58,7 @@
                 <h4 class="modal-title" id="smallModalLabel">EDITAR ASIGNATURA/CURSO SERIADA</h4>
             </div>
             <div class="modal-body">
-                <div style=" height: 100px;overflow-x: hidden; overflow-y: scroll;">
+                <div style=" ">
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12 ">
                             <label  class="col-red" v-html="formValidate.msgerror"></label>

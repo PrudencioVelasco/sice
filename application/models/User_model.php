@@ -57,6 +57,7 @@ class User_model extends CI_Model {
         $this->db->from('tblplantel p');
         $this->db->join('tblniveleducativo n', 'p.idniveleducativo = n.idniveleducativo');
         $this->db->where('p.idplantel !=', $idplantel);
+        $this->db->order_by('n.idniveleducativo ASC');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();

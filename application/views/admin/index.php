@@ -20,12 +20,20 @@
                     <p class="mb-0">Para hacer esto debe de seleccionar el nivel dentro de la opción de cerrar sesión.</p>
                 </div>
             <?php endif ?>
+            <?php if (isset($_SESSION['seleccionar_escuela'])): ?>
+                <div class="alert alert-info" role="alert">
+                    <h4 class="alert-heading">INFORMACIÓN!</h4>
+                    <p><?php echo $_SESSION['seleccionar_escuela'] ?></p>
+                    <hr>
+                    <p class="mb-0">Para hacer esto debe de seleccionar el nivel dentro de la opción de cerrar sesión.</p>
+                </div>
+            <?php endif ?>
                <?php if (isset($_SESSION['informacion_exito'])): ?>
                 <div class="alert alert-success" role="alert">
                     <h4 class="alert-heading">EXITO!</h4>
                     <p>EL NIVEL FUE SELECCIONADO CON EXITO.</p>
                     <hr>
-                    <p class="mb-0">Ya puede ver los registros para este nivel seleccionado..</p>
+                    <p class="mb-0">Ya puede ver los registros para este nivel seleccionado.</p>
                 </div>
             <?php endif ?>
         </div>  

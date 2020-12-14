@@ -276,8 +276,10 @@ class Welcome extends CI_Controller {
                 if (password_verify($password, $result->password)) {
                     $idplantel = $result->idplantel;
                     $escuelas = "";
+                    $total_escuelas = 0;
                     if ($idplantel == $this->idescuela_todos) {
                         $escuelas = $this->usuario->showAllPlantelesUsuario($this->idescuela_todos);
+                        $total_escuelas = count($escuelas);
                     }
                     $data_session = array(
                         'user_id' => $result->id,
@@ -294,7 +296,10 @@ class Welcome extends CI_Controller {
                     );
 
                     $this->session->set_userdata($data_session);
-                    if (! empty($escuelas)) {}
+                    //if (! empty($escuelas)) {}
+                    if($total_escuelas > 1){
+                        $this->session->set_flashdata('seleccionar_escuela','SELECCIONE EL  NIVEL ESCOLAR');
+                    }
                     $this->session->set_flashdata('saludar',$this->saludar());
                     $this->session->set_flashdata('nombre_saludar',$result->nombre);
                     redirect('/Admin');

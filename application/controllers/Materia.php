@@ -1,11 +1,13 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 date_default_timezone_set("America/Mexico_City");
 
-class Materia extends CI_Controller {
+class Materia extends CI_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         if (!isset($_SESSION['user_id'])) {
             $this->session->set_flashdata('flash_data', 'You don\'t have access! ss');
@@ -20,14 +22,16 @@ class Materia extends CI_Controller {
         $this->load->library('pdfgenerator');
     }
 
-    public function inicio() {
-         Permission::grant(uri_string());
+    public function inicio()
+    {
+        Permission::grant(uri_string());
         $this->load->view('admin/header');
         $this->load->view('admin/materia/index');
         $this->load->view('admin/footer');
     }
 
-    public function searchMateria() {
+    public function searchMateria()
+    {
         $value = $this->input->post('text');
         $query = $this->materia->searchMateria($value, $this->session->idplantel);
         if ($query) {
@@ -38,7 +42,8 @@ class Materia extends CI_Controller {
         }
     }
 
-    public function showAll() {
+    public function showAll()
+    {
         $query = $this->materia->showAll($this->session->idplantel);
 
         if ($query) {
@@ -49,9 +54,10 @@ class Materia extends CI_Controller {
         }
     }
 
-    public function showAllClasificaciones() {
+    public function showAllClasificaciones()
+    {
         $query = $this->materia->showAllClasificaciones();
-       
+
         if ($query) {
             $result['clasificaciones'] = $this->materia->showAllClasificaciones();
         }
@@ -60,9 +66,10 @@ class Materia extends CI_Controller {
         }
     }
 
-    public function showAllNiveles() {
+    public function showAllNiveles()
+    {
         $query = $this->materia->showAllNiveles();
-     
+
         if ($query) {
             $result['niveles'] = $this->materia->showAllNiveles();
         }
@@ -71,67 +78,68 @@ class Materia extends CI_Controller {
         }
     }
 
-    public function showAllEspecialidades() {
+    public function showAllEspecialidades()
+    {
         $query = $this->materia->showAllEspecialidades($this->session->idplantel);
-       
+
         if ($query) {
-            $result['especialidades'] = $this->materia->showAllEspecialidades($this->session->idplantel);
-            ;
+            $result['especialidades'] = $this->materia->showAllEspecialidades($this->session->idplantel);;
         }
         if (isset($result) && !empty($result)) {
             echo json_encode($result);
         }
     }
 
-    public function addMateria() {
+    public function addMateria()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $config = array(
                 array(
                     'field' => 'idnivelestudio',
-                    'label' => 'Mes inicio',
+                    'label' => 'Nivel Estudio',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
                     'field' => 'idespecialidad',
-                    'label' => 'Nombre',
+                    'label' => 'Especialidad',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
                     'field' => 'clave',
-                    'label' => 'Clve',
+                    'label' => 'Clave',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ), array(
                     'field' => 'credito',
-                    'label' => 'Clve',
+                    'label' => 'Credito',
                     'rules' => 'trim|required|integer',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.',
-                        'integer' => 'Solo número enteros.'
+                        'required' => '%s es obligatorio.',
+                        'integer' => '%s solo número enteros.'
                     )
                 ),
                 array(
                     'field' => 'nombreclase',
-                    'label' => 'A. Paterno',
+                    'label' => 'Nombre Clase',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
                     'field' => 'idclasificacionmateria',
-                    'label' => 'Claficacion Materia',
+                    'label' => 'Claficación Materia',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
@@ -139,15 +147,15 @@ class Materia extends CI_Controller {
                     'label' => 'Se califica',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
-                 array(
+                array(
                     'field' => 'unidades',
                     'label' => 'Total de unidades',
                     'rules' => 'trim|is_natural',
                     'errors' => array(
-                        'is_natural' => 'Solo número natural.'
+                        'is_natural' => '%s solo número natural.'
                     )
                 )
             );
@@ -161,8 +169,8 @@ class Materia extends CI_Controller {
                     'nombreclase' => form_error('nombreclase'),
                     'clave' => form_error('clave'),
                     'credito' => form_error('credito'),
-                     'unidades' => form_error('unidades'),
-                     'secalifica' => form_error('secalifica'),
+                    'unidades' => form_error('unidades'),
+                    'secalifica' => form_error('secalifica'),
                     'idclasificacionmateria' => form_error('idclasificacionmateria')
                 );
             } else {
@@ -186,7 +194,7 @@ class Materia extends CI_Controller {
                         'nombreclase' => mb_strtoupper($nombreclase),
                         'clave' => mb_strtoupper($clave),
                         'credito' => $credito,
-                        'unidades'=> (isset($unidades) && !empty($unidades))? $unidades:0,
+                        'unidades' => (isset($unidades) && !empty($unidades)) ? $unidades : 0,
                         'secalifica' => $secalifica,
                         'idusuario' => $this->session->user_id,
                         'fecharegistro' => date('Y-m-d H:i:s')
@@ -210,7 +218,8 @@ class Materia extends CI_Controller {
         }
     }
 
-    public function addMateriaSeriada() {
+    public function addMateriaSeriada()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $config = array(
                 array(
@@ -262,7 +271,8 @@ class Materia extends CI_Controller {
         }
     }
 
-    public function updateMateria() {
+    public function updateMateria()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $config = array(
                 array(
@@ -313,7 +323,7 @@ class Materia extends CI_Controller {
                         'required' => 'Campo obligatorio.'
                     )
                 ),
-                 array(
+                array(
                     'field' => 'unidades',
                     'label' => 'Total de unidades',
                     'rules' => 'trim|is_natural',
@@ -356,8 +366,8 @@ class Materia extends CI_Controller {
                         'nombreclase' => mb_strtoupper($nombreclase),
                         'clave' => mb_strtoupper($clave),
                         'credito' => $credito,
-                        'unidades'=> (isset($unidades) && !empty($unidades))? $unidades:0,
-                        'secalifica'=>$secalifica,
+                        'unidades' => (isset($unidades) && !empty($unidades)) ? $unidades : 0,
+                        'secalifica' => $secalifica,
                         'idusuario' => $this->session->user_id,
                         'fecharegistro' => date('Y-m-d H:i:s')
                     );
@@ -380,7 +390,8 @@ class Materia extends CI_Controller {
         }
     }
 
-    public function updateMateriaSeriada() {
+    public function updateMateriaSeriada()
+    {
         $config = array(
             array(
                 'field' => 'idmateriasecundaria',
@@ -414,7 +425,8 @@ class Materia extends CI_Controller {
         }
     }
 
-    public function deleteMateria() {
+    public function deleteMateria()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $idmateria = $this->input->get('idmateria');
             $query = $this->materia->deleteMateria($idmateria);
@@ -437,7 +449,8 @@ class Materia extends CI_Controller {
         }
     }
 
-    public function showAllClases() {
+    public function showAllClases()
+    {
 
         $idplantel = $this->session->idplantel;
         $idmateria = $this->input->get('idmateria');
@@ -450,7 +463,8 @@ class Materia extends CI_Controller {
         }
     }
 
-    public function showDetalleMateria() {
+    public function showDetalleMateria()
+    {
         $idmateria = $this->input->get('idmateria');
         $query = $this->materia->showAllMateriaSeriada($idmateria);
         if ($query) {
@@ -461,7 +475,8 @@ class Materia extends CI_Controller {
         }
     }
 
-    public function deleteMateriaSeriada() {
+    public function deleteMateriaSeriada()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $id = $this->input->get('id');
 
@@ -488,7 +503,8 @@ class Materia extends CI_Controller {
         }
     }
 
-    public function detalle($idmateria = '') {
+    public function detalle($idmateria = '')
+    {
         $detalle_materia = $this->materia->detalleMateria($idmateria);
         $data = array(
             'detalle_materia' => $detalle_materia,
@@ -498,5 +514,4 @@ class Materia extends CI_Controller {
         $this->load->view('admin/materia/detalle', $data);
         $this->load->view('admin/footer');
     }
-
 }

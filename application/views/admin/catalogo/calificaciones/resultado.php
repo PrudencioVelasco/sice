@@ -43,7 +43,7 @@
                                                 <?php
                                                 if (isset($grupos) && !empty($grupos)) {
                                                     foreach ($grupos as $value) {
-                                                        echo  '<option value="' . $value->idgrupo . '">' . $value->nombrenivel . ' - ' . $value->nombregrupo . '</option>';
+                                                        echo  '<option value="' . $value->idgrupo . '">' . $value->nivelgrupo . ' - ' . $value->nombregrupo . '</option>';
                                                     }
                                                 }
                                                 ?>

@@ -18,14 +18,50 @@
  * 
  * @return string La cantidad convertida a letras
  */
-  
-function floordec($zahl,$decimals=1){  
-    $numero ="";
-    if (is_float($zahl)){
-    $numero =  floor($zahl*pow(10,$decimals))/pow(10,$decimals);
+
+function floordec($zahl, $decimals = 1)
+{
+    $numero = "";
+    if (is_float($zahl)) {
+        $numero =  floor($zahl * pow(10, $decimals)) / pow(10, $decimals);
+    } else {
+        $numero = $zahl;
     }
-    else{
-    $numero = $zahl;
+    return $numero;
+}
+function eliminarDecimalCero($zahl, $decimals = 1)
+{
+    $numero = "";
+    if (is_float($zahl)) {
+        $numpart = explode(".", $zahl);
+        if ((isset($numpart[1])) && ($numpart[1] > 0)) {
+            $numero =  floor($zahl * pow(10, $decimals)) / pow(10, $decimals);
+        } else {
+            if (isset($numpart[0]) && $numpart[0] == 10) {
+                $numero = $numpart[0];
+            } else {
+                $numero = floor($zahl * pow(10, $decimals)) / pow(10, $decimals);
+            }
+        }
+    } else {
+        $numpart = explode(".", $zahl);
+        if ((isset($numpart[1])) && ($numpart[1] > 0)) {
+            if (isset($numpart[0]) && $numpart[0] == 10) {
+                $numero = $numpart[0];
+            } else {
+                $numero =  floor($zahl * pow(10, $decimals)) / pow(10, $decimals);
+            }
+        } else {
+            if (isset($numpart[0]) && $numpart[0] == 10) {
+                $numero = $numpart[0];
+            } else {
+                if ((isset($numpart[1])) && ($numpart[1] > 0)) {
+                    $numero =  floor($zahl * pow(10, $decimals)) / pow(10, $decimals);
+                } else {
+                    $numero =  number_format($zahl, 1);
+                }
+            }
+        }
     }
     return $numero;
 }
@@ -314,449 +350,394 @@ function mostrarReprovado($idnivel, $niveleducativo, $total_materia, $total_apro
                 } else {
                     $mensaje = false;
                 }
-                 
-             }
-             
-         }
-         if($idnivel == 7){
-             if($total_reprovado > $reprobado_permitido){
-                 $mensaje = true;
-             }elseif($calificacion_optenida >= $calificacion_minima){
-                 if($total_reprovado > 0){
-                     $mensaje = true;
-                 }else{
-                     $mensaje = false;
-                 }
-                 
-             }
-             
-         }
-         if($idnivel == 8){
-             if($total_reprovado > $reprobado_permitido){
-                 $mensaje = true;
-             }elseif($calificacion_optenida >= $calificacion_minima){
-                 if($total_reprovado > 0){
-                     $mensaje = true;
-                 }else{
-                     $mensaje = false;
-                 }
-                 
-             }
-             
-         }
-     }
-     
-     return $mensaje;
- }
-function calcularReprovado($idnivel,$niveleducativo,$total_materia,$total_aprovado,$total_reprovado,$reprobado_permitido,$calificacion_optenida,$calificacion_minima)
- {
-     $mensaje = "";
-     if($niveleducativo == 1){
-         //PRIMARIA
-         if($idnivel == 1){
+            }
+        }
+        if ($idnivel == 7) {
+            if ($total_reprovado > $reprobado_permitido) {
+                $mensaje = true;
+            } elseif ($calificacion_optenida >= $calificacion_minima) {
+                if ($total_reprovado > 0) {
+                    $mensaje = true;
+                } else {
+                    $mensaje = false;
+                }
+            }
+        }
+        if ($idnivel == 8) {
+            if ($total_reprovado > $reprobado_permitido) {
+                $mensaje = true;
+            } elseif ($calificacion_optenida >= $calificacion_minima) {
+                if ($total_reprovado > 0) {
+                    $mensaje = true;
+                } else {
+                    $mensaje = false;
+                }
+            }
+        }
+    }
+
+    return $mensaje;
+}
+function calcularReprovado($idnivel, $niveleducativo, $total_materia, $total_aprovado, $total_reprovado, $reprobado_permitido, $calificacion_optenida, $calificacion_minima)
+{
+    $mensaje = "";
+    if ($niveleducativo == 1) {
+        //PRIMARIA
+        if ($idnivel == 1) {
             //PRIMER AÑO
-              if($total_reprovado > $reprobado_permitido){
-                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>"; 
-            }elseif($calificacion_optenida >= $calificacion_minima){
-                if($total_reprovado > 0){
-                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>"; 
-                }else{
-                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>"; 
+            if ($total_reprovado > $reprobado_permitido) {
+                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
+            } elseif ($calificacion_optenida >= $calificacion_minima) {
+                if ($total_reprovado > 0) {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
+                } else {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
                 }
-                
             }
-         }
-         if($idnivel == 2){
+        }
+        if ($idnivel == 2) {
             //SEGUNDO AÑO
-             if($total_reprovado > $reprobado_permitido){
-                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>"; 
-            }elseif($calificacion_optenida >= $calificacion_minima){
-                if($total_reprovado > 0){
-                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>"; 
-                }else{
-                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>"; 
+            if ($total_reprovado > $reprobado_permitido) {
+                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
+            } elseif ($calificacion_optenida >= $calificacion_minima) {
+                if ($total_reprovado > 0) {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
+                } else {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
                 }
-                
             }
-
-         }
-           if($idnivel == 3){
+        }
+        if ($idnivel == 3) {
             //TERCER AÑO
-             if($total_reprovado > $reprobado_permitido){
-                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>"; 
-            }elseif($calificacion_optenida >= $calificacion_minima){
-                if($total_reprovado > 0){
-                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>"; 
-                }else{
-                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>"; 
+            if ($total_reprovado > $reprobado_permitido) {
+                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
+            } elseif ($calificacion_optenida >= $calificacion_minima) {
+                if ($total_reprovado > 0) {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
+                } else {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
                 }
-                
             }
-
-         }
-           if($idnivel == 4){
+        }
+        if ($idnivel == 4) {
             //CUARTO AÑO
-             if($total_reprovado > $reprobado_permitido){
-                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>"; 
-            }elseif($calificacion_optenida >= $calificacion_minima){
-                if($total_reprovado > 0){
-                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>"; 
-                }else{
-                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>"; 
+            if ($total_reprovado > $reprobado_permitido) {
+                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
+            } elseif ($calificacion_optenida >= $calificacion_minima) {
+                if ($total_reprovado > 0) {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
+                } else {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
                 }
-                
             }
-
-         }
-           if($idnivel == 5){
+        }
+        if ($idnivel == 5) {
             //QUINTO AÑO
-             if($total_reprovado > $reprobado_permitido){
-                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>"; 
-            }elseif($calificacion_optenida >= $calificacion_minima){
-                if($total_reprovado > 0){
-                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>"; 
-                }else{
-                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>"; 
+            if ($total_reprovado > $reprobado_permitido) {
+                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
+            } elseif ($calificacion_optenida >= $calificacion_minima) {
+                if ($total_reprovado > 0) {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
+                } else {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
                 }
-                
             }
-
-         }
-           if($idnivel == 6){
+        }
+        if ($idnivel == 6) {
             //SEXO AÑO
-             if($total_reprovado > $reprobado_permitido){
-                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>"; 
-            }elseif($calificacion_optenida >= $calificacion_minima){
-                if($total_reprovado > 0){
-                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>"; 
-                }else{
-                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>"; 
+            if ($total_reprovado > $reprobado_permitido) {
+                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
+            } elseif ($calificacion_optenida >= $calificacion_minima) {
+                if ($total_reprovado > 0) {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
+                } else {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
                 }
-                
             }
+        }
+    }
+    if ($niveleducativo == 2) {
+        //SECUANDARIA
 
-         }
-
-     }
-     if($niveleducativo == 2){
-         //SECUANDARIA
-          
-         if($idnivel == 1){
+        if ($idnivel == 1) {
             //PRIMER  SEMESTRE
-              if($total_reprovado > $reprobado_permitido){
-                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>"; 
-            }elseif($calificacion_optenida >= $calificacion_minima){
-                if($total_reprovado > 0){
-                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>"; 
-                }else{
-                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>"; 
+            if ($total_reprovado > $reprobado_permitido) {
+                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
+            } elseif ($calificacion_optenida >= $calificacion_minima) {
+                if ($total_reprovado > 0) {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
+                } else {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
                 }
-                
             }
-         }
-         if($idnivel == 2){
+        }
+        if ($idnivel == 2) {
             //SEGUNDO SEMESTRE
-             if($total_reprovado > $reprobado_permitido){
-                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>"; 
-            }elseif($calificacion_optenida >= $calificacion_minima){
-                if($total_reprovado > 0){
-                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>"; 
-                }else{
-                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>"; 
+            if ($total_reprovado > $reprobado_permitido) {
+                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
+            } elseif ($calificacion_optenida >= $calificacion_minima) {
+                if ($total_reprovado > 0) {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
+                } else {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
                 }
-                
             }
-
-         }
-           if($idnivel == 3){
+        }
+        if ($idnivel == 3) {
             //TERCER SEMESTRE
-             if($total_reprovado > $reprobado_permitido){
-                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>"; 
-            }elseif($calificacion_optenida >= $calificacion_minima){
-                if($total_reprovado > 0){
-                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>"; 
-                }else{
-                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>"; 
+            if ($total_reprovado > $reprobado_permitido) {
+                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
+            } elseif ($calificacion_optenida >= $calificacion_minima) {
+                if ($total_reprovado > 0) {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
+                } else {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
                 }
-                
             }
-
-         }
-           if($idnivel == 4){
+        }
+        if ($idnivel == 4) {
             //CUARTO SEMESTRE
-             if($total_reprovado > $reprobado_permitido){
-                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>"; 
-            }elseif($calificacion_optenida >= $calificacion_minima){
-                if($total_reprovado > 0){
-                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>"; 
-                }else{
-                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>"; 
+            if ($total_reprovado > $reprobado_permitido) {
+                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
+            } elseif ($calificacion_optenida >= $calificacion_minima) {
+                if ($total_reprovado > 0) {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
+                } else {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
                 }
-                
             }
-
-         }
-           if($idnivel == 5){
+        }
+        if ($idnivel == 5) {
             //QUINTO SEMESTRE
-             if($total_reprovado > $reprobado_permitido){
-                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>"; 
-            }elseif($calificacion_optenida >= $calificacion_minima){
-                if($total_reprovado > 0){
-                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>"; 
-                }else{
-                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>"; 
+            if ($total_reprovado > $reprobado_permitido) {
+                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
+            } elseif ($calificacion_optenida >= $calificacion_minima) {
+                if ($total_reprovado > 0) {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
+                } else {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
                 }
-                
             }
-
-         }
-           if($idnivel == 6){
+        }
+        if ($idnivel == 6) {
             //SEXO SEMESTRE
-             if($total_reprovado > $reprobado_permitido){
-                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>"; 
-            }elseif($calificacion_optenida >= $calificacion_minima){
-                if($total_reprovado > 0){
-                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>"; 
-                }else{
-                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>"; 
+            if ($total_reprovado > $reprobado_permitido) {
+                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
+            } elseif ($calificacion_optenida >= $calificacion_minima) {
+                if ($total_reprovado > 0) {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
+                } else {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
                 }
-                
             }
-
-         }
-            
-
-     }
-     if($niveleducativo == 3){
+        }
+    }
+    if ($niveleducativo == 3) {
         //PREPARATORIA
-        if($idnivel == 1){
+        if ($idnivel == 1) {
             //PRIMER  SEMESTRE
-              if($total_reprovado > $reprobado_permitido){
-                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>"; 
-            }elseif($calificacion_optenida >= $calificacion_minima){
-                if($total_reprovado > 0){
-                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>"; 
-                }else{
-                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>"; 
+            if ($total_reprovado > $reprobado_permitido) {
+                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
+            } elseif ($calificacion_optenida >= $calificacion_minima) {
+                if ($total_reprovado > 0) {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
+                } else {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
                 }
-                
             }
-         }
-         if($idnivel == 2){
+        }
+        if ($idnivel == 2) {
             //SEGUNDO SEMESTRE
-             if($total_reprovado > $reprobado_permitido){
-                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>"; 
-            }elseif($calificacion_optenida >= $calificacion_minima){
-                if($total_reprovado > 0){
-                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>"; 
-                }else{
-                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>"; 
+            if ($total_reprovado > $reprobado_permitido) {
+                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
+            } elseif ($calificacion_optenida >= $calificacion_minima) {
+                if ($total_reprovado > 0) {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
+                } else {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
                 }
-                
             }
-
-         }
-           if($idnivel == 3){
+        }
+        if ($idnivel == 3) {
             //TERCER SEMESTRE
-             if($total_reprovado > $reprobado_permitido){
-                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>"; 
-            }elseif($calificacion_optenida >= $calificacion_minima){
-                if($total_reprovado > 0){
-                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>"; 
-                }else{
-                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>"; 
+            if ($total_reprovado > $reprobado_permitido) {
+                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
+            } elseif ($calificacion_optenida >= $calificacion_minima) {
+                if ($total_reprovado > 0) {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
+                } else {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
                 }
-                
             }
-
-         }
-           if($idnivel == 4){
+        }
+        if ($idnivel == 4) {
             //CUARTO SEMESTRE
-             if($total_reprovado > $reprobado_permitido){
-                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>"; 
-            }elseif($calificacion_optenida >= $calificacion_minima){
-                if($total_reprovado > 0){
-                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>"; 
-                }else{
-                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>"; 
+            if ($total_reprovado > $reprobado_permitido) {
+                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
+            } elseif ($calificacion_optenida >= $calificacion_minima) {
+                if ($total_reprovado > 0) {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
+                } else {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
                 }
-                
             }
-
-         }
-           if($idnivel == 5){
+        }
+        if ($idnivel == 5) {
             //QUINTO SEMESTRE
-             if($total_reprovado > $reprobado_permitido){
-                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>"; 
-            }elseif($calificacion_optenida >= $calificacion_minima){
-                if($total_reprovado > 0){
-                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>"; 
-                }else{
-                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>"; 
+            if ($total_reprovado > $reprobado_permitido) {
+                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
+            } elseif ($calificacion_optenida >= $calificacion_minima) {
+                if ($total_reprovado > 0) {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
+                } else {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
                 }
-                
             }
-
-         }
-           if($idnivel == 6){
+        }
+        if ($idnivel == 6) {
             //SEXO SEMESTRE
-             if($total_reprovado > $reprobado_permitido){
-                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>"; 
-            }elseif($calificacion_optenida >= $calificacion_minima){
-                if($total_reprovado > 0){
-                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>"; 
-                }else{
-                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>"; 
+            if ($total_reprovado > $reprobado_permitido) {
+                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
+            } elseif ($calificacion_optenida >= $calificacion_minima) {
+                if ($total_reprovado > 0) {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
+                } else {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
                 }
-                
             }
-
-         }
-     }
-     if($niveleducativo == 5){
-         //PREPARATORIA
-         if($idnivel == 1){
-             //PRIMER  SEMESTRE
-             if($total_reprovado > $reprobado_permitido){
-                 $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
-             }elseif($calificacion_optenida >= $calificacion_minima){
-                 if($total_reprovado > 0){
-                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
-                 }else{
-                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
-                 }
-                 
-             }
-         }
-         if($idnivel == 2){
-             //SEGUNDO SEMESTRE
-             if($total_reprovado > $reprobado_permitido){
-                 $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
-             }elseif($calificacion_optenida >= $calificacion_minima){
-                 if($total_reprovado > 0){
-                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
-                 }else{
-                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
-                 }
-                 
-             }
-             
-         }
-         if($idnivel == 3){
-             //TERCER SEMESTRE
-             if($total_reprovado > $reprobado_permitido){
-                 $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
-             }elseif($calificacion_optenida >= $calificacion_minima){
-                 if($total_reprovado > 0){
-                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
-                 }else{
-                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
-                 }
-                 
-             }
-             
-         }
-         if($idnivel == 4){
-             //CUARTO SEMESTRE
-             if($total_reprovado > $reprobado_permitido){
-                 $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
-             }elseif($calificacion_optenida >= $calificacion_minima){
-                 if($total_reprovado > 0){
-                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
-                 }else{
-                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
-                 }
-                 
-             }
-             
-         }
-         if($idnivel == 5){
-             //QUINTO SEMESTRE
-             if($total_reprovado > $reprobado_permitido){
-                 $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
-             }elseif($calificacion_optenida >= $calificacion_minima){
-                 if($total_reprovado > 0){
-                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
-                 }else{
-                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
-                 }
-                 
-             }
-             
-         }
-         if($idnivel == 6){
-             //SEXO SEMESTRE
-             if($total_reprovado > $reprobado_permitido){
-                 $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
-             }elseif($calificacion_optenida >= $calificacion_minima){
-                 if($total_reprovado > 0){
-                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
-                 }else{
-                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
-                 }
-                 
-             }
-             
-         }
-         if($idnivel == 7){
-             //SEPTIMO SEMESTRE
-             if($total_reprovado > $reprobado_permitido){
-                 $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
-             }elseif($calificacion_optenida >= $calificacion_minima){
-                 if($total_reprovado > 0){
-                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
-                 }else{
-                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
-                 }
-                 
-             }
-             
-         }
-         if($idnivel == 8){
-             //OCTAVO SEMESTRE
-             if($total_reprovado > $reprobado_permitido){
-                 $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
-             }elseif($calificacion_optenida >= $calificacion_minima){
-                 if($total_reprovado > 0){
-                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
-                 }else{
-                     $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
-                 }
-                 
-             }
-             
-         }
-     }
-     return $mensaje;
- }
- function validar_calificacion($calificacion,$calificacion_aprovatoria)
-{ 
-    if($calificacion < $calificacion_aprovatoria){
+        }
+    }
+    if ($niveleducativo == 5) {
+        //PREPARATORIA
+        if ($idnivel == 1) {
+            //PRIMER  SEMESTRE
+            if ($total_reprovado > $reprobado_permitido) {
+                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
+            } elseif ($calificacion_optenida >= $calificacion_minima) {
+                if ($total_reprovado > 0) {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
+                } else {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
+                }
+            }
+        }
+        if ($idnivel == 2) {
+            //SEGUNDO SEMESTRE
+            if ($total_reprovado > $reprobado_permitido) {
+                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
+            } elseif ($calificacion_optenida >= $calificacion_minima) {
+                if ($total_reprovado > 0) {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
+                } else {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
+                }
+            }
+        }
+        if ($idnivel == 3) {
+            //TERCER SEMESTRE
+            if ($total_reprovado > $reprobado_permitido) {
+                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
+            } elseif ($calificacion_optenida >= $calificacion_minima) {
+                if ($total_reprovado > 0) {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
+                } else {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
+                }
+            }
+        }
+        if ($idnivel == 4) {
+            //CUARTO SEMESTRE
+            if ($total_reprovado > $reprobado_permitido) {
+                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
+            } elseif ($calificacion_optenida >= $calificacion_minima) {
+                if ($total_reprovado > 0) {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
+                } else {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
+                }
+            }
+        }
+        if ($idnivel == 5) {
+            //QUINTO SEMESTRE
+            if ($total_reprovado > $reprobado_permitido) {
+                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
+            } elseif ($calificacion_optenida >= $calificacion_minima) {
+                if ($total_reprovado > 0) {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
+                } else {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
+                }
+            }
+        }
+        if ($idnivel == 6) {
+            //SEXO SEMESTRE
+            if ($total_reprovado > $reprobado_permitido) {
+                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
+            } elseif ($calificacion_optenida >= $calificacion_minima) {
+                if ($total_reprovado > 0) {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
+                } else {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
+                }
+            }
+        }
+        if ($idnivel == 7) {
+            //SEPTIMO SEMESTRE
+            if ($total_reprovado > $reprobado_permitido) {
+                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
+            } elseif ($calificacion_optenida >= $calificacion_minima) {
+                if ($total_reprovado > 0) {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
+                } else {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
+                }
+            }
+        }
+        if ($idnivel == 8) {
+            //OCTAVO SEMESTRE
+            if ($total_reprovado > $reprobado_permitido) {
+                $mensaje .= "<label style='color:red; font-size: 16px;'>REPROBADO</label>";
+            } elseif ($calificacion_optenida >= $calificacion_minima) {
+                if ($total_reprovado > 0) {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label> <small style='color:red;'> Pero tiene materias pendiente por recuperar.</small>";
+                } else {
+                    $mensaje .= "<label style='color:green; font-size: 16px;'>APROBADO</label>";
+                }
+            }
+        }
+    }
+    return $mensaje;
+}
+function validar_calificacion($calificacion, $calificacion_aprovatoria)
+{
+    if ($calificacion < $calificacion_aprovatoria) {
         return true;
-    }else{
+    } else {
         return false;
     }
 }
-function cutNum($num, $precision = 2) {
+function cutNum($num, $precision = 2)
+{
     return floor($num) . substr(str_replace(floor($num), '', $num), 0, $precision + 1);
-
 }
 function numberFormatPrecision($number, $precision = 2, $separator = '.')
 {
     $numberParts = explode($separator, $number);
     $response = $numberParts[0];
-    if(count($numberParts)>1){
+    if (count($numberParts) > 1) {
         $response .= $separator;
         $response .= substr($numberParts[1], 0, $precision);
     }
     return $response;
 }
-function obtenerPorcentaje($cantidad, $total) {
+function obtenerPorcentaje($cantidad, $total)
+{
     $porcentaje = ((float)$cantidad * 100) / $total; // Regla de tres
     $porcentaje = round($porcentaje, 0);  // Quitar los decimales
     return $porcentaje;
 }
-function dias_pasados($fecha_inicial, $fecha_fin) {
+function dias_pasados($fecha_inicial, $fecha_fin)
+{
     $dias = (strtotime($fecha_fin) - strtotime($fecha_inicial)) / 86400;
     $dias = abs($dias);
     $dias = floor($dias);
@@ -766,13 +747,7 @@ function dias_pasados($fecha_inicial, $fecha_fin) {
 function num_to_letras($numero, $moneda = 'PESO', $subfijo = 'M.N.')
 {
     $xarray = array(
-        0 => 'Cero'
-        , 1 => 'UN', 'DOS', 'TRES', 'CUATRO', 'CINCO', 'SEIS', 'SIETE', 'OCHO', 'NUEVE'
-        , 'DIEZ', 'ONCE', 'DOCE', 'TRECE', 'CATORCE', 'QUINCE', 'DIECISEIS', 'DIECISIETE', 'DIECIOCHO', 'DIECINUEVE'
-        , 'VEINTI', 30 => 'TREINTA', 40 => 'CUARENTA', 50 => 'CINCUENTA'
-        , 60 => 'SESENTA', 70 => 'SETENTA', 80 => 'OCHENTA', 90 => 'NOVENTA'
-        , 100 => 'CIENTO', 200 => 'DOSCIENTOS', 300 => 'TRESCIENTOS', 400 => 'CUATROCIENTOS', 500 => 'QUINIENTOS'
-        , 600 => 'SEISCIENTOS', 700 => 'SETECIENTOS', 800 => 'OCHOCIENTOS', 900 => 'NOVECIENTOS'
+        0 => 'Cero', 1 => 'UN', 'DOS', 'TRES', 'CUATRO', 'CINCO', 'SEIS', 'SIETE', 'OCHO', 'NUEVE', 'DIEZ', 'ONCE', 'DOCE', 'TRECE', 'CATORCE', 'QUINCE', 'DIECISEIS', 'DIECISIETE', 'DIECIOCHO', 'DIECINUEVE', 'VEINTI', 30 => 'TREINTA', 40 => 'CUARENTA', 50 => 'CINCUENTA', 60 => 'SESENTA', 70 => 'SETENTA', 80 => 'OCHENTA', 90 => 'NOVENTA', 100 => 'CIENTO', 200 => 'DOSCIENTOS', 300 => 'TRESCIENTOS', 400 => 'CUATROCIENTOS', 500 => 'QUINIENTOS', 600 => 'SEISCIENTOS', 700 => 'SETECIENTOS', 800 => 'OCHOCIENTOS', 900 => 'NOVECIENTOS'
     );
 
     $numero = trim($numero);
@@ -865,12 +840,12 @@ function num_to_letras($numero, $moneda = 'PESO', $subfijo = 'M.N.')
         } // ENDDO
         # si la cadena obtenida termina en MILLON o BILLON, entonces le agrega al final la conjuncion DE
         if ('ILLON' == substr(trim($xcadena), -5, 5)) {
-            $xcadena.= ' DE';
+            $xcadena .= ' DE';
         }
 
         # si la cadena obtenida en MILLONES o BILLONES, entonces le agrega al final la conjuncion DE
         if ('ILLONES' == substr(trim($xcadena), -7, 7)) {
-            $xcadena.= ' DE';
+            $xcadena .= ' DE';
         }
 
         # depurar leyendas finales
@@ -878,16 +853,16 @@ function num_to_letras($numero, $moneda = 'PESO', $subfijo = 'M.N.')
             switch ($xz) {
                 case 0:
                     if ('1' == trim(substr($XAUX, $xz * 6, 6))) {
-                        $xcadena.= 'UN BILLON ';
+                        $xcadena .= 'UN BILLON ';
                     } else {
-                        $xcadena.= ' BILLONES ';
+                        $xcadena .= ' BILLONES ';
                     }
                     break;
                 case 1:
                     if ('1' == trim(substr($XAUX, $xz * 6, 6))) {
-                        $xcadena.= 'UN MILLON ';
+                        $xcadena .= 'UN MILLON ';
                     } else {
-                        $xcadena.= ' MILLONES ';
+                        $xcadena .= ' MILLONES ';
                     }
                     break;
                 case 2:
@@ -898,7 +873,7 @@ function num_to_letras($numero, $moneda = 'PESO', $subfijo = 'M.N.')
                         $xcadena = "UN {$moneda} {$xdecimales}/100 {$subfijo}";
                     }
                     if ($numero >= 2) {
-                        $xcadena.= " {$moneda}S {$xdecimales}/100 {$subfijo}"; //
+                        $xcadena .= " {$moneda}S {$xdecimales}/100 {$subfijo}"; //
                     }
                     break;
             } // endswitch ($xz)
@@ -936,6 +911,7 @@ function subfijo($cifras)
 /*  EOF  */
 
 
-function generateRandomString($length = 10) { 
-    return substr(str_shuffle("0123456789"), 0, $length); 
-} 
+function generateRandomString($length = 10)
+{
+    return substr(str_shuffle("0123456789"), 0, $length);
+}

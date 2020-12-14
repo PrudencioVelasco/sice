@@ -47,7 +47,12 @@
                                                 <tr v-for="horario in horarios" class="table-default">
 
                                                     <td>{{horario.mesinicio}} - {{horario.mesfin}} {{horario.yearfin}}</td>
-                                                    <td>{{horario.nombrenivel}} - {{horario.nombregrupo}}</td>
+                                                    <td>
+                                                    <label v-if="horario.idniveleducativo == 3 || horario.idniveleducativo == 5"> {{horario.numeroromano}}  {{horario.nombregrupo}}</label>
+                                                    <label v-else> {{horario.numeroordinaria}}  {{horario.nombregrupo}}</label>
+                                                   
+                                                    
+                                                    </td>
                                                     <td>{{horario.nombreturno}}</td>
                                                      <td>{{horario.nombreespecialidad}}</td>
                                                     <td>
@@ -56,24 +61,29 @@
                                                         <span v-else class="label label-danger">Finalizado</span>
                                                     </td>
                                                     <td align="right">
-                                                        <a href="#" class="btn btn-danger  btn-sm waves-effect waves-black" @click="deleteHorario(horario.idhorario)" title="Eliminar Datos"><i class="fa fa-trash"></i> Eliminar</a>
-
-                                                        <button v-if="horario.periodoactivo==1"  type="button" class="btn btn-success btn-sm waves-effect waves-black" @click=" abrirEditModal(); selectHorario(horario)" title="Modificar Datos"> <i class="fa fa-edit" aria-hidden="true"></i>
-                                                            Editar
+                                                    <div class="btn-group" role="group">
+                                                    <div class="btn-group" role="group">
+                                                        <button type="button" class="btn btn-info waves-effect dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <i class='fa fa-plus'></i>  Opciones
+                                                            <span class="caret"></span>
                                                         </button>
-
-                                                        <a class="btn btn-info btn-sm waves-effect waves-black" v-bind:href="'detalle/'+ horario.idhorario" ><i class="fa fa-book" aria-hidden="true"></i>
-                                                            Detalle</a>
+                                                        <ul class="dropdown-menu"> 
+                                                            <li ><a href="#" @click="deleteHorario(horario.idhorario)"  title="Eliminar Datos"><i style="color:#fc2222;" class="fa fa-trash"></i> Eliminar</a></li> 
+                                                            <li><a href="#" @click=" abrirEditModal(); selectHorario(horario)" title="Modificar Datos"><i style="color:#789dfc;" class="fa fa-edit"></i> Editar</a></li>
+                                                            <li><a href="#" v-bind:href="'detalle/'+ horario.idhorario"><i style="color:#000000;" class="fa fa-list-alt" aria-hidden="true"></i> Detalles</a></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
 
                                                     </td>
                                                 </tr>
                                                 <tr v-if="emptyResult">
-                                                    <td colspan="7" class="text-center h4">No encontrado</td>
+                                                    <td colspan="6" class="text-center h4">No encontrado</td>
                                                 </tr>
                                             </tbody>
                                             <tfoot>
                                                 <tr>
-                                                    <td colspan="7" align="right">
+                                                    <td colspan="6" align="right">
                                             <pagination
                                                 :current_page="currentPage"
                                                 :row_count_page="rowCountPage"

@@ -38,7 +38,7 @@
                                             <select style="border-bottom: solid #ebebeb 2px;" ref="idgrupo" name="grupo" class="form-control">
                                                 <option value="">-- GRUPO --</option>  
                                                 <option v-for="option in grupos" v-bind:value="option.idgrupo">
-                                                    {{ option.nombrenivel }}  {{ option.nombregrupo }}
+                                                    {{ option.nivelgrupo }}  {{ option.nombregrupo }}
                                                 </option>
                                             </select> 
                                         </div>

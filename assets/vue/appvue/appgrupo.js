@@ -4,6 +4,10 @@ var my_var_1 = this_js_script.attr('data-my_var_1');
 if (typeof my_var_1 === "undefined") {
     var my_var_1 = 'some_default_value';
 }
+var my_var_2 = this_js_script.attr('data-my_var_2');
+if (typeof my_var_2 === "undefined") {
+    var my_var_2 = 'some_default_value';
+}
 
 
 Vue.config.devtools = true;
@@ -11,6 +15,7 @@ var v = new Vue({
     el: '#app',
     data: {
         url: my_var_1,
+        idniveleducativo: my_var_2,
         addModal: false,
         editModal: false,
         cargando: false,
@@ -207,6 +212,7 @@ var v = new Vue({
             $('#addRegister').modal('hide');
             v.newGrupo = {
                 idnivelestudio: '',
+                idespecialidad: '',
                 idturno: '',
                 nombregrupo: '',
                 smserror: ''};

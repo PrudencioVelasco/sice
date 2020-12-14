@@ -35,7 +35,7 @@
 
                                     <li>
                                         <i class="fa fa-home" style="color:#098fd4;" ></i> <label> 
-                                            <span v-if="grupo_actual" >{{grupo_actual.nombrenivel}} {{grupo_actual.nombregrupo}} - {{grupo_actual.nombreturno}}</span>
+                                            <span v-if="grupo_actual" >{{grupo_actual.nivelgrupo}} {{grupo_actual.nombregrupo}} - {{grupo_actual.nombreturno}}</span>
                                             <span v-if="!grupo_actual">Grupo no asignado.</span> 
                                         </label>
                                     </li>
@@ -387,18 +387,18 @@
                                                 <div>
                                                     <ul>
                                                         <li>  CURP: <label for=""><?php echo $detalle->curp; ?></label> </li>
-                                                        <li><i class="fa fa-phone"></i> Núm Celular:  <label for=""><?php echo $detalle->telefonocelular; ?></label></li>
+                                                        <li><i class="fa fa-phone"></i> Núm Celular:  <label for=""><?php ($detalle->telefonocelular > 0 && !empty($detalle->telefonocelular))? $detalle->telefonocelular:''; ?></label></li>
                                                         <li><i class="fa fa-phone"></i> Núm Emergencia: <label for=""> <?php echo $detalle->telefonoemergencia; ?></label></li>
-                                                        <li>L. Nacimiento: <label for=""><?php echo $detalle->lugarnacimiento; ?></label></li>
-                                                        <li>Nacionalidad: <label for=""><?php echo $detalle->nacionalidad; ?></label> </li>
-                                                        <li>Servicio Medico: <label for=""><?php echo $detalle->serviciomedico; ?></label></li>
-                                                        <li>Alergia o Padecimiento: <label for=""><?php echo $detalle->alergiaopadecimiento; ?></label></li>
+                                                        <li>L. Nacimiento: <label for=""><?php ($detalle->lugarnacimiento != 'NO DEFINIDO' && !empty($detalle->lugarnacimiento))? $detalle->lugarnacimiento:''; ?></label></li>
+                                                        <li>Nacionalidad: <label for=""><?php ($detalle->nacionalidad != 'NO DEFINIDO' && !empty($detalle->nacionalidad))? $detalle->nacionalidad:''; ?></label> </li>
+                                                        <li>Servicio Medico: <label for=""><?php  ($detalle->serviciomedico != 'NO DEFINIDO' && !empty($detalle->serviciomedico))? $detalle->serviciomedico:''; ?></label></li>
+                                                        <li>Alergia o Padecimiento: <label for=""><?php ($detalle->alergiaopadecimiento != 'NO DEFINIDO' && !empty($detalle->alergiaopadecimiento))? $detalle->alergiaopadecimiento:''; ?></label></li>
                                                         <li>T. Sanguineo: <label for=""><?php echo $detalle->tiposanguineo; ?></label></li>
-                                                        <li>Peso: <label for=""><?php echo $detalle->peso; ?></label></li>
-                                                        <li>Estatura: <label for=""><?php echo $detalle->estatura; ?></label></li>
-                                                        <li>Núm Folio: <label for=""><?php echo $detalle->numfolio; ?></label></li>
-                                                        <li>Núm Acta: <label for=""><?php echo $detalle->numacta; ?></label></li>
-                                                        <li>Núm Libro: <label for=""><?php echo $detalle->numlibro; ?></label></li>
+                                                        <li>Peso: <label for=""><?php ($detalle->peso > 0 && !empty($detalle->peso))? $detalle->peso:''; ?></label></li>
+                                                        <li>Estatura: <label for=""><?php ($detalle->estatura > 0 && !empty($detalle->estatura))? $detalle->estatura:''; ?></label></li>
+                                                        <li>Núm Folio: <label for=""><?php ($detalle->numfolio != 'NO DEFINIDO' && !empty($detalle->numfolio))? $detalle->numfolio:''; ?></label></li>
+                                                        <li>Núm Acta: <label for=""><?php ($detalle->numacta != 'NO DEFINIDO' && !empty($detalle->numacta))? $detalle->numacta:''; ?></label></li>
+                                                        <li>Núm Libro: <label for=""><?php ($detalle->numlibro != 'NO DEFINIDO' && !empty($detalle->numlibro))? $detalle->numlibro:''; ?></label></li>
                                                         <li>F. Nacimiento: <label for=""><?php echo $detalle->fechanacimiento; ?></label></li>
                                                         <li>Sexo: <label for=""><?php
                                                                 if ($detalle->sexo == 1) {
@@ -407,8 +407,8 @@
                                                                     echo "MUJER";
                                                                 }
                                                                 ?></label></li>
-                                                        <li>Correo: <label for=""><?php echo $detalle->correo; ?></label></li>
-                                                        <li>Domicilio: <label for=""><?php echo $detalle->domicilio; ?></label></li>
+                                                        <li>Correo: <label for=""><?php (!empty($detalle->correo))? $detalle->correo:'';?></label></li>
+                                                        <li>Domicilio: <label for=""><?php (!empty($detalle->domicilio))? $detalle->domicilio:'';?></label></li>
                                                     </ul>
                                                 </div>
                                             </div>
@@ -420,9 +420,9 @@
                                                             ?>
                                                         <ul>
                                                             <li>Nombre: <label for=""><?php echo $value->nombre . " " . $value->apellidop . " " . $value->apellidom ?></label></li>
-                                                            <li>Escolaridad: <label for=""><?php echo $value->escolaridad; ?></label></li>
-                                                            <li>Ocupación: <label for=""><?php echo $value->ocupacion; ?></label></li>
-                                                            <li>Donde Trabaja: <label for=""><?php echo $value->dondetrabaja; ?></label></li>
+                                                            <li>Escolaridad: <label for=""><?php ($value->escolaridad != 'NO DEFINIDO' && !empty($value->escolaridad))? $value->escolaridad:'';?></label></li>
+                                                            <li>Ocupación: <label for=""><?php ($value->ocupacion != 'NO DEFINIDO' && !empty($value->ocupacion))? $value->ocupacion:''; ?></label></li>
+                                                            <li>Donde Trabaja: <label for=""><?php ($value->dondetrabaja != 'NO DEFINIDO' && !empty($value->dondetrabaja))? $value->dondetrabaja:'';?></label></li>
                                                             <li>Telefono: <label for=""><?php echo $value->telefono; ?></label></li>
                                                             <li>Correo: <label for=""><?php echo $value->correo; ?></label></li>
                                                             <li>Domicilio: <label for=""><?php echo $value->direccion; ?></label></li>

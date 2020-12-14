@@ -1,11 +1,13 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 date_default_timezone_set("America/Mexico_City");
 
-class Profesor extends CI_Controller {
+class Profesor extends CI_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         if (!isset($_SESSION['user_id'])) {
             $this->session->set_flashdata('flash_data', 'You don\'t have access! ss');
@@ -20,14 +22,16 @@ class Profesor extends CI_Controller {
         //$this->load->library('encrypt'); 
     }
 
-    public function inicio() {
+    public function inicio()
+    {
         Permission::grant(uri_string());
         $this->load->view('admin/header');
         $this->load->view('admin/profesor/index');
         $this->load->view('admin/footer');
     }
 
-    public function showAll() {
+    public function showAll()
+    {
         //Permission::grant(uri_string()); 
         $idplantel = $this->session->idplantel;
         $query = $this->profesor->showAll($idplantel);
@@ -39,7 +43,8 @@ class Profesor extends CI_Controller {
         }
     }
 
-    public function showDetalleProfesor() {
+    public function showDetalleProfesor()
+    {
         $idprofesor = $this->input->get('idprofesor');
         $query = $this->profesor->detalleProfesor($idprofesor);
         if ($query) {
@@ -50,7 +55,8 @@ class Profesor extends CI_Controller {
         }
     }
 
-    public function subirFoto() {
+    public function subirFoto()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             if (isset($_FILES['file']['name']) && !empty($_FILES['file']['name'])) {
                 $mi_archivo = 'file';
@@ -102,16 +108,17 @@ class Profesor extends CI_Controller {
         }
     }
 
-    public function addProfesor() {
+    public function addProfesor()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $config = array(
                 array(
                     'field' => 'cedula',
-                    'label' => 'Nombre',
+                    'label' => 'Cédula',
                     'rules' => 'trim|required|integer',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.',
-                        'integer' => 'Debe de ser solo número.'
+                        'required' => '%s es obligatorio.',
+                        'integer' => '%s debe ser solo número.'
                     )
                 ),
                 array(
@@ -119,7 +126,7 @@ class Profesor extends CI_Controller {
                     'label' => 'Nombre',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
@@ -127,23 +134,23 @@ class Profesor extends CI_Controller {
                     'label' => 'A. Paterno',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ), array(
                     'field' => 'profesion',
-                    'label' => 'A. Paterno',
+                    'label' => 'Profesión ',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
                     'field' => 'correo',
-                    'label' => 'Correo',
+                    'label' => 'Correo electronico',
                     'rules' => 'trim|required|valid_email',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.',
-                        'valid_email' => 'Correo no valido.'
+                        'required' => '%s es obligatorio.',
+                        'valid_email' => '%s  no valido.'
                     )
                 ),
                 array(
@@ -151,10 +158,10 @@ class Profesor extends CI_Controller {
                     'label' => 'Contraseña',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
-                 array(
+                array(
                     'field' => 'urlvideoconferencia',
                     'label' => 'URL Videoconferencia',
                     'rules' => 'trim|valid_url',
@@ -162,12 +169,12 @@ class Profesor extends CI_Controller {
                         'valid_url' => 'Formato de la URL invalido.'
                     )
                 ),
-                  array(
+                array(
                     'field' => 'numeroanfitrion',
-                    'label' => 'Hora final',
+                    'label' => 'Número anfitrion',
                     'rules' => 'trim|integer',
-                    'errors' => array( 
-                         'integer' => 'Debe de ser numero.'
+                    'errors' => array(
+                        'integer' => '%s  debe ser número.'
                     )
                 )
             );
@@ -182,14 +189,14 @@ class Profesor extends CI_Controller {
                     'correo' => form_error('correo'),
                     'password' => form_error('password'),
                     'profesion' => form_error('profesion'),
-                      'urlvideoconferencia' => form_error('urlvideoconferencia'),
-                     'numeroanfitrion' => form_error('numeroanfitrion')
+                    'urlvideoconferencia' => form_error('urlvideoconferencia'),
+                    'numeroanfitrion' => form_error('numeroanfitrion')
                 );
             } else {
                 $cedula = trim($this->input->post('cedula'));
                 $correo = trim($this->input->post('correo'));
-                $validar = $this->profesor->validarCedula($cedula,'', $this->session->idplantel);
-                 $validar_correo = $this->profesor->validarCorreo($correo, $this->session->idplantel);
+                $validar = $this->profesor->validarCedula($cedula, '', $this->session->idplantel);
+                $validar_correo = $this->profesor->validarCorreo($correo, $this->session->idplantel);
                 if ($validar == FALSE && $validar_correo == FALSE) {
                     $password_encrypted = password_hash(trim($this->input->post('password')), PASSWORD_BCRYPT);
                     $data = array(
@@ -238,16 +245,17 @@ class Profesor extends CI_Controller {
         }
     }
 
-    public function updateProfesor() {
+    public function updateProfesor()
+    {
         # code...
         if (Permission::grantValidar(uri_string()) == 1) {
             $config = array(
                 array(
                     'field' => 'cedula',
-                    'label' => 'Nombre',
+                    'label' => 'Cédula',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
@@ -255,7 +263,7 @@ class Profesor extends CI_Controller {
                     'label' => 'Nombre',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
@@ -263,23 +271,23 @@ class Profesor extends CI_Controller {
                     'label' => 'A. Paterno',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ), array(
                     'field' => 'profesion',
-                    'label' => 'A. Paterno',
+                    'label' => 'Profesion',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
                     'field' => 'correo',
-                    'label' => 'Correo',
+                    'label' => 'Correo electronico',
                     'rules' => 'trim|required|valid_email',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.',
-                        'valid_email' => 'Correo no valido.'
+                        'required' => '%s es obligatorio.',
+                        'valid_email' => '%s no valido.'
                     )
                 ),
                 array(
@@ -287,10 +295,10 @@ class Profesor extends CI_Controller {
                     'label' => 'Contraseña',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
-                 array(
+                array(
                     'field' => 'urlvideoconferencia',
                     'label' => 'URL Videoconferencia',
                     'rules' => 'trim|valid_url',
@@ -298,12 +306,12 @@ class Profesor extends CI_Controller {
                         'valid_url' => 'Formato de la URL invalido.'
                     )
                 ),
-                  array(
+                array(
                     'field' => 'numeroanfitrion',
-                    'label' => 'Hora final',
+                    'label' => 'Número anfitrion',
                     'rules' => 'trim|integer',
-                    'errors' => array( 
-                         'integer' => 'Debe de ser numero.'
+                    'errors' => array(
+                        'integer' => '%s debe ser número.'
                     )
                 )
             );
@@ -318,15 +326,15 @@ class Profesor extends CI_Controller {
                     'correo' => form_error('correo'),
                     'password' => form_error('password'),
                     'profesion' => form_error('profesion'),
-                      'urlvideoconferencia' => form_error('urlvideoconferencia'),
-                     'numeroanfitrion' => form_error('numeroanfitrion')
+                    'urlvideoconferencia' => form_error('urlvideoconferencia'),
+                    'numeroanfitrion' => form_error('numeroanfitrion')
                 );
             } else {
                 $id = $this->input->post('idprofesor');
                 $cedula = trim($this->input->post('cedula'));
-                 $correo = trim($this->input->post('correo'));
+                $correo = trim($this->input->post('correo'));
                 $validar = $this->profesor->validarCedula($cedula, $id, $this->session->idplantel);
-                  $validar_correo = $this->profesor->validarCorreoUpdate($correo, $id, $this->session->idplantel);
+                $validar_correo = $this->profesor->validarCorreoUpdate($correo, $id, $this->session->idplantel);
                 if ($validar == FALSE && $validar_correo == false) {
                     $data = array(
                         'idplantel' => $this->session->idplantel,
@@ -336,7 +344,7 @@ class Profesor extends CI_Controller {
                         'apellidom' => mb_strtoupper($this->input->post('apellidom')),
                         'profesion' => mb_strtoupper($this->input->post('profesion')),
                         'correo' => $this->input->post('correo'),
-                          'urlvideoconferencia' => $this->input->post('urlvideoconferencia'),
+                        'urlvideoconferencia' => $this->input->post('urlvideoconferencia'),
                         'numeroanfitrion' => $this->input->post('numeroanfitrion'),
                         'estatus' => $this->input->post('estatus'),
                         'idusuario' => $this->session->user_id,
@@ -361,23 +369,24 @@ class Profesor extends CI_Controller {
         }
     }
 
-    public function updatePasswordProfesor() {
+    public function updatePasswordProfesor()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $config = array(
                 array(
                     'field' => 'password1',
-                    'label' => 'Nombre',
+                    'label' => 'Contraseña',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
                     'field' => 'password2',
-                    'label' => 'Nombre',
+                    'label' => 'Repita contraseña',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 )
             );
@@ -418,7 +427,8 @@ class Profesor extends CI_Controller {
         }
     }
 
-    public function searchProfesor() {
+    public function searchProfesor()
+    {
         //Permission::grant(uri_string());
         $idplantel = $this->session->idplantel;
         $value = $this->input->post('text');
@@ -431,7 +441,8 @@ class Profesor extends CI_Controller {
         }
     }
 
-    public function detalle($id) {
+    public function detalle($id)
+    {
         Permission::grant(uri_string());
         # code...
         $data = array(
@@ -445,7 +456,8 @@ class Profesor extends CI_Controller {
     }
 
     //MATERIAS DEL PROFESOR
-    public function showAllClases() {
+    public function showAllClases()
+    {
         //Permission::grant(uri_string()); 
         $idplantel = $this->session->idplantel;
         $query = $this->profesor->showAllClases();
@@ -457,7 +469,8 @@ class Profesor extends CI_Controller {
         }
     }
 
-    public function searchllClases() {
+    public function searchllClases()
+    {
         //Permission::grant(uri_string()); 
         $query = $this->profesor->searchMaterias();
         if ($query) {
@@ -468,7 +481,8 @@ class Profesor extends CI_Controller {
         }
     }
 
-    public function showAllMaterias($idprofesor) {
+    public function showAllMaterias($idprofesor)
+    {
         //Permission::grant(uri_string()); 
         $query = $this->profesor->showAllMateriasProfesor($idprofesor);
         if ($query) {
@@ -479,7 +493,8 @@ class Profesor extends CI_Controller {
         }
     }
 
-    public function addMateria() {
+    public function addMateria()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $config = array(
                 array(
@@ -487,7 +502,7 @@ class Profesor extends CI_Controller {
                     'label' => 'Materia',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 )
             );
@@ -528,7 +543,8 @@ class Profesor extends CI_Controller {
         }
     }
 
-    public function updateMateria() {
+    public function updateMateria()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $config = array(
                 array(
@@ -536,7 +552,7 @@ class Profesor extends CI_Controller {
                     'label' => 'Materia',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 )
             );
@@ -579,7 +595,8 @@ class Profesor extends CI_Controller {
         }
     }
 
-    public function deleteMateria() {
+    public function deleteMateria()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $id = $this->input->get('id');
             $query = $this->profesor->deleteMateria($id);
@@ -602,7 +619,8 @@ class Profesor extends CI_Controller {
         }
     }
 
-    public function deleteProfesor() {
+    public function deleteProfesor()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $idprofesor = $this->input->get('idprofesor');
             $query = $this->profesor->deleteProfesor($idprofesor);
@@ -624,5 +642,4 @@ class Profesor extends CI_Controller {
             echo json_encode($result);
         }
     }
-
 }

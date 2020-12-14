@@ -32,16 +32,14 @@
                                     <div class="col-md-12 col-sm-12 col-xs-12 ">
                                         <table class="table table-hover table-striped">
                                             <thead class="bg-teal">
-                                            <th class="text-white" v-column-sortable:nombrenivel>Nivel </th>
-                                            <th class="text-white" v-column-sortable:nombregrupo>Grupo </th>
+                                             <th class="text-white" v-column-sortable:nombregrupo>Grupo </th>
                                              <th class="text-white" v-column-sortable:nombreespecialidad>Especialidad </th>  
                                             <th class="text-white" v-column-sortable:nombreturno>Turno </th>  
                                             <th class="text-center text-white"> </th>
                                             </thead>
                                             <tbody class="table-light">
                                                 <tr v-for="row in grupos" class="table-default">
-                                                    <td>{{row.nombrenivel}}</td>
-                                                    <td>{{row.nombregrupo}}</td>
+                                                    <td><label>{{row.nivelgrupo}} - {{row.nombregrupo}}</label></td>
                                                     <td>{{row.nombreespecialidad}}</td> 
                                                      <td>{{row.nombreturno}}</td> 
                                                     <td align="right">
@@ -108,6 +106,6 @@
     <div class="clearfix"></div>
     <div id="notif-group" class="tabbed_notifications"></div>
 </div>
-<script data-my_var_1="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/vue/appvue/appgrupo.js"></script> 
+<script data-my_var_1="<?php echo base_url() ?>" data-my_var_2="<?php echo $this->session->idniveleducativo; ?>" src="<?php echo base_url(); ?>/assets/vue/appvue/appgrupo.js"></script> 
 
 

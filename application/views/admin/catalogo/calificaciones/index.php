@@ -20,12 +20,12 @@
                     </div>
                     <div class="x_content"> 
                         <div class="row"  align="center"> 
-
+                       
                             <form method="POST" action="<?= base_url(),'Calificacion/buscar'?>">
                                 <div class="row">
                                     <div class="col-md-3 col-sm-12 col-xs-12 ">
                                         <div class="form-group"> 
-                                            <select style="border-bottom: solid #ebebeb 2px;" name="cicloescolar" required="" class="form-control">
+                                            <select style="border-bottom: solid #ebebeb 2px;" name="cicloescolar" required="" id="idcicloescolar" class="form-control">
                                                 <option value="">-- CICLO ESCOLAR --</option>   
                                                <?php
                                                if(isset($periodos) && !empty($periodos)){
@@ -39,12 +39,12 @@
                                     </div>   
                                     <div class="col-md-3 col-sm-12 col-xs-12 ">
                                         <div class="form-group"> 
-                                            <select style="border-bottom: solid #ebebeb 2px;" name="grupo" class="form-control">
+                                            <select style="border-bottom: solid #ebebeb 2px;" name="grupo" id="idgrupo" class="form-control">
                                                 <option value="">-- GRUPO --</option>  
                                                <?php 
                                                         if(isset($grupos) && !empty($grupos)){
                                                             foreach ($grupos as $value) {
-                                                                  echo  '<option value="'.$value->idgrupo.'">'.$value->nombrenivel.' - '.$value->nombregrupo.'</option>'; 
+                                                                  echo  '<option value="'.$value->idgrupo.'">'.$value->nivelgrupo.' - '.$value->nombregrupo.'</option>'; 
                                                             }
                                                         }
                                                ?>
@@ -53,7 +53,7 @@
                                     </div>  
                                       <div class="col-md-4 col-sm-12 col-xs-12 ">
                                         <div class="form-group"> 
-                                            <select style="border-bottom: solid #ebebeb 2px;" name="tiporeporte" class="form-control">
+                                            <select style="border-bottom: solid #ebebeb 2px;" name="tiporeporte"  id="idtiporeporte" class="form-control">
                                                 <option value="">-- TIPO DE REPORTE --</option>  
                                                 <option value="2">PROMEDIO FINAL</option> 
                                                 <option value="4">CALIFICACIÓN POR MATERIA</option> 
@@ -112,7 +112,7 @@
 </div>
 
 </div>
-
+<script data-my_var_2="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/js/validar/Administrar/busqueda_asignaturas.js"></script> 
 <div id="custom_notifications" class="custom-notifications dsp_none">
     <ul class="list-unstyled notifications clearfix" data-tabbed_notifications="notif-group">
     </ul>

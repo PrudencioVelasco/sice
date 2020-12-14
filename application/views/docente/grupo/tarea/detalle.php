@@ -78,12 +78,12 @@
                                                 </button>  
                                             </td>
                                         </tr>
-                                          <tr v-if="loading">
+                                          <!--<tr v-if="loading">
                                             <td colspan="6" align="center"> 
                                                
                                                 <label > <i style="color:#2ca2f9;" class="fa fa-spinner fa-pulse fa-3x fa-fw"></i> Cargando registros...</label>
                                             </td>
-                                        </tr>
+                                        </tr>-->
                                         <tr v-if="emptyResult">
                                             <td colspan="6" class="text-center h4">Sin registros</td>
                                         </tr>

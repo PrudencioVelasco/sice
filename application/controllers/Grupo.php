@@ -1,11 +1,13 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 date_default_timezone_set("America/Mexico_City");
 
-class Grupo extends CI_Controller {
+class Grupo extends CI_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         if (!isset($_SESSION['user_id'])) {
             $this->session->set_flashdata('flash_data', 'You don\'t have access! ss');
@@ -20,15 +22,17 @@ class Grupo extends CI_Controller {
         $this->load->library('pdfgenerator');
     }
 
-    public function inicio() {
+    public function inicio()
+    {
         Permission::grant(uri_string());
         $this->load->view('admin/header');
         $this->load->view('admin/grupo/index');
         $this->load->view('admin/footer');
     }
 
-    public function alumnos() {
-        Permission::grant(uri_string()); 
+    public function alumnos()
+    {
+        Permission::grant(uri_string());
         $idplantel = $this->session->idplantel;
         $periodos = $this->grupo->showAllPeriodos($idplantel);
         $grupos = $this->grupo->showAllGrupos($idplantel);
@@ -43,7 +47,8 @@ class Grupo extends CI_Controller {
         $this->load->view('admin/footer');
     }
 
-    public function showAllEspecialidades() {
+    public function showAllEspecialidades()
+    {
         //Permission::grant(uri_string()); 
         $idplantel = $this->session->idplantel;
         $query = $this->alumno->showAllEspecialidades($idplantel);
@@ -56,7 +61,8 @@ class Grupo extends CI_Controller {
         }
     }
 
-    public function searchGrupo() {
+    public function searchGrupo()
+    {
         //ermission::grant(uri_string());
         $idplantel = $this->session->idplantel;
         $value = $this->input->post('text');
@@ -69,7 +75,8 @@ class Grupo extends CI_Controller {
         }
     }
 
-    public function showAll() {
+    public function showAll()
+    {
         //Permission::grant(uri_string());
         $idplantel = $this->session->idplantel;
         $query = $this->grupo->showAllGrupos($idplantel);
@@ -82,8 +89,10 @@ class Grupo extends CI_Controller {
         }
     }
 
-    public function showAllNiveles() {
+    public function showAllNiveles()
+    {
         //Permission::grant(uri_string());
+
         $query = $this->grupo->showAllNiveles();
         //var_dump($query);
         if ($query) {
@@ -94,7 +103,8 @@ class Grupo extends CI_Controller {
         }
     }
 
-    public function showAllTurnos() {
+    public function showAllTurnos()
+    {
         //Permission::grant(uri_string());
         $query = $this->grupo->showAllTurnos();
         //var_dump($query);
@@ -106,39 +116,40 @@ class Grupo extends CI_Controller {
         }
     }
 
-    public function addGrupo() {
+    public function addGrupo()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $config = array(
                 array(
                     'field' => 'idespecialidad',
-                    'label' => 'Mes inicio',
+                    'label' => 'Especialidad',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
                     'field' => 'idnivelestudio',
-                    'label' => 'Mes inicio',
+                    'label' => 'Nivel Escolar',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
                     'field' => 'idturno',
-                    'label' => 'Nombre',
+                    'label' => 'Turno',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
                     'field' => 'nombregrupo',
-                    'label' => 'A. Paterno',
+                    'label' => 'Grupo',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 )
             );
@@ -187,39 +198,40 @@ class Grupo extends CI_Controller {
         }
     }
 
-    public function updateGrupo() {
+    public function updateGrupo()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $config = array(
                 array(
                     'field' => 'idespecialidad',
-                    'label' => 'Mes inicio',
+                    'label' => 'Especialidad',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
                     'field' => 'idnivelestudio',
-                    'label' => 'Mes inicio',
+                    'label' => 'Nivel Escolar',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
                     'field' => 'idturno',
-                    'label' => 'Nombre',
+                    'label' => 'Turno',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
                     'field' => 'nombregrupo',
-                    'label' => 'A. Paterno',
+                    'label' => 'Grupo',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 )
             );
@@ -269,7 +281,8 @@ class Grupo extends CI_Controller {
         }
     }
 
-    public function deleteGrupo() {
+    public function deleteGrupo()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $idgrupo = $this->input->get('idgrupo');
             $query = $this->grupo->deleteGrupo($idgrupo);
@@ -292,32 +305,32 @@ class Grupo extends CI_Controller {
         }
     }
 
-    public function busqueda($idgrupo, $idperiodo, $opcion) {
+    public function busqueda($idgrupo, $idperiodo, $opcion)
+    {
         $alumnos = "";
         $alumnos_reprobados = "";
         $calificaion_final = "";
-        $calificacion_oportunidad ="";
+        $calificacion_oportunidad = "";
         if ((isset($idgrupo) && !empty($idgrupo)) && (isset($idperiodo) && !empty($idperiodo)) && (isset($opcion) && !empty($opcion))) {
             $idplantel = $this->session->idplantel;
             if ($opcion == 28) {
                 //LISTA DE ALUMNOS
                 $alumnos = $this->grupo->listaAlumnosGrupo($idperiodo, $idgrupo, $idplantel);
-                 $alumnos_reprobados = $this->grupo->listaAlumnosGrupoReprobados($idperiodo, $idgrupo, $idplantel);
-            }
-            else if ($opcion == 29) {
+                $alumnos_reprobados = $this->grupo->listaAlumnosGrupoReprobados($idperiodo, $idgrupo, $idplantel);
+            } else if ($opcion == 29) {
                 $calificaion_final = $this->tablaCalificacionesFinales($idgrupo, $idperiodo);
-            }else{
+            } else {
                 $calificacion_oportunidad = $this->tablaCalificacionesPorOportunidades($idgrupo, $idperiodo, $opcion);
             }
-             
+
             $periodos = $this->grupo->showAllPeriodos($idplantel);
             $grupos = $this->grupo->showAllGrupos($idplantel);
             $oportunidades = $this->grupo->showAllOportunidadesExamen($idplantel);
             $data = array(
                 'lista_alumnos' => $alumnos,
-                'alumnos_reprobados'=>$alumnos_reprobados,
+                'alumnos_reprobados' => $alumnos_reprobados,
                 'calificaion_final' => $calificaion_final,
-                'calificacion_por_oportunidad'=>$calificacion_oportunidad,
+                'calificacion_por_oportunidad' => $calificacion_oportunidad,
                 'periodos' => $periodos,
                 'grupos' => $grupos,
                 'oportunidades' => $oportunidades
@@ -328,13 +341,14 @@ class Grupo extends CI_Controller {
         }
     }
 
-    public function tablaCalificacionesFinales($idgrupo, $idperiodo) {
+    public function tablaCalificacionesFinales($idgrupo, $idperiodo)
+    {
         $total_materias = 0;
         $materias = $this->grupo->listaMateriasGrupo($idperiodo, $idgrupo);
-          //$materias_reprobadas = $this->grupo->listaMateriasReprobadasGrupo($idperiodo, $idgrupo);
-          
+        //$materias_reprobadas = $this->grupo->listaMateriasReprobadasGrupo($idperiodo, $idgrupo);
+
         $alumnos = $this->grupo->listaAlumnosGrupo($idperiodo, $idgrupo, $this->session->idplantel);
-          $alumnos_reprobados = $this->grupo->listaAlumnosGrupoReprobados($idperiodo, $idgrupo, $this->session->idplantel);
+        $alumnos_reprobados = $this->grupo->listaAlumnosGrupoReprobados($idperiodo, $idgrupo, $this->session->idplantel);
         $tabla = "";
         $tabla .= ' <table  class="tblcalificacionfinal table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
  <caption class="bg-teal"  align="center" > <center><strong>CALIFICACIONES FINALES</strong></center></caption>         
@@ -342,11 +356,11 @@ class Grupo extends CI_Controller {
       <th>#</th>
       <th></th>
       <th>NOMBRE</th>';
-        if(isset($materias) && !empty($materias)){
-        foreach ($materias as $block) :
-            $total_materias = $total_materias + 1;
-            $tabla .= '<th>' . $block->nombreclase . '</th>';
-        endforeach;
+        if (isset($materias) && !empty($materias)) {
+            foreach ($materias as $block) :
+                $total_materias = $total_materias + 1;
+                $tabla .= '<th>' . $block->nombreclase . '</th>';
+            endforeach;
         }
         $tabla .= '  <th>PROMEDIO</th>';
         $tabla .= '</thead>';
@@ -356,22 +370,22 @@ class Grupo extends CI_Controller {
             foreach ($alumnos as $row) {
                 $tabla .= '<tr>';
                 $tabla .= '  <td>' . $c++ . '</td>';
-                 $tabla .= '  <td>N</td>';
+                $tabla .= '  <td>N</td>';
                 $tabla .= '<td>' . $row->apellidop . " " . $row->apellidom . " " . $row->nombre . '</td>';
                 $suma_calificacion = 0;
                 foreach ($materias as $block) {
-                    if($this->grupo->validarMateriaSeriada($block->idmateria,$row->idalumno) == false){
-                    $val = $this->grupo->calificacionFinalNormal($idgrupo, $idperiodo, $block->idprofesormateria, $row->idalumno);
-                    $tabla .= '<td>';
-                    if ($val != false) {
-                        $suma_calificacion = $suma_calificacion + $val[0]->calificacionfinal;
-                        $tabla .= '<label>' . $val[0]->calificacionfinal . '</label>';
+                    if ($this->grupo->validarMateriaSeriada($block->idmateria, $row->idalumno) == false) {
+                        $val = $this->grupo->calificacionFinalNormal($idgrupo, $idperiodo, $block->idprofesormateria, $row->idalumno);
+                        $tabla .= '<td>';
+                        if ($val != false) {
+                            $suma_calificacion = $suma_calificacion + $val[0]->calificacionfinal;
+                            $tabla .= '<label>' . $val[0]->calificacionfinal . '</label>';
+                        } else {
+                            $tabla .= '<label>No registrado</label>';
+                        }
+                        $tabla .= '</td>';
                     } else {
-                        $tabla .= '<label>No registrado</label>';
-                    }
-                    $tabla .= '</td>';
-                    }else{
-                          $tabla .= '<td><label>No puede cursar esta materia.</label></td>';
+                        $tabla .= '<td><label>No puede cursar esta materia.</label></td>';
                     }
                 }
                 $calificacion_alumno = $suma_calificacion / $total_materias;
@@ -384,38 +398,37 @@ class Grupo extends CI_Controller {
         }
         $calificacion_alumno_r = 0;
         if (isset($alumnos_reprobados) && !empty($alumnos_reprobados)) {
-              $suma_calificacion_r = 0;
-              if(!isset($c) && empty($c)){
-                  $c = 1;
-              }
-              $total_materias_r = 0;
+            $suma_calificacion_r = 0;
+            if (!isset($c) && empty($c)) {
+                $c = 1;
+            }
+            $total_materias_r = 0;
             foreach ($alumnos_reprobados as $value) {
                 $tabla .= '<tr>';
                 $tabla .= '  <td>' . $c++ . '</td>';
-                  $tabla .= '  <td>R</td>';
+                $tabla .= '  <td>R</td>';
                 $tabla .= '<td>' . $value->apellidop . " " . $value->apellidom . " " . $value->nombre . '</td>';
                 $suma_calificacion_r = 0;
-                 $total_materias_r = 0;
-                 if(isset($materias) && !empty($materias)){
-                foreach ($materias as $block) { 
+                $total_materias_r = 0;
+                if (isset($materias) && !empty($materias)) {
+                    foreach ($materias as $block) {
                         $val = $this->grupo->calificacionFinalReprobadas($idgrupo, $idperiodo, $block->idprofesormateria, $value->idalumno);
                         $tabla .= '<td>';
                         if ($val != false) {
-                             $total_materias_r = $total_materias_r + 1;
+                            $total_materias_r = $total_materias_r + 1;
                             $suma_calificacion_r = $suma_calificacion_r + $val[0]->calificacionfinal;
                             $tabla .= '<label>' . $val[0]->calificacionfinal . '</label>';
                         } else {
                             $tabla .= '<label>---</label>';
                         }
                         $tabla .= '</td>';
-                    
+                    }
                 }
-                 }
-            
-            if($suma_calificacion_r > 0 && $total_materias_r>0){
-                 $calificacion_alumno_r = $suma_calificacion_r / $total_materias_r; 
-            }
-              
+
+                if ($suma_calificacion_r > 0 && $total_materias_r > 0) {
+                    $calificacion_alumno_r = $suma_calificacion_r / $total_materias_r;
+                }
+
                 $tabla .= '<td>';
                 $tabla .= '<label>' . number_format($calificacion_alumno_r, 2) . '</label>';
                 $tabla .= '</td>';
@@ -426,8 +439,9 @@ class Grupo extends CI_Controller {
         $tabla .= '</table>';
         return $tabla;
     }
-    
-        public function tablaCalificacionesPorOportunidades($idgrupo, $idperiodo, $opcion) {
+
+    public function tablaCalificacionesPorOportunidades($idgrupo, $idperiodo, $opcion)
+    {
         $total_materias = 0;
         $detalle_oportunidad = $this->grupo->detalleOportunidad($opcion);
         $materias = $this->grupo->calificacionPorOportunidad($idgrupo, $idperiodo, '', $opcion, '', 'materias');
@@ -436,16 +450,16 @@ class Grupo extends CI_Controller {
         $alumnos_reprobados = $this->grupo->calificacionPorOportunidad($idgrupo, $idperiodo, '', $opcion, '', 'alumnos');
         $tabla = "";
         $tabla .= ' <table  class="tblcalificacionfinal table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
-   <caption class="bg-teal"  align="center" > <center><strong>'.$detalle_oportunidad->nombreoportunidad.'</strong></center></caption>     
+   <caption class="bg-teal"  align="center" > <center><strong>' . $detalle_oportunidad->nombreoportunidad . '</strong></center></caption>     
 <thead class="bg-teal"> 
       <th>#</th>
       <th></th>
       <th>NOMBRE</th>';
-        if(isset($materias) & !empty($materias)){
-        foreach ($materias as $block) :
-            $total_materias = $total_materias + 1;
-            $tabla .= '<th>' . $block->nombreclase . '</th>';
-        endforeach;
+        if (isset($materias) & !empty($materias)) {
+            foreach ($materias as $block) :
+                $total_materias = $total_materias + 1;
+                $tabla .= '<th>' . $block->nombreclase . '</th>';
+            endforeach;
         }
         $tabla .= '</thead>';
         $c = 1;
@@ -499,5 +513,4 @@ class Grupo extends CI_Controller {
         $tabla .= '</table>';
         return $tabla;
     }
-
 }

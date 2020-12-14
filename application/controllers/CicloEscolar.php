@@ -1,11 +1,13 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 date_default_timezone_set("America/Mexico_City");
 
-class CicloEscolar extends CI_Controller {
+class CicloEscolar extends CI_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         if (!isset($_SESSION['user_id'])) {
             $this->session->set_flashdata('flash_data', 'You don\'t have access! ss');
@@ -19,14 +21,16 @@ class CicloEscolar extends CI_Controller {
         $this->load->library('pdfgenerator');
     }
 
-    public function inicio() {
+    public function inicio()
+    {
         Permission::grant(uri_string());
         $this->load->view('admin/header');
         $this->load->view('admin/cicloescolar/index');
         $this->load->view('admin/footer');
     }
 
-    public function searchCiclo() {
+    public function searchCiclo()
+    {
         //Permission::grant(uri_string());
         $value = $this->input->post('text');
         $query = $this->ciclo->searchCiclo($value, $this->session->idplantel);
@@ -38,7 +42,8 @@ class CicloEscolar extends CI_Controller {
         }
     }
 
-    public function showAll() {
+    public function showAll()
+    {
         //Permission::grant(uri_string());
         $query = $this->ciclo->showAll($this->session->idplantel);
         //var_dump($query);
@@ -50,7 +55,8 @@ class CicloEscolar extends CI_Controller {
         }
     }
 
-    public function showAllMeses() {
+    public function showAllMeses()
+    {
         //Permission::grant(uri_string());
         $query = $this->ciclo->showAllMeses();
         //var_dump($query);
@@ -62,7 +68,8 @@ class CicloEscolar extends CI_Controller {
         }
     }
 
-    public function showAllYears() {
+    public function showAllYears()
+    {
         //Permission::grant(uri_string());
         $query = $this->ciclo->showAllYears();
         //var_dump($query);
@@ -74,7 +81,8 @@ class CicloEscolar extends CI_Controller {
         }
     }
 
-    public function addCiclo() {
+    public function addCiclo()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $config = array(
                 array(
@@ -82,31 +90,31 @@ class CicloEscolar extends CI_Controller {
                     'label' => 'Mes inicio',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
                     'field' => 'idyearinicio',
-                    'label' => 'Nombre',
+                    'label' => 'Año inicio',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
                     'field' => 'idmesfin',
-                    'label' => 'A. Paterno',
+                    'label' => 'Mes termino',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
                     'field' => 'idyearfin',
-                    'label' => 'Fecha nacimiento',
+                    'label' => 'Año termino',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
             );
@@ -118,7 +126,8 @@ class CicloEscolar extends CI_Controller {
                     'idmesinicio' => form_error('idmesinicio'),
                     'idyearinicio' => form_error('idyearinicio'),
                     'idmesfin' => form_error('idmesfin'),
-                    'idyearfin' => form_error('idyearfin')
+                    'idyearfin' => form_error('idyearfin'),
+                    'descripcion' => form_error('descripcion')
                 );
             } else {
 
@@ -126,6 +135,7 @@ class CicloEscolar extends CI_Controller {
                 $yearinicio = trim($this->input->post('idyearinicio'));
                 $mesfin = trim($this->input->post('idmesfin'));
                 $yearfin = trim($this->input->post('idyearfin'));
+                $descripcion = trim($this->input->post('descripcion'));
                 $validar = $this->ciclo->validarAddCiclo($mesinicio, $yearinicio, $mesfin, $yearfin, $this->session->idplantel);
                 if ($validar == FALSE) {
                     $data_update = array(
@@ -145,6 +155,7 @@ class CicloEscolar extends CI_Controller {
                         'idyearinicio' => $yearinicio,
                         'idmesfin' => $mesfin,
                         'idyearfin' => $yearfin,
+                        'descripcion' => $descripcion,
                         'activo' => 1,
                         'idusuario' => $this->session->user_id,
                         'fecharegistro' => date('Y-m-d H:i:s')
@@ -168,7 +179,8 @@ class CicloEscolar extends CI_Controller {
         }
     }
 
-    public function updateCiclo() {
+    public function updateCiclo()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $config = array(
                 array(
@@ -181,26 +193,26 @@ class CicloEscolar extends CI_Controller {
                 ),
                 array(
                     'field' => 'idyearinicio',
-                    'label' => 'Nombre',
+                    'label' => 'Año inicio',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
                     'field' => 'idmesfin',
-                    'label' => 'A. Paterno',
+                    'label' => 'Mes termino',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
                     'field' => 'idyearfin',
-                    'label' => 'Fecha nacimiento',
+                    'label' => 'Año termino',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
             );
@@ -212,7 +224,8 @@ class CicloEscolar extends CI_Controller {
                     'idmesinicio' => form_error('idmesinicio'),
                     'idyearinicio' => form_error('idyearinicio'),
                     'idmesfin' => form_error('idmesfin'),
-                    'idyearfin' => form_error('idyearfin')
+                    'idyearfin' => form_error('idyearfin'),
+                    'descripcion' => form_error('idyearfin')
                 );
             } else {
 
@@ -221,6 +234,7 @@ class CicloEscolar extends CI_Controller {
                 $mesfin = trim($this->input->post('idmesfin'));
                 $yearfin = trim($this->input->post('idyearfin'));
                 $idperiodo = trim($this->input->post('idperiodo'));
+                $descripcion = trim($this->input->post('descripcion'));
                 $activo = trim($this->input->post('activo'));
                 $validar = $this->ciclo->validarUpdateCiclo($mesinicio, $yearinicio, $mesfin, $yearfin, $idperiodo, $this->session->idplantel);
                 if ($validar == FALSE) {
@@ -235,6 +249,7 @@ class CicloEscolar extends CI_Controller {
                             'idyearinicio' => $yearinicio,
                             'idmesfin' => $mesfin,
                             'idyearfin' => $yearfin,
+                            'descripcion' => $descripcion,
                             'idusuario' => $this->session->user_id,
                             'fecharegistro' => date('Y-m-d H:i:s')
                         );
@@ -255,6 +270,7 @@ class CicloEscolar extends CI_Controller {
                                 'idyearinicio' => $yearinicio,
                                 'idmesfin' => $mesfin,
                                 'idyearfin' => $yearfin,
+                                'descripcion' => $descripcion,
                                 'activo' => 1,
                                 'idusuario' => $this->session->user_id,
                                 'fecharegistro' => date('Y-m-d H:i:s')
@@ -277,15 +293,15 @@ class CicloEscolar extends CI_Controller {
                                 'fecharegistro' => date('Y-m-d H:i:s')
                             );
                             $this->ciclo->updatePeriodo($idperiodo, $data);
-                              $data_update_horario_activar = array(
+                            $data_update_horario_activar = array(
                                 'activo' => 0
                             );
                             $this->ciclo->updateHorario($idperiodo, $data_update_horario_activar);
                         } else {
-                             $result['error'] = true;
-                    $result['msg'] = array(
-                        'msgerror' => 'Error, intente mas tarde.'
-                    );
+                            $result['error'] = true;
+                            $result['msg'] = array(
+                                'msgerror' => 'Error, intente mas tarde.'
+                            );
                         }
                     }
                 } else {
@@ -306,7 +322,8 @@ class CicloEscolar extends CI_Controller {
         }
     }
 
-    public function deleteCicloEscolar() {
+    public function deleteCicloEscolar()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $idperiodo = $this->input->get('idperiodo');
             $query = $this->ciclo->deleteCicloEscolar($idperiodo);
@@ -328,5 +345,4 @@ class CicloEscolar extends CI_Controller {
             echo json_encode($result);
         }
     }
-
 }

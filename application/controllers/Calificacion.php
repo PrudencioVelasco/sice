@@ -904,8 +904,10 @@ class Calificacion extends CI_Controller
                                                                 data-nombremes="' . $detalle_mes->nombremes . '"
                                                                 data-alumno="' . $alumno->apellidop . " " . $alumno->apellidom . " " . $alumno->nombre . '"><i class="fa fa-plus-circle fa-lg"
                                                                 style = "color:#4cc279;" title="Agregar."></i> Agregar </a> ';
-                                                $tabla .= '</td>';
+                                            } else {
+                                                $tabla .= '<small>No registrado</small>';
                                             }
+                                            $tabla .= '</td>';
                                         }
                                     }
                                 } else {
@@ -928,6 +930,7 @@ class Calificacion extends CI_Controller
                                 $tabla .= '<td>No lleva la materia.</td>';
                             }
                         } else {
+                            // $tabla .= '<td>No lleva la materiaD.</td>';
                             // NO ES NADA
                         }
                     }
@@ -1069,7 +1072,8 @@ class Calificacion extends CI_Controller
                             $tabla .= '</td>';
                         }
                     }
-
+                    $suma_calificacion_verificar = 0;
+                    $mostrar = false;
                     foreach ($materias as $materia) {
                         $idmateria = $materia->idmateria;
                         $idhorario = $materia->idhorario;
@@ -1077,15 +1081,84 @@ class Calificacion extends CI_Controller
                         $idclasificacionmateria = $materia->idclasificacionmateria;
                         $secalifica = $materia->secalifica;
                         $idhorariodetalle  = $materia->idhorariodetalle;
+
+                        $validar = $this->calificacion->verificarCalificacionSiSeMuestraXMateria($idalumno, $idhorario, $idmateria);
+                        if ($validar) {
+                            $suma_calificacion_verificar = 0;
+                            foreach ($validar as $row) {
+                                $suma_calificacion_verificar += $row->calificacion;
+                            }
+                            if ($suma_calificacion_verificar > 0) {
+                                $mostrar = TRUE;
+                            } else {
+                                $mostrar = FALSE;
+                            }
+                        } else {
+                            $mostrar = TRUE;
+                        }
                         // AGREGAMOS LA OPCION DE AGREGAR OTRAS CALIFICACIONES
 
                         // AVERIGUAR SI AL ALUMNO PUEDE LLEVAR ESTA MATERIA
                         // DEPENDIENDO DE LLEVA REPROBADA
                         if ($opcion_alumno == 1) {
-                            if ($secalifica == 1) {
-                                if ($idclasificacionmateria == 3) {
-                                    $lo_lleva = $this->calificacion->obtenerMateriaTaller($idalumno, $idprofesormateria, $idhorario);
-                                    if ($lo_lleva) {
+                            if ($mostrar) {
+                                if ($secalifica == 1) {
+                                    if ($idclasificacionmateria == 3) {
+                                        $lo_lleva = $this->calificacion->obtenerMateriaTaller($idalumno, $idprofesormateria, $idhorario);
+                                        if ($lo_lleva) {
+                                            $evaluar = $this->calificacion->validarMateriaSeriada($idalumno, $idmateria, $estatus_periodo);
+                                            if ($evaluar) {
+                                                $tabla .= '<td>No puede llevar este curso.</td>';
+                                            } else {
+                                                $calificacion = $this->calificacion->obtenerCalificacionXUnidad($idalumno, $idunidad, $idprofesormateria, $idhorario);
+                                                // EVALUA LA CALIFICACION PARA ESTE NIVEL
+                                                if ($calificacion) {
+                                                    $idcalificacion = $calificacion->idcalificacion;
+                                                    $tabla .= '<td>';
+                                                    if ($this->session->idniveleducativo == 3) {
+                                                        $tabla .= '  <a  href="#"  data-toggle="modal" data-target="#modalEditCalificacionPrepa" class="edit_button_calificacion_prepa"';
+                                                        $tabla .= 'data-idcalificacion="' . $idcalificacion . '"';
+                                                        $tabla .= 'data-calificacion="' . $calificacion->calificacion . '"';
+                                                        $tabla .= 'data-alumno="' . $alumno->apellidop . " " . $alumno->apellidom . " " . $alumno->nombre . '"><i class="fa fa-pencil"
+                                                    style = "color:#2bc035;" title="Editar Calificación."></i>  </a> ';
+
+                                                        $tabla .= '  <a  href="#"  data-toggle="modal" data-target="#modalDeleteCalificacionPrepa" class="delete_button_calificacion_prepa"';
+                                                        $tabla .= 'data-idcalificacion="' . $idcalificacion . '"';
+                                                        $tabla .= 'data-alumno="' . $alumno->apellidop . " " . $alumno->apellidom . " " . $alumno->nombre . '"><i class="fa fa-trash "
+                                                    style = "color:#ff0033;" title="Eliminar Calificación."></i>  </a> ';
+                                                    }
+                                                    //if ($calificacion->calificacion > 0) {
+                                                    //$tabla .= '<label>' . numberFormatPrecision($calificacion->calificacion, 1, '.') . '</label>';
+                                                    $tabla .= '<label class="tamanocalificacion">' . eliminarDecimalCero($calificacion->calificacion) . '</label>';
+                                                    //} else {
+                                                    //    $tabla .= '<small><strong>No lleva el curso.</strong></small>';
+                                                    //}
+                                                    $tabla .= '</td>';
+                                                } else {
+
+                                                    //SE AGREGA LA OPCION DE AGREGA CALIFICACION PARA PREPA
+                                                    $detalle_oportunidad = $this->grupo->primeraOportunidad($this->session->idplantel);
+                                                    $idopotunidad = $detalle_oportunidad[0]->idoportunidadexamen;
+
+                                                    $tabla .= '<td>';
+                                                    if ($this->session->idniveleducativo == 3) {
+                                                        $tabla .= '  <a  href="#"  data-toggle="modal" data-target="#modalAddCalificacionPrepa" class="add_button_calificacion_prepa"
+                                                    data-idhorario="' . $idhorario . '"';
+                                                        $tabla .= 'data-idalumno="' . $idalumno . '"';
+                                                        $tabla .= 'data-idhorariodetalle="' . $idhorariodetalle . '"';
+                                                        $tabla .= 'data-idunidad="' . $idunidad . '"';
+                                                        $tabla .= 'data-idoportunidadexamen="' . $idopotunidad . '"';
+                                                        $tabla .= 'data-alumno="' . $alumno->apellidop . " " . $alumno->apellidom . " " . $alumno->nombre . '"><i class="fa fa-plus"
+                                                    style = "color:#2a90f0;" title="Agregar Calificación."></i>  </a> ';
+                                                    }
+                                                    $tabla .= '<small>No registrado</small>';
+                                                    $tabla .= '</td>';
+                                                }
+                                            }
+                                        } else {
+                                            $tabla .= '<td><small>No lleva el curso</small></td>';
+                                        }
+                                    } else {
                                         $evaluar = $this->calificacion->validarMateriaSeriada($idalumno, $idmateria, $estatus_periodo);
                                         if ($evaluar) {
                                             $tabla .= '<td>No puede llevar este curso.</td>';
@@ -1100,21 +1173,20 @@ class Calificacion extends CI_Controller
                                                     $tabla .= 'data-idcalificacion="' . $idcalificacion . '"';
                                                     $tabla .= 'data-calificacion="' . $calificacion->calificacion . '"';
                                                     $tabla .= 'data-alumno="' . $alumno->apellidop . " " . $alumno->apellidom . " " . $alumno->nombre . '"><i class="fa fa-pencil"
-                                                    style = "color:#2bc035;" title="Editar Calificación."></i>  </a> ';
+                                            style = "color:#2bc035;" title="Editar Calificación."></i>  </a> ';
 
                                                     $tabla .= '  <a  href="#"  data-toggle="modal" data-target="#modalDeleteCalificacionPrepa" class="delete_button_calificacion_prepa"';
                                                     $tabla .= 'data-idcalificacion="' . $idcalificacion . '"';
                                                     $tabla .= 'data-alumno="' . $alumno->apellidop . " " . $alumno->apellidom . " " . $alumno->nombre . '"><i class="fa fa-trash "
-                                                    style = "color:#ff0033;" title="Eliminar Calificación."></i>  </a> ';
+                                            style = "color:#ff0033;" title="Eliminar Calificación."></i>  </a> ';
                                                 }
                                                 //if ($calificacion->calificacion > 0) {
-                                                $tabla .= '<label>' . numberFormatPrecision($calificacion->calificacion, 1, '.') . '</label>';
+                                                $tabla .= '<label class="tamanocalificacion">' . eliminarDecimalCero($calificacion->calificacion) . '</label>';
                                                 //} else {
                                                 //    $tabla .= '<small><strong>No lleva el curso.</strong></small>';
                                                 //}
                                                 $tabla .= '</td>';
                                             } else {
-
                                                 //SE AGREGA LA OPCION DE AGREGA CALIFICACION PARA PREPA
                                                 $detalle_oportunidad = $this->grupo->primeraOportunidad($this->session->idplantel);
                                                 $idopotunidad = $detalle_oportunidad[0]->idoportunidadexamen;
@@ -1122,29 +1194,34 @@ class Calificacion extends CI_Controller
                                                 $tabla .= '<td>';
                                                 if ($this->session->idniveleducativo == 3) {
                                                     $tabla .= '  <a  href="#"  data-toggle="modal" data-target="#modalAddCalificacionPrepa" class="add_button_calificacion_prepa"
-                                                    data-idhorario="' . $idhorario . '"';
+                                            data-idhorario="' . $idhorario . '"';
                                                     $tabla .= 'data-idalumno="' . $idalumno . '"';
                                                     $tabla .= 'data-idhorariodetalle="' . $idhorariodetalle . '"';
                                                     $tabla .= 'data-idunidad="' . $idunidad . '"';
                                                     $tabla .= 'data-idoportunidadexamen="' . $idopotunidad . '"';
                                                     $tabla .= 'data-alumno="' . $alumno->apellidop . " " . $alumno->apellidom . " " . $alumno->nombre . '"><i class="fa fa-plus"
-                                                    style = "color:#2a90f0;" title="Agregar Calificación."></i>  </a> ';
+                                            style = "color:#2a90f0;" title="Agregar Calificación."></i>  </a> ';
                                                 }
                                                 $tabla .= '<small>No registrado</small>';
                                                 $tabla .= '</td>';
                                             }
                                         }
-                                    } else {
-                                        $tabla .= '<td><small>No lleva el curso</small></td>';
                                     }
                                 } else {
-                                    $evaluar = $this->calificacion->validarMateriaSeriada($idalumno, $idmateria, $estatus_periodo);
-                                    if ($evaluar) {
-                                        $tabla .= '<td>No puede llevar este curso.</td>';
-                                    } else {
-                                        $calificacion = $this->calificacion->obtenerCalificacionXUnidad($idalumno, $idunidad, $idprofesormateria, $idhorario);
-                                        // EVALUA LA CALIFICACION PARA ESTE NIVEL
-                                        if ($calificacion) {
+                                    $tabla .= '<td><small>No se califica</small></td>';
+                                }
+                            } else {
+                                $tabla .= '<td><small>No se lleva el curso</small></td>';
+                            }
+                        } else if ($opcion_alumno == 0) {
+                            if ($mostrar) {
+                                // VALIDAR MATERIA REPROBADA
+                                $validar = $this->calificacion->validarMateriaReprobadaXUnidad($idalumno, $idprofesormateria);
+                                if ($validar) {
+                                    // VALIDAMOS LA CALIFICACION
+                                    $calificacion = $this->calificacion->obtenerCalificacionXUnidad($idalumno, $idunidad, $idprofesormateria, $idhorario);
+                                    if ($calificacion) {
+                                        if ($calificacion->calificacion > 0) {
                                             $idcalificacion = $calificacion->idcalificacion;
                                             $tabla .= '<td>';
                                             if ($this->session->idniveleducativo == 3) {
@@ -1160,87 +1237,38 @@ class Calificacion extends CI_Controller
                                             style = "color:#ff0033;" title="Eliminar Calificación."></i>  </a> ';
                                             }
                                             //if ($calificacion->calificacion > 0) {
-                                            $tabla .= '<label>' . numberFormatPrecision($calificacion->calificacion, 1, '.') . '</label>';
+                                            $tabla .= '<label class="tamanocalificacion">' . eliminarDecimalCero($calificacion->calificacion) . '</label>';
                                             //} else {
                                             //    $tabla .= '<small><strong>No lleva el curso.</strong></small>';
                                             //}
                                             $tabla .= '</td>';
                                         } else {
-                                            //SE AGREGA LA OPCION DE AGREGA CALIFICACION PARA PREPA
-                                            $detalle_oportunidad = $this->grupo->primeraOportunidad($this->session->idplantel);
-                                            $idopotunidad = $detalle_oportunidad[0]->idoportunidadexamen;
-
-                                            $tabla .= '<td>';
-                                            if ($this->session->idniveleducativo == 3) {
-                                                $tabla .= '  <a  href="#"  data-toggle="modal" data-target="#modalAddCalificacionPrepa" class="add_button_calificacion_prepa"
-                                            data-idhorario="' . $idhorario . '"';
-                                                $tabla .= 'data-idalumno="' . $idalumno . '"';
-                                                $tabla .= 'data-idhorariodetalle="' . $idhorariodetalle . '"';
-                                                $tabla .= 'data-idunidad="' . $idunidad . '"';
-                                                $tabla .= 'data-idoportunidadexamen="' . $idopotunidad . '"';
-                                                $tabla .= 'data-alumno="' . $alumno->apellidop . " " . $alumno->apellidom . " " . $alumno->nombre . '"><i class="fa fa-plus"
-                                            style = "color:#2a90f0;" title="Agregar Calificación."></i>  </a> ';
-                                            }
-                                            $tabla .= '<small>No registrado</small>';
-                                            $tabla .= '</td>';
+                                            $tabla .= '<td><small><strong>No lleva el curso.</strong></small></td>';
                                         }
-                                    }
-                                }
-                            } else {
-                                $tabla .= '<td><small>No se califica</small></td>';
-                            }
-                        } else if ($opcion_alumno == 0) {
-                            // VALIDAR MATERIA REPROBADA
-                            $validar = $this->calificacion->validarMateriaReprobadaXUnidad($idalumno, $idprofesormateria);
-                            if ($validar) {
-                                // VALIDAMOS LA CALIFICACION
-                                $calificacion = $this->calificacion->obtenerCalificacionXUnidad($idalumno, $idunidad, $idprofesormateria, $idhorario);
-                                if ($calificacion) {
-                                    if ($calificacion->calificacion > 0) {
-                                        $idcalificacion = $calificacion->idcalificacion;
+                                    } else {
+                                        $detalle_oportunidad = $this->grupo->primeraOportunidad($this->session->idplantel);
+                                        $idopotunidad = $detalle_oportunidad[0]->idoportunidadexamen;
+
                                         $tabla .= '<td>';
                                         if ($this->session->idniveleducativo == 3) {
-                                            $tabla .= '  <a  href="#"  data-toggle="modal" data-target="#modalEditCalificacionPrepa" class="edit_button_calificacion_prepa"';
-                                            $tabla .= 'data-idcalificacion="' . $idcalificacion . '"';
-                                            $tabla .= 'data-calificacion="' . $calificacion->calificacion . '"';
-                                            $tabla .= 'data-alumno="' . $alumno->apellidop . " " . $alumno->apellidom . " " . $alumno->nombre . '"><i class="fa fa-pencil"
-                                            style = "color:#2bc035;" title="Editar Calificación."></i>  </a> ';
-
-                                            $tabla .= '  <a  href="#"  data-toggle="modal" data-target="#modalDeleteCalificacionPrepa" class="delete_button_calificacion_prepa"';
-                                            $tabla .= 'data-idcalificacion="' . $idcalificacion . '"';
-                                            $tabla .= 'data-alumno="' . $alumno->apellidop . " " . $alumno->apellidom . " " . $alumno->nombre . '"><i class="fa fa-trash "
-                                            style = "color:#ff0033;" title="Eliminar Calificación."></i>  </a> ';
+                                            $tabla .= '  <a  href="#"  data-toggle="modal" data-target="#modalAddCalificacionPrepa" class="add_button_calificacion_prepa"
+                                    data-idhorario="' . $idhorario . '"';
+                                            $tabla .= 'data-idalumno="' . $idalumno . '"';
+                                            $tabla .= 'data-idhorariodetalle="' . $idhorariodetalle . '"';
+                                            $tabla .= 'data-idunidad="' . $idunidad . '"';
+                                            $tabla .= 'data-idoportunidadexamen="' . $idopotunidad . '"';
+                                            $tabla .= 'data-alumno="' . $alumno->apellidop . " " . $alumno->apellidom . " " . $alumno->nombre . '"><i class="fa fa-plus"
+                                    style = "color:#2a90f0;" title="Agregar Calificación."></i>  </a> ';
                                         }
-                                        //if ($calificacion->calificacion > 0) {
-                                        $tabla .= '<label>' . numberFormatPrecision($calificacion->calificacion, 1, '.') . '</label>';
-                                        //} else {
-                                        //    $tabla .= '<small><strong>No lleva el curso.</strong></small>';
-                                        //}
+                                        $tabla .= '<small>No registrado</small>';
                                         $tabla .= '</td>';
-                                    } else {
-                                        $tabla .= '<td><small><strong>No lleva el curso.</strong></small></td>';
                                     }
                                 } else {
-                                    $detalle_oportunidad = $this->grupo->primeraOportunidad($this->session->idplantel);
-                                    $idopotunidad = $detalle_oportunidad[0]->idoportunidadexamen;
-
-                                    $tabla .= '<td>';
-                                    if ($this->session->idniveleducativo == 3) {
-                                        $tabla .= '  <a  href="#"  data-toggle="modal" data-target="#modalAddCalificacionPrepa" class="add_button_calificacion_prepa"
-                                    data-idhorario="' . $idhorario . '"';
-                                        $tabla .= 'data-idalumno="' . $idalumno . '"';
-                                        $tabla .= 'data-idhorariodetalle="' . $idhorariodetalle . '"';
-                                        $tabla .= 'data-idunidad="' . $idunidad . '"';
-                                        $tabla .= 'data-idoportunidadexamen="' . $idopotunidad . '"';
-                                        $tabla .= 'data-alumno="' . $alumno->apellidop . " " . $alumno->apellidom . " " . $alumno->nombre . '"><i class="fa fa-plus"
-                                    style = "color:#2a90f0;" title="Agregar Calificación."></i>  </a> ';
-                                    }
-                                    $tabla .= '<small>No registrado</small>';
-                                    $tabla .= '</td>';
+                                    // NO PUEDE LLEVAR LA MATERIA
+                                    $tabla .= '<td>No lleva la materia.</td>';
                                 }
                             } else {
-                                // NO PUEDE LLEVAR LA MATERIA
-                                $tabla .= '<td>No lleva la materia.</td>';
+                                $tabla .= '<td><small>No se lleva el curso</small></td>';
                             }
                         } else {
                             // NO ES NADA
@@ -1266,6 +1294,38 @@ class Calificacion extends CI_Controller
         $materias = $this->calificacion->materiasGrupo($idperiodo, $idgrupo);
 
         $tabla = "";
+        if (isset($this->session->idniveleducativo) && $this->session->idniveleducativo == 3) {
+            $tabla .= ' 
+        <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12 "> 
+                  
+                  <div class="panel-group" id="accordion_1" role="tablist" aria-multiselectable="true">
+                  <div class="panel panel-primary">
+                      <div class="panel-heading" role="tab" id="headingOne_1">
+                          <h4 class="panel-title">
+                              <a role="button" data-toggle="collapse" data-parent="#accordion_1" href="#collapseOne_1" aria-expanded="true" aria-controls="collapseOne_1">
+                                  Acta de evaluación
+                              </a>
+                          </h4>
+                      </div>
+                      <div id="collapseOne_1" class="panel-collapse collapse " role="tabpanel" aria-labelledby="headingOne_1">
+                          <div class="panel-body">
+                          ';
+            if (isset($materias) && !empty($materias)) {
+                foreach ($materias as $materia) {
+                    $tabla .= '<a target="_blank" href="' . base_url() . '/Calificacion/imprimirActaEvaluacion/' . $materia->idhorariodetalle . '">  <span class="label label-info">' . $materia->nombreclase . '</span></a>';
+                }
+            }
+            $tabla .= '
+                          </div>
+                      </div>
+                  </div>
+                  
+  
+              </div>
+          </div> 
+          </div>     ';
+        }
         $tabla .= ' <table  id="tablageneralcal" class=" table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
         <thead class="bg-teal">
             <th>#</th>
@@ -1380,6 +1440,7 @@ class Calificacion extends CI_Controller
         $materias = $this->calificacion->materiasGrupoStoreProcedure($idespecialidad, $idnivelestudio, $idperiodo, $idgrupo);
         $director = $this->calificacion->obtenerDirector($this->session->idplantel);
         $idhorario = "";
+
         $detalle_diciplina = "";
         if (isset($materias) && !empty($materias)) {
             $idhorario = $materias[0]->idhorario;
@@ -1646,7 +1707,8 @@ class Calificacion extends CI_Controller
                                 $evaluar = $this->calificacion->obtenerCalificacionValidandoMateria($idalumno, $idunidad, $idhorario, $idmateria);
                                 if ($evaluar) {
                                     if ($evaluar->calificacion > 0) {
-                                        $tabla .= '<td align="center">' . numberFormatPrecision($evaluar->calificacion, 1, '.') . '</td>';
+                                        //$tabla .= '<td align="center">' . numberFormatPrecision($evaluar->calificacion, 1, '.') . '</td>';
+                                        $tabla .= '<td align="center">' . eliminarDecimalCero($evaluar->calificacion) . '</td>';
                                         $suma_calificaciones += $evaluar->calificacion;
                                     } else {
                                         $tabla .= '<td align="center"><small></small></td>';
@@ -1661,7 +1723,7 @@ class Calificacion extends CI_Controller
                         if ($suma_calificaciones > 0 && $suma_unidades > 0) {
                             $suma = $suma_calificaciones / $suma_unidades;
                             $suma_calificaciones_global += $suma;
-                            $tabla .= '<td align="center" class="bg-prom">' . numberFormatPrecision($suma_calificaciones / $suma_unidades, 1, '.') . '</td>';
+                            $tabla .= '<td align="center" class="bg-prom">' . eliminarDecimalCero(numberFormatPrecision($suma, 1, '.')) . '</td>';
                         } else {
                             $tabla .= '<td align="center" class="bg-prom">0</td>';
                         }
@@ -1723,7 +1785,7 @@ class Calificacion extends CI_Controller
                             $idunidad = $unidad->idunidad;
                             $evaluar = $this->calificacion->obtenerCalificacionValidandoMateria($idalumno, $idunidad, $idhorario, $idmateria);
                             if ($evaluar) {
-                                $tabla .= '<td align="center">' . numberFormatPrecision($evaluar->calificacion, 1, '.') . '</td>';
+                                $tabla .= '<td align="center">' . eliminarDecimalCero($evaluar->calificacion) . '</td>';
                                 $suma_calificaciones += $evaluar->calificacion;
                             } else {
                                 $tabla .= '<td align="center">0</td>';
@@ -1735,7 +1797,7 @@ class Calificacion extends CI_Controller
                     if ($suma_calificaciones > 0 && $suma_unidades > 0) {
                         $suma = $suma_calificaciones / $suma_unidades;
                         $suma_calificaciones_global += $suma;
-                        $tabla .= '<td align="center" class="bg-prom">' . numberFormatPrecision($suma_calificaciones / $suma_unidades, 1, '.') . '</td>';
+                        $tabla .= '<td align="center" class="bg-prom">' . eliminarDecimalCero($suma_calificaciones / $suma_unidades) . '</td>';
                     } else {
                         $tabla .= '<td align="center" class="bg-prom">0</td>';
                     }
@@ -1771,7 +1833,8 @@ class Calificacion extends CI_Controller
       <td> </td>
       <td>';
         if ($suma_calificaciones_global > 0 && $total_suma_materias > 0) {
-            $tabla .= '<strong>' . numberFormatPrecision($suma_calificaciones_global / $total_suma_materias, 1, '.') . '</strong>';
+            $suma = $suma_calificaciones_global / $total_suma_materias;
+            $tabla .= '<strong>' . eliminarDecimalCero(numberFormatPrecision($suma, 1, '.')) . '</strong>';
         } else {
             $tabla .= '<strong>0</strong>';
         }
@@ -1885,6 +1948,7 @@ class Calificacion extends CI_Controller
       </td>
       </tr>
       </table>
+     
       ';
 
         $pdf->writeHTML($tabla, true, false, false, false, '');
@@ -1893,7 +1957,306 @@ class Calificacion extends CI_Controller
 
         $pdf->Output('Boleta de Calificaciones', 'I');
     }
+    public function imprimirActaEvaluacion($idhorariodetalle)
+    {
+        $detalle = $this->grupo->detalleHorarioDetalle($idhorariodetalle);
+        $this->load->library('tcpdf');
+        $idperiodo = $detalle->idperiodo;
+        $idgrupo = $detalle->idgrupo;
+        $grado = $detalle->nombrenivel;
+        $clave = $detalle->clave;
+        $idhorario = $detalle->idhorario;
+        $idmateria = $detalle->idmateriareal;
+        $idprofesormateria = $detalle->idprofesormateria;
+        $detalle_periodo = $this->cicloescolar->detalleCicloEscolar($idperiodo);
+        $detalle_logo = $this->alumno->logo($this->session->idplantel);
+        $detalle_periodo = $this->calificacion->detallePeriodo($idperiodo);
+        $estatus_periodo = $detalle_periodo->activo;
+        $alumnos = $this->calificacion->alumnosGrupo($idperiodo, $idgrupo, $estatus_periodo);
+        $logo = base_url() . '/assets/images/escuelas/' . $detalle_logo[0]->logoplantel;
+        $logo2 = base_url() . '/assets/images/escuelas/' . $detalle_logo[0]->logosegundo;
 
+        $grupo = "";
+        foreach ($alumnos as $alumno) {
+            $idalumno  =  $alumno->idalumno;
+            if (isset($grupo) && empty($grupo)) {
+                $dato = $this->calificacion->obtenerEspecialidadAlumno($idalumno);
+                //var_dump($dato);
+                if ($dato) {
+                    $grupo  .= $dato[0]->grupo;
+                }
+            }
+        }
+        // echo $grupo;
+        $unidades = $this->calificacion->unidades($this->session->idplantel);
+        //$materias = $this->calificacion->materiasGrupo($idperiodo, $idgrupo);
+
+
+        $pdf = new Pdf('P', 'mm', 'A4', true, 'UTF-8', false);
+        $pdf->SetTitle('Boleta de Calificaciones.');
+        $pdf->SetHeaderMargin(30);
+        $pdf->SetTopMargin(10);
+        $pdf->setFooterMargin(20);
+        $pdf->SetAutoPageBreak(true);
+        $pdf->SetAuthor('Author');
+        $pdf->SetDisplayMode('real', 'default');
+        $pdf->setPrintHeader(false);
+        $pdf->setPrintFooter(false);
+
+        $pdf->SetMargins(15, 15, 15);
+        $pdf->SetHeaderMargin(15);
+        $pdf->SetFooterMargin(15);
+
+        $pdf->SetAutoPageBreak(TRUE, 15);
+        $pdf->AddPage();
+        $tabla = '
+        <style type="text/css">
+        .txtn {
+          font-size: 7px;
+          color: #365f91;
+          font-family: sans-serif;
+      }
+                
+      .clave {
+          font-size: 7px;
+          color: #365f91;
+          font-family: sans-serif;
+      }
+                
+      .slogan {
+          font-size: 6px;
+          font-family: sans-serif;
+      }
+                
+      .nombreplantel {
+          font-size: 9px;
+          font-weight: bold;
+          color: #1f497d;
+          font-family: sans-serif;
+      }
+                
+      .tipoplantel {
+          font-size: 7px;
+          padding: 0px;
+          margin: 0px;
+          color: #365f91;
+          font-family: sans-serif;
+      }
+                
+      .titulo {
+          font-size: 7px;
+          text-align: center;
+          font-family: sans-serif;
+          font-weight:bold;
+      }
+      .cuerpo{
+        font-size: 7px;
+        text-align: left;
+        font-family: sans-serif;
+      }
+                
+      .secondtxt {
+          font-size: 5px;
+          font-family: sans-serif;
+          vertical-align:middle;
+      }
+      .thirdtxt {
+          font-size: 7px;
+          font-family: sans-serif;
+      }
+                
+      .bg-prom {
+          background-color: #ccc;
+      }
+      tblborder  {
+          border-spacing:0.5rem;
+      }
+      tblborder {
+        border-collapse:collapse;
+      }
+       .tblhorario tr td
+       {
+        border:0px solid black;
+       }
+        .tituloalumno{
+         font-size: 7px;
+          font-family: sans-serif;
+                
+    }
+      </style>
+                
+      <body>
+      <table width="500" border="0" cellpadding="3" class="tblborder" cellspacing="0">
+      <tr>
+      <td width="120" align="center">
+      <img src="' . $logo2 . '" width="150" height="90" />
+      </td>
+      <td colspan="2" width="260" align="center">
+      <label class="slogan">"' . str_replace("INSTITUTO MORELOS", "", $detalle_logo[0]->nombreplantel) . '"</label><br />
+      <label class="nombreplantel">' . str_replace("VALOR Y CONFIANZA", "", $detalle_logo[0]->nombreplantel) . '</label><br />
+      <label class="tipoplantel">' . $detalle_logo[0]->asociado . '</label><br />
+      <label class="clave">CCT. ' . $detalle_logo[0]->clave . '</label><br />
+      <label class="txtn">Incorporado a la Dirección General del Bachillerato - Modalidad Escolarizada</label
+      ><br />
+      <label class="txtn">RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorporación y Revalidación</label>
+      </td>
+      <td width="120" align="center">
+      <img src="' . $logo . '" width="150" height="70" />
+      </td>
+      </tr>
+      <tr>
+      <td align="center" colspan="4"><strong>ACTA DE EVALUACIÓN</strong></td>
+      </tr>
+      <tr>
+      <td  colspan="2" style="font-size:8px;"><strong>CICLO:</strong> ' . $detalle_periodo->yearinicio . '-' . $detalle_periodo->yearfin . ' / ' . $detalle_periodo->descripcion . '</td>
+      <td  colspan="2" style="font-size:8px;" align="right"><strong>TIPO DE EVALUACIÓN:</strong> ORD</td>
+      </tr>
+      <tr>
+      <td  colspan="2" style="font-size:8px;"><strong>GRADO: </strong>' . $grado . '</td>
+      <td  colspan="2" style="font-size:8px;" align="left"><strong>DOCENTE:</strong> ' . $detalle->nombre . ' ' . $detalle->apellidop . ' ' . $detalle->apellidom . '</td>
+      </tr>
+      <tr>
+      <td  colspan="2" style="font-size:8px;"><strong>GRUPO: </strong>' . $grupo . '</td>
+      <td  colspan="2" style="font-size:8px;" align="left"><strong>FIRMA:</strong></td>
+      </tr>
+      <tr>
+      <td  colspan="2" style="font-size:8px;"></td>
+      <td  colspan="2" style="border-bottom:solid black 2px;"></td>
+      </tr>
+      <tr>
+      <td  colspan="3" style="font-size:8px;"><strong>ASIGNATURA: </strong>' . $clave . ' - ' . $detalle->nombreclase . '</td> 
+      <td  colspan="1" align="right" style="font-size:9px;"><strong>página:</strong> 1</td>
+      </tr>
+      </table>
+      <table border="0" cellpadding="3">
+      <tr class="titulo" >
+          <td width="15"   style=" border-left:solid #000 2px; border-top:solid #000 2px;"></td>
+          <td width="50" style="border-top:solid #000 2px;"   >MATRICULA</td>
+          <td width="200" style="border-top:solid #000 2px;"  >NOMBRE</td>
+          <td width="47" style="border-top:solid #000 2px;"  >1ER. PARC.</td>
+          <td width="47" style="border-top:solid #000 2px;"  >2DO. PARC.</td>
+          <td width="47" style="border-top:solid #000 2px;"  >3RE. PARC.</td>
+          <td width="47" style="border-top:solid #000 2px;"  >EX. SEM.</td>
+          <td width="55" style="border-top:solid #000 2px; border-right:solid #000 2px; "   >PROM. FINAL</td>
+      </tr>';
+        if (isset($alumnos)  && !empty($alumnos)) {
+            $contador = 1;
+            $suma_calificacion_verificar = 0;
+            $mostrar = false;
+            foreach ($alumnos as $alumno) {
+                $idalumno  =  $alumno->idalumno;
+                if (isset($grupo) && !empty($grupo)) {
+                    $dato = $this->calificacion->obtenerEspecialidadAlumno($idalumno);
+                    if ($dato) {
+                        $grupo  .= $dato[0]->grupo;
+                    }
+                }
+                $opcion_alumno = $alumno->opcion;
+
+                $validarm = $this->calificacion->verificarCalificacionSiSeMuestraXMateria($idalumno, $idhorario, $idmateria);
+                if ($validarm) {
+                    $suma_calificacion_verificar = 0;
+                    foreach ($validarm as $row) {
+                        $suma_calificacion_verificar += $row->calificacion;
+                    }
+                    if ($suma_calificacion_verificar > 0) {
+                        $mostrar = TRUE;
+                    } else {
+                        $mostrar = FALSE;
+                    }
+                } else {
+                    $mostrar = TRUE;
+                }
+                if ($opcion_alumno == 1) {
+                    if ($mostrar) {
+                        if ($detalle->secalifica == 1) {
+
+                            $evaluar = $this->calificacion->validarMateriaSeriada($idalumno, $idprofesormateria, $estatus_periodo);
+                            if ($evaluar) {
+                                //$tabla .= '<td>No puede llevar esta Asignatura.</td>';
+                            } else {
+
+                                if ($detalle->idclasificacionmateria == 3) {
+                                    $validar_taller = $this->calificacion->obtenerMateriaTaller($idalumno, $idprofesormateria, $idhorario);
+                                    if ($validar_taller) {
+                                        $valor_calificacion = $this->calificacion->obtenerCalificacionSumatoria($idalumno, $idprofesormateria, $idperiodo, $idhorario);
+                                        // Se refleja la metaria para sacar el promedio
+                                        if (isset($valor_calificacion) && !empty($valor_calificacion)) {
+                                            $suma_recorrido = 0;
+                                            foreach ($valor_calificacion as $row_ca) {
+                                                if ($suma_recorrido == 0) {
+                                                    $tabla .= '<tr class="cuerpo" >
+                                                    <td width="15">' . $contador++ . '</td>
+                                                    <td width="60">' . $alumno->matricula . '</td>
+                                                    <td width="200">' . $alumno->apellidop . ' ' . $alumno->apellidom . ' ' . $alumno->nombre . '</td>
+                                                    <td width="50"></td>
+                                                    <td width="50"></td>
+                                                    <td width="50"></td>
+                                                    <td width="50"></td>
+                                                    <td width="90">' . numberFormatPrecision($row_ca->calificacion, 1, '.') . '</td></tr>';
+                                                }
+                                                $suma_recorrido = 1;
+                                            }
+                                        } else {
+                                            $tabla .= '<small>No registrado</small>';
+                                        }
+                                    } else {
+                                        $tabla .= '<small><strong>No lleva el curso.</strong></small>';
+                                    }
+                                } else {
+                                    $valor_calificacion = $this->calificacion->obtenerCalificacionSumatoria($idalumno, $idprofesormateria, $idperiodo, $idhorario);
+                                    // Se refleja la metaria para sacar el promedio
+                                    if (isset($valor_calificacion) && !empty($valor_calificacion)) {
+                                        $suma_recorrido = 0;
+                                        foreach ($valor_calificacion as $row_ca) {
+                                            if ($suma_recorrido == 0) {
+                                                //if ($row_ca->calificacion > 0) {
+                                                // $tabla .= '<label>' . numberFormatPrecision($row_ca->calificacion, 1, '.') . '</label>';
+                                                //} else {
+                                                //    $tabla .= '<small><strong>No lleva el curso.</strong></small>';
+                                                //}
+
+                                                $tabla .= '<tr class="cuerpo"  >
+                                                        <td width="15" style="border-bottom:solid #000 2px; border-left:solid #000 2px; border-top:solid #000 2px;" >' . $contador++ . '</td>
+                                                        <td width="50" style="border-bottom:solid #000 2px; border-top:solid #000 2px;" >' . $alumno->matricula . '</td>
+                                                        <td width="200" style="border-bottom:solid #000 2px; border-top:solid #000 2px;">' . $alumno->apellidop . ' ' . $alumno->apellidom . ' ' . $alumno->nombre . '</td>';
+                                                if (isset($unidades) && !empty($unidades)) {
+                                                    foreach ($unidades as $unidad) {
+                                                        $idunidad = $unidad->idunidad;
+                                                        $calificacion_unidad = $this->calificacion->obtenerCalificacionXUnidadMateria($idalumno, $idunidad, $idprofesormateria);
+                                                        if ($calificacion_unidad) {
+
+                                                            $tabla .= '<td width="47" align="center" style="border-left:solid #000 2px;border-bottom:solid #000 2px; border-top:solid #000 2px;">' . eliminarDecimalCero($calificacion_unidad->calificacion) . '</td>';
+                                                        } else {
+                                                            $tabla .= '<td width="47" align="center" style="border-left:solid #000 2px;border-bottom:solid #000 2px; border-top:solid #000 2px;">0</td>';
+                                                        }
+                                                    }
+                                                }
+                                                $tabla .= '<td width="55" style="border-bottom:solid #000 2px;border-top:solid #000 2px;border-left:solid #000 2px; border-right:solid #000 2px; " align="center"  ><strong>' . eliminarDecimalCero(numberFormatPrecision($row_ca->calificacion, 1, '.')) . '</strong></td></tr>';
+                                            }
+                                            $suma_recorrido = 1;
+                                        }
+                                    } else {
+                                        // $tabla .= '<small>No registrado</small>';
+                                    }
+                                }
+                            }
+                        } else {
+                            //$tabla .= '<small>No se evaluea.</small>';
+                        }
+                    } else {
+                        ///$tabla .= '<small>No lleva el curso</small>';
+                    }
+                }
+            }
+        }
+        $tabla .= '</table>';
+        $pdf->writeHTML($tabla, true, false, false, false, '');
+
+        // ob_end_clean();
+
+        $pdf->Output('Boleta de Calificaciones', 'I');
+    }
     public function obtenerCalificacion($idperiodo, $idgrupo)
     {
         $detalle_periodo = $this->calificacion->detallePeriodo($idperiodo);
@@ -1901,7 +2264,13 @@ class Calificacion extends CI_Controller
         $alumnos = $this->calificacion->alumnosGrupo($idperiodo, $idgrupo, $estatus_periodo);
         $materias = $this->calificacion->materiasGrupo($idperiodo, $idgrupo);
         $tabla = "";
-        $tabla .= ' <table  id="tablageneralcal" class=" table table-striped dt-responsive nowrap" cellspacing="0" width="100%"> 
+
+
+
+
+
+        $tabla .= ' 
+        <table  id="tablageneralcal" class=" table table-striped dt-responsive nowrap" cellspacing="0" width="100%"> 
         <thead class="bg-teal">
             <th>#</th> 
             <th>NOMBRE</th>';
@@ -1926,6 +2295,8 @@ class Calificacion extends CI_Controller
                 $tabla .= '</td>';
                 $opcion_alumno = $row->opcion;
                 $suma_recorrido = 0;
+                $suma_calificacion_verificar = 0;
+                $mostrar = false;
                 if (isset($materias) && !empty($materias)) {
                     foreach ($materias as $block) {
                         $idmateria = $block->idmateria;
@@ -1933,18 +2304,54 @@ class Calificacion extends CI_Controller
                         $idprofesormateria = $block->idprofesormateria;
                         $secalifica = $block->secalifica;
                         $idclasificacionmateria = $block->idclasificacionmateria;
+                        $validarm = $this->calificacion->verificarCalificacionSiSeMuestraXMateria($idalumno, $idhorario, $idmateria);
+                        if ($validarm) {
+                            $suma_calificacion_verificar = 0;
+                            foreach ($validarm as $row) {
+                                $suma_calificacion_verificar += $row->calificacion;
+                            }
+                            if ($suma_calificacion_verificar > 0) {
+                                $mostrar = TRUE;
+                            } else {
+                                $mostrar = FALSE;
+                            }
+                        } else {
+                            $mostrar = TRUE;
+                        }
                         $tabla .= '<td>';
                         if ($opcion_alumno == 1) {
-                            if ($secalifica == 1) {
+                            if ($mostrar) {
+                                if ($secalifica == 1) {
 
-                                $evaluar = $this->calificacion->validarMateriaSeriada($idalumno, $idmateria, $estatus_periodo);
-                                if ($evaluar) {
-                                    $tabla .= '<td>No puede llevar esta Asignatura.</td>';
-                                } else {
+                                    $evaluar = $this->calificacion->validarMateriaSeriada($idalumno, $idmateria, $estatus_periodo);
+                                    if ($evaluar) {
+                                        $tabla .= '<td>No puede llevar esta Asignatura.</td>';
+                                    } else {
 
-                                    if ($idclasificacionmateria == 3) {
-                                        $validar_taller = $this->calificacion->obtenerMateriaTaller($idalumno, $idprofesormateria, $idhorario);
-                                        if ($validar_taller) {
+                                        if ($idclasificacionmateria == 3) {
+                                            $validar_taller = $this->calificacion->obtenerMateriaTaller($idalumno, $idprofesormateria, $idhorario);
+                                            if ($validar_taller) {
+                                                $valor_calificacion = $this->calificacion->obtenerCalificacionSumatoria($idalumno, $idprofesormateria, $idperiodo, $idhorario);
+                                                // Se refleja la metaria para sacar el promedio
+                                                if (isset($valor_calificacion) && !empty($valor_calificacion)) {
+                                                    $suma_recorrido = 0;
+                                                    foreach ($valor_calificacion as $row_ca) {
+                                                        if ($suma_recorrido == 0) {
+                                                            //if ($row_ca->calificacion > 0) {
+                                                            $tabla .= '<label>' . numberFormatPrecision($row_ca->calificacion, 1, '.') . '</label>';
+                                                            //} else {
+                                                            //    $tabla .= '<small><strong>No lleva el curso.</strong></small>';
+                                                            //}
+                                                        }
+                                                        $suma_recorrido = 1;
+                                                    }
+                                                } else {
+                                                    $tabla .= '<small>No registrado</small>';
+                                                }
+                                            } else {
+                                                $tabla .= '<small><strong>No lleva el curso.</strong></small>';
+                                            }
+                                        } else {
                                             $valor_calificacion = $this->calificacion->obtenerCalificacionSumatoria($idalumno, $idprofesormateria, $idperiodo, $idhorario);
                                             // Se refleja la metaria para sacar el promedio
                                             if (isset($valor_calificacion) && !empty($valor_calificacion)) {
@@ -1962,59 +2369,44 @@ class Calificacion extends CI_Controller
                                             } else {
                                                 $tabla .= '<small>No registrado</small>';
                                             }
-                                        } else {
-                                            $tabla .= '<small><strong>No lleva el curso.</strong></small>';
                                         }
-                                    } else {
-                                        $valor_calificacion = $this->calificacion->obtenerCalificacionSumatoria($idalumno, $idprofesormateria, $idperiodo, $idhorario);
-                                        // Se refleja la metaria para sacar el promedio
-                                        if (isset($valor_calificacion) && !empty($valor_calificacion)) {
-                                            $suma_recorrido = 0;
-                                            foreach ($valor_calificacion as $row_ca) {
-                                                if ($suma_recorrido == 0) {
-                                                    //if ($row_ca->calificacion > 0) {
-                                                    $tabla .= '<label>' . numberFormatPrecision($row_ca->calificacion, 1, '.') . '</label>';
-                                                    //} else {
-                                                    //    $tabla .= '<small><strong>No lleva el curso.</strong></small>';
-                                                    //}
-                                                }
-                                                $suma_recorrido = 1;
-                                            }
-                                        } else {
-                                            $tabla .= '<small>No registrado</small>';
-                                        }
-                                    }
-                                }
-                            } else {
-                                $tabla .= '<small>No se evaluea.</small>';
-                            }
-                        } else if ($opcion_alumno == 0) {
-                            $validar = $this->calificacion->validarMateriaReprobadaXUnidad($idalumno, $idprofesormateria);
-                            if ($validar) {
-                                // VALIDAMOS LA CALIFICACION
-                                $valor_calificacion = $this->calificacion->obtenerCalificacionSumatoria($idalumno, $idprofesormateria, $idperiodo, $idhorario);
-
-                                // Se refleja la metaria para sacar el promedio
-                                if (isset($valor_calificacion) && !empty($valor_calificacion)) {
-                                    $suma_recorrido = 0;
-                                    foreach ($valor_calificacion as $row_ca) {
-                                        if ($suma_recorrido == 0) {
-                                            if ($row_ca->calificacion > 0.0) {
-                                                $tabla .= '<label>' . numberFormatPrecision($row_ca->calificacion, 1, '.') . '</label>';
-                                            } else {
-                                                $tabla .= '<small><strong>No lleva el curso.</strong></small>';
-                                            }
-                                        }
-                                        $suma_recorrido = 1;
                                     }
                                 } else {
-                                    $tabla .= '<small>No registrado</small>';
+                                    $tabla .= '<small>No se evaluea.</small>';
                                 }
                             } else {
-                                // NO PUEDE LLEVAR LA MATERIA
-                                $tabla .= '<td>No lleva la materia.</td>';
+                                $tabla .= '<small>No lleva el curso</small>';
                             }
-                        } else {
+                        } else if ($opcion_alumno == 0) {
+                            if ($mostrar) {
+                                $validar = $this->calificacion->validarMateriaReprobadaXUnidad($idalumno, $idprofesormateria);
+                                if ($validar) {
+                                    // VALIDAMOS LA CALIFICACION
+                                    $valor_calificacion = $this->calificacion->obtenerCalificacionSumatoria($idalumno, $idprofesormateria, $idperiodo, $idhorario);
+
+                                    // Se refleja la metaria para sacar el promedio
+                                    if (isset($valor_calificacion) && !empty($valor_calificacion)) {
+                                        $suma_recorrido = 0;
+                                        foreach ($valor_calificacion as $row_ca) {
+                                            if ($suma_recorrido == 0) {
+                                                if ($row_ca->calificacion > 0.0) {
+                                                    $tabla .= '<label>' . numberFormatPrecision($row_ca->calificacion, 1, '.') . '</label>';
+                                                } else {
+                                                    $tabla .= '<small><strong>No lleva el curso.</strong></small>';
+                                                }
+                                            }
+                                            $suma_recorrido = 1;
+                                        }
+                                    } else {
+                                        $tabla .= '<small>No registrado</small>';
+                                    }
+                                } else {
+                                    // NO PUEDE LLEVAR LA MATERIA
+                                    $tabla .= '<td>No lleva la materia.</td>';
+                                }
+                            } else {
+                                $tabla .= '<small>No lleva el curso</small>';
+                            }
                         }
 
                         $tabla .= '</td>';
@@ -2157,17 +2549,7 @@ class Calificacion extends CI_Controller
         }
     }
 
-    public function showAllPeriodos()
-    {
-        $idplantel = $this->session->idplantel;
-        $query = $this->cicloescolar->showAll($idplantel);
-        if ($query) {
-            $result['periodos'] = $this->cicloescolar->showAll($idplantel);
-        }
-        if (isset($result) && !empty($result)) {
-            echo json_encode($result);
-        }
-    }
+
 
     public function showAllGrupos()
     {
