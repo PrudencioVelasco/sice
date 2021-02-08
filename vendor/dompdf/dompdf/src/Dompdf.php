@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package dompdf
  * @link    http://dompdf.github.com/
@@ -6,6 +7,7 @@
  * @author  Fabien Ménager <fabien.menager@gmail.com>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
+
 namespace Dompdf;
 
 use DOMDocument;
@@ -207,22 +209,22 @@ class Dompdf
     private $quirksmode = false;
 
     /**
-    * Protocol whitelist
-    *
-    * Protocols and PHP wrappers allowed in URLs. Full support is not
-    * guaranteed for the protocols/wrappers contained in this array.
-    *
-    * @var array
-    */
+     * Protocol whitelist
+     *
+     * Protocols and PHP wrappers allowed in URLs. Full support is not
+     * guaranteed for the protocols/wrappers contained in this array.
+     *
+     * @var array
+     */
     private $allowedProtocols = [null, "", "file://", "http://", "https://"];
 
     /**
-    * Local file extension whitelist
-    *
-    * File extensions supported by dompdf for local files.
-    *
-    * @var array
-    */
+     * Local file extension whitelist
+     *
+     * File extensions supported by dompdf for local files.
+     *
+     * @var array
+     */
     private $allowedLocalFileExtensions = ["htm", "html"];
 
     /**
@@ -274,8 +276,7 @@ class Dompdf
     {
         mb_internal_encoding('UTF-8');
 
-        if (version_compare(PHP_VERSION, '7.0.0') >= 0)
-        {
+        if (version_compare(PHP_VERSION, '7.0.0') >= 0) {
             @ini_set('pcre.jit', 0);
         }
 
@@ -289,7 +290,7 @@ class Dompdf
 
         $versionFile = realpath(__DIR__ . '/../VERSION');
         if (file_exists($versionFile) && ($version = file_get_contents($versionFile)) !== false && $version !== '$Format:<%h>$') {
-          $this->version = sprintf('dompdf %s', $version);
+            $this->version = sprintf('dompdf %s', $version);
         }
 
         $this->localeStandard = sprintf('%.1f', 1.0) == '1.0';
@@ -356,10 +357,10 @@ class Dompdf
             [$this->protocol, $this->baseHost, $this->basePath] = Helpers::explode_url($file);
         }
         $protocol = strtolower($this->protocol);
-        
+
         $uri = Helpers::build_url($this->protocol, $this->baseHost, $this->basePath, $file);
 
-        if ( !in_array($protocol, $this->allowedProtocols) ) {
+        if (!in_array($protocol, $this->allowedProtocols)) {
             throw new Exception("Permission denied on $file. The communication protocol is not supported.");
         }
 
@@ -417,7 +418,8 @@ class Dompdf
         $this->loadHtml($str, $encoding);
     }
 
-    public function loadDOM($doc, $quirksmode = false) {
+    public function loadDOM($doc, $quirksmode = false)
+    {
         // Remove #text children nodes in nodes that shouldn't have
         $tag_names = ["html", "head", "table", "tbody", "thead", "tfoot", "tr"];
         foreach ($tag_names as $tag_name) {
@@ -454,7 +456,7 @@ class Dompdf
             }
         }
 
-        if (in_array(strtoupper($encoding), array('UTF-8','UTF8')) === false) {
+        if (in_array(strtoupper($encoding), array('UTF-8', 'UTF8')) === false) {
             $str = mb_convert_encoding($str, 'UTF-8', $encoding);
 
             //Update encoding after converting
@@ -474,7 +476,7 @@ class Dompdf
                 }
             }
         }
-        if (isset($document_encoding) && in_array(strtoupper($document_encoding), ['UTF-8','UTF8']) === false) {
+        if (isset($document_encoding) && in_array(strtoupper($document_encoding), ['UTF-8', 'UTF8']) === false) {
             $str = preg_replace('/charset=([^\s"]+)/i', 'charset=UTF-8', $str);
         } elseif (isset($document_encoding) === false && strpos($str, '<head>') !== false) {
             $str = str_replace('<head>', '<head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8">', $str);
@@ -596,9 +598,10 @@ class Dompdf
         /** @var \DOMElement $tag */
         foreach ($stylesheets as $tag) {
             switch (strtolower($tag->nodeName)) {
-                // load <link rel="STYLESHEET" ... /> tags
+                    // load <link rel="STYLESHEET" ... /> tags
                 case "link":
-                    if (mb_strtolower(stripos($tag->getAttribute("rel"), "stylesheet") !== false) || // may be "appendix stylesheet"
+                    if (
+                        mb_strtolower(stripos($tag->getAttribute("rel"), "stylesheet") !== false) || // may be "appendix stylesheet"
                         mb_strtolower($tag->getAttribute("type")) === "text/css"
                     ) {
                         //Check if the css file is for an accepted media type
@@ -627,13 +630,14 @@ class Dompdf
                     }
                     break;
 
-                // load <style> tags
+                    // load <style> tags
                 case "style":
                     // Accept all <style> tags by default (note this is contrary to W3C
                     // HTML 4.0 spec:
                     // http://www.w3.org/TR/REC-html40/present/styles.html#adef-media
                     // which states that the default media type is 'screen'
-                    if ($tag->hasAttributes() &&
+                    if (
+                        $tag->hasAttributes() &&
                         ($media = $tag->getAttribute("media")) &&
                         !in_array($media, $acceptedmedia)
                     ) {
@@ -868,11 +872,15 @@ class Dompdf
 
         $out = sprintf(
             "<span style='color: #000' title='Frames'>%6d</span>" .
-            "<span style='color: #009' title='Memory'>%10.2f KB</span>" .
-            "<span style='color: #900' title='Time'>%10.2f ms</span>" .
-            "<span  title='Quirksmode'>  " .
-            ($this->quirksmode ? "<span style='color: #d00'> ON</span>" : "<span style='color: #0d0'>OFF</span>") .
-            "</span><br />", $frames, $memory, $time);
+                "<span style='color: #009' title='Memory'>%10.2f KB</span>" .
+                "<span style='color: #900' title='Time'>%10.2f ms</span>" .
+                "<span  title='Quirksmode'>  " .
+                ($this->quirksmode ? "<span style='color: #d00'> ON</span>" : "<span style='color: #0d0'>OFF</span>") .
+                "</span><br />",
+            $frames,
+            $memory,
+            $time
+        );
 
         $out .= ob_get_contents();
         ob_clean();
@@ -1473,12 +1481,11 @@ class Dompdf
      */
     function __get($prop)
     {
-        switch ($prop)
-        {
-            case 'version' :
+        switch ($prop) {
+            case 'version':
                 return $this->version;
             default:
-                throw new Exception( 'Invalid property: ' . $prop );
+                throw new Exception('Invalid property: ' . $prop);
         }
     }
 }

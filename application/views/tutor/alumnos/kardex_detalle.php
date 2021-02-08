@@ -9,16 +9,7 @@
                       <div class="x_title">
                           <h2><strong>BOLETA DE CALIFICACIONES</strong></h2>
                           <ul class="nav navbar-right panel_toolbox">
-                              <h3><small>Promedio: </small><strong style="color: green">
-                                      <?php 
-                //$calificacion 
-             if(isset($calificacion) && !empty($calificacion)){
-              echo  number_format($calificacion,2);
-            }else{
-              echo "0.00";
-            }
-               ?>
-                                  </strong></h3>
+                             
                           </ul>
                           <div class="clearfix"></div>
                       </div>
@@ -37,7 +28,7 @@
                                   <label>GRUPO</label><br>
                                   <label style="color: #000">
                                       <?php 
-                    echo $datoshorario->nombrenivel.' '.$datoshorario->nombregrupo.' - '.$datoshorario->nombreturno;
+                                      echo $datoshorario->nivelgrupo.' '.$datoshorario->nombregrupo.' - '.$datoshorario->nombreturno;
                    ?>
                                   </label>
                               </div>

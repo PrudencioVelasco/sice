@@ -108,6 +108,7 @@ class CicloEscolar_model extends CI_Model
         $this->db->from('tblmes m');
         $this->db->where('m.numero >= 9');
         $this->db->where('m.numero <= 11');
+        $this->db->order_by('m.enumeracion ASC');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();
@@ -121,6 +122,7 @@ class CicloEscolar_model extends CI_Model
         $this->db->select('m.idmes');
         $this->db->from('tblmes m');
         $this->db->where_in('m.idmes', $in);
+        $this->db->order_by('m.enumeracion ASC');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();
@@ -134,6 +136,7 @@ class CicloEscolar_model extends CI_Model
         $this->db->select('m.idmes');
         $this->db->from('tblmes m');
         $this->db->where_in('m.idmes', $in);
+        $this->db->order_by('m.enumeracion ASC');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();
@@ -148,10 +151,12 @@ class CicloEscolar_model extends CI_Model
         $this->db->from('tblcalificacion c');
         $this->db->join('tbldetalle_calificacion dc', 'c.idcalificacion = dc.idcalificacion');
         $this->db->join('tblhorario_detalle hd ', 'hd.idhorariodetalle = c.idhorariodetalle');
+        $this->db->join('tblmes m ', 'm.idmes = dc.idmes');
         $this->db->where('hd.idhorario', $idhorario);
         $this->db->where('c.idalumno', $idalumno);
         $this->db->where('hd.idmateria', $idprofesormateria);
         $this->db->where('dc.idmes', $idmes);
+        $this->db->order_by('m.enumeracion ASC');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->first_row();

@@ -690,6 +690,12 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                     'errors' => array(
                         'required' => '%s es obligatorio.'
                     )
+                ),
+                array(
+                    'field' => 'descripcionhorario',
+                    'label' => 'Descripción',
+                    'rules' => 'trim',
+                    'errors' => array()
                 )
             );
 
@@ -710,7 +716,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                         'idplantel' => $this->session->idplantel,
                         'idperiodo' => $this->input->post('idperiodo'),
                         'idgrupo' => $this->input->post('idgrupo'),
-                        'descripcion' => $this->input->post('descripcion'),
+                        'descripcion' => $this->input->post('descripcionhorario'),
                         'activo' => $this->input->post('activo')
                     );
                     $this->horario->updateHorario($id, $data);
@@ -799,51 +805,84 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
                 );
             } else {
                 $id = $this->input->post('idhorariodetalle');
-                $validar_calificacion = $this->horario->validarCalificacionHorarioDetalle($id);
-                $validar_asistencia = $this->horario->validarAsistenciaHorarioDetalle($id);
-                $validar_tarea = $this->horario->validarTareaHorarioDetalle($id);
-                $validar_mensaje = $this->horario->validarMensajeHorarioDetalle($id);
-                if (!$validar_calificacion) {
-                    if (!$validar_asistencia) {
-                        if (!$validar_tarea) {
-                            if (!$validar_mensaje) {
-                                $data = array(
-                                    'idhorario' => $this->input->post('idhorario'),
-                                    'idmateria' => strtoupper($this->input->post('idprofesormateria')),
-                                    'iddia' => strtoupper($this->input->post('iddia')),
-                                    'horainicial' => strtoupper($this->input->post('horainicial')),
-                                    'horafinal' => $this->input->post('horafinal'),
-                                    'urlvideoconferencia' => $this->input->post('urlvideoconferencia'),
-                                    'numeroanfitrion' => $this->input->post('numeroanfitrion'),
-                                    'idusuario' => $this->session->user_id,
-                                    'fecharegistro' => date('Y-m-d H:i:s')
-                                );
+                $idprofesormateria = $this->input->post('idprofesormateria');
 
-                                $this->horario->updateHorarioMateria($id, $data);
-                                $result['error'] = false;
-                                $result['success'] = 'User updated successfully';
+
+                $detalle_materia =  $this->horario->detalleProfesorMateria($idprofesormateria);
+                if ($detalle_materia) {
+                    $detalle_horariodetalle = $this->horario->detalleHorarioDetalle($id);
+                    $idmateriahorariodetalle = $detalle_horariodetalle[0]->idmateria;
+                    $idmateria  = $detalle_materia->idmateria;
+
+                    $validar_calificacion = $this->horario->validarCalificacionHorarioDetalle($id);
+                    $validar_asistencia = $this->horario->validarAsistenciaHorarioDetalle($id);
+                    $validar_tarea = $this->horario->validarTareaHorarioDetalle($id);
+                    $validar_mensaje = $this->horario->validarMensajeHorarioDetalle($id);
+                    if ($idmateria != $idmateriahorariodetalle) {
+                        if (!$validar_calificacion) {
+                            if (!$validar_asistencia) {
+                                if (!$validar_tarea) {
+                                    if (!$validar_mensaje) {
+                                        $data = array(
+                                            'idhorario' => $this->input->post('idhorario'),
+                                            'idmateria' => strtoupper($this->input->post('idprofesormateria')),
+                                            'iddia' => strtoupper($this->input->post('iddia')),
+                                            'horainicial' => strtoupper($this->input->post('horainicial')),
+                                            'horafinal' => $this->input->post('horafinal'),
+                                            'urlvideoconferencia' => $this->input->post('urlvideoconferencia'),
+                                            'numeroanfitrion' => $this->input->post('numeroanfitrion'),
+                                            'idusuario' => $this->session->user_id,
+                                            'fecharegistro' => date('Y-m-d H:i:s')
+                                        );
+
+                                        $this->horario->updateHorarioMateria($id, $data);
+                                        $result['error'] = false;
+                                        $result['success'] = 'User updated successfully';
+                                    } else {
+                                        $result['error'] = true;
+                                        $result['msg'] = array(
+                                            'msgerror' => 'No puede modificar, porque existe mensajes registrados.'
+                                        );
+                                    }
+                                } else {
+                                    $result['error'] = true;
+                                    $result['msg'] = array(
+                                        'msgerror' => 'No puede modificar, porque existe tareas registradas.'
+                                    );
+                                }
                             } else {
                                 $result['error'] = true;
                                 $result['msg'] = array(
-                                    'msgerror' => 'No puede modificar, porque existe mensajes registrados.'
+                                    'msgerror' => 'No puede modificar, porque existe asistencias registradas.'
                                 );
                             }
                         } else {
                             $result['error'] = true;
                             $result['msg'] = array(
-                                'msgerror' => 'No puede modificar, porque existe tareas registradas.'
+                                'msgerror' => 'No puede modificar, porque existe calificaciones registradas.'
                             );
                         }
                     } else {
-                        $result['error'] = true;
-                        $result['msg'] = array(
-                            'msgerror' => 'No puede modificar, porque existe asistencias registradas.'
+                        $data = array(
+                            'idhorario' => $this->input->post('idhorario'),
+                            'idmateria' => strtoupper($this->input->post('idprofesormateria')),
+                            'iddia' => strtoupper($this->input->post('iddia')),
+                            'horainicial' => strtoupper($this->input->post('horainicial')),
+                            'horafinal' => $this->input->post('horafinal'),
+                            'urlvideoconferencia' => $this->input->post('urlvideoconferencia'),
+                            'numeroanfitrion' => $this->input->post('numeroanfitrion'),
+                            'idusuario' => $this->session->user_id,
+                            'fecharegistro' => date('Y-m-d H:i:s')
                         );
+
+                        $this->horario->updateHorarioMateria($id, $data);
+                        $result['error'] = false;
+                        $result['success'] = 'User updated successfully';
                     }
                 } else {
                     $result['error'] = true;
                     $result['msg'] = array(
-                        'msgerror' => 'No puede modificar, porque existe calificaciones registradas.'
+                        'msgerror' => 'No puede modificar el horario, consulte con el Adminitrador.'
                     );
                 }
             }

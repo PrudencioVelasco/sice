@@ -1,8 +1,8 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 /**
 
 
-* CodeIgniter PDF Library
+ * CodeIgniter PDF Library
  *
  * Generate PDF's in your CodeIgniter applications.
  *
@@ -15,20 +15,22 @@
 
 
 
-*/
+ */
 
-require_once dirname(__FILE__) .'/dompdf/lib/Cpdf.php';
+require_once dirname(__FILE__) . '/dompdf/lib/Cpdf.php';
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 // Dompdf namespace
 use Dompdf\Dompdf;
 use Dompdf\Options;
-class Pdfgenerator{
-public function __construct(){
-require_once dirname(__FILE__).'/dompdf/autoload.inc.php';
-$pdf = new DOMPDF();
-$CI = & get_instance();
-$CI->dompdf = $pdf;
+
+class Pdfgenerator
+{
+    public function __construct()
+    {
+        require_once dirname(__FILE__) . '/dompdf/autoload.inc.php';
+        $pdf = new DOMPDF();
+        $CI = &get_instance();
+        $CI->dompdf = $pdf;
+    }
 }
-}
-?>

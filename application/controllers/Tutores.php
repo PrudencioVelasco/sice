@@ -634,12 +634,14 @@ class Tutores extends CI_Controller
                     $total_reprovadas = 0;
                     if ($detalle_calificacion) {
                         foreach ($detalle_calificacion as $row) {
-                            if (validar_calificacion($row->calificacion, $detalle_configuracion[0]->calificacion_minima)) {
-                                // REPROVADAS
-                                $total_reprovadas += 1;
-                            } else {
-                                // APROBADAS
-                                $total_aprovadas += 1;
+                            if ($row->calificacion > 0) {
+                                if (validar_calificacion($row->calificacion, $detalle_configuracion[0]->calificacion_minima)) {
+                                    // REPROVADAS
+                                    $total_reprovadas += 1;
+                                } else {
+                                    // APROBADAS
+                                    $total_aprovadas += 1;
+                                }
                             }
                         }
                     }
@@ -842,12 +844,7 @@ class Tutores extends CI_Controller
     {
         # code...
         Permission::grant(uri_string());
-
-        //Extraer informacion del Alumno 
-        $data = $this->alumno->obtenerNivelEducativoAlumno($idalumno);
-        //var_dump($data);
-
-        $unidades = $this->grupo->unidades($data->idplantel);
+        $unidades = $this->grupo->unidades($this->session->idplantel);
         $array_materias_reprobadas = array();
         $materias_reprobadas = $this->alumno->obtenerTodasMateriaReprobadasActivas($idalumno);
         if (isset($materias_reprobadas) && !empty($materias_reprobadas)) {
@@ -860,8 +857,8 @@ class Tutores extends CI_Controller
         $materias = $this->alumno->showAllMaterias($idhorario, $reprobadas, $idalumno);
         $datoshorario = $this->horario->showNivelGrupo($idhorario);
         $idnivelestudio = $datoshorario->idnivelestudio;
-
-        $detalle_configuracion = $this->configuracion->showAllConfiguracion($data->idplantel, $idnivelestudio);
+        $idperiodo =  $datoshorario->idperiodo;
+        $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
         $total_unidades = 0;
         $total_materia = 0;
         if ($materias != false) {
@@ -871,46 +868,49 @@ class Tutores extends CI_Controller
             }
         }
         $tabla = "";
-        $tabla .= '<table class="table  table-striped  table-hover">
-      <thead class="bg-teal">
-      <th>#</th>
-      <th>MATERIA</th>';
-        if (isset($unidades) && !empty($unidades)) {
-            foreach ($unidades as $block) :
-                $total_unidades += 1;
-                $tabla .= '<th><strong>' . $block->nombreunidad . '</strong></th>';
-            endforeach;
-        } else {
-            $tabla .= '<th><strong></strong></th>';
-        }
+        $tabla .= '<div class="table-responsive"> <table class="table  table-striped  table-hover">
+        <thead class="bg-teal">
+        <th>#</th>
+        <th>MATERIA</th>';
+        foreach ($unidades as $block) :
+            $total_unidades += 1;
+            $tabla .= '<th><strong>' . $block->nombreunidad . '</strong></th>';
+        endforeach;
         $tabla .= '<th>PROMEDIO</th>';
         $tabla .= '</thead>';
         $c = 1;
-        $mostrar = false;
-        $suma_calificacion_verificar = 0;
+        $mostrar = FALSE;
         if (isset($materias) && !empty($materias)) {
             $suma_calificacion = 0;
+            $suma_unidad_concalificacion = 0;
+
             foreach ($materias as $row) {
                 $suma_calificacion = 0;
                 $idmateria = $row->idmateria;
-                $validar = $this->calificacion->verificarCalificacionSiSeMuestra($idalumno, $row->idhorariodetalle);
-                if ($validar) {
-                    $suma_calificacion_verificar = 0;
-                    foreach ($validar as $rowv) {
-                        $suma_calificacion_verificar += $rowv->calificacion;
-                    }
-                    if ($suma_calificacion_verificar > 0) {
-                        $mostrar = TRUE;
+                $suma_unidad_concalificacion = 0;
+                $idhorariodetalle = $row->idhorariodetalle;
+                $validar = $this->calificacion->verificarCalificacionSiSeMuestraXMateria($idalumno, $idhorario, $idmateria);
+                if ($idperiodo == 9) {
+                    if ($validar) {
+                        $suma_calificacion_verificar = 0;
+                        foreach ($validar as $rowv) {
+                            $suma_calificacion_verificar += $rowv->calificacion;
+                        }
+                        if ($suma_calificacion_verificar > 0) {
+                            $mostrar = TRUE;
+                        } else {
+                            $mostrar = FALSE;
+                        }
                     } else {
-                        $mostrar = FALSE;
+                        $mostrar = TRUE;
                     }
                 } else {
                     $mostrar = TRUE;
                 }
                 if ($mostrar) {
                     $tabla .= '<tr>
-          <td>' . $c++ . '</td>
-          <td>';
+                <td>' . $c++ . '</td>
+                <td>';
                     if ($row->opcion == 0) {
                         $tabla .= '<label style="color:red;">R: </label>';
                     }
@@ -919,80 +919,109 @@ class Tutores extends CI_Controller
                         $val = $this->grupo->obtenerCalificacionValidandoMateria($idalumno, $block->idunidad, $idhorario, $idmateria);
 
                         $tabla .= '<td>';
-                        if ($val != false) {
-
+                        if ($val) {
                             $idcalificacion = $val->idcalificacion;
                             $detalle_calificacion = $this->grupo->detalleCalificacionSecundaria($idcalificacion);
-
                             $suma_calificacion = $suma_calificacion + $val->calificacion;
-
                             if (validar_calificacion($val->calificacion, $detalle_configuracion[0]->calificacion_minima)) {
-
-                                $tabla .= '<label style="color:red;">' . eliminarDecimalCero($val->calificacion) . '</label>';
+                                if ($val->calificacion > 0) {
+                                    $suma_unidad_concalificacion += 1;
+                                    $tabla .= '<label style="color:red;">' . eliminarDecimalCero($val->calificacion) . '</label>';
+                                } else {
+                                    $suma_unidad_concalificacion += 1;
+                                    $tabla .= '<label style="color:red;">' . eliminarDecimalCero($val->calificacion) . '</label>';
+                                }
                             } else {
-
-                                $tabla .= '<label style="color:green;">' . eliminarDecimalCero($val->calificacion) . '</label>';
+                                $suma_unidad_concalificacion += 1;
+                                $tabla .= '<label style="color:#36ad36;">' . eliminarDecimalCero($val->calificacion) . '</label>';
                             }
                         } else {
                             $tabla .= '<small>No registrado</small>';
                         }
                         $tabla .= '</td>';
                     endforeach;
-                    $tabla .= '<td>';
-                    $calificacion_final = eliminarDecimalCero($suma_calificacion / $total_unidades);
-                    if (validar_calificacion($calificacion_final, $detalle_configuracion[0]->calificacion_minima)) {
-                        if ($suma_calificacion > 0.0) {
-                            $tabla .= '<label style="color:red;">' . eliminarDecimalCero($suma_calificacion / $total_unidades) . '</label>';
+                    if ($suma_unidad_concalificacion == $total_unidades) {
+                        $tabla .= '<td>';
+                        $calificacion_final = eliminarDecimalCero($suma_calificacion / $total_unidades);
+                        if (validar_calificacion($calificacion_final, $detalle_configuracion[0]->calificacion_minima)) {
+                            if ($suma_calificacion > 0.0) {
+                                $tabla .= '<label style="color:red;">' . eliminarDecimalCero($suma_calificacion / $total_unidades) . '</label>';
+                            } else {
+                                $tabla .= '<label "> </label>';
+                            }
                         } else {
-                            $tabla .= '<label "> </label>';
+                            $tabla .= '<label style="color:green;">' . eliminarDecimalCero($suma_calificacion / $total_unidades) . '</label>';
                         }
+                        $tabla .= '</td>';
                     } else {
-                        $tabla .= '<label style="color:green;">' . eliminarDecimalCero($suma_calificacion / $total_unidades) . '</label>';
+                        $tabla .= '<td></td>';
                     }
-                    $tabla .= '</td>';
                     $tabla .= '</tr>';
                 }
             }
         }
-        $tabla .= '</table>';
-
+        $tabla .= '</table></div>';
         return $tabla;
     }
 
     public function obtenerCalificacionPrimaria($idhorario = '', $idalumno = '')
     {
-        # code...
         Permission::grant(uri_string());
-        $idplantel = $this->session->idplantel;
+        // $idplantel = $this->session->idplantel;
         $datoshorario = $this->horario->showNivelGrupo($idhorario);
         $idnivelestudio = $datoshorario->idnivelestudio;
-
+        $idperiodo = $datoshorario->idperiodo;
+        //$materias = $this->alumno->obtenerMateriasHorario($idalumno, $idhorario);
         $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
-        $calificaciones = $this->alumno->calificacionFinalPrimaria($idalumno, $idhorario, $idplantel);
-
+        //$calificaciones = $this->alumno->calificacionFinalPrimaria($idalumno, $idhorario, $idplantel);
+        $calificaciones = $this->alumno->spObtenerCalificacion($idalumno, $idhorario, $idperiodo);
         $tabla = "";
-        $tabla .= '<table class="table  table-striped  table-hover">
+        $tabla .= '<div class="table-responsive"> <table class="table  table-striped  table-hover">
         <thead class="bg-teal">
          <th>#</th>
-        <th>Nombre de Materia</th>';
-        $tabla .= '<th>PROMEDIO</th>';
+        <th>MATERIA</th>';
+        $tabla .= '<th><center>CALIFICACIÓN</center></th>';
         $tabla .= '</thead>';
         $c = 1;
+        $total_materia = 0;
+        $suma_calificacion = 0;
+        if (isset($calificaciones) && !empty($calificaciones)) {
+            foreach ($calificaciones as $calificacion) {
+                //$idprofesormateria = $materia->idprofesormateria;
+                if ($calificacion->mostrar === "SI") {
+                    $total_materia++;
+                    $suma_calificacion += $calificacion->calificacion;
+                    $tabla .= '<tr>';
+                    $tabla .= '<td>' . $c++ . '</td>';
+                    $tabla .= '<td>' . $calificacion->nombreclase . '</td>';
+                    ///OBTENER CALIFICACION POR MATERIA
+                    /*$calificacion = $this->alumno->obtenerCalificacionPorMateriaPrimaria($idhorario, $idprofesormateria, $idalumno);
+                     if (isset($calificacion) && !empty($calificacion)) {*/
+                    if ($calificacion->calificacion < $detalle_configuracion[0]->calificacion_minima) {
+                        $tabla .= '<td align="center" ><strong>' . eliminarDecimalCero(numberFormatPrecision($calificacion->calificacion, 1, '.')) . '</strong></td>';
+                    } else {
+                        $tabla .= '<td align="center">' . eliminarDecimalCero(numberFormatPrecision($calificacion->calificacion, 1, '.')) . '</td>';
+                    }
+                    /* } else {
+                     $tabla .= '<td><strong>NA</strong></td>';
+                     }*/
 
-        foreach ($calificaciones as $row) {
-            $tabla .= '<tr>';
-            $tabla .= '<td>' . $c++ . '</td>';
-            $tabla .= '<td>' . $row->nombreclase . '</td>';
-
-            if ($row->calificacion < $detalle_configuracion[0]->calificacion_minima) {
-                $tabla .= '<td><strong>NA</strong></td>';
-            } else {
-                $tabla .= '<td>' . numberFormatPrecision($row->calificacion, 1, '.') . '</td>';
+                    $tabla .= '</tr>';
+                }
             }
-            $tabla .= '</tr>';
+            $promedio = 0;
+            if ($total_materia > 0 && $suma_calificacion > 0) {
+                $promedio =  $suma_calificacion / $total_materia;
+            }
+            $tabla .= '
+                <tr style="background-color:#ccc;" >
+                    <td colspan="2" align="right"><strong><h5>PROMEDIO:</h5></strong></td>
+                    <td align="center"><strong><h5>' . eliminarDecimalCero(numberFormatPrecision($promedio, 1, '.')) . '</h5></strong></td>
+                </tr>
+            ';
         }
 
-        $tabla .= '</table>';
+        $tabla .= '</table></div>';
         return $tabla;
     }
 
@@ -2657,6 +2686,46 @@ class Tutores extends CI_Controller
         $suma_periodo = 0;
         $calificacion_global = 0;
         if (isset($detalle) && !empty($detalle)) {
+            $total_materia = 0;
+            $suma_calificacion = 0;
+            $calificacion = 0;
+            foreach ($detalle as $det) {
+                $suma_periodo++;
+                $idhorario = $det->idhorario;
+                $idperiodo = $det->idperiodo;
+                $calificaciones = $this->alumno->spObtenerCalificacion($idalumno, $idhorario, $idperiodo);
+                if (isset($calificaciones) && !empty($calificaciones)) {
+                    foreach ($calificaciones as $calificacion) {
+                        $idnivelestudio = $calificacion->idnivelestudio;
+                        $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
+                        if ($calificacion->calificacion > 0 && $calificacion->mostrar == "SI") {
+                            if ($calificacion->calificacion >= $detalle_configuracion[0]->calificacion_minima) {
+
+                                $suma_calificacion += $calificacion->calificacion;
+                                $total_materia = $total_materia + 1;
+                            } else {
+                                $total_materia = $total_materia + 1;
+                            }
+                        }
+                    }
+                    if ($suma_calificacion > 0  && $total_materia > 0) {
+                        $calificacion = $suma_calificacion / $total_materia;
+
+                        $calificacion_periodo += numberFormatPrecision($calificacion, 1, '.');
+                    }
+                }
+            }
+        }
+        if ($calificacion_periodo > 0 && $suma_periodo > 0) {
+            $calificacion_global = numberFormatPrecision(($calificacion_periodo / $suma_periodo), 1, '.');
+        }
+
+        return $calificacion_global;
+        /*$detalle = $this->alumno->allKardex($idalumno);
+        $calificacion_periodo = 0;
+        $suma_periodo = 0;
+        $calificacion_global = 0;
+        if (isset($detalle) && !empty($detalle)) {
             foreach ($detalle as $det) {
                 $suma_periodo++;
                 $idhorario = $det->idhorario;
@@ -2698,7 +2767,7 @@ class Tutores extends CI_Controller
             $calificacion_global = numberFormatPrecision(($calificacion_periodo / $suma_periodo), 1, '.');
         }
 
-        return $calificacion_global;
+        return $calificacion_global;*/
     }
 
     public function detalle($idalumno = '')
@@ -2784,8 +2853,8 @@ class Tutores extends CI_Controller
                 $tabla = $this->obtenerCalificacionPrimaria($idhorario, $idalumno);
             }
             if ($idniveleducativo == 4) {
-                //PRIMARIA
-                $tabla = $this->obtenerCalificacionPrimaria($idhorario, $idalumno);
+                //PREESCOLAR
+                $tabla = $this->obtenerCalificacionPreescolar($idalumno, $idnivelestudio, $idperiodo);
             }
             if ($idniveleducativo == 2) {
                 //SECUNDARIA
@@ -2793,11 +2862,11 @@ class Tutores extends CI_Controller
             }
             if ($idniveleducativo == 3) {
                 //PREPARATORIA
-                $tabla = $this->obtenerCalificacionSecundaria($idhorario, $idalumno, $idperiodo);
+                $tabla = $this->obtenerCalificacionPreparatoria($idhorario, $idalumno, $idperiodo);
             }
             if ($idniveleducativo == 5) {
-                //PREPARATORIA
-                $tabla = $this->obtenerCalificacionSecundaria($idhorario, $idalumno, $idperiodo);
+                //LICENCIATURA
+                $tabla = $this->obtenerCalificacionLicenciaturaFinal($idhorario, $idalumno, $idperiodo);
             }
             //CODIGO PARA OBTENER LA CALIFICACION DEL NIVEL
             $materias = $this->alumno->showAllMateriasPasadas($idhorario, $idalumno, $idperiodo);
@@ -2847,69 +2916,160 @@ class Tutores extends CI_Controller
         }
     }
 
+    public function obtenerCalificacionLicenciaturaFinal($idhorario = '', $idalumno = '', $idperiodo = '')
+    {
+        # code...
+        Permission::grant(uri_string());
+        $datoshorario = $this->horario->showNivelGrupo($idhorario);
+        $idnivelestudio = $datoshorario->idnivelestudio;
+        $calificaciones = $this->alumno->spObtenerCalificacion($idalumno, $idhorario, $idperiodo);
+        $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
+        $tabla = "";
+        $tabla .= '<div class="table-responsive"> <table class="table  table-striped  table-hover">
+        <thead class="bg-teal">
+             <th>#</th>
+             <th>MATERIA</th>';
+        $tabla .= '<th><center>CALIFICACIÓN</center></th>';
+        $tabla .= '</thead>';
+        $c = 1;
+        $total_materia = 0;
+        $suma_calificacion = 0;
+        if (isset($calificaciones) && !empty($calificaciones)) {
+            foreach ($calificaciones as $row) {
+
+                if ($row->mostrar === "SI") {
+                    $total_materia++;
+                    $suma_calificacion += $row->calificacion;
+                    $tabla .= '<tr>';
+                    $tabla .= '<td>' . $c++ . '</td>';
+                    $tabla .= '<td>' . $row->nombreclase . '</td>';
+                    $tabla .= '<td align="center" >';
+                    if ($detalle_configuracion[0]->calificacion_minima < $row->calificacion) {
+                        $tabla .= '<label>' . eliminarDecimalCero(numberFormatPrecision($row->calificacion, 1, '.')) . '</label>';
+                    } else {
+                        $tabla .= '<label style="color:red;">' . eliminarDecimalCero(numberFormatPrecision($row->calificacion, 1, '.')) . '</label>';
+                    }
+
+                    $tabla .= '</td>';
+                    $tabla .= '</tr>';
+                }
+            }
+            if ($total_materia > 0 && $suma_calificacion > 0) {
+                $promedio =  $suma_calificacion / $total_materia;
+            }
+            $tabla .= '
+                <tr style="background-color:#ccc;" >
+                    <td colspan="2" align="right"><strong><h5>PROMEDIO:</h5></strong></td>
+                    <td align="center"><strong><h5>' . eliminarDecimalCero(numberFormatPrecision($promedio, 1, '.')) . '</h5></strong></td>
+                </tr>
+            ';
+        }
+        $tabla .= '</table></div>';
+        return $tabla;
+    }
+
+
+    public function obtenerCalificacionPreparatoria($idhorario = '', $idalumno = '', $idperiodo)
+    {
+        # code...
+        Permission::grant(uri_string());
+        $datoshorario = $this->horario->showNivelGrupo($idhorario);
+        $idnivelestudio = $datoshorario->idnivelestudio;
+        $calificaciones = $this->alumno->spObtenerCalificacion($idalumno, $idhorario, $idperiodo);
+        $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
+
+        $tabla = "";
+        $tabla .= '<div class="table-responsive"> <table class="table  table-striped  table-hover">
+        <thead class="bg-teal">
+             <th>#</th>
+             <th>MATERIA</th>';
+        $tabla .= '<th><center>CALIFICACIÓN</center></th>';
+        $tabla .= '</thead>';
+        $c = 1;
+        $total_materia = 0;
+        $suma_calificacion = 0;
+        if (isset($calificaciones) && !empty($calificaciones)) {
+            foreach ($calificaciones as $row) {
+                if ($row->mostrar === "SI" && $row->calificacion > 0) {
+                    $total_materia++;
+                    $suma_calificacion += $row->calificacion;
+                    $tabla .= '<tr>';
+                    $tabla .= '<td>' . $c++ . '</td>';
+                    $tabla .= '<td>' . $row->nombreclase . '</td>';
+                    $tabla .= '<td align="center">';
+                    if ($detalle_configuracion[0]->calificacion_minima < $row->calificacion) {
+                        $tabla .= '<label>' . eliminarDecimalCero(numberFormatPrecision($row->calificacion, 1, '.')) . '</label>';
+                    } else {
+                        $tabla .= '<label style="color:red;">' . eliminarDecimalCero(numberFormatPrecision($row->calificacion, 1, '.')) . '</label>';
+                    }
+
+                    $tabla .= '</td>';
+                    $tabla .= '</tr>';
+                }
+            }
+            $promedio = 0;
+            if ($total_materia > 0 && $suma_calificacion > 0) {
+                $promedio =  $suma_calificacion / $total_materia;
+            }
+            $tabla .= '
+                <tr style="background-color:#ccc;" >
+                    <td colspan="2" align="right"><strong><h5>PROMEDIO:</h5></strong></td>
+                    <td align="center"><strong><h5>' . eliminarDecimalCero(numberFormatPrecision($promedio, 1, '.')) . '</h5></strong></td>
+                </tr>
+            ';
+        }
+        $tabla .= '</table></div>';
+        return $tabla;
+    }
     public function obtenerCalificacionSecundaria($idhorario = '', $idalumno = '', $idperiodo = '')
     {
         # code...
         Permission::grant(uri_string());
-        $data = $this->alumno->obtenerNivelEducativoAlumno($idalumno);
-        $unidades = $this->grupo->unidades($data->idplantel);
-        $materias = $this->alumno->showAllMateriasPasadas($idhorario, $idalumno, $idperiodo);
         $datoshorario = $this->horario->showNivelGrupo($idhorario);
         $idnivelestudio = $datoshorario->idnivelestudio;
-        $oportunidades_examen = $this->alumno->showAllOportunidadesExamen($data->idplantel);
-
-        $detalle_configuracion = $this->configuracion->showAllConfiguracion($data->idplantel, $idnivelestudio);
-        $total_unidades = 0;
-        $total_materia = 0;
-        if (isset($materias) && !empty($materias)) {
-            foreach ($materias as $row) {
-                # code...
-                $total_materia = $total_materia + 1;
-            }
-        }
+        $calificaciones  = $this->alumno->spObtenerCalificacion($idalumno, $idhorario, $idperiodo);
+        $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
         $tabla = "";
-        $tabla .= '<table class="table  table-striped  table-hover">
+        $tabla .= '<div class="table-responsive"> <table class="table  table-striped  table-hover">
         <thead class="bg-teal">
-             <th>NO.</th>
-             <th>MATERIA</th>
-             <th>CRÉDITO</th>';
-        $tabla .= '<th>PROMEDIO</th>';
-        $tabla .= '<th></th>';
+             <th>#</th>
+             <th>MATERIA</th>';
+        $tabla .= '<th><center>CALIFICACIÓN</center></th>';
         $tabla .= '</thead>';
         $c = 1;
-        if (isset($materias) && !empty($materias)) {
-            foreach ($materias as $row) {
-                $idhorariodetalle = $row->idhorariodetalle;
-                $calificacion = 0;
-                foreach ($oportunidades_examen as $oportunidad) {
-                    $idoportunidadexamen = $oportunidad->idoportunidadexamen;
-                    $detalle_calificacion = $this->alumno->calificacionSecuPrepa($idalumno, $idhorariodetalle, $idoportunidadexamen);
-                    if ($detalle_calificacion && $calificacion == 0) {
-                        $calificacion .= $detalle_calificacion[0]->calificacion;
+        $total_materia = 0;
+        $suma_calificacion = 0;
+        if (isset($calificaciones) && !empty($calificaciones)) {
+            foreach ($calificaciones as $row) {
+                if ($row->mostrar === "SI") {
+                    $total_materia++;
+                    $suma_calificacion += $row->calificacion;
+                    $tabla .= '<tr>';
+                    $tabla .= '<td>' . $c++ . '</td>';
+                    $tabla .= '<td>' . $row->nombreclase . '</td>';
+                    $tabla .= '<td align="center" >';
+                    if ($detalle_configuracion[0]->calificacion_minima < $row->calificacion) {
+                        $tabla .= '<label>' . eliminarDecimalCero(numberFormatPrecision($row->calificacion, 1, '.')) .  '</label>';
+                    } else {
+                        $tabla .= '<label style="color:red;">' . eliminarDecimalCero(numberFormatPrecision($row->calificacion, 1, '.')) .  '</label>';
                     }
-                }
-                $tabla .= '<tr>';
-                $tabla .= '<td>' . $c++ . '</td>';
-                $tabla .= '<td>' . $row->nombreclase . '</td>';
-                $tabla .= '<td>' . $row->credito . '</td>';
-                $tabla .= '<td>';
-                if ($detalle_configuracion[0]->calificacion_minima < $calificacion) {
-                    $tabla .= '<label>' . number_format($calificacion, 2)  . '</label>';
-                } else {
-                    $tabla .= '<label style="color:red;">NA</label>';
-                }
 
-                $tabla .= '</td>';
-                $tabla .= '<td>';
-                if ($row->opcion == 0) {
-                    $tabla .= '<label style="color:blue;">R</label>';
+                    $tabla .= '</td>';
+                    $tabla .= '</tr>';
                 }
-
-                $tabla .= '</td>';
-                $tabla .= '</tr>';
             }
+            $promedio = 0;
+            if ($total_materia > 0 && $suma_calificacion > 0) {
+                $promedio =  $suma_calificacion / $total_materia;
+            }
+            $tabla .= '
+                <tr style="background-color:#ccc;" >
+                    <td colspan="2" align="right"><strong><h5>PROMEDIO:</h5></strong></td>
+                    <td align="center"><strong><h5>' . eliminarDecimalCero(numberFormatPrecision($promedio, 1, '.')) . '</h5></strong></td>
+                </tr>
+            ';
         }
-        $tabla .= '</table>';
+        $tabla .= '</table></div>';
         return $tabla;
     }
 

@@ -17,7 +17,39 @@ class Webhook extends CI_Controller {
         $this->load->library('pdfgenerator'); 
         $this->load->library('openpayservicio');
         $this->load->library('encryption');
-	}
+      }
+      
+      public function cambiargrupo()
+      {
+            $id_periodo_anterior  = 9;
+            $id_grupo_anterior =0;
+
+            $id_periodo_nuevo = 15;
+            $id_grupo_nuevo = 0;
+
+            $lista_alumnos = $this->webhook->alumnos($id_periodo_anterior);
+            if(isset($lista_alumnos) && !empty($lista_alumnos)){
+                  foreach ($lista_alumnos as  $value) {
+                       $idalumnogrupo=$value->idalumnogrupo;
+                       $idalumno = $value->idalumno;                                             
+                       $data=array(
+                             'idalumno'=>$idalumno,
+                             'idperiodo'=>$id_periodo_nuevo,
+                             'idgrupo'=>$value->idgrupo,
+                             'idbeca'=>$value->idbeca,
+                             'idestatusnivel'=>$value->idestatusnivel,
+                             'activo'=>$value->activo,
+                             'idusuario'=>45,
+                             'fecharegistro'=>date('Y-m-d H:i:s'),
+                       );
+                       $this->webhook->addAlumnoGrupo($data);
+                       $data_update=array(
+                             'activo'=>0
+                       );
+                       $this->webhook->updateAlumnoGrupo($idalumnogrupo,$data_update);
+                  }
+            }
+      }
  
 	public function index()
 	{ 

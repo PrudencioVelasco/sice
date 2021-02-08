@@ -1,11 +1,13 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 date_default_timezone_set("America/Mexico_City");
 
-class Alumnos extends CI_Controller {
+class Alumnos extends CI_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
 
         if (!isset($_SESSION['user_id'])) {
@@ -23,7 +25,8 @@ class Alumnos extends CI_Controller {
         $this->load->library('encryption');
     }
 
-    public function index() {
+    public function index()
+    {
         Permission::grant(uri_string());
         $idalumno = $this->session->idalumno;
         $idplantel = $this->session->idplantel;
@@ -34,20 +37,20 @@ class Alumnos extends CI_Controller {
         if ($grupo != false) {
             $idhorario = $grupo->idhorario;
             $fecha = date('Y-m-d', strtotime(date('Y-m-d') . "-4 days"));
-            $tareas = $this->alumno->showTareaAlumnoMateria($idhorario, $fecha); 
-            $mensajes = $this->mensaje->showAllMensajeAlumno($idhorario);
+            //$tareas = $this->alumno->showTareaAlumnoMateria($idhorario, $fecha); 
+            //$mensajes = $this->mensaje->showAllMensajeAlumno($idhorario);
         }
- 
+
         $data = array(
-            'tareas' => $tareas, 
+            'tareas' => $tareas,
             'mensajes' => $mensajes,
-            'idhorario'=>$idhorario,
+            'idhorario' => $idhorario,
             'controller' => $this,
-            'idalumno'=>$idalumno
-        ); 
+            'idalumno' => $idalumno
+        );
 
         $this->load->view('alumno/header');
-       /*  if($this->session->idniveleducativo == 1){
+        /*  if($this->session->idniveleducativo == 1){
         $this->load->view('alumno/tarea/index', $data);
         }else{
              $this->load->view('alumno/index', $data);
@@ -55,7 +58,8 @@ class Alumnos extends CI_Controller {
         $this->load->view('alumno/tarea/index', $data);
         $this->load->view('alumno/footer');
     }
-    public function detalletarea($idtarea, $idhorario) {
+    public function detalletarea($idtarea, $idhorario)
+    {
         $idhorario = $this->decode($idhorario);
         if ((isset($idtarea) && !empty($idtarea)) && (isset($idhorario) && !empty($idhorario))) {
             $validar_tarea = $this->tarea->validarTareaAlumno($idtarea, $idhorario);
@@ -82,7 +86,8 @@ class Alumnos extends CI_Controller {
         }
     }
 
-    function encode($string) {
+    function encode($string)
+    {
         $encrypted = $this->encryption->encrypt($string);
         if (!empty($string)) {
             $encrypted = strtr($encrypted, array('/' => '~'));
@@ -90,9 +95,9 @@ class Alumnos extends CI_Controller {
         return $encrypted;
     }
 
-    function decode($string) {
+    function decode($string)
+    {
         $string = strtr($string, array('~' => '/'));
         return $this->encryption->decrypt($string);
     }
-
 }

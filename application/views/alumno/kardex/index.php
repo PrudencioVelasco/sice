@@ -42,7 +42,7 @@
                                                         ?>
                                             </strong>
                                         </td>
-                                        <td><?php echo $row->nombrenivel; ?></td>
+                                        <td><?php echo $row->nivelgrupo; ?></td>
                                         <td><?php echo $row->nombregrupo; ?> </td>
                                         <td align="right">
                                             <a class="btn btn-default" 

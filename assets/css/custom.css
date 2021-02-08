@@ -5454,8 +5454,84 @@ ul.notifications {
   top: 0;
   right: 100%;
   width: 100%;
-  height: 2px;
+  height: 4px;
 }
 .copyright-info {
   padding: 8px 0;
+}
+.tamanocalificacion{
+  font-size: 15px;
+}
+
+.txtn {
+  font-size: 7px;
+  color: #365f91;
+  font-family: sans-serif;
+}
+        
+.clave {
+  font-size: 7px;
+  color: #365f91;
+  font-family: sans-serif;
+}
+        
+.slogan {
+  font-size: 6px;
+  font-family: sans-serif;
+}
+        
+.nombreplantel {
+  font-size: 9px;
+  font-weight: bold;
+  color: #1f497d;
+  font-family: sans-serif;
+}
+        
+.tipoplantel {
+  font-size: 7px;
+  padding: 0px;
+  margin: 0px;
+  color: #365f91;
+  font-family: sans-serif;
+}
+        
+.titulo {
+  font-size: 7px;
+  text-align: center;
+  font-family: sans-serif;
+  font-weight:bold;
+}
+.cuerpo{
+font-size: 7px;
+text-align: left;
+font-family: sans-serif;
+}
+        
+.secondtxt {
+  font-size: 5px;
+  font-family: sans-serif;
+  vertical-align:middle;
+}
+.thirdtxt {
+  font-size: 7px;
+  font-family: sans-serif;
+}
+        
+.bg-prom {
+  background-color: #ccc;
+}
+.tblborder  {
+  border-spacing:0.5rem;
+}
+.tblborder {
+border-collapse:collapse;
+}
+.tblhorario tr td
+{
+border:0px solid black;
+}
+.tituloalumno{
+ font-size: 7px;
+  font-family: sans-serif;
+        
 }

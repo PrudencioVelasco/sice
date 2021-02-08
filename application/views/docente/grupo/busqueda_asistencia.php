@@ -16,9 +16,9 @@
             <div class="x_content">
               <div class="row">
                 <div class="col-md-12 col-sm-12 col-xs-12 ">
-                  <button type="button" class="btn btn-primary waves-effect m-r-20" data-toggle="modal" data-target="#largeModal"><i class='fa fa-plus'></i> Registrar Asistencia</button>
-                  <button type="button" class="btn btn-danger waves-effect m-r-20" data-toggle="modal" data-target="#myModalDeleteAsistencia"><i class='fa fa-trash '></i> Eliminar Asistencia</button>
-                  <div class="modal fade" id="largeModal" tabindex="-1" role="dialog">
+                  <button type="button" class="btn btn-primary waves-effect m-r-20" data-toggle="modal" data-target="#smodalRegistrarAsistencia" data-backdrop="static" data-keyboard="false"><i class='fa fa-plus'></i> Registrar Asistencia</button>
+                  <button type="button" class="btn btn-danger waves-effect m-r-20" data-toggle="modal" data-target="#smodalEliminarAsistencia" data-backdrop="static" data-keyboard="false"><i class='fa fa-trash '></i> Eliminar Asistencia</button>
+                  <div class="modal fade" id="smodalRegistrarAsistencia" tabindex="-1" role="dialog">
                     <div class="modal-dialog modal-lg" role="document">
                       <div class="modal-content">
                         <div class="modal-header">
@@ -112,8 +112,9 @@
                           <div class="modal-footer">
                             <input type="hidden" name="idhorario" value="<?php echo $idhorario ?>">
                             <input type="hidden" name="idhorariodetalle" value="<?php echo $idhorariodetalle ?>">
+                            <button type="button" class="btn btn-danger waves-effect cerrarventana"><i class='fa fa-close'></i> CANCELAR</button>
                             <button type="button" id="btnguardar" class="btn btn-primary waves-effect"><i class='fa fa-floppy-o'></i> GUARDAR</button>
-                            <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal"><i class='fa fa-close'></i> CERRAR</button>
+
                           </div>
                         </form>
                       </div>
@@ -204,7 +205,7 @@
 
   </div>
 
-  <div class="modal fade" id="myModalDeleteAsistencia" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal fade" id="smodalEliminarAsistencia" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -222,7 +223,7 @@
           </div>
           <div class="modal-footer">
             <input type="hidden" name="horariodetalle" value="<?php echo $idhorariodetalle; ?>">
-            <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> CERRAR</button>
+            <button type="button" class="btn btn-danger cerrarventana"><i class="fa fa-times"></i> CERRAR</button>
             <button type="button" id="btneliminarasistencia" class="btn btn-primary"><i class="fa fa-trash"></i> ELIMINAR</button>
           </div>
         </form>
@@ -263,7 +264,7 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> CERRAR</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> CANCELAR</button>
             <button type="button" id="btnmodificar" class="btn btn-primary"><i class="fa fa-pencil"></i> MODIFICAR</button>
           </div>
         </form>

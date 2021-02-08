@@ -22,19 +22,18 @@
                                         <div class="col-md-2 col-sm-2 col-xs-12 "></div>
                                         <div class="col-md-4 col-sm-4 col-xs-12 ">
                                             <div class="form-group">
-                                                <select style=" border-bottom: solid #ccc 2px;" name="grupo" style="" required="" id="idgrupo"
-                                                        class="form-control  show-tick">
+                                                <select style=" border-bottom: solid #ccc 2px;" name="grupo" style="" required="" id="idgrupo" class="form-control  show-tick">
                                                     <option value="">-- GRUPO --</option>
                                                     <?php
                                                     if (isset($grupos) && !empty($grupos)) {
                                                         foreach ($grupos as $value) {
-                                                            ?>
+                                                    ?>
                                                             <option value="<?php echo $value->idhorariodetalle ?>">
                                                                 <?php echo $value->nivelgrupo . ' - ' . $value->nombregrupo . ' - ' . $value->nombreclase; ?>
 
                                                             </option>
 
-                                                            <?php
+                                                    <?php
                                                         }
                                                     }
                                                     ?>
@@ -44,29 +43,29 @@
                                         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6">
                                             <div class="form-group">
 
-                                                <select name="tiporeporte"  style=" border-bottom: solid #ccc 2px;" id="" required class="form-control">
+                                                <select name="tiporeporte" style=" border-bottom: solid #ccc 2px;" id="" required class="form-control">
                                                     <option value="">-- TIPO DE REPORTE --</option>
                                                     <option value="28">LISTA DE ALUMNOS</option>
-                                                    <option value="29">CALIFICACION PDF</option>
-                                                    <option value="30">CALIFICACION 1RE OPORTUNIDAD</option>
-                                                    <?php if (isset($oportunidades) && !empty($oportunidades)){
-                                                        foreach ($oportunidades as $row){
-                                                            echo '<option value="'.$row->idoportunidadexamen.'" >'.$row->nombreoportunidad.'</option>';
+                                                    <option value="29"><?php echo ($this->session->idniveleducativo == 3) ? 'ACTA DE EVALUACIÓN' : 'CALIFICACIÓN PDF'; ?></option>
+                                                    <option value="30">CALIFICACIÓN 1RE OPORTUNIDAD</option>
+                                                    <?php if (isset($oportunidades) && !empty($oportunidades)) {
+                                                        foreach ($oportunidades as $row) {
+                                                            echo '<option value="' . $row->idoportunidadexamen . '" >' . $row->nombreoportunidad . '</option>';
                                                         }
                                                     } ?>
                                                     <?php
-                                                    if ((isset($this->session->idniveleducativo) && ! empty($this->session->idniveleducativo)) && ($this->session->idniveleducativo == 1 || $this->session->idniveleducativo == 2)) {
-                                                            if (isset($meses) && ! empty($meses)) {
+                                                    if ((isset($this->session->idniveleducativo) && !empty($this->session->idniveleducativo)) && ($this->session->idniveleducativo == 1 || $this->session->idniveleducativo == 2)) {
+                                                        if (isset($meses) && !empty($meses)) {
                                                             foreach ($meses as $row) {
                                                                 echo '<option value="m' . $row->idmes . '" >' . $row->nombremes . '</option>';
                                                             }
-                                                        } 
-                                                     }
+                                                        }
+                                                    }
                                                     ?>
                                                 </select>
 
                                             </div>
-                                        </div> 
+                                        </div>
                                         <div class="col-lg-2 col-md-2 col-sm-4 col-xs-12">
                                             <button type="submit" class="btn btn-primary"><i class='fa fa-download'></i>
                                                 DESCARGAR</button>
@@ -83,6 +82,7 @@
                                             <th>#</th>
                                             <th>GRUPO</th>
                                             <th>MATERIA</th>
+                                            <th>CAPACITACIÓN/ESPECIALIDAD</th>
                                             <th></th>
                                             <th></th>
                                         </tr>
@@ -92,7 +92,7 @@
                                         if (isset($datos) && !empty($datos)) {
                                             $i = 1;
                                             foreach ($datos as $value) {
-                                                ?>
+                                        ?>
                                                 <tr>
                                                     <th scope="row"><?php echo $i++; ?></th>
 
@@ -100,6 +100,7 @@
                                                         <strong><?php echo $value->nivelgrupo . " - " . $value->nombregrupo ?></strong>
                                                     </td>
                                                     <td><strong><?php echo $value->nombreclase; ?></strong></td>
+                                                    <td><strong><?php echo $value->nombreespecialidad; ?></strong></td>
                                                     <td><?php
                                                         if (isset($value->opcion) && !empty($value->opcion) && $value->opcion == 0) {
                                                             echo ' <span class="label label-danger">RECURSANDO</span>';
@@ -108,54 +109,37 @@
                                                     <td align="right">
                                                         <div class="btn-group" role="group">
                                                             <div class="btn-group" role="group">
-                                                                <button type="button"
-                                                                        class="btn btn-info waves-effect dropdown-toggle"
-                                                                        data-toggle="dropdown" aria-haspopup="true"
-                                                                        aria-expanded="false">
+                                                                <button type="button" class="btn btn-info waves-effect dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                     <i class='fa fa-list'></i> Opciones
                                                                     <span class="caret"></span>
                                                                 </button>
                                                                 <ul class="dropdown-menu">
-                                                                     <?php  if((isset($this->session->idniveleducativo) && !empty($this->session->idniveleducativo)) && $this->session->idniveleducativo == 5) { ?>
-                                                                    <li><a
-                                                                            href="<?php echo site_url('Pgrupo/calificacionLic/' . $controller->encode($value->idhorario) . '/' . $controller->encode($value->idhorariodetalle)) ?>">
-                                                                            <i style="color: #0b94e3;"
-                                                                               class="fa fa-file-text-o"></i> Calificación</a>
-                                                                    </li>
-                                                                     <?php } else if((isset($this->session->idniveleducativo) && !empty($this->session->idniveleducativo)) && ($this->session->idniveleducativo == 1|| $this->session->idniveleducativo == 2)){ ?>
-                                                                         <li><a
-                                                                            href="<?php echo site_url('Pgrupo/calificacionSecu/' . $controller->encode($value->idhorario) . '/' . $controller->encode($value->idhorariodetalle)) ?>">
-                                                                            <i style="color: #0b94e3;"
-                                                                               class="fa fa-file-text-o"></i> Calificación</a>
-                                                                    </li>
-                                                                   <?php  } else if((isset($this->session->idniveleducativo) && !empty($this->session->idniveleducativo)) && $this->session->idniveleducativo == 4){ ?>
-                                                                       <li><a
-                                                                            href="<?php echo site_url('Pgrupo/calificacionPree/' . $controller->encode($value->idhorario) . '/' . $controller->encode($value->idhorariodetalle)) ?>">
-                                                                            <i style="color: #0b94e3;"
-                                                                               class="fa fa-file-text-o"></i> Calificación</a>
-                                                                    </li>
-                                                                  <?php } else{ ?>
-                                                                     <li><a
-                                                                            href="<?php echo site_url('Pgrupo/examen/' . $controller->encode($value->idhorario) . '/' . $controller->encode($value->idhorariodetalle)) ?>">
-                                                                            <i style="color: #0b94e3;"
-                                                                               class="fa fa-file-text-o"></i> Calificación</a>
-                                                                    </li>
-                                                                    <?php }?>
-                                                                    <li><a
-                                                                            href="<?php echo site_url('Pgrupo/asistencia/' . $controller->encode($value->idhorario) . '/' . $controller->encode($value->idhorariodetalle)) ?>">
-                                                                            <i style="color: #31d50b;"
-                                                                               class="fa fa-check-circle"></i> Asistencia</a>
+                                                                    <?php if ((isset($this->session->idniveleducativo) && !empty($this->session->idniveleducativo)) && $this->session->idniveleducativo == 5) { ?>
+                                                                        <li><a href="<?php echo site_url('Pgrupo/calificacionLic/' . $controller->encode($value->idhorario) . '/' . $controller->encode($value->idhorariodetalle)) ?>">
+                                                                                <i style="color: #0b94e3;" class="fa fa-file-text-o"></i> Calificación</a>
+                                                                        </li>
+                                                                    <?php } else if ((isset($this->session->idniveleducativo) && !empty($this->session->idniveleducativo)) && ($this->session->idniveleducativo == 1 || $this->session->idniveleducativo == 2)) { ?>
+                                                                        <li><a href="<?php echo site_url('Pgrupo/calificacionSecu/' . $controller->encode($value->idhorario) . '/' . $controller->encode($value->idhorariodetalle)) ?>">
+                                                                                <i style="color: #0b94e3;" class="fa fa-file-text-o"></i> Calificación</a>
+                                                                        </li>
+                                                                    <?php  } else if ((isset($this->session->idniveleducativo) && !empty($this->session->idniveleducativo)) && $this->session->idniveleducativo == 4) { ?>
+                                                                        <li><a href="<?php echo site_url('Pgrupo/calificacionPree/' . $controller->encode($value->idhorario) . '/' . $controller->encode($value->idhorariodetalle)) ?>">
+                                                                                <i style="color: #0b94e3;" class="fa fa-file-text-o"></i> Calificación</a>
+                                                                        </li>
+                                                                    <?php } else { ?>
+                                                                        <li><a href="<?php echo site_url('Pgrupo/examen/' . $controller->encode($value->idhorario) . '/' . $controller->encode($value->idhorariodetalle)) ?>">
+                                                                                <i style="color: #0b94e3;" class="fa fa-file-text-o"></i> Calificación</a>
+                                                                        </li>
+                                                                    <?php } ?>
+                                                                    <li><a href="<?php echo site_url('Pgrupo/asistencia/' . $controller->encode($value->idhorario) . '/' . $controller->encode($value->idhorariodetalle)) ?>">
+                                                                            <i style="color: #31d50b;" class="fa fa-check-circle"></i> Asistencia</a>
                                                                     </li>
                                                                     <li>
-                                                                        <a
-                                                                            href="<?php echo site_url('Pgrupo/tareav2/' . $controller->encode($value->idhorario) . '/' . $controller->encode($value->idhorariodetalle)) ?>"><i
-                                                                                style="color: #000;" class="fa fa-book"></i>
-                                                                            Tarea</a> 
+                                                                        <a href="<?php echo site_url('Pgrupo/tareav2/' . $controller->encode($value->idhorario) . '/' . $controller->encode($value->idhorariodetalle)) ?>"><i style="color: #000;" class="fa fa-book"></i>
+                                                                            Tarea</a>
                                                                     </li>
-                                                                    <li><a
-                                                                            href="<?php echo site_url('Pgrupo/mensaje/' . $controller->encode($value->idhorario) . '/' . $controller->encode($value->idhorariodetalle)) ?>">
-                                                                            <i style="color: #dd3115;"
-                                                                               class="fa fa-envelope"></i> Mensaje</a></li>
+                                                                    <li><a href="<?php echo site_url('Pgrupo/mensaje/' . $controller->encode($value->idhorario) . '/' . $controller->encode($value->idhorariodetalle)) ?>">
+                                                                            <i style="color: #dd3115;" class="fa fa-envelope"></i> Mensaje</a></li>
 
                                                                 </ul>
                                                             </div>
@@ -163,12 +147,12 @@
 
                                                     </td>
                                                 </tr>
-                                                <?php
+                                        <?php
                                             }
-                                        }else{
+                                        } else {
                                             echo '<tr><td colspan="5" align="center">Sin registros de Grupos.</td></tr>';
                                         }
-                                         
+
                                         ?>
                                     </tbody>
                                 </table>

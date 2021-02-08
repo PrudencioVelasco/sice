@@ -16,7 +16,7 @@ class Tarea_model extends CI_Model
         $this->db->close();
     }
 
-    public function showAll($idusuario = '', $idhorariodetalle = '',$idprofesor ='', $idmateria ='', $idhorario='')
+    public function showAll($idusuario = '', $idhorariodetalle = '', $idprofesor = '', $idmateria = '', $idhorario = '')
     {
         $this->db->select("t.idtarea, 
                            t.titulo, 
@@ -27,12 +27,12 @@ class Tarea_model extends CI_Model
                             t.iddocumento,
                             t.fechaentrega as fechaentregareal");
         $this->db->from('tbltareav2 t');
-        $this->db->join('tblhorario_detalle hd','hd.idhorariodetalle = t.idhorariodetalle');
-        $this->db->join('tblprofesor_materia pm','pm.idprofesormateria = hd.idmateria');
+        $this->db->join('tblhorario_detalle hd', 'hd.idhorariodetalle = t.idhorariodetalle');
+        $this->db->join('tblprofesor_materia pm', 'pm.idprofesormateria = hd.idmateria');
         $this->db->where('hd.idhorario = t.idhorario');
         $this->db->where('t.eliminado', 0);
         if (isset($idusuario) && !empty($idusuario)) {
-           // $this->db->where('t.idusuario', $idusuario);
+            //$this->db->where('t.idusuario', $idusuario);
         }
         if (isset($idmateria) && !empty($idmateria)) {
             $this->db->where('pm.idmateria', $idmateria);
@@ -42,7 +42,7 @@ class Tarea_model extends CI_Model
         }
         if (isset($idhorario) && !empty($idhorario)) {
             $this->db->where('hd.idhorario', $idhorario);
-        } 
+        }
         if (isset($idhorariodetalle) && !empty($idhorariodetalle)) {
             $this->db->where('t.idhorariodetalle', $idhorariodetalle);
         }
@@ -622,13 +622,13 @@ WHERE
         }
     }
 
-    public function searchTareas($match, $idusuario = '',$idhorariodetalle = '' ,$fechainicio = '', $fechafin = '',$idprofesormateria='',$idhorario = '')
+    public function searchTareas($match, $idusuario = '', $idhorariodetalle = '', $fechainicio = '', $fechafin = '', $idprofesormateria = '', $idhorario = '')
     {
         $field = 't.titulo,' . "' '" . ',t.fechaentrega';
 
         $this->db->select("t.idtarea, t.titulo, t.tarea,t.horaentrega as horaentregareal, DATE_FORMAT(t.horaentrega,'%h:%i %p') as horaentrega, DATE_FORMAT(t.fechaentrega,'%d/%m/%Y') as fechaentrega,t.fechaentrega as fechaentregareal");
         $this->db->from('tbltareav2 t');
-        $this->db->join('tblhorario_detalle hd','hd.idhorariodetalle = t.idhorariodetalle');
+        $this->db->join('tblhorario_detalle hd', 'hd.idhorariodetalle = t.idhorariodetalle');
         $this->db->where('hd.idhorario = t.idhorario');
         $this->db->where('t.eliminado', 0);
         if (isset($idprofesormateria) && !empty($idprofesormateria)) {
@@ -636,7 +636,7 @@ WHERE
         }
         if (isset($idhorario) && !empty($idhorario)) {
             $this->db->where('t.idhorario', $idhorario);
-        } 
+        }
         $this->db->where('t.eliminado', 0);
         if (isset($idusuario) && !empty($idusuario)) {
             //$this->db->where('t.idusuario', $idusuario);

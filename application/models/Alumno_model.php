@@ -512,7 +512,8 @@ FROM
     unidades,
     opcion,
 totaltareacontestada,
-totaltareaenviada
+totaltareaenviada,
+mensajesnovistos
 FROM
     (select
         hd.idmateria AS idprofesormateri,
@@ -550,7 +551,22 @@ COALESCE((SELECT
                         WHERE
                             hd.idmateria = hd2.idmateria
 AND tv2.eliminado = 0
-                                AND tv2.idhorario = hd.idhorario),0) AS totaltareaenviada
+                                AND tv2.idhorario = hd.idhorario),0) AS totaltareaenviada,
+
+                               COALESCE((
+		SELECT
+			COUNT(m.idmensaje)
+		FROM
+			tblmensaje m
+		INNER JOIN tblhorario_detalle hd2 ON
+			m.idhorariodetalle = hd2.idhorariodetalle
+		WHERE
+			hd.idmateria = hd2.idmateria
+			AND m.eliminado = 0
+			AND m.idhorario = hd.idhorario
+			AND m.idnotificacionalumno = 1),
+		0) AS mensajesnovistos
+
     FROM
         tblhorario_detalle hd
     JOIN tblprofesor_materia pm ON hd.idmateria = pm.idprofesormateria
@@ -598,7 +614,20 @@ COALESCE((SELECT
                     WHERE
                         hd.idmateria = hd2.idmateria
 AND tv2.eliminado = 0
-                            AND tv2.idhorario = hd.idhorario),0) AS totaltareaenviada
+                            AND tv2.idhorario = hd.idhorario),0) AS totaltareaenviada,
+                             COALESCE((
+                                SELECT
+                                    COUNT(m.idmensaje)
+                                FROM
+                                    tblmensaje m
+                                INNER JOIN tblhorario_detalle hd2 ON
+                                    m.idhorariodetalle = hd2.idhorariodetalle
+                                WHERE
+                                    hd.idmateria = hd2.idmateria
+                                    AND m.eliminado = 0
+                                    AND m.idhorario = hd.idhorario
+                                    AND m.idnotificacionalumno = 1),
+                                0) AS mensajesnovistos
 FROM
     tblhorario_detalle hd
 JOIN tblprofesor_materia pm ON hd.idmateria = pm.idprofesormateria
@@ -644,7 +673,21 @@ WHERE hd.idhorario = ' . $idhorario . ' ';
                         INNER JOIN tblhorario_detalle hd2 ON tv2.idhorariodetalle = hd2.idhorariodetalle
                         WHERE
                             hd.idmateria = hd2.idmateria
-                                AND tv2.idhorario = hd.idhorario) AS totaltareaenviada
+                                AND tv2.idhorario = hd.idhorario) AS totaltareaenviada,
+                                 COALESCE((
+                                    SELECT
+                                        COUNT(m.idmensaje)
+                                    FROM
+                                        tblmensaje m
+                                    INNER JOIN tblhorario_detalle hd2 ON
+                                        m.idhorariodetalle = hd2.idhorariodetalle
+                                    WHERE
+                                        hd.idmateria = hd2.idmateria
+                                        AND m.eliminado = 0
+                                        AND m.idhorario = hd.idhorario
+                                        AND m.idnotificacionalumno = 1),
+                                    0) AS mensajesnovistos
+                                
     FROM
         tblmateria_reprobada mr
     INNER JOIN tbldetalle_reprobada dr ON mr.idreprobada = dr.idreprobada
@@ -1345,7 +1388,15 @@ GROUP BY hd.idmateria) tabla");
                             ne.nombrenivel,
                             en.idestatusnivel,
                             en.nombreestatusnivel,
-                            plantel.idniveleducativo
+                            plantel.idniveleducativo,
+                            CASE niv.idniveleducativo 
+                                WHEN 3 THEN n.numeroromano
+                                WHEN 5 THEN n.numeroromano
+                                WHEN 1 THEN n.numeroordinaria
+                                WHEN 2 THEN n.numeroordinaria
+                                WHEN 4 THEN n.numeroordinaria
+                                ELSE ''
+                            END AS nivelgrupo
                         FROM
                             tblperiodo p
                                 INNER JOIN
@@ -1370,10 +1421,14 @@ GROUP BY hd.idmateria) tabla");
                             tblalumno a ON ag.idalumno = a.idalumno
                                 INNER JOIN
                             tblplantel plantel ON a.idplantel = plantel.idplantel
+                                INNER JOIN
+                            tblniveleducativo niv ON plantel.idniveleducativo = niv.idniveleducativo
+                                INNER JOIN
+                            tblnivelestudio n ON n.idnivelestudio = g.idnivelestudio
                         WHERE
                             ag.idgrupo = h.idgrupo
                                 AND ag.idalumno = $idalumno
-                                AND  p.activo = 0 AND h.activo = 0
+                                AND  p.activo = 0 AND h.activo = 0         
                                 ORDER BY p.idperiodo DESC");
 
         if ($query->num_rows() > 0) {
@@ -1596,6 +1651,7 @@ GROUP BY hd.idmateria) tabla");
         $this->db->join('tblplantel pla', 'pla.idplantel = g.idplantel');
         $this->db->join('tblniveleducativo niv', 'pla.idniveleducativo = niv.idniveleducativo');
         $this->db->where('ag.idalumno', $idalumno);
+        $this->db->where('ag.activo', 1);
         $this->db->order_by("n.nombrenivel", "asc");
         $query = $this->db->get();
         if ($this->db->affected_rows() > 0) {
@@ -1721,7 +1777,38 @@ GROUP BY hd.idmateria) tabla");
             return false;
         }
     }
-
+    public function obtenerCalificacionFinal($idalumno, $idhorario, $idprofesormateria)
+    {
+        $query = $this->db->query("SELECT
+                    COALESCE((COALESCE(SUM(c.calificacion), 0) / (count(c.idunidad))),
+            0)  AS calificacion,
+                m.nombreclase,
+                m.clave,
+                m.credito,
+            count(c.idunidad) as totalunidad
+            FROM
+                tblhorario h
+                    INNER JOIN
+                tblhorario_detalle hd ON h.idhorario = hd.idhorario
+                    INNER JOIN
+                tblcalificacion c ON hd.idhorariodetalle = c.idhorariodetalle
+                    INNER JOIN
+                tblprofesor_materia pm ON hd.idmateria = pm.idprofesormateria
+                    INNER JOIN
+                tblmateria m ON m.idmateria = pm.idmateria
+                    INNER JOIN
+                tbloportunidad_examen oe ON oe.idoportunidadexamen = c.idoportunidadexamen
+            WHERE
+                c.idalumno = $idalumno
+                AND hd.idhorario = $idhorario
+                AND hd.idmateria = $idprofesormateria
+            GROUP BY hd.idmateria ORDER BY oe.numero ASC");
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
     public function calificacionSecuPrepa($idalumno = '', $idhorariodetalle = '', $oportunidad = '')
     {
         $query = $this->db->query("SELECT
@@ -1807,6 +1894,120 @@ GROUP BY hd.idmateria) tabla");
                     GROUP BY c.idhorariodetalle");
         if ($query->num_rows() > 0) {
             return $query->result();
+        } else {
+            return false;
+        }
+    }
+
+    public function obtenerMateriasHorario($idalumno = '', $idhorario = '')
+    {
+        $query = $this->db->query("SELECT idhorario,idprofesormateria,idalumno,idmateria ,nombreclase,profesor,mostrar FROM (
+            SELECT hd.idhorario , pm.idprofesormateria,  a.idalumno, m.idmateria ,m.nombreclase, CONCAT(p.apellidop,' ',p.apellidom,' ',p.nombre) as profesor,
+                CASE 
+                     WHEN m.idmateria = (SELECT ms2.idmateriaprincipal FROM tblmateria_reprobada mr INNER JOIN  tblmateria_seriada ms2 ON mr.idmateria = ms2.idmateriasecundaria ) THEN 'NO'
+                     WHEN m.idclasificacionmateria = 3 AND pla.idniveleducativo = 3 THEN ' NO'
+                ELSE 'SI'
+                END AS mostrar
+            FROM
+                tblalumno a
+            INNER JOIN tblalumno_grupo ag ON a.idalumno = ag.idalumno
+            INNER JOIN tblhorario h ON h.idgrupo = ag.idgrupo
+            INNER JOIN tblhorario_detalle hd ON hd.idhorario  = h.idhorario 
+            INNER JOIN tblprofesor_materia pm ON pm.idprofesormateria = hd.idmateria 
+            INNER JOIN tblmateria m ON m.idmateria = pm.idmateria 
+            INNER JOIN tblprofesor p ON p.idprofesor = pm.idprofesor 
+            INNER JOIN tblplantel pla ON pla.idplantel = a.idplantel 
+            WHERE
+                h.idperiodo = ag.idperiodo
+                AND m.secalifica IN (1) 
+                /*AND ag.activo = 1*/
+                /*AND a.idalumno = 947*/
+            GROUP BY hd.idmateria, a.idalumno, h.idhorario  
+            UNION ALL 
+            SELECT hd.idhorario  , pm.idprofesormateria,  a.idalumno,  m.idmateria ,m.nombreclase, CONCAT(p.apellidop,' ',p.apellidom,' ',p.nombre) as profesor,
+                'SI' AS mostrar
+            FROM
+                tblalumno a
+            INNER JOIN tblalumno_grupo ag ON a.idalumno = ag.idalumno
+            INNER JOIN tblhorario h ON h.idgrupo = ag.idgrupo
+            INNER JOIN tblhorario_detalle hd ON hd.idhorario  = h.idhorario 
+            INNER JOIN tblprofesor_materia pm ON pm.idprofesormateria = hd.idmateria 
+            INNER JOIN tblmateria m ON m.idmateria = pm.idmateria 
+            INNER JOIN tblprofesor p ON p.idprofesor = pm.idprofesor 
+            INNER JOIN tblplantel pla ON pla.idplantel = a.idplantel
+            INNER JOIN tblhorario_detalle_cursos  hdc ON hdc.idprofesormateria = hd.idmateria 
+            WHERE
+                h.idperiodo = ag.idperiodo
+                AND hdc.idhorario = hd.idhorario 
+                /*AND m.secalifica IN (1)*/
+                AND a.idalumno = hdc.idalumno 
+                /*AND ag.activo = 1*/
+                /*AND a.idalumno = 947*/
+            GROUP BY hd.idmateria, a.idalumno, h.idhorario  
+            UNION ALL 
+            SELECT hd.idhorario , pm.idprofesormateria,  a.idalumno , m.idmateria ,m.nombreclase, CONCAT(p.apellidop,' ',p.apellidom,' ',p.nombre) as profesor,
+                'SI' AS mostrar
+            FROM
+                tblalumno a
+            INNER JOIN tblalumno_grupo ag ON a.idalumno = ag.idalumno
+            INNER JOIN tblhorario h ON h.idgrupo = ag.idgrupo
+            INNER JOIN tblhorario_detalle hd ON hd.idhorario  = h.idhorario 
+            INNER JOIN tblprofesor_materia pm ON pm.idprofesormateria = hd.idmateria 
+            INNER JOIN tblmateria m ON m.idmateria = pm.idmateria 
+            INNER JOIN tblprofesor p ON p.idprofesor = pm.idprofesor 
+            INNER JOIN tblplantel pla ON pla.idplantel = a.idplantel
+            INNER JOIN tblmateria_reprobada  mr ON  mr.idalumnogrupo = ag.idalumnogrupo 
+            INNER JOIN tbldetalle_reprobada dr ON dr.idreprobada = mr.idreprobada 
+            WHERE
+                h.idperiodo = ag.idperiodo 
+                AND dr.idhorario = hd.idhorario 
+                AND dr.idprofesormateria = hd.idmateria 
+                /*AND m.secalifica IN (1)
+                AND ag.activo = 1*/
+                AND mr.estatus = 1
+                /*AND a.idalumno = 947*/
+            GROUP BY hd.idmateria, a.idalumno, h.idhorario ) tbl WHERE idalumno  = $idalumno AND idhorario = $idhorario ORDER BY nombreclase ASC");
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+    public function obtenerCalificacionPorMateriaPrimaria($idhorario = '', $idprofesormateria = '', $idalumno = '')
+    {
+        $this->db->select('((SUM(dc.calificacion)/COUNT(dc.idmes))/(SELECT COUNT(u.idunidad) FROM tblunidad u WHERE u.idplantel =  a.idplantel)) AS calificacion');
+        $this->db->from('tblcalificacion c');
+        $this->db->join('tblhorario_detalle hd', 'c.idhorariodetalle = hd.idhorariodetalle');
+        $this->db->join('tbldetalle_calificacion dc', 'dc.idcalificacion = c.idcalificacion');
+        $this->db->join('tbloportunidad_examen oe', 'oe.idoportunidadexamen = c.idoportunidadexamen');
+        $this->db->join('tblalumno a', 'a.idalumno = c.idalumno');
+        $this->db->where('c.idalumno', $idalumno);
+        $this->db->where('hd.idhorario', $idhorario);
+        $this->db->where('hd.idmateria', $idprofesormateria);
+        $this->db->order_by('oe.numero ASC');
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
+    public function obtenerCalificacionPorMateriaSecundaria($idhorario = '', $idprofesormateria = '', $idalumno = '', $idoportunidadexamen = '')
+    {
+        $this->db->select('((SUM(dc.calificacion)/COUNT(dc.idmes))/(SELECT COUNT(u.idunidad) FROM tblunidad u WHERE u.idplantel =  a.idplantel)) AS calificacion');
+        $this->db->from('tblcalificacion c');
+        $this->db->join('tblhorario_detalle hd', 'c.idhorariodetalle = hd.idhorariodetalle');
+        $this->db->join('tbldetalle_calificacion dc', 'dc.idcalificacion = c.idcalificacion');
+        $this->db->join('tbloportunidad_examen oe', 'oe.idoportunidadexamen = c.idoportunidadexamen');
+        $this->db->join('tblalumno a', 'a.idalumno = c.idalumno');
+        $this->db->where('c.idalumno', $idalumno);
+        $this->db->where('hd.idhorario', $idhorario);
+        $this->db->where('hd.idmateria', $idprofesormateria);
+        $this->db->where('c.idoportunidadexamen', $idoportunidadexamen);
+        //$this->db->order_by('oe.numero ASC');
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->first_row();
         } else {
             return false;
         }
@@ -2027,7 +2228,183 @@ GROUP BY hd.idmateria) tabla");
             return false;
         }
     }
+    public function obtenerCalificacionPorOportunidadAlumno($idalumno, $idhorario, $idoportunidad, $idmateria = '')
+    {
+        $sql = "SELECT
+        CASE
+            WHEN numero = 1
+            AND unidadesregistradas = unidades THEN 'SI'
+            WHEN numero > 1 THEN 'SI'
+            ELSE 'NO'
+        END AS mostrar,
+        numero ,
+        idalumno,
+        apellidop,
+        apellidom,
+        nombre,
+        nombreclase,
+	    profesor,
+        calificacion ,
+        unidadesregistradas,
+        unidades
+    FROM
+        (
+        SELECT
+            oe.numero , a2.idalumno , a2.apellidop, a2.apellidom , a2.nombre , m2.nombreclase,   concat(p.nombre,' ',p.apellidop,' ',p.apellidom) as profesor,
+            CASE
+                /* PRIMARIA */
+                WHEN p1.idniveleducativo = 1 THEN
+                CASE
+                    WHEN oe.numero = 1 THEN FORMAT((
+                    SELECT
+                        ((SUM(dc1.calificacion)/ 8)/(
+                        SELECT
+                            COUNT(u2.idunidad)
+                        FROM
+                            tblunidad u2
+                        WHERE
+                            u2.idplantel = a2.idplantel))
+                    FROM
+                        tbldetalle_calificacion dc1
+                    WHERE
+                        dc1.idcalificacion = c1.idcalificacion), 1)
+                    ELSE SUM(c1.calificacion)
+                END /* SECUNDARIA */
+                WHEN p1.idniveleducativo = 2 THEN
+                CASE
+                    WHEN oe.numero = 1 THEN FORMAT((
+                    SELECT
+                        ((SUM(dc1.calificacion)/ 8)/(
+                        SELECT
+                            COUNT(u2.idunidad)
+                        FROM
+                            tblunidad u2
+                        WHERE
+                            u2.idplantel = a2.idplantel))
+                    FROM
+                        tbldetalle_calificacion dc1
+                    WHERE
+                        dc1.idcalificacion = c1.idcalificacion), 1)
+                    ELSE SUM(c1.calificacion)
+                END /* PREPA */
+                WHEN p1.idniveleducativo = 3 THEN
+                CASE
+                    WHEN oe.numero = 1 THEN (SUM(c1.calificacion) / (
+                    SELECT
+                        COUNT(u2.idunidad)
+                    FROM
+                        tblunidad u2
+                    WHERE
+                        u2.idplantel = a2.idplantel))
+                    ELSE SUM(c1.calificacion)
+                END /* LICENCIATUA */
+                WHEN p1.idniveleducativo = 5 THEN
+                CASE
+                    WHEN oe.numero = 1 THEN (SUM(c1.calificacion) / m2.unidades)
+                    ELSE SUM(c1.calificacion)
+                END
+                ELSE ''
+            END AS calificacion,
+            CASE
+                /* PRIMARIA */
+                WHEN p1.idniveleducativo = 1 THEN
+                CASE
+                    WHEN oe.numero = 1 THEN (
+                    SELECT
+                        COUNT(dc3.idcalificacion)
+                    FROM
+                        tbldetalle_calificacion dc3
+                    WHERE
+                        dc3.idcalificacion = c1.idcalificacion)
+                    ELSE 28
+                END /* SECUNDARIA */
+                WHEN p1.idniveleducativo = 2 THEN
+                CASE
+                    WHEN oe.numero = 1 THEN (
+                    SELECT
+                        COUNT(dc2.idcalificacion)
+                    FROM
+                        tbldetalle_calificacion dc2
+                    WHERE
+                        dc2.idcalificacion = c1.idcalificacion)
+                    ELSE 28
+                END /* PREPA */
+                WHEN p1.idniveleducativo = 3 THEN
+                CASE
+                    WHEN oe.numero = 1 THEN COUNT(c1.idcalificacion)
+                    ELSE 28
+                END /* LICENCIATUA */
+                WHEN p1.idniveleducativo = 5 THEN
+                CASE
+                    WHEN oe.numero = 1 THEN COUNT(c1.idcalificacion)
+                    ELSE 28
+                END
+                ELSE ''
+            END AS unidadesregistradas,
+            CASE
+                /* PRIMARIA */
+                WHEN p1.idniveleducativo = 1 THEN 8 /* SECUNDARIA */
+                WHEN p1.idniveleducativo = 2 THEN 8 /* PREPA */
+                WHEN p1.idniveleducativo = 3 THEN (
+                SELECT
+                    COUNT(u2.idunidad)
+                FROM
+                    tblunidad u2
+                WHERE
+                    u2.idplantel = a2.idplantel)/* LICENCIATUA */
+                WHEN p1.idniveleducativo = 5 THEN m2.unidades
+                ELSE ''
+            END AS unidades
+        FROM
+            tblcalificacion c1
+        INNER JOIN tblhorario_detalle hd ON
+            hd.idhorariodetalle = c1.idhorariodetalle
+        INNER JOIN tbloportunidad_examen oe ON
+            c1.idoportunidadexamen = oe.idoportunidadexamen
+        INNER JOIN tblalumno a2 ON
+            a2.idalumno = c1.idalumno
+        INNER JOIN tblplantel p1 ON
+            p1.idplantel = a2.idplantel
+        INNER JOIN tblprofesor_materia pm2 ON
+            pm2.idprofesormateria = hd.idmateria
+        INNER JOIN tblmateria m2 ON
+            m2.idmateria = pm2.idmateria
+        INNER JOIN tblhorario h ON
+             h.idhorario = hd.idhorario
+        INNER JOIN tblprofesor p ON
+		    p.idprofesor  = pm2.idprofesor
+        WHERE
+               hd.idhorario = $idhorario
+            AND c1.idoportunidadexamen = $idoportunidad
+            AND a2.idalumno =$idalumno
+            AND hd.idmateria NOT IN (
+            SELECT
+                dr.idprofesormateria
+            FROM
+                tbldetalle_reprobada dr
+            INNER JOIN tblmateria_reprobada mr ON
+                dr.idreprobada = mr.idreprobada
+            INNER JOIN tblalumno_grupo ag ON
+                ag.idalumnogrupo = mr.idalumnogrupo
+            WHERE
+                ag.idalumno = $idalumno
+                AND dr.idhorario = $idhorario";
+        if (isset($idmateria) && !empty($idmateria)) {
+            $sql .= " AND hd.idmateria = $idmateria";
+        }
+        $sql .= " )
+        GROUP BY
+            c1.idoportunidadexamen, a2.idalumno, pm2.idprofesormateria, hd.idhorario, h.idperiodo) tbl
+    ORDER BY
+        apellidop ASC";
 
+        $query = $this->db->query($sql);
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
     public function calificacionPorOportunidad($idalumno, $idhorario, $idoportunidad, $idmateria = '')
     {
         $sql = " SELECT
@@ -2228,4 +2605,18 @@ GROUP BY hd.idmateria) tabla");
             return false;
         }
     }
+
+    //Nuevo metodos la obtener Horario de Clases por dia.
+    public function spObtenerCalificacion($idalumno, $idhorario, $idperiodo)
+    {
+
+        $query = $this->db->query("CALL spObtenerCalificacion ($idalumno, $idhorario,$idperiodo)");
+        $res = $query->result();
+        //add this two line
+        $query->next_result();
+        $query->free_result();
+        //end of new code
+        return $res;
+    }
+    //Fin de codig
 }

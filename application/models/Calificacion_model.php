@@ -1280,4 +1280,39 @@ FROM
             return false;
         }
     }
+
+    public function validarCalificacionRegistrada($idalumno, $idhorario, $idprofesormateria, $idunidad)
+    {
+        $this->db->select('c.calificacion');
+        $this->db->from('tblcalificacion  c');
+        $this->db->join('tblhorario_detalle hd', 'hd.idhorariodetalle = c.idhorariodetalle');
+        //$this->db->join(' tblalumno_grupo ag', 'ag.idalumnogrupo = mr.idalumnogrupo');
+        $this->db->where('hd.idhorario', $idhorario);
+        $this->db->where('hd.idmateria', $idprofesormateria);
+        $this->db->where('c.idalumno', $idalumno);
+        $this->db->where('c.idunidad', $idunidad);
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+    public function validarCalificacionRegistradaMeses($idalumno, $idhorario, $idprofesormateria, $idmes)
+    {
+        $this->db->select('dc.calificacion');
+        $this->db->from('tblcalificacion  c');
+        $this->db->join('tblhorario_detalle hd', 'hd.idhorariodetalle = c.idhorariodetalle');
+        $this->db->join('tbldetalle_calificacion dc', 'dc.idcalificacion = c.idcalificacion');
+        $this->db->where('hd.idhorario', $idhorario);
+        $this->db->where('hd.idmateria', $idprofesormateria);
+        $this->db->where('c.idalumno', $idalumno);
+        $this->db->where('dc.idmes', $idmes);
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
 }

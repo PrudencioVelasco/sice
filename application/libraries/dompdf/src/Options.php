@@ -1,4 +1,5 @@
 <?php
+
 namespace Dompdf;
 
 class Options
@@ -929,7 +930,7 @@ class Options
      */
     public function setIsRemoteEnabled($isRemoteEnabled)
     {
-        $this->isRemoteEnabled = $isRemoteEnabled;
+        $this->isRemoteEnabled = true;
         return $this;
     }
 

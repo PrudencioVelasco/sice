@@ -19,7 +19,7 @@
                             <select style="border-bottom: solid #ebebeb 2px;" v-model="newHorario.idperiodo" :class="{'is-invalid': formValidate.idperiodo}" class="form-control">
                                 <option value="">-- SELECCIONAR --</option>
                                 <option v-for="option in periodos" v-bind:value="option.idperiodo">
-                                    {{ option.mesinicio }} {{ option.yearinicio }} - {{option.mesfin}} {{ option.yearfin }}
+                                    {{ option.mesinicio }} {{ option.yearinicio }} - {{option.mesfin}} {{ option.yearfin }} / {{option.descripcion}}
                                 </option>
                             </select>
                             <div class="col-red" v-html="formValidate.idperiodo"></div>
@@ -99,7 +99,7 @@
                             <select class="form-control" v-model="chooseHorario.idperiodo">
                                 <option value="">-- SELECCIONAR --</option>
                                 <option v-for="option in periodos" :selected="option.idperiodo == chooseHorario.idperiodo ? 'selected' : ''" :value="option.idperiodo">
-                                    {{ option.mesinicio }} {{ option.yearinicio }} - {{option.mesfin}} {{ option.yearfin }}</small>
+                                    {{ option.mesinicio }} {{ option.yearinicio }} - {{option.mesfin}} {{ option.yearfin }} / {{option.descripcion}}
                                 </option>
                             </select>
                             <div class="col-red" v-html="formValidate.idperiodo"></div>
@@ -129,9 +129,9 @@
                                 <label class="form-label">
                                     DESCRIPCIÓN/CLAVE
                                 </label>
-                                <input type="text" v-model="chooseHorario.descripcion" class="form-control" :class="{'is-invalid': formValidate.domicilio}" name="po">
+                                <input type="text" v-model="chooseHorario.descripcionhorario" class="form-control" :class="{'is-invalid': formValidate.descripcionhorario}" name="po">
                             </div>
-                            <div class="col-red" v-html="formValidate.descripcion"></div>
+                            <div class="col-red" v-html="formValidate.descripcionhorario"></div>
                         </div>
                     </div>
                 </div>

@@ -1,4 +1,5 @@
 <?php
+
 namespace Dompdf;
 
 class Options
@@ -179,7 +180,7 @@ class Options
      *
      * @var bool
      */
-    private $isRemoteEnabled = false;
+    private $isRemoteEnabled = true;
 
     /**
      * Enable inline Javascript
@@ -321,7 +322,7 @@ class Options
             } elseif ($key === 'fontCache' || $key === 'font_cache') {
                 $this->setFontCache($value);
             } elseif ($key === 'chroot') {
-                $this->setChroot($value);
+                $this->setChroot(true);
             } elseif ($key === 'logOutputFile' || $key === 'log_output_file') {
                 $this->setLogOutputFile($value);
             } elseif ($key === 'defaultMediaType' || $key === 'default_media_type') {

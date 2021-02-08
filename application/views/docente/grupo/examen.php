@@ -8,42 +8,37 @@
                 <div class="x_panel">
                     <div class="x_title">
                         <h2><strong>CALIFICACIONES - <?php
-                                if (isset($nombreclase) && !empty($nombreclase)) {
-                                    echo $nombreclase;
-                                }
-                                ?></strong></h2>
+                                                        if (isset($nombreclase) && !empty($nombreclase)) {
+                                                            echo $nombreclase;
+                                                        }
+                                                        ?></strong></h2>
 
                         <div class="clearfix"></div>
                     </div>
                     <div class="x_content">
                         <div class="row">
                             <div class="col-md-12 col-sm-12 col-xs-12 ">
-                                <button type="button" class="btn btn-primary waves-effect m-r-20" data-toggle="modal"
-                                        data-target="#largeModal"><i class='fa fa-plus'></i> Registrar</button>
-                                <button type="button" class="btn btn-danger waves-effect m-r-20" data-toggle="modal"
-                                        data-target="#myModalDeleteAsistencia"><i class='fa fa-trash '></i>
+                                <button type="button" class="btn btn-primary waves-effect m-r-20" data-toggle="modal" data-target="#modalRegistrarCalificacionPrepa " data-backdrop="static" data-keyboard="false"><i class='fa fa-plus'></i> Registrar</button>
+                                <button type="button" class="btn btn-danger waves-effect m-r-20" data-toggle="modal" data-target="#modalEliminarCalificacionPrepa" data-backdrop="static" data-keyboard="false"><i class='fa fa-trash '></i>
                                     Eliminar</button>
                                 <?php
                                 if ((isset($oportunidades) && !empty($oportunidades))) {
                                     foreach ($oportunidades as $row) {
-                                        ?>
-                                        <a href="<?php echo site_url('Pgrupo/recuperacion/' . $controller->encode($idhorario) . '/' . $controller->encode($idhorariodetalle) . '/' . $controller->encode($row->idoportunidadexamen) . '/' . $controller->encode($row->numero)) ?>"
-                                           class="btn btn-default waves-effect m-r-20"><?php echo $row->nombreoportunidad; ?></a>
-                                           <?php
-                                       }
-                                   }
-                                   ?>
+                                ?>
+                                        <a href="<?php echo site_url('Pgrupo/recuperacion/' . $controller->encode($idhorario) . '/' . $controller->encode($idhorariodetalle) . '/' . $controller->encode($row->idoportunidadexamen) . '/' . $controller->encode($row->numero)) ?>" class="btn btn-default waves-effect m-r-20"><?php echo $row->nombreoportunidad; ?></a>
+                                <?php
+                                    }
+                                }
+                                ?>
                             </div>
 
                         </div>
                         <br>
-                        <div class="modal fade" id="myModalDeleteAsistencia" tabindex="-1" role="dialog"
-                             aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="modalEliminarCalificacionPrepa" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal"
-                                                aria-hidden="true">&times;</button>
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                                         <h2 class="modal-title " id="myModalLabel">ELIMINAR CALIFICACIÓN POR UNIDAD
                                         </h2>
                                     </div>
@@ -58,10 +53,10 @@
                                                     <?php
                                                     if (isset($unidades) && !empty($unidades)) {
                                                         foreach ($unidades as $row) {
-                                                            ?>
+                                                    ?>
                                                             <option value="<?php echo $row->idunidad ?>">
                                                                 <?php echo $row->nombreunidad; ?></option>
-                                                            <?php
+                                                    <?php
                                                         }
                                                     }
                                                     ?>
@@ -69,19 +64,16 @@
                                             </div>
                                         </div>
                                         <div class="modal-footer">
-                                            <input type="hidden" name="horariodetalle"
-                                                   value="<?php echo $idhorariodetalle; ?>">
-                                            <button type="button" class="btn btn-danger" data-dismiss="modal"><i
-                                                    class="fa fa-times"></i> CERRAR</button>
-                                            <button type="button" id="btneliminarcalificacion"
-                                                    class="btn btn-primary"><i class="fa fa-trash"></i> ELIMINAR</button>
+                                            <input type="hidden" name="horariodetalle" value="<?php echo $idhorariodetalle; ?>">
+                                            <button type="button" class="btn btn-danger cerrarventana"><i class="fa fa-times"></i> CANCELAR</button>
+                                            <button type="button" id="btneliminarcalificacion" class="btn btn-primary"><i class="fa fa-trash"></i> ELIMINAR</button>
                                         </div>
                                     </form>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="modal fade" id="largeModal" tabindex="-1" role="dialog">
+                        <div class="modal fade" id="modalRegistrarCalificacionPrepa" tabindex="-1" role="dialog">
                             <div class="modal-dialog modal-lg" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
@@ -92,10 +84,8 @@
                                             <div class="row">
                                                 <div class="col-md-12 col-sm-12 col-xs-12 ">
 
-                                                    <div class="alert alert-success print-success-msg"
-                                                         style="display:none"></div>
-                                                    <div class="alert alert-danger print-error-msg"
-                                                         style="display:none"></div>
+                                                    <div class="alert alert-success print-success-msg" style="display:none"></div>
+                                                    <div class="alert alert-danger print-error-msg" style="display:none"></div>
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -109,10 +99,10 @@
                                                             <?php
                                                             if (isset($unidades) && !empty($unidades)) {
                                                                 foreach ($unidades as $row) {
-                                                                    ?>
+                                                            ?>
                                                                     <option value="<?php echo $row->idunidad ?>">
                                                                         <?php echo $row->nombreunidad ?></option>
-                                                                    <?php
+                                                            <?php
                                                                 }
                                                             }
                                                             ?>
@@ -122,7 +112,7 @@
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-12 col-sm-12 col-xs-12 ">
-														<small>Nota: Registre la calificación de los alumnos que requiera, no es necesario que registre todas las calificaciones de los alumnos.</small>
+                                                    <small>Nota: Registre la calificación de los alumnos que requiera, no es necesario que registre todas las calificaciones de los alumnos.</small>
                                                     <table class="table table-striped  ">
                                                         <thead class="bg-teal">
                                                             <tr>
@@ -136,32 +126,29 @@
                                                             if (isset($alumnos) && !empty($alumnos)) {
                                                                 $i = 1;
                                                                 foreach ($alumnos as $value) {
-                                                                    ?>
-                                                                <input type="hidden" name="idalumno[]"
-                                                                       value="<?php echo $value->idalumno ?>">
-                                                                <tr>
+                                                            ?>
+                                                                    <input type="hidden" name="idalumno[]" value="<?php echo $value->idalumno ?>">
+                                                                    <tr>
 
-                                                                    <td><?php echo $i++ ?></td>
-                                                                    <?php
-                                                                    if ($value->opcion == 0) {
-                                                                        echo '<td  style="color:red;">';
-                                                                    } else {
-                                                                        echo '<td>';
-                                                                    }
-                                                                    ?>
-                                                                    <?php echo $value->apellidop . ' ' . $value->apellidom . ' ' . $value->nombre ?>
+                                                                        <td><?php echo $i++ ?></td>
+                                                                        <?php
+                                                                        if ($value->opcion == 0) {
+                                                                            echo '<td  style="color:red;">';
+                                                                        } else {
+                                                                            echo '<td>';
+                                                                        }
+                                                                        ?>
+                                                                        <?php echo $value->apellidop . ' ' . $value->apellidom . ' ' . $value->nombre ?>
 
-                                                                    </td>
-                                                                    <td>
-                                                                        <input type="text" minlength="0.00"
-                                                                               maxlength="10.00" name="calificacion[]"
-                                                                               class="form-control" placeholder="0.0 a 10.0" >
-                                                                     </td>
-                                                                </tr>
-                                                                <?php
+                                                                        </td>
+                                                                        <td>
+                                                                            <input type="text" minlength="0.00" maxlength="10.00" name="calificacion[]" class="form-control" placeholder="0.0 a 10.0">
+                                                                        </td>
+                                                                    </tr>
+                                                            <?php
+                                                                }
                                                             }
-                                                        }
-                                                        ?>
+                                                            ?>
 
                                                         </tbody>
                                                     </table>
@@ -172,13 +159,11 @@
                                         </div>
                                         <div class="modal-footer">
                                             <input type="hidden" name="idhorario" value="<?php echo $idhorario ?>">
-                                            <input type="hidden" name="idhorariodetalle"
-                                                   value="<?php echo $idhorariodetalle ?>">
-                                            <button type="button" id="btnguardar"
-                                                    class="btn btn-primary waves-effect"><i class='fa fa-floppy-o'></i>
+                                            <input type="hidden" name="idhorariodetalle" value="<?php echo $idhorariodetalle ?>">
+                                            <button type="button" class="btn btn-danger waves-effect cerrarventana"><i class='fa fa-close'></i> CANCELAR</button>
+                                            <button type="button" id="btnguardar" class="btn btn-primary waves-effect"><i class='fa fa-floppy-o'></i>
                                                 GUARDAR</button>
-                                            <button type="button" class="btn btn-danger waves-effect"
-                                                    data-dismiss="modal"><i class='fa fa-close'></i> CERRAR</button>
+
                                         </div>
                                     </form>
                                 </div>
@@ -261,8 +246,7 @@
 </div>
 
 
-<div class="modal fade" id="myModalDelete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-     aria-hidden="true">
+<div class="modal fade" id="myModalDelete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -307,7 +291,7 @@
 
 
 <script type="text/javascript">
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('#tablageneral2').DataTable({
             keys: true,
             "scrollX": true,

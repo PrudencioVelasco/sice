@@ -45,7 +45,7 @@
                             <tr>
                               <td> <?php echo "<label>" . $row->mesinicio . " " . $row->yearinicio . " - " . $row->mesfin . " " . $row->yearfin . "</label>"; ?>
                             </td>
-                            <td> <?php echo $row->nombrenivel; ?> </td>
+                            <td> <?php echo $row->nivelgrupo; ?> </td>
                             <td> <?php echo $row->nombregrupo; ?> </td> 
       <td align="right">
        <?php if($row->idniveleducativo == 4){?>

@@ -1,4 +1,5 @@
 <?php
+
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
@@ -11,7 +12,7 @@ class Aalumno extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        if (! isset($_SESSION['user_id'])) {
+        if (!isset($_SESSION['user_id'])) {
             $this->session->set_flashdata('flash_data', 'You don\'t have access! ss');
             return redirect('welcome');
         }
@@ -33,7 +34,7 @@ class Aalumno extends CI_Controller
     public function encode($string)
     {
         $encrypted = $this->encryption->encrypt($string);
-        if (! empty($string)) {
+        if (!empty($string)) {
             $encrypted = strtr($encrypted, array(
                 '/' => '~'
             ));
@@ -61,7 +62,7 @@ class Aalumno extends CI_Controller
     {
         $idalumno = $this->decode($idalumno);
         $idhorario = $this->decode($idhorario);
-        if ((isset($idhorario) && ! empty($idhorario)) && (isset($idalumno) && ! empty($idalumno))) {
+        if ((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno))) {
             $detalle_logo = $this->alumno->logo($this->session->idplantel);
             $detalle_horario = $this->horario->detalleHorario($idhorario);
             $ubicacion_imagen = '/assets/images/escuelas/';
@@ -72,7 +73,7 @@ class Aalumno extends CI_Controller
             $grupo = $this->horario->showNivelGrupo($idhorario);
             $dias = $this->alumno->showAllDias();
             $datelle_alumno = $this->alumno->showAllMateriasAlumno($idalumno);
-            if (isset($datelle_alumno) && ! empty($datelle_alumno)) {
+            if (isset($datelle_alumno) && !empty($datelle_alumno)) {
                 $this->load->library('tcpdf');
                 $hora = date("h:i:s a");
                 $fechaactual = date('d/m/Y');
@@ -166,7 +167,7 @@ class Aalumno extends CI_Controller
 </style>
 <div id="areimprimir">
           <table width="600" border="0" cellpadding="2" cellspacing="0">';
-                if ((isset($this->session->idplantel) && ! empty($this->session->idplantel)) && ($this->session->idplantel == 7 || $this->session->idplantel == 8)) {
+                if ((isset($this->session->idplantel) && !empty($this->session->idplantel)) && ($this->session->idplantel == 7 || $this->session->idplantel == 8)) {
                     $tabla .= '<tr>
     <td width="150" align="center" valing="top"><img  src="' . $logo2 . '" /></td>
     <td colspan="2" width="230" align="center">
@@ -183,7 +184,7 @@ class Aalumno extends CI_Controller
     </td>
     <td width="150" align="center"><img     src="' . $logo . '" /></td>';
                     $tabla .= '</tr>';
-                } else if ((isset($this->session->idplantel) && ! empty($this->session->idplantel)) && ($this->session->idplantel == 4)) {
+                } else if ((isset($this->session->idplantel) && !empty($this->session->idplantel)) && ($this->session->idplantel == 4)) {
                     $tabla .= '<tr>
     <td width="150" align="center" valing="top"><img  src="' . $logo2 . '" /></td>
     <td colspan="2" width="230" align="center">
@@ -261,7 +262,7 @@ RVOE: 85489 de fecha 29 julio 1985, otorgado por la Dirección General de Incorp
 
     public function horarioClasesAlumno($idhorario = '', $idalumno = '')
     {
-        if ((isset($idhorario) && ! empty($idhorario)) && (isset($idalumno) && ! empty($idalumno))) {
+        if ((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno))) {
 
             $tabla = '
         <style type="text/css">
@@ -304,7 +305,7 @@ border-top:solid #33C1FF 2px;
             $tabla .= ' </thead>';
             $array_materias_reprobadas = array();
             $materias_reprobadas = $this->alumno->obtenerTodasMateriaReprobadasActivas($idalumno);
-            if (isset($materias_reprobadas) && ! empty($materias_reprobadas)) {
+            if (isset($materias_reprobadas) && !empty($materias_reprobadas)) {
                 foreach ($materias_reprobadas as $row) {
                     array_push($array_materias_reprobadas, $row->idmateriaprincipal);
                 }
@@ -312,87 +313,88 @@ border-top:solid #33C1FF 2px;
             $base = base_url();
             $reprobadas = implode(",", $array_materias_reprobadas);
             $lunesAll = $this->horario->horarioClasesXDia($idhorario, $idalumno, $reprobadas);
-
-            if (isset($lunesAll) && ! empty($lunesAll)) {
+                                            
+            if (isset($lunesAll) && !empty($lunesAll)) {
                 foreach ($lunesAll as $row) {
                     $tabla .= '<tr>';
                     $tabla .= '<td  ><strong>' . $row->hora . '</strong></td>';
                     $tabla .= '<td >';
-                    if (isset($row->lunes) && ! empty($row->lunes)) {
+                    if (isset($row->lunes) && !empty($row->lunes)) {
                         $tabla .= '<div class="card1"> <strong><i class="fa fa-book" style="color:#ff7e00;" ></i>  
                                 ' . $row->lunes . '</strong><hr>';
-                        if (isset($row->lunesprofesor) && ! empty($row->lunesprofesor)) {
+                        if (isset($row->lunesprofesor) && !empty($row->lunesprofesor)) {
                             $tabla .= '<small><i class="fa fa-user" style="color:#3db828;" ></i> ' . $row->lunesprofesor . '</small><br>';
                         }
-                        if (isset($row->lunesurl) && ! empty($row->lunesurl)) {
+                                                                 
+                        if (isset($row->lunesurl) && !empty($row->lunesurl)) {
 
                             $tabla .= '<a href="#"  onclick="cambiar_estado(\'' . $row->lunesidhorariodetalle . '\',\'' . $base . '\')" style="color:#1e81fb;   font-weight:bolder;"><i class="fa fa-external-link"></i> ENTRAR A CLASE</a><br>';
                         }
-                        if (isset($row->lunesurlgrabado) && ! empty($row->lunesurlgrabado)) {
+                        if (isset($row->lunesurlgrabado) && !empty($row->lunesurlgrabado)) {
                             $tabla .= '  <a target="_blank" href="' . $row->lunesurlgrabado . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> CLASE GRABADA</a>';
                         }
                         $tabla .= '</div>';
                     }
                     $tabla .= '</td>';
                     $tabla .= '<td  >';
-                    if (isset($row->martes) && ! empty($row->martes)) {
+                    if (isset($row->martes) && !empty($row->martes)) {
                         $tabla .= '<div class="card1"> <strong><i class="fa fa-book" style="color:#ff7e00;"></i>  
                                 ' . $row->martes . '</strong><hr>';
-                        if (isset($row->martesprofesor) && ! empty($row->martesprofesor)) {
+                        if (isset($row->martesprofesor) && !empty($row->martesprofesor)) {
                             $tabla .= '<small><i class="fa fa-user" style="color:#3db828;"></i> ' . $row->martesprofesor . '</small><br>';
                         }
-                        if (isset($row->martesurl) && ! empty($row->martesurl)) {
+                        if (isset($row->martesurl) && !empty($row->martesurl)) {
                             $tabla .= '<a href="#"  onclick="cambiar_estado(\'' . $row->martesidhorariodetalle . '\',\'' . $base . '\')" style="color:#1e81fb;   font-weight:bolder;"><i class="fa fa-external-link"></i> ENTRAR A CLASE</a><br>';
                         }
-                        if (isset($row->martesurlgrabado) && ! empty($row->martesurlgrabado)) {
+                        if (isset($row->martesurlgrabado) && !empty($row->martesurlgrabado)) {
                             $tabla .= '  <a target="_blank" href="' . $row->martesurlgrabado . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> CLASE GRABADA</a>';
                         }
                         $tabla .= '</div>';
                     }
                     $tabla .= '</td>';
                     $tabla .= '<td >';
-                    if (isset($row->miercoles) && ! empty($row->miercoles)) {
+                    if (isset($row->miercoles) && !empty($row->miercoles)) {
                         $tabla .= '<div class="card1"> <strong><i class="fa fa-book" style="color:#ff7e00;"></i>  
                                 ' . $row->miercoles . '</strong><hr>';
-                        if (isset($row->miercolesprofesor) && ! empty($row->miercolesprofesor)) {
+                        if (isset($row->miercolesprofesor) && !empty($row->miercolesprofesor)) {
                             $tabla .= '<small><i class="fa fa-user" style="color:#3db828;" ></i> ' . $row->miercolesprofesor . '</small><br>';
                         }
-                        if (isset($row->miercolesurl) && ! empty($row->miercolesurl)) {
+                        if (isset($row->miercolesurl) && !empty($row->miercolesurl)) {
                             $tabla .= '<a href="#"  onclick="cambiar_estado(\'' . $row->miercolesidhorariodetalle . '\',\'' . $base . '\')" style="color:#1e81fb;   font-weight:bolder;"><i class="fa fa-external-link"></i> ENTRAR A CLASE</a><br>';
                         }
-                        if (isset($row->miercolesurlgrabado) && ! empty($row->miercolesurlgrabado)) {
+                        if (isset($row->miercolesurlgrabado) && !empty($row->miercolesurlgrabado)) {
                             $tabla .= '  <a target="_blank" href="' . $row->miercolesurlgrabado . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> CLASE GRABADA</a>';
                         }
                         $tabla .= '</div>';
                     }
                     $tabla .= '</td>';
                     $tabla .= '<td  >';
-                    if (isset($row->jueves) && ! empty($row->jueves)) {
+                    if (isset($row->jueves) && !empty($row->jueves)) {
                         $tabla .= '<div class="card1"> <strong><i class="fa fa-book" style="color:#ff7e00;"></i>  
                                 ' . $row->jueves . '</strong><hr>';
-                        if (isset($row->juevesprofesor) && ! empty($row->juevesprofesor)) {
+                        if (isset($row->juevesprofesor) && !empty($row->juevesprofesor)) {
                             $tabla .= '<small><i class="fa fa-user" style="color:#3db828;"></i> ' . $row->juevesprofesor . '</small><br>';
                         }
-                        if (isset($row->juevesurl) && ! empty($row->juevesurl)) {
+                        if (isset($row->juevesurl) && !empty($row->juevesurl)) {
                             $tabla .= '<a href="#"  onclick="cambiar_estado(\'' . $row->juevesidhorariodetalle . '\',\'' . $base . '\')" style="color:#1e81fb;   font-weight:bolder;"><i class="fa fa-external-link"></i> ENTRAR A CLASE</a><br>';
                         }
-                        if (isset($row->juevesurlgrabado) && ! empty($row->juevesurlgrabado)) {
+                        if (isset($row->juevesurlgrabado) && !empty($row->juevesurlgrabado)) {
                             $tabla .= '  <a target="_blank" href="' . $row->juevesurlgrabado . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> CLASE GRABADA</a>';
                         }
                         $tabla .= '</div>';
                     }
                     $tabla .= '</td>';
                     $tabla .= '<td >';
-                    if (isset($row->viernes) && ! empty($row->viernes)) {
+                    if (isset($row->viernes) && !empty($row->viernes)) {
                         $tabla .= '<div class="card1"> <strong><i class="fa fa-book" style="color:#ff7e00;"></i>  
                                 ' . $row->viernes . '</strong><hr>';
-                        if (isset($row->viernesprofesor) && ! empty($row->viernesprofesor)) {
+                        if (isset($row->viernesprofesor) && !empty($row->viernesprofesor)) {
                             $tabla .= '<small><i class="fa fa-user" style="color:#3db828;" ></i> ' . $row->viernesprofesor . '</small><br>';
                         }
-                        if (isset($row->viernesurl) && ! empty($row->viernesurl)) {
+                        if (isset($row->viernesurl) && !empty($row->viernesurl)) {
                             $tabla .= '<a href="#"  onclick="cambiar_estado(\'' . $row->viernesidhorariodetalle . '\',\'' . $base . '\')" style="color:#1e81fb;   font-weight:bolder;"><i class="fa fa-external-link"></i> ENTRAR A CLASE</a><br>';
                         }
-                        if (isset($row->viernesurlgrabado) && ! empty($row->viernesurlgrabado)) {
+                        if (isset($row->viernesurlgrabado) && !empty($row->viernesurlgrabado)) {
                             $tabla .= '  <a target="_blank" href="' . $row->viernesurlgrabado . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> CLASE GRABADA</a>';
                         }
                         $tabla .= '</div>';
@@ -412,7 +414,7 @@ border-top:solid #33C1FF 2px;
 
     public function horarioMostrar($idhorario = '', $idalumno = '')
     {
-        if ((isset($idhorario) && ! empty($idhorario)) && (isset($idalumno) && ! empty($idalumno))) {
+        if ((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno))) {
 
             $tabla = '
         <style type="text/css">
@@ -455,7 +457,7 @@ border-top:solid #33C1FF 2px;
             $tabla .= ' </thead>';
             $array_materias_reprobadas = array();
             $materias_reprobadas = $this->alumno->obtenerTodasMateriaReprobadasActivas($idalumno);
-            if (isset($materias_reprobadas) && ! empty($materias_reprobadas)) {
+            if (isset($materias_reprobadas) && !empty($materias_reprobadas)) {
                 foreach ($materias_reprobadas as $row) {
                     array_push($array_materias_reprobadas, $row->idmateriaprincipal);
                 }
@@ -464,67 +466,67 @@ border-top:solid #33C1FF 2px;
             $reprobadas = implode(",", $array_materias_reprobadas);
             $lunesAll = $this->horario->showAllDiaHorarioSinDua($idhorario, $reprobadas);
 
-            if (isset($lunesAll) && ! empty($lunesAll)) {
+            if (isset($lunesAll) && !empty($lunesAll)) {
                 foreach ($lunesAll as $row) {
                     $tabla .= '<tr>';
                     $tabla .= '<td  ><strong>' . $row->hora . '</strong></td>';
                     $tabla .= '<td >';
-                    if (isset($row->lunes) && ! empty($row->lunes)) {
+                    if (isset($row->lunes) && !empty($row->lunes)) {
                         $tabla .= '<div class="card1">  
                                 ' . $row->lunes . '<br>';
-                        if (isset($row->lunesurl) && ! empty($row->lunesurl)) {
+                        if (isset($row->lunesurl) && !empty($row->lunesurl)) {
 
                             $tabla .= '<a href="#"  onclick="cambiar_estado(\'' . $row->lunesidhorariodetalle . '\',\'' . $base . '\')" style="color:#1e81fb;   font-weight:bolder;"><i class="fa fa-external-link"></i> ENTRAR A CLASE</a>';
                         }
-                        if (isset($row->lunesurlgrabado) && ! empty($row->lunesurlgrabado)) {
+                        if (isset($row->lunesurlgrabado) && !empty($row->lunesurlgrabado)) {
                             $tabla .= '  <a target="_blank" href="' . $row->lunesurlgrabado . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> CLASE GRABADA</a>';
                         }
                         $tabla .= '</div>';
                     }
                     $tabla .= '</td>';
                     $tabla .= '<td  >';
-                    if (isset($row->martes) && ! empty($row->martes)) {
+                    if (isset($row->martes) && !empty($row->martes)) {
                         $tabla .= '<div class="card1"> ' . $row->martes . '<br>';
-                        if (isset($row->martesurl) && ! empty($row->martesurl)) {
+                        if (isset($row->martesurl) && !empty($row->martesurl)) {
                             $tabla .= '<a href="#"  onclick="cambiar_estado(\'' . $row->martesidhorariodetalle . '\',\'' . $base . '\')" style="color:#1e81fb;   font-weight:bolder;"><i class="fa fa-external-link"></i> ENTRAR A CLASE</a>';
                         }
-                        if (isset($row->martesurlgrabado) && ! empty($row->martesurlgrabado)) {
+                        if (isset($row->martesurlgrabado) && !empty($row->martesurlgrabado)) {
                             $tabla .= '  <a target="_blank" href="' . $row->martesurlgrabado . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> CLASE GRABADA</a>';
                         }
                         $tabla .= '</div>';
                     }
                     $tabla .= '</td>';
                     $tabla .= '<td >';
-                    if (isset($row->miercoles) && ! empty($row->miercoles)) {
+                    if (isset($row->miercoles) && !empty($row->miercoles)) {
                         $tabla .= '<div class="card1"> ' . $row->miercoles . '<br>';
-                        if (isset($row->miercolesurl) && ! empty($row->miercolesurl)) {
+                        if (isset($row->miercolesurl) && !empty($row->miercolesurl)) {
                             $tabla .= '<a href="#"  onclick="cambiar_estado(\'' . $row->miercolesidhorariodetalle . '\',\'' . $base . '\')" style="color:#1e81fb;   font-weight:bolder;"><i class="fa fa-external-link"></i> ENTRAR A CLASE</a>';
                         }
-                        if (isset($row->miercolesurlgrabado) && ! empty($row->miercolesurlgrabado)) {
+                        if (isset($row->miercolesurlgrabado) && !empty($row->miercolesurlgrabado)) {
                             $tabla .= '  <a target="_blank" href="' . $row->miercolesurlgrabado . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> CLASE GRABADA</a>';
                         }
                         $tabla .= '</div>';
                     }
                     $tabla .= '</td>';
                     $tabla .= '<td  >';
-                    if (isset($row->jueves) && ! empty($row->jueves)) {
+                    if (isset($row->jueves) && !empty($row->jueves)) {
                         $tabla .= '<div class="card1"> ' . $row->jueves . '<br>';
-                        if (isset($row->juevesurl) && ! empty($row->juevesurl)) {
+                        if (isset($row->juevesurl) && !empty($row->juevesurl)) {
                             $tabla .= '<a href="#"  onclick="cambiar_estado(\'' . $row->juevesidhorariodetalle . '\',\'' . $base . '\')" style="color:#1e81fb;   font-weight:bolder;"><i class="fa fa-external-link"></i> ENTRAR A CLASE</a>';
                         }
-                        if (isset($row->juevesurlgrabado) && ! empty($row->juevesurlgrabado)) {
+                        if (isset($row->juevesurlgrabado) && !empty($row->juevesurlgrabado)) {
                             $tabla .= '  <a target="_blank" href="' . $row->juevesurlgrabado . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> CLASE GRABADA</a>';
                         }
                         $tabla .= '</div>';
                     }
                     $tabla .= '</td>';
                     $tabla .= '<td >';
-                    if (isset($row->viernes) && ! empty($row->viernes)) {
+                    if (isset($row->viernes) && !empty($row->viernes)) {
                         $tabla .= '<div class="card1"> ' . $row->viernes . '<br>';
-                        if (isset($row->viernesurl) && ! empty($row->viernesurl)) {
+                        if (isset($row->viernesurl) && !empty($row->viernesurl)) {
                             $tabla .= '<a href="#"  onclick="cambiar_estado(\'' . $row->viernesidhorariodetalle . '\',\'' . $base . '\')" style="color:#1e81fb;   font-weight:bolder;"><i class="fa fa-external-link"></i> ENTRAR A CLASE</a>';
                         }
-                        if (isset($row->viernesurlgrabado) && ! empty($row->viernesurlgrabado)) {
+                        if (isset($row->viernesurlgrabado) && !empty($row->viernesurlgrabado)) {
                             $tabla .= '  <a target="_blank" href="' . $row->viernesurlgrabado . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> CLASE GRABADA</a>';
                         }
                         $tabla .= '</div>';
@@ -547,9 +549,9 @@ border-top:solid #33C1FF 2px;
         date_default_timezone_set("America/Mexico_City");
         $idhorariodetalle = $this->input->post('idhorariodetalle');
 
-        if ((isset($idhorariodetalle) && ! empty($idhorariodetalle))) {
+        if ((isset($idhorariodetalle) && !empty($idhorariodetalle))) {
             $detalle_horario = $this->horario->detalleHorarioDetalle($idhorariodetalle);
-            if (isset($detalle_horario) && ! empty($detalle_horario)) {
+            if (isset($detalle_horario) && !empty($detalle_horario)) {
                 $hora_inicial = $detalle_horario[0]->horainicial;
                 $hora = date('H:i', strtotime($hora_inicial));
                 $horafinal = $detalle_horario[0]->horafinal;
@@ -630,7 +632,7 @@ border-top:solid #33C1FF 2px;
                 'mensaje' => 'Ocurrio un error, intente mas tarde.'
             );
         }
-        if (isset($data) && ! empty($data)) {
+        if (isset($data) && !empty($data)) {
             echo json_encode($data);
         }
     }
@@ -644,7 +646,7 @@ border-top:solid #33C1FF 2px;
 
         if ($consulta) {
             foreach ($consulta as $row) {
-                $contador ++;
+                $contador++;
                 $suma_calificacion += $row->calificacionxperiodo;
             }
             $calificacion_final = numberFormatPrecision($suma_calificacion / $contador, 1, '.');
@@ -657,9 +659,9 @@ border-top:solid #33C1FF 2px;
         Permission::grant(uri_string());
         # code...
         $idalumno = $this->session->idalumno;
-        $idplantel = $this->session->idplantel;
+        //$idplantel = $this->session->idplantel;
         $kardex = $this->alumno->allKardex($this->session->idalumno);
-        $promerio = $this->promedioGeneral($idalumno, $idplantel);
+        //$promerio = $this->promedioGeneral($idalumno, $idplantel);
         $detalle = $this->alumno->detalleAlumno($idalumno);
         $data = array(
             'kardex' => $kardex,
@@ -683,6 +685,8 @@ border-top:solid #33C1FF 2px;
         $materia_taller_seleccionada = "";
         $grupo = $this->alumno->obtenerGrupo($idalumno);
         $mostrar = FALSE;
+        $tabla = "";
+        $materias_repetir = "";
         if ($this->session->idniveleducativo == 3) {
             $mostrar = TRUE;
         } else {
@@ -692,7 +696,7 @@ border-top:solid #33C1FF 2px;
             $idhorario = $grupo->idhorario;
             $array_materias_reprobadas = array();
             $materias_reprobadas = $this->alumno->obtenerTodasMateriaReprobadasActivas($idalumno);
-            if (isset($materias_reprobadas) && ! empty($materias_reprobadas)) {
+            if (isset($materias_reprobadas) && !empty($materias_reprobadas)) {
                 foreach ($materias_reprobadas as $row) {
                     array_push($array_materias_reprobadas, $row->idmateriaprincipal);
                 }
@@ -723,7 +727,7 @@ border-top:solid #33C1FF 2px;
 
     public function seleccionarTaller($idhorario = '', $idalumno = '', $idprofesormateria = '', $idmateria = '')
     {
-        if ((isset($idhorario) && ! empty($idhorario)) && (isset($idalumno) && ! empty($idalumno)) && (isset($idprofesormateria) && ! empty($idprofesormateria)) && (isset($idmateria) && ! empty($idmateria))) {
+        if ((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno)) && (isset($idprofesormateria) && !empty($idprofesormateria)) && (isset($idmateria) && !empty($idmateria))) {
             // ELIMINAR LA CLASE DE TALLER QUE TENGA REGISTRADO
             $eliminar = $this->alumno->deleteClaseTaller($idalumno, $idhorario);
             $data = array(
@@ -781,8 +785,7 @@ border-top:solid #33C1FF 2px;
       <th>Nombre</th>';
         foreach ($unidades as $block) :
             $tabla .= '<th>' . $block->nombreunidad . '</th>';
-        endforeach
-        ;
+        endforeach;
 
         $tabla .= '</thead>';
         $c = 1;
@@ -790,7 +793,7 @@ border-top:solid #33C1FF 2px;
             // $alumn = $al->getAlumn();
 
             $tabla .= '<tr>
-        <td>' . $c ++ . '</td>
+        <td>' . $c++ . '</td>
         <td>' . $row->apellidop . " " . $row->apellidom . " " . $row->nombre . '</td>';
             foreach ($unidades as $block) :
                 $val = $this->grupo->obtenerCalificacionValidandoMateria($row->idalumno, $block->idunidad, $idhorario, $idmateria);
@@ -802,8 +805,7 @@ border-top:solid #33C1FF 2px;
                     $tabla .= '<label>No registrado</label>';
                 }
                 $tabla .= '</td>';
-            endforeach
-            ;
+            endforeach;
 
             $tabla .= '</tr>';
         }
@@ -824,7 +826,7 @@ border-top:solid #33C1FF 2px;
             $tabla .= '<table class="table">
             <thead>
             <th>#</th> ';
-            for ($i = 0; $i < $range; $i ++) :
+            for ($i = 0; $i < $range; $i++) :
                 setlocale(LC_ALL, 'es_ES');
                 $fecha = strftime("%A, %d de %B", strtotime($fechainicio) + ($i * (24 * 60 * 60)));
 
@@ -834,15 +836,14 @@ border-top:solid #33C1FF 2px;
                         $tabla .= '<th>' . $fecha . '</th>';
                     }
                 }
-                // echo date("d-M",strtotime($_GET["start_at"])+($i*(24*60*60)));
-            endfor
-            ;
+            // echo date("d-M",strtotime($_GET["start_at"])+($i*(24*60*60)));
+            endfor;
             $tabla .= '</thead>';
             $n = 1;
             foreach ($alumns as $alumn) {
                 $tabla .= ' <tr>';
-                $tabla .= '<td>' . $n ++ . '</td>';
-                for ($i = 0; $i < $range; $i ++) :
+                $tabla .= '<td>' . $n++ . '</td>';
+                for ($i = 0; $i < $range; $i++) :
                     $date_at = date("Y-m-d", strtotime($fechainicio) + ($i * (24 * 60 * 60)));
                     // $asist = AssistanceData::getByATD($alumn->id,$_GET["team_id"],$date_at);
                     $asist = $this->grupo->listaAsistencia($alumn->idalumno, $idhorario, $date_at, $idhorariodetalle);
@@ -881,8 +882,7 @@ border-top:solid #33C1FF 2px;
                             $tabla .= '</td>';
                         }
                     }
-                endfor
-                ;
+                endfor;
                 $tabla .= '</tr>';
             }
             $tabla .= '</table>';
@@ -899,7 +899,7 @@ border-top:solid #33C1FF 2px;
         $idhorariodetalle = $this->decode($idhorariodetalle);
         // $fechainicio = $this->input->post('fechainicio');
         // $fechafin = $this->input->post('fechafin');
-        if ((isset($idhorario) && ! empty($idhorario)) && (isset($idhorariodetalle) && ! empty($idhorariodetalle)) && (isset($fechainicio) && ! empty($fechainicio)) && (isset($fechafin) && ! empty($fechafin)) && (isset($idmotivo))) {
+        if ((isset($idhorario) && !empty($idhorario)) && (isset($idhorariodetalle) && !empty($idhorariodetalle)) && (isset($fechainicio) && !empty($fechainicio)) && (isset($fechafin) && !empty($fechafin)) && (isset($idmotivo))) {
             $alumns = $this->alumno->showAllAlumnoId($idalumno);
             $tabla = "";
 
@@ -910,21 +910,20 @@ border-top:solid #33C1FF 2px;
                 $tabla .= '<table id="tablageneral2" class="table table-striped  dt-responsive nowrap" cellspacing="0" width="100%">
            <thead class="bg-teal">
             <th>#</th> ';
-                for ($i = 0; $i < $range; $i ++) :
+                for ($i = 0; $i < $range; $i++) :
                     setlocale(LC_ALL, 'es_ES');
 
                     $fecha = strftime("%A, %d de %B", strtotime($fechainicio) + ($i * (24 * 60 * 60)));
 
                     $tabla .= '<th>' . utf8_encode($fecha) . '</th>';
-                    // echo date("d-M",strtotime($_GET["start_at"])+($i*(24*60*60)));
-                endfor
-                ;
+                // echo date("d-M",strtotime($_GET["start_at"])+($i*(24*60*60)));
+                endfor;
                 $tabla .= '</thead>';
                 $n = 1;
                 foreach ($alumns as $alumn) {
                     $tabla .= ' <tr>';
-                    $tabla .= '<td>' . $n ++ . '</td>';
-                    for ($i = 0; $i < $range; $i ++) :
+                    $tabla .= '<td>' . $n++ . '</td>';
+                    for ($i = 0; $i < $range; $i++) :
                         $date_at = date("Y-m-d", strtotime($fechainicio) + ($i * (24 * 60 * 60)));
                         // $asist = AssistanceData::getByATD($alumn->id,$_GET["team_id"],$date_at);
                         $asist = $this->grupo->listaAsistenciaBuscar($alumn->idalumno, $idhorario, $date_at, $idhorariodetalle, $idmotivo);
@@ -958,8 +957,7 @@ border-top:solid #33C1FF 2px;
                         }
 
                         $tabla .= '</td>';
-                    endfor
-                    ;
+                    endfor;
                     $tabla .= '</tr>';
                 }
                 $tabla .= '</table>';
@@ -1003,7 +1001,7 @@ border-top:solid #33C1FF 2px;
             $array_materias_reprobadas = array();
             $materias_reprobadas = $this->alumno->obtenerTodasMateriaReprobadasActivas($idalumno);
 
-            if (isset($materias_reprobadas) && ! empty($materias_reprobadas)) {
+            if (isset($materias_reprobadas) && !empty($materias_reprobadas)) {
                 foreach ($materias_reprobadas as $row) {
                     array_push($array_materias_reprobadas, $row->idmateriaprincipal);
                 }
@@ -1026,7 +1024,7 @@ border-top:solid #33C1FF 2px;
         $idhorario = $this->decode($idhorario);
         $idhorariodetalle = $this->decode($idhorariodetalle);
         $idmateria = $this->decode($idmateria);
-        if ((isset($idhorario) && ! empty($idhorario)) && (isset($idhorariodetalle) && ! empty($idhorariodetalle)) && (isset($idmateria) && ! empty($idmateria))) {
+        if ((isset($idhorario) && !empty($idhorario)) && (isset($idhorariodetalle) && !empty($idhorariodetalle)) && (isset($idmateria) && !empty($idmateria))) {
             $data = array(
                 'idhorario' => $this->encode($idhorario),
                 'idhorariodetalle' => $idhorariodetalle,
@@ -1038,14 +1036,33 @@ border-top:solid #33C1FF 2px;
             $this->load->view('alumno/footer');
         }
     }
+    public function  mensajes($idhorario, $idhorariodetalle, $idmateria)
+    {
+        $idhorario = $this->decode($idhorario);
+        $idhorariodetalle = $this->decode($idhorariodetalle);
+        $idmateria = $this->decode($idmateria);
+        $mensajes = $this->mensaje->showAllMensajePorMateria($idhorario, $idmateria);
 
+        if ((isset($idhorario) && !empty($idhorario)) && (isset($idhorariodetalle) && !empty($idhorariodetalle)) && (isset($idmateria) && !empty($idmateria))) {
+            $data = array(
+                'idhorario' => $this->encode($idhorario),
+                'idhorariodetalle' => $idhorariodetalle,
+                'idmateria' => $idmateria,
+                'mensajes' => $mensajes,
+                'controller' => $this
+            );
+            $this->load->view('alumno/header');
+            $this->load->view('alumno/mensaje/index', $data);
+            $this->load->view('alumno/footer');
+        }
+    }
     public function calificacion($idhorario, $idhorariodetalle)
     {
         # code...
         Permission::grant(uri_string());
         $idhorario = $this->decode($idhorario);
         $idhorariodetalle = $this->decode($idhorariodetalle);
-        if ((isset($idhorario) && ! empty($idhorario)) && (isset($idhorariodetalle) && ! empty($idhorariodetalle))) {
+        if ((isset($idhorario) && !empty($idhorario)) && (isset($idhorariodetalle) && !empty($idhorariodetalle))) {
             $detalle = $this->alumno->detalleClase($idhorariodetalle);
             $nombreclase = $detalle[0]->nombreclase;
             $data = array(
@@ -1071,7 +1088,7 @@ border-top:solid #33C1FF 2px;
         Permission::grant(uri_string());
         $idhorario = $this->decode($idhorario);
         $idhorariodetalle = $this->decode($idhorariodetalle);
-        if ((isset($idhorario) && ! empty($idhorario)) && (isset($idhorariodetalle) && ! empty($idhorariodetalle))) {
+        if ((isset($idhorario) && !empty($idhorario)) && (isset($idhorariodetalle) && !empty($idhorariodetalle))) {
             $detalle = $this->alumno->detalleClase($idhorariodetalle);
             $nombreclase = $detalle[0]->nombreclase;
             $idalumno = $this->session->idalumno;
@@ -1121,38 +1138,119 @@ border-top:solid #33C1FF 2px;
         $this->load->view('alumno/footer');
     }
 
-    public function obtenerCalificacionSecundaria($idhorario = '', $idalumno = '', $idperiodo)
+    public function obtenerCalificacionSecundaria($idhorario = '', $idalumno = '', $idperiodo = '')
     {
         # code...
         Permission::grant(uri_string());
-        $unidades = $this->grupo->unidades($this->session->idplantel);
-        $materias = $this->alumno->showAllMateriasPasadas($idhorario, $idalumno, $idperiodo);
+        // $unidades = $this->grupo->unidades($this->session->idplantel);
+        //$materias = $this->alumno->obtenerMateriasHorario($idalumno, $idhorario);
         $datoshorario = $this->horario->showNivelGrupo($idhorario);
         $idnivelestudio = $datoshorario->idnivelestudio;
-        $oportunidades_examen = $this->alumno->showAllOportunidadesExamen($this->session->idplantel);
+        $calificaciones  = $this->alumno->spObtenerCalificacion($idalumno, $idhorario, $idperiodo);
+        //$oportunidades_examen = $this->alumno->showAllOportunidadesExamen($this->session->idplantel);
 
         $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
-        $total_unidades = 0;
+        /*
+        // $total_unidades = 0;
         $total_materia = 0;
-        if (isset($materias) && ! empty($materias)) {
+        if (isset($materias) && !empty($materias)) {
             foreach ($materias as $row) {
                 # code...
                 $total_materia = $total_materia + 1;
             }
-        }
+        }*/
         $tabla = "";
         $tabla .= '<div class="table-responsive"> <table class="table  table-striped  table-hover">
         <thead class="bg-teal">
              <th>NO.</th>
-             <th>MATERIA</th>
-             <th>CRÉDITO</th>';
-        $tabla .= '<th>PROMEDIO</th>';
-        $tabla .= '<th></th>';
+             <th>MATERIA</th>';
+        $tabla .= '<th><center>CALIFICACIÓN</center></th>';
+        // $tabla .= '<th></th>';
         $tabla .= '</thead>';
         $c = 1;
-        if (isset($materias) && ! empty($materias)) {
+        $total_materia = 0;
+        $suma_calificacion = 0;
+        if (isset($calificaciones) && !empty($calificaciones)) {
+            foreach ($calificaciones as $row) {
+                if ($row->mostrar === "SI") {
+                    $total_materia++;
+                    $suma_calificacion += $row->calificacion;
+                    /*$idprofesormateria = $row->idprofesormateria;
+                $calificacion = 0;
+                foreach ($oportunidades_examen as $oportunidad) {
+                    $idoportunidadexamen = $oportunidad->idoportunidadexamen;
+                    $detalle_calificacion = $this->alumno->obtenerCalificacionPorMateriaSecundaria($idhorario, $idprofesormateria, $idalumno, $idoportunidadexamen);
+                    if ($detalle_calificacion && $calificacion == 0) {
+                        $calificacion .= $detalle_calificacion->calificacion;
+                    }
+                }*/
+                    $tabla .= '<tr>';
+                    $tabla .= '<td>' . $c++ . '</td>';
+                    $tabla .= '<td>' . $row->nombreclase . '</td>';
+                    $tabla .= '<td align="center" >';
+                    if ($detalle_configuracion[0]->calificacion_minima < $row->calificacion) {
+                        $tabla .= '<label>' . eliminarDecimalCero(numberFormatPrecision($row->calificacion, 1, '.')) .  '</label>';
+                    } else {
+                        $tabla .= '<label style="color:red;">' . eliminarDecimalCero(numberFormatPrecision($row->calificacion, 1, '.')) .  '</label>';
+                    }
+
+                    $tabla .= '</td>';
+                    //$tabla .= '<td>';
+                    /* if ($row->opcion == 0) {
+                    $tabla .= '<label style="color:blue;">R</label>';
+                }*/
+
+                    //$tabla .= '</td>';
+                    $tabla .= '</tr>';
+                }
+            }
+            $promedio = 0;
+            if ($total_materia > 0 && $suma_calificacion > 0) {
+                $promedio =  $suma_calificacion / $total_materia;
+            }
+            $tabla .= '
+                <tr style="background-color:#ccc;" >
+                    <td colspan="2" align="right"><strong><h5>PROMEDIO:</h5></strong></td>
+                    <td align="center"><strong><h5>' . eliminarDecimalCero(numberFormatPrecision($promedio, 1, '.')) . '</h5></strong></td>
+                </tr>
+            ';
+        }
+        $tabla .= '</table></div>';
+        return $tabla;
+    }
+
+    public function obtenerCalificacionPreparatoria($idhorario = '', $idalumno = '', $idperiodo)
+    {
+        # code...
+        Permission::grant(uri_string());
+        //$unidades = $this->grupo->unidades($this->session->idplantel);
+        ///$materias = $this->alumno->showAllMateriasPasadas($idhorario, $idalumno, $idperiodo);
+        $datoshorario = $this->horario->showNivelGrupo($idhorario);
+        $idnivelestudio = $datoshorario->idnivelestudio;
+        //$oportunidades_examen = $this->alumno->showAllOportunidadesExamen($this->session->idplantel);
+        $calificaciones = $this->alumno->spObtenerCalificacion($idalumno, $idhorario, $idperiodo);
+        $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
+        /*$total_unidades = 0;
+        $total_materia = 0;
+        if (isset($materias) && !empty($materias)) {
             foreach ($materias as $row) {
-                $idhorariodetalle = $row->idhorariodetalle;
+                # code...
+                $total_materia = $total_materia + 1;
+            }
+        }*/
+        $tabla = "";
+        $tabla .= '<div class="table-responsive"> <table class="table  table-striped  table-hover">
+        <thead class="bg-teal">
+             <th>NO.</th>
+             <th>MATERIA</th>';
+        $tabla .= '<th><center>CALIFICACIÓN</center></th>';
+        $tabla .= '</thead>';
+        $c = 1;
+        $total_materia = 0;
+        $suma_calificacion = 0;
+        if (isset($calificaciones) && !empty($calificaciones)) {
+            foreach ($calificaciones as $row) {
+                /*$idhorariodetalle = $row->idhorariodetalle;
                 $calificacion = 0;
                 foreach ($oportunidades_examen as $oportunidad) {
                     $idoportunidadexamen = $oportunidad->idoportunidadexamen;
@@ -1160,27 +1258,105 @@ border-top:solid #33C1FF 2px;
                     if ($detalle_calificacion && $calificacion == 0) {
                         $calificacion .= $detalle_calificacion[0]->calificacion;
                     }
-                }
-                $tabla .= '<tr>';
-                $tabla .= '<td>' . $c ++ . '</td>';
-                $tabla .= '<td>' . $row->nombreclase . '</td>';
-                $tabla .= '<td>' . $row->credito . '</td>';
-                $tabla .= '<td>';
-                if ($detalle_configuracion[0]->calificacion_minima < $calificacion) {
-                    $tabla .= '<label>' . number_format($calificacion, 2) . '</label>';
-                } else {
-                    $tabla .= '<label style="color:red;">NA</label>';
-                }
+                }*/
+                if ($row->mostrar === "SI" && $row->calificacion > 0) {
+                    $total_materia++;
+                    $suma_calificacion += $row->calificacion;
+                    $tabla .= '<tr>';
+                    $tabla .= '<td>' . $c++ . '</td>';
+                    $tabla .= '<td>' . $row->nombreclase . '</td>';
+                    $tabla .= '<td align="center">';
+                    if ($detalle_configuracion[0]->calificacion_minima < $row->calificacion) {
+                        $tabla .= '<label>' . eliminarDecimalCero(numberFormatPrecision($row->calificacion, 1, '.')) . '</label>';
+                    } else {
+                        $tabla .= '<label style="color:red;">' . eliminarDecimalCero(numberFormatPrecision($row->calificacion, 1, '.')) . '</label>';
+                    }
 
-                $tabla .= '</td>';
-                $tabla .= '<td>';
-                if ($row->opcion == 0) {
-                    $tabla .= '<label style="color:blue;">R</label>';
+                    $tabla .= '</td>';
+                    $tabla .= '</tr>';
                 }
-
-                $tabla .= '</td>';
-                $tabla .= '</tr>';
             }
+            $promedio = 0;
+            if ($total_materia > 0 && $suma_calificacion > 0) {
+                $promedio =  $suma_calificacion / $total_materia;
+            }
+            $tabla .= '
+                <tr style="background-color:#ccc;" >
+                    <td colspan="2" align="right"><strong><h5>PROMEDIO:</h5></strong></td>
+                    <td align="center"><strong><h5>' . eliminarDecimalCero(numberFormatPrecision($promedio, 1, '.')) . '</h5></strong></td>
+                </tr>
+            ';
+        }
+        $tabla .= '</table></div>';
+        return $tabla;
+    }
+
+    public function obtenerCalificacionLicenciaturaFinal($idhorario = '', $idalumno = '', $idperiodo = '')
+    {
+        # code...
+        Permission::grant(uri_string());
+        //$unidades = $this->grupo->unidades($this->session->idplantel);
+        ///$materias = $this->alumno->showAllMateriasPasadas($idhorario, $idalumno, $idperiodo);
+        $datoshorario = $this->horario->showNivelGrupo($idhorario);
+        $idnivelestudio = $datoshorario->idnivelestudio;
+        //$oportunidades_examen = $this->alumno->showAllOportunidadesExamen($this->session->idplantel);
+        $calificaciones = $this->alumno->spObtenerCalificacion($idalumno, $idhorario, $idperiodo);
+        $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
+        /*$total_unidades = 0;
+        $total_materia = 0;
+        if (isset($materias) && !empty($materias)) {
+            foreach ($materias as $row) {
+                # code...
+                $total_materia = $total_materia + 1;
+            }
+        }*/
+        $tabla = "";
+        $tabla .= '<div class="table-responsive"> <table class="table  table-striped  table-hover">
+        <thead class="bg-teal">
+             <th>NO.</th>
+             <th>MATERIA</th>';
+        $tabla .= '<th><center>CALIFICACIÓN</center></th>';
+        $tabla .= '</thead>';
+        $c = 1;
+        $total_materia = 0;
+        $suma_calificacion = 0;
+        if (isset($calificaciones) && !empty($calificaciones)) {
+            foreach ($calificaciones as $row) {
+                /*$idhorariodetalle = $row->idhorariodetalle;
+                $calificacion = 0;
+                foreach ($oportunidades_examen as $oportunidad) {
+                    $idoportunidadexamen = $oportunidad->idoportunidadexamen;
+                    $detalle_calificacion = $this->alumno->calificacionSecuPrepa($idalumno, $idhorariodetalle, $idoportunidadexamen);
+                    if ($detalle_calificacion && $calificacion == 0) {
+                        $calificacion .= $detalle_calificacion[0]->calificacion;
+                    }
+                }*/
+                if ($row->mostrar === "SI") {
+                    $total_materia++;
+                    $suma_calificacion += $row->calificacion;
+                    $tabla .= '<tr>';
+                    $tabla .= '<td>' . $c++ . '</td>';
+                    $tabla .= '<td>' . $row->nombreclase . '</td>';
+                    $tabla .= '<td>';
+                    if ($detalle_configuracion[0]->calificacion_minima < $row->calificacion) {
+                        $tabla .= '<label>' . eliminarDecimalCero(numberFormatPrecision($row->calificacion, 1, '.')) . '</label>';
+                    } else {
+                        $tabla .= '<label style="color:red;">' . eliminarDecimalCero(numberFormatPrecision($row->calificacion, 1, '.')) . '</label>';
+                    }
+
+                    $tabla .= '</td>';
+                    $tabla .= '</tr>';
+                }
+            }
+            if ($total_materia > 0 && $suma_calificacion > 0) {
+                $promedio =  $suma_calificacion / $total_materia;
+            }
+            $tabla .= '
+                <tr style="background-color:#ccc;" >
+                    <td colspan="2" align="right"><strong><h5>PROMEDIO:</h5></strong></td>
+                    <td align="center"><strong><h5>' . eliminarDecimalCero(numberFormatPrecision($promedio, 1, '.')) . '</h5></strong></td>
+                </tr>
+            ';
         }
         $tabla .= '</table></div>';
         return $tabla;
@@ -1253,7 +1429,7 @@ border-top:solid #33C1FF 2px;
         $unidades = $this->grupo->unidades($this->session->idplantel);
         $array_materias_reprobadas = array();
         $materias_reprobadas = $this->alumno->obtenerTodasMateriaReprobadasActivas($idalumno);
-        if (isset($materias_reprobadas) && ! empty($materias_reprobadas)) {
+        if (isset($materias_reprobadas) && !empty($materias_reprobadas)) {
             foreach ($materias_reprobadas as $row) {
                 array_push($array_materias_reprobadas, $row->idmateriaprincipal);
             }
@@ -1263,7 +1439,7 @@ border-top:solid #33C1FF 2px;
         $materias = $this->alumno->showAllMaterias($idhorario, $reprobadas, $idalumno);
         $datoshorario = $this->horario->showNivelGrupo($idhorario);
         $idnivelestudio = $datoshorario->idnivelestudio;
-
+        $idperiodo =  $datoshorario->idperiodo;
         $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
         $total_unidades = 0;
         $total_materia = 0;
@@ -1281,13 +1457,12 @@ border-top:solid #33C1FF 2px;
         foreach ($unidades as $block) :
             $total_unidades += 1;
             $tabla .= '<th><strong>' . $block->nombreunidad . '</strong></th>';
-        endforeach
-        ;
+        endforeach;
         $tabla .= '<th>PROMEDIO</th>';
         $tabla .= '</thead>';
         $c = 1;
         $mostrar = FALSE;
-        if (isset($materias) && ! empty($materias)) {
+        if (isset($materias) && !empty($materias)) {
             $suma_calificacion = 0;
             $suma_unidad_concalificacion = 0;
 
@@ -1297,23 +1472,26 @@ border-top:solid #33C1FF 2px;
                 $suma_unidad_concalificacion = 0;
                 $idhorariodetalle = $row->idhorariodetalle;
                 $validar = $this->calificacion->verificarCalificacionSiSeMuestraXMateria($idalumno, $idhorario, $idmateria);
-
-                if ($validar) {
-                    $suma_calificacion_verificar = 0;
-                    foreach ($validar as $rowv) {
-                        $suma_calificacion_verificar += $rowv->calificacion;
-                    }
-                    if ($suma_calificacion_verificar > 0) {
-                        $mostrar = TRUE;
+                if ($idperiodo == 9) {
+                    if ($validar) {
+                        $suma_calificacion_verificar = 0;
+                        foreach ($validar as $rowv) {
+                            $suma_calificacion_verificar += $rowv->calificacion;
+                        }
+                        if ($suma_calificacion_verificar > 0) {
+                            $mostrar = TRUE;
+                        } else {
+                            $mostrar = FALSE;
+                        }
                     } else {
-                        $mostrar = FALSE;
+                        $mostrar = TRUE;
                     }
                 } else {
                     $mostrar = TRUE;
                 }
                 if ($mostrar) {
                     $tabla .= '<tr>
-                <td>' . $c ++ . '</td>
+                <td>' . $c++ . '</td>
                 <td>';
                     if ($row->opcion == 0) {
                         $tabla .= '<label style="color:red;">R: </label>';
@@ -1343,8 +1521,7 @@ border-top:solid #33C1FF 2px;
                             $tabla .= '<small>No registrado</small>';
                         }
                         $tabla .= '</td>';
-                    endforeach
-                    ;
+                    endforeach;
                     if ($suma_unidad_concalificacion == $total_unidades) {
                         $tabla .= '<td>';
                         $calificacion_final = eliminarDecimalCero($suma_calificacion / $total_unidades);
@@ -1376,7 +1553,7 @@ border-top:solid #33C1FF 2px;
         $unidades = $this->grupo->unidades($this->session->idplantel);
         $array_materias_reprobadas = array();
         $materias_reprobadas = $this->alumno->obtenerTodasMateriaReprobadasActivas($idalumno);
-        if (isset($materias_reprobadas) && ! empty($materias_reprobadas)) {
+        if (isset($materias_reprobadas) && !empty($materias_reprobadas)) {
             foreach ($materias_reprobadas as $row) {
                 array_push($array_materias_reprobadas, $row->idmateriaprincipal);
             }
@@ -1404,13 +1581,12 @@ border-top:solid #33C1FF 2px;
         foreach ($unidades as $block) :
 
             $tabla .= '<th><strong>' . $block->nombreunidad . '</strong></th>';
-        endforeach
-        ;
+        endforeach;
         $tabla .= '<th>PROMEDIO</th>';
         $tabla .= '</thead>';
         $c = 1;
 
-        if (isset($materias) && ! empty($materias)) {
+        if (isset($materias) && !empty($materias)) {
             $suma_calificacion = 0;
 
             foreach ($materias as $row) {
@@ -1418,7 +1594,7 @@ border-top:solid #33C1FF 2px;
                 $idmateria = $row->idmateria;
                 $suma_calificacion = 0;
                 $tabla .= '<tr>
-                <td>' . $c ++ . '</td>
+                <td>' . $c++ . '</td>
                 <td>';
                 if ($row->opcion == 0) {
                     $tabla .= '<label style="color:red;">R: </label>';
@@ -1469,33 +1645,58 @@ border-top:solid #33C1FF 2px;
     {
         # code...
         Permission::grant(uri_string());
-        $idplantel = $this->session->idplantel;
+        // $idplantel = $this->session->idplantel;
         $datoshorario = $this->horario->showNivelGrupo($idhorario);
         $idnivelestudio = $datoshorario->idnivelestudio;
-
+        $idperiodo = $datoshorario->idperiodo;
+        //$materias = $this->alumno->obtenerMateriasHorario($idalumno, $idhorario);
         $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
-        $calificaciones = $this->alumno->calificacionFinalPrimaria($idalumno, $idhorario, $idplantel);
+        //$calificaciones = $this->alumno->calificacionFinalPrimaria($idalumno, $idhorario, $idplantel);
+        $calificaciones = $this->alumno->spObtenerCalificacion($idalumno, $idhorario, $idperiodo);
         $tabla = "";
         $tabla .= '<div class="table-responsive"> <table class="table  table-striped  table-hover">
         <thead class="bg-teal">
          <th>#</th>
         <th>MATERIA</th>';
-        $tabla .= '<th>CALIFICACIÓN</th>';
+        $tabla .= '<th  ><center>CALIFICACIÓN</center></th>';
         $tabla .= '</thead>';
         $c = 1;
-        if (isset($calificaciones) && ! empty($calificaciones)) {
-            foreach ($calificaciones as $row) {
-                $tabla .= '<tr>';
-                $tabla .= '<td>' . $c ++ . '</td>';
-                $tabla .= '<td>' . $row->nombreclase . '</td>';
-
-                if ($row->calificacion < $detalle_configuracion[0]->calificacion_minima) {
+        $total_materia = 0;
+        $suma_calificacion = 0;
+        if (isset($calificaciones) && !empty($calificaciones)) {
+            foreach ($calificaciones as $calificacion) {
+                //$idprofesormateria = $materia->idprofesormateria;
+                if ($calificacion->mostrar === "SI") {
+                    $total_materia++;
+                    $suma_calificacion += $calificacion->calificacion;
+                    $tabla .= '<tr>';
+                    $tabla .= '<td>' . $c++ . '</td>';
+                    $tabla .= '<td>' . $calificacion->nombreclase . '</td>';
+                    ///OBTENER CALIFICACION POR MATERIA
+                    /*$calificacion = $this->alumno->obtenerCalificacionPorMateriaPrimaria($idhorario, $idprofesormateria, $idalumno);
+                if (isset($calificacion) && !empty($calificacion)) {*/
+                    if ($calificacion->calificacion < $detalle_configuracion[0]->calificacion_minima) {
+                        $tabla .= '<td align="center" ><strong>' . eliminarDecimalCero(numberFormatPrecision($calificacion->calificacion, 1, '.')) . '</strong></td>';
+                    } else {
+                        $tabla .= '<td align="center">' . eliminarDecimalCero(numberFormatPrecision($calificacion->calificacion, 1, '.')) . '</td>';
+                    }
+                    /* } else {
                     $tabla .= '<td><strong>NA</strong></td>';
-                } else {
-                    $tabla .= '<td>' . $row->calificacion . '</td>';
+                }*/
+
+                    $tabla .= '</tr>';
                 }
-                $tabla .= '</tr>';
             }
+            $promedio = 0;
+            if ($total_materia > 0 && $suma_calificacion > 0) {
+                $promedio =  $suma_calificacion / $total_materia;
+            }
+            $tabla .= '
+                <tr>
+                    <td colspan="2" align="right"><strong><h5>PROMEDIO</h5></strong></td>
+                    <td align="center"><strong><h5>' . eliminarDecimalCero(numberFormatPrecision($promedio, 1, '.')) . '</h5></strong></td>
+                </tr>
+            ';
         }
 
         $tabla .= '</table></div>';
@@ -1507,7 +1708,7 @@ border-top:solid #33C1FF 2px;
         Permission::grant(uri_string());
         $idhorario = $this->decode($idhorario);
         $idalumno = $this->decode($idalumno);
-        if ((isset($idhorario) && ! empty($idhorario)) && (isset($idalumno) && ! empty($idalumno))) {
+        if ((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno))) {
             $alumno = $this->alumno->detalleAlumno($idalumno);
             $grupop = $this->horario->showNivelGrupo($idhorario);
             $unidades = $this->grupo->unidades($this->session->idplantel);
@@ -1657,8 +1858,7 @@ tblcalificacion  {border-collapse:collapse}
       <td width="180" class="titulocal">MATERIA</td>';
             foreach ($unidades as $block) :
                 $tbl .= '<td class="titulocal">' . $block->nombreunidad . '</td>';
-            endforeach
-            ;
+            endforeach;
 
             $tbl .= '</tr>';
             $c = 1;
@@ -1666,7 +1866,7 @@ tblcalificacion  {border-collapse:collapse}
                 // $alumn = $al->getAlumn();
                 $idmateria = $row->idmateria;
                 $tbl .= '<tr>
-        <td width="30" class="subtitulocal">' . $c ++ . '</td>
+        <td width="30" class="subtitulocal">' . $c++ . '</td>
         <td width="180" class="subtitulocal">' . $row->nombreclase . '</td>';
                 foreach ($unidades as $block) :
                     $val = $this->grupo->obtenerCalificacionValidandoMateria($idalumno, $block->idunidad, $idhorario, $idmateria);
@@ -1678,8 +1878,7 @@ tblcalificacion  {border-collapse:collapse}
                         $tbl .= '<label>No registrado</label>';
                     }
                     $tbl .= '</td>';
-                endforeach
-                ;
+                endforeach;
 
                 $tbl .= '</tr>';
             }
@@ -1690,7 +1889,7 @@ tblcalificacion  {border-collapse:collapse}
         <tr>
             <td align="right" class="promedio" >
                 Promedio: <strong>';
-            if (isset($calificacion) && ! empty($calificacion)) {
+            if (isset($calificacion) && !empty($calificacion)) {
                 $tbl .= numberFormatPrecision($calificacion, 1, '.');
             } else {
                 $tbl .= '<label>0.0</label>';
@@ -1735,7 +1934,7 @@ tblcalificacion  {border-collapse:collapse}
 
             $array_materias_reprobadas = array();
             $materias_reprobadas = $this->alumno->obtenerTodasMateriaReprobadasActivas($idalumno);
-            if (isset($materias_reprobadas) && ! empty($materias_reprobadas)) {
+            if (isset($materias_reprobadas) && !empty($materias_reprobadas)) {
                 foreach ($materias_reprobadas as $row) {
                     array_push($array_materias_reprobadas, $row->idmateriaprincipal);
                 }
@@ -1763,48 +1962,6 @@ tblcalificacion  {border-collapse:collapse}
                 $tabla = $this->obtenerCalificacion2($idhorario, $idalumno);
             }
 
-            if ($materias != false) {
-                foreach ($materias as $row) {
-                    # code...
-                    $total_materia = $total_materia + 1;
-                }
-            }
-            if ($unidades != false) {
-                foreach ($unidades as $row) {
-                    # code...
-                    $total_unidades = $total_unidades + 1;
-                }
-            }
-            $datoscalifiacacion = $this->horario->calificacionGeneralAlumno($idhorario, $idalumno);
-            if ($datoscalifiacacion != false && $total_materia > 0) {
-                $calificacion = ($datoscalifiacacion->calificaciongeneral / $total_unidades) / $total_materia;
-            }
-            $detalle_oportunidad = $this->alumno->detalleOportunidadExamen($this->session->idplantel, 1);
-            $numero_oportunidad = $detalle_oportunidad->numero;
-            $detalle_siguiente_oportunidad = $this->alumno->siguienteOportunidadExamen($this->session->idplantel, $numero_oportunidad);
-            $detalle_calificacion = $this->alumno->calificacionAlumno($idalumno, $idhorario, $detalle_oportunidad->idoportunidadexamen);
-
-            $total_aprovadas = 0;
-            $total_reprovadas = 0;
-            if ($detalle_calificacion) {
-                foreach ($detalle_calificacion as $row) {
-                    if ($row->calificacion > 0) {
-                        if (validar_calificacion($row->calificacion, $detalle_configuracion[0]->calificacion_minima)) {
-                            // REPROVADAS
-                            $total_reprovadas += 1;
-                        } else {
-                            // APROBADAS
-                            $total_aprovadas += 1;
-                        }
-                    }
-                }
-            }
-
-            $calificacion_minima = $detalle_configuracion[0]->calificacion_minima;
-            $reprovatorio_permitido = $detalle_configuracion[0]->reprovandas_minima;
-
-            $estatus_alumno = calcularReprovado($idnivelestudio, $idniveleducativo, $total_materia, $total_aprovadas, $total_reprovadas, $reprovatorio_permitido, $calificacion, $calificacion_minima);
-            $mostrar_estatus = mostrarReprovado($idnivelestudio, $idniveleducativo, $total_materia, $total_aprovadas, $total_reprovadas, $reprovatorio_permitido, $calificacion, $calificacion_minima);
 
             $data = array(
                 'idhorario' => $idhorario,
@@ -1814,10 +1971,10 @@ tblcalificacion  {border-collapse:collapse}
                 'datoshorario' => $datoshorario,
                 'calificacion' => $calificacion,
                 'controller' => $this,
-                'estatus_nivel' => $estatus_alumno,
+                //'estatus_nivel' => $estatus_alumno,
                 'oportunidades' => $this->grupo->showAllOportunidades($this->session->idplantel),
                 'nivel_educativo' => $idniveleducativo,
-                'mostrar_estatus' => $mostrar_estatus
+                //'mostrar_estatus' => $mostrar_estatus
                 // 'detalle_siguiente_oportunidad'=>$detalle_siguiente_oportunidad
             );
             $this->load->view('alumno/header');
@@ -1842,7 +1999,7 @@ tblcalificacion  {border-collapse:collapse}
         $unidades = $this->grupo->unidades($this->session->idplantel);
         $array_materias_reprobadas = array();
         $materias_reprobadas = $this->alumno->obtenerTodasMateriaReprobadasActivas($idalumno);
-        if (isset($materias_reprobadas) && ! empty($materias_reprobadas)) {
+        if (isset($materias_reprobadas) && !empty($materias_reprobadas)) {
             foreach ($materias_reprobadas as $row) {
                 array_push($array_materias_reprobadas, $row->idmateriaprincipal);
             }
@@ -1891,12 +2048,11 @@ tblcalificacion  {border-collapse:collapse}
                         $total_cols += 1;
                         $tabla .= '<th><strong>' . $row->nombremes . '</strong></th>';
                     }
-                    $total_unidades_registradas ++;
+                    $total_unidades_registradas++;
                 }
                 $total_cols += 1;
                 $tabla .= '<th><strong>' . $block->nombreunidad . '</strong></th>';
-            endforeach
-            ;
+            endforeach;
         }
         if ($total_unidades == $total_unidades_registradas) {
             $tabla .= '<th>PROMEDIO</th>';
@@ -1905,7 +2061,7 @@ tblcalificacion  {border-collapse:collapse}
         $tabla .= '</thead>';
         $c = 1;
 
-        if (isset($materias) && ! empty($materias)) {
+        if (isset($materias) && !empty($materias)) {
             $suma_calificacion = 0;
             $suma_calificacion_verificar = 0;
             $mostrar = false;
@@ -1929,7 +2085,7 @@ tblcalificacion  {border-collapse:collapse}
                 }
                 if ($mostrar) {
                     $tabla .= '<tr>
-                <td>' . $c ++ . '</td>
+                <td>' . $c++ . '</td>
                 <td>';
                     if ($row->opcion == 0) {
                         $tabla .= '<label style="color:red;">R: </label>';
@@ -1953,7 +2109,7 @@ tblcalificacion  {border-collapse:collapse}
                                         $calificacion_mes = $this->grupo->obtenerCalificacionXMeses($idcalificacion, $idmes);
                                         if ($calificacion_mes) {
                                             $suma_calificacion_mes = $suma_calificacion_mes + $calificacion_mes->calificacion;
-                                            $contador_meses ++;
+                                            $contador_meses++;
                                             $tabla .= '<td align="center"><strong><center>' . numberFormatPrecision($calificacion_mes->calificacion, 1, '.') . '</center></strong></td>';
                                         } else {
                                             $tabla .= '<td><small>No registrado</small></td>';
@@ -1972,8 +2128,7 @@ tblcalificacion  {border-collapse:collapse}
                             } else {
                                 $tabla .= '<td> </td>';
                             }
-                        endforeach
-                        ;
+                        endforeach;
                     }
                     if ($total_unidades == $total_unidades_registradas) {
                         if ($suma_calificacion > 0 && $total_unidades > 0) {
@@ -2003,7 +2158,7 @@ tblcalificacion  {border-collapse:collapse}
     {
         $idhorario = $this->decode($idhorario);
         $idalumno = $this->decode($idalumno);
-        if ((isset($idhorario) && ! empty($idhorario)) && (isset($idalumno) && ! empty($idalumno))) {
+        if ((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno))) {
             // $this->load->library('tcpdf');
 
             $detalle_logo = $this->alumno->logo($this->session->idplantel);
@@ -2029,7 +2184,7 @@ tblcalificacion  {border-collapse:collapse}
 
             $array_materias_reprobadas = array();
             $materias_reprobadas = $this->alumno->obtenerTodasMateriaReprobadasActivas($idalumno);
-            if (isset($materias_reprobadas) && ! empty($materias_reprobadas)) {
+            if (isset($materias_reprobadas) && !empty($materias_reprobadas)) {
                 foreach ($materias_reprobadas as $row) {
                     array_push($array_materias_reprobadas, $row->idmateriaprincipal);
                 }
@@ -2069,7 +2224,7 @@ tblcalificacion  {border-collapse:collapse}
             $hora = date("h:i:s a");
             $fechaactual = date('d/m/Y');
             $pdf = new Pdf('P', 'mm', 'A4', true, 'UTF-8', false);
-            $pdf->SetTitle('Horario de clases.');
+            $pdf->SetTitle('Boleta de Evaluación.');
             $pdf->SetHeaderMargin(20);
             $pdf->SetTopMargin(10);
             $pdf->setFooterMargin(20);
@@ -2466,32 +2621,59 @@ tblcalificacion  {border-collapse:collapse}
         $calificacion_periodo = 0;
         $suma_periodo = 0;
         $calificacion_global = 0;
-        if (isset($detalle) && ! empty($detalle)) {
+        if (isset($detalle) && !empty($detalle)) {
+            $total_materia = 0;
+            $suma_calificacion = 0;
+            $calificacion = 0;
             foreach ($detalle as $det) {
-                $suma_periodo ++;
+                $suma_periodo++;
                 $idhorario = $det->idhorario;
                 $idperiodo = $det->idperiodo;
-                $materias = $this->alumno->showAllMateriasPasadas($idhorario, $idalumno, $idperiodo);
+                $calificaciones = $this->alumno->spObtenerCalificacion($idalumno, $idhorario, $idperiodo);
+                if (isset($calificaciones) && !empty($calificaciones)) {
+                    foreach ($calificaciones as $calificacion) {
+                        $idnivelestudio = $calificacion->idnivelestudio;
+                        $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
+                        if ($calificacion->calificacion > 0 && $calificacion->mostrar == "SI") {
+                            if ($calificacion->calificacion >= $detalle_configuracion[0]->calificacion_minima) {
 
-                if (isset($materias) && ! empty($materias)) {
+                                $suma_calificacion += $calificacion->calificacion;
+                                $total_materia = $total_materia + 1;
+                            } else {
+                                $total_materia = $total_materia + 1;
+                            }
+                        }
+                    }
+                    if ($suma_calificacion > 0  && $total_materia > 0) {
+                        $calificacion = $suma_calificacion / $total_materia;
+
+                        $calificacion_periodo += numberFormatPrecision($calificacion, 1, '.');
+                    }
+                }
+                /* $materias = $this->alumno->showAllMateriasPasadas($idhorario, $idalumno, $idperiodo);
+
+                if (isset($materias) && !empty($materias)) {
 
                     $oportunidades_examen = $this->alumno->showAllOportunidadesExamen($this->session->idplantel);
                     $total_materia = 0;
                     $suma_calificacion = 0;
                     $calificacion = 0;
+
                     foreach ($materias as $row) {
                         $idnivelestudio = $row->idnivelestudio;
+                        $idprofesormateria = $row->idprofesormateri;
                         $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
-                        $total_materia = $total_materia + 1;
-                        $idhorariodetalle = $row->idhorariodetalle;
-                        $calificacion = 0;
+ 
+                         $calificacion = 0;
                         foreach ($oportunidades_examen as $oportunidad) {
                             $idoportunidadexamen = $oportunidad->idoportunidadexamen;
-                            $detalle_calificacion = $this->alumno->calificacionSecuPrepa($idalumno, $idhorariodetalle, $idoportunidadexamen);
+                            $detalle_calificacion = $this->alumno->obtenerCalificacionFinal($idalumno, $idhorario, $idprofesormateria);
                             if ($detalle_calificacion && $calificacion == 0) {
+
                                 if ($detalle_calificacion[0]->calificacion >= $detalle_configuracion[0]->calificacion_minima) {
                                     $calificacion .= $detalle_calificacion[0]->calificacion;
                                     $suma_calificacion += $calificacion;
+                                    $total_materia = $total_materia + 1;
                                 }
                             }
                         }
@@ -2500,7 +2682,7 @@ tblcalificacion  {border-collapse:collapse}
                     $calificacion = $suma_calificacion / $total_materia;
 
                     $calificacion_periodo += numberFormatPrecision($calificacion, 1, '.');
-                }
+                }*/
             }
         }
         if ($calificacion_periodo > 0 && $suma_periodo > 0) {
@@ -2513,10 +2695,11 @@ tblcalificacion  {border-collapse:collapse}
     public function historial($idhorario = '', $idperiodo = '')
     {
         Permission::grant(uri_string());
+        //echo $this->session->idalumno;
         $idhorario = $this->decode($idhorario);
         $idperiodo = $this->decode($idperiodo);
         $tabla = "";
-        if ((isset($idhorario) && ! empty($idhorario)) && (isset($idperiodo) && ! empty($idperiodo))) {
+        if ((isset($idhorario) && !empty($idhorario)) && (isset($idperiodo) && !empty($idperiodo))) {
             $idalumno = $this->session->idalumno;
             $datosalumno = $this->alumno->showAllAlumnoId($idalumno);
             $datoshorario = $this->horario->showNivelGrupo($idhorario);
@@ -2526,10 +2709,8 @@ tblcalificacion  {border-collapse:collapse}
             $idniveleducativo = $datoshorario->idniveleducativo;
             $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
 
-            // $alumno_grupo = $this->grupo->detalleAlumnoGrupo($idalumno,$idperiodo);
             if ($idniveleducativo == 1) {
-                // PRIMARIA
-                // $tabla = $this->obtenerCalificacionPrimaria($idhorario,$idalumno);
+                // PRIMARIA  
                 $tabla = $this->obtenerCalificacionPrimaria($idhorario, $idalumno);
             }
             if ($idniveleducativo == 2) {
@@ -2538,7 +2719,11 @@ tblcalificacion  {border-collapse:collapse}
             }
             if ($idniveleducativo == 3) {
                 // PREPARATORIA
-                $tabla = $this->obtenerCalificacionSecundaria($idhorario, $idalumno, $idperiodo);
+                $tabla = $this->obtenerCalificacionPreparatoria($idhorario, $idalumno, $idperiodo);
+            }
+            if ($idniveleducativo == 5) {
+                // LICENCIATUA
+                $tabla = $this->obtenerCalificacionLicenciaturaFinal($idhorario, $idalumno, $idperiodo);
             }
             if ($idniveleducativo == 4) {
                 // PREESCOLAR
@@ -2599,24 +2784,24 @@ tblcalificacion  {border-collapse:collapse}
         $idnivelestudio = $datoshorario->idnivelestudio;
 
         $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
-        $calificaciones = $this->alumno->calificacionPorOportunidad($idalumno, $idhorario, $idoportunidad_acterior);
+        $calificaciones = $this->alumno->obtenerCalificacionPorOportunidadAlumno($idalumno, $idhorario, $idoportunidad_acterior);
         $tabla = "";
         $tabla .= '<table class="table  table-striped  table-hover">
         <thead class="bg-teal">
          <th>#</th>
         <th>MATERIA</th>';
-        $tabla .= '<th>PROMEDIO</th>';
+        $tabla .= '<th>CALIFICACIÓN</th>';
         $tabla .= '</thead>';
         $c = 1;
 
         foreach ($calificaciones as $row) {
-            if ($row->calificacionmateria < $detalle_configuracion[0]->calificacion_minima && $row->calificacionmateria > 0) {
+            if (($row->mostrar == "SI") && ($row->calificacion < $detalle_configuracion[0]->calificacion_minima)) {
                 $calificacion_alu = $this->alumno->calificacionPorOportunidad($idalumno, $idhorario, $idoportunidad_actual, $row->idmateria);
 
                 $tabla .= '<tr>';
-                $tabla .= '<td>' . $c ++ . '</td>';
+                $tabla .= '<td>' . $c++ . '</td>';
                 $tabla .= '<td>' . $row->nombreclase . '</td>';
-                if (isset($calificacion_alu) && ! empty($calificacion_alu)) {
+                if (isset($calificacion_alu) && !empty($calificacion_alu)) {
                     if ($calificacion_alu[0]->calificacionmateria < $detalle_configuracion[0]->calificacion_minima) {
                         $tabla .= '<td style="color:red;"><strong>' . $calificacion_alu[0]->calificacionmateria . '</strong></td>';
                     } else {
@@ -2628,7 +2813,9 @@ tblcalificacion  {border-collapse:collapse}
                 $tabla .= '</tr>';
             }
         }
-
+        if ($c <= 1) {
+            $tabla .= '<tr><td colspan="3" align="center">Sin registros</td></tr>';
+        }
         $tabla .= '</table>';
         return $tabla;
     }
@@ -2639,7 +2826,7 @@ tblcalificacion  {border-collapse:collapse}
         $idhorario = $this->decode($idhorario);
         $idopotunidad = $this->decode($idopotunidad);
         $numero = $this->decode($numero);
-        if ((isset($idhorario) && ! empty($idhorario)) && (isset($idalumno) && ! empty($idalumno)) && (isset($idopotunidad) && ! empty($idopotunidad)) && (isset($numero) && ! empty($numero))) {
+        if ((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno)) && (isset($idopotunidad) && !empty($idopotunidad)) && (isset($numero) && !empty($numero))) {
             $idplantel = $this->session->idplantel;
             $detalle_oportunidad_anteriot = $this->grupo->obtenerOportunidadAnterior($numero, $idplantel);
             $idoportunidad_anterior = $detalle_oportunidad_anteriot->idoportunidadexamen;
@@ -2665,7 +2852,7 @@ tblcalificacion  {border-collapse:collapse}
     public function detalletarea($idtarea = '')
     {
         $idtarea = $this->decode($idtarea);
-        if (isset($idtarea) && ! empty($idtarea)) {
+        if (isset($idtarea) && !empty($idtarea)) {
             $detalle_tarea = $this->mensaje->detalleTarea($idtarea);
             $data_tarea = array(
                 'idnotificacionalumno' => 2
@@ -2689,7 +2876,7 @@ tblcalificacion  {border-collapse:collapse}
     public function detallemensaje($idmensaje = '')
     {
         $idmensaje = $this->decode($idmensaje);
-        if (isset($idmensaje) && ! empty($idmensaje)) {
+        if (isset($idmensaje) && !empty($idmensaje)) {
             $detalle_mensaje = $this->mensaje->detalleMensaje($idmensaje);
             // var_dump($detalle_tarea);
             $data_mesaje = array(

@@ -37,7 +37,7 @@
     <!-- Bootstrap Select Css -->
     <link href="<?php echo base_url(); ?>/assets/plugins/bootstrap-select/css/bootstrap-select.css" rel="stylesheet" />
 
-
+    <script src="<?php echo base_url(); ?>/assets/js/ventanas.js"></script>
     <!-- SweetAlert -->
     <script src="<?php echo base_url(); ?>/assets/js/sweetalert2/dist/sweetalert2.min.js"></script>
     <link rel="stylesheet" href="<?php echo base_url(); ?>/assets/js/sweetalert2/dist/sweetalert2.min.css">
@@ -121,18 +121,22 @@
                 </div>
             </div>
 
+
+
+
+
             <!-- top navigation -->
             <div class="top_nav">
 
-                <div class="nav_menu">
+                <div class="nav_menu" style="margin-top: -16px;">
                     <nav class="" role="navigation">
-                        <div class="nav toggle">
+                        <div class="nav toggle" style="margin-top:20px;">
                             <a id="menu_toggle"><i class="fa fa-bars"></i></a>
                         </div>
 
                         <ul class="nav navbar-nav navbar-right">
                             <li class="">
-                                <a href="#" style=" padding:0 10px 0 0;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                                     <img src="<?php echo base_url(); ?>/assets/images/user2.png" alt=""><?php echo $this->session->nombre ?>
                                     <span class=" fa fa-angle-down"></span>
                                 </a>
@@ -158,6 +162,66 @@
                                     </li>
                                     <li><a href="<?= base_url('/welcome/logout') ?>"><i class="fa fa-sign-out pull-right"></i> SALIR</a>
                                     </li>
+                                </ul>
+                            </li>
+                            <?php
+                            if (isset($this->session->notificaciones_calificaciones) && !empty($this->session->notificaciones_calificaciones)) {
+
+                                $total = count($this->session->notificaciones_calificaciones);
+                            }
+                            ?>
+                            <li role="presentation" class="dropdown">
+                                <a href="javascript:;" class="dropdown-toggle info-number" <?php if (isset($total)  &&  !empty($total)) {
+                                                                                                if ($total > 10 && $total < 100) {
+                                                                                                    echo 'style="padding-right: 20px;"';
+                                                                                                } elseif ($total > 100) {
+                                                                                                    echo 'style="padding-right: 40px;"';
+                                                                                                }
+                                                                                            } ?> data-toggle="dropdown" aria-expanded="false">
+                                    <i class="fa fa-envelope-o"></i>
+                                    <span class="badge bg-green">
+                                        <?php echo (isset($total) && !empty($total)) ? $total : 0;
+                                        ?>
+
+                                    </span>
+                                </a>
+                                <ul id="menu1" class="dropdown-menu list-unstyled msg_list animated fadeInDown" role="menu">
+
+                                    <?php
+                                    if (isset($this->session->notificaciones_calificaciones) && !empty($this->session->notificaciones_calificaciones)) {
+                                        $contador = 1;
+                                        foreach ($this->session->notificaciones_calificaciones as $row) {
+                                            if ($contador <= 4) {
+
+                                                echo '
+                                                    <li>
+                                                   
+                                                        <span>
+                                                            <span><i class="fa fa-user" style="color:#6199ed;"></i> ' . $row["nombre"] . '</span><br/>
+                                                        
+                                                        </span><span><i class="fa fa-book" style="color:#18c86b;"></i> ' . $row["nombreclase"] . '</span><br/>
+                                                        <span class="message">
+                                                        ' . $row["fechalimite"] . '
+                                                        </span>
+                                                   
+                                                </li> 
+                                            ';
+                                                $contador++;
+                                            }
+                                        }
+
+                                        if ($contador > 4) {
+                                            echo '<li>
+                                        <div class="text-center">
+                                            <a href="' . base_url() . '/Profesores/todasNotificaciones' . '">
+                                                <strong>Todas las notificaciones</strong>
+                                                <i class="fa fa-angle-right"></i>
+                                            </a>
+                                        </div>
+                                    </li>';
+                                        }
+                                    }
+                                    ?>
                                 </ul>
                             </li>
 

@@ -18,7 +18,7 @@ class Horario_model extends CI_Model
 
     public function showAll($idplantel = '')
     {
-        $this->db->select('h.idhorario,h.idperiodo,h.idgrupo,niv.idniveleducativo,m.nombremes as mesinicio,m2.nombremes as mesfin,y.nombreyear as yearinicio,y2.nombreyear as yearfin,ne.nombrenivel,ne.numeroordinaria, ne.numeroromano, g.nombregrupo,h.activo, t.idturno, t.nombreturno, p.activo as periodoactivo, e.idespecialidad, e.nombreespecialidad');
+        $this->db->select('h.idhorario,h.idperiodo,h.idgrupo,niv.idniveleducativo,m.nombremes as mesinicio,m2.nombremes as mesfin,y.nombreyear as yearinicio,y2.nombreyear as yearfin,ne.nombrenivel,ne.numeroordinaria, ne.numeroromano, g.nombregrupo,h.activo, t.idturno, t.nombreturno, p.activo as periodoactivo, e.idespecialidad, e.nombreespecialidad, p.descripcion,h.descripcion as descripcionhorario');
         $this->db->from('tblhorario h');
         $this->db->join('tblperiodo p', 'p.idperiodo = h.idperiodo');
         $this->db->join('tblgrupo g', 'g.idgrupo = h.idgrupo');
@@ -34,7 +34,8 @@ class Horario_model extends CI_Model
         if (isset($idplantel) && !empty($idplantel)) {
             $this->db->where('h.idplantel', $idplantel);
         }
-        $this->db->order_by('ne.nombrenivel ASC');
+        $this->db->order_by('h.activo DESC');
+        //$this->db->order_by('h.activo DESC');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();
@@ -82,7 +83,8 @@ class Horario_model extends CI_Model
             return false;
         }
     }
-    public function validarCalificacionHorarioDetalle($idhorariodetalle = ''){
+    public function validarCalificacionHorarioDetalle($idhorariodetalle = '')
+    {
         $this->db->select('c.idcalificacion');
         $this->db->from('tblcalificacion c');
         $this->db->where('c.idhorariodetalle', $idhorariodetalle);
@@ -90,43 +92,46 @@ class Horario_model extends CI_Model
         if ($query->num_rows() > 0) {
             return $query->result();
         } else {
-            return false;     
+            return false;
+        }
     }
-}
 
-public function validarAsistenciaHorarioDetalle($idhorariodetalle = ''){
-    $this->db->select('a.idasistencia');
-    $this->db->from('tblasistencia a');
-    $this->db->where('a.idhorariodetalle', $idhorariodetalle);
-    $query = $this->db->get();
-    if ($query->num_rows() > 0) {
-        return $query->result();
-    } else {
-        return false;    
-}
-}
-public function validarTareaHorarioDetalle($idhorariodetalle = ''){
-    $this->db->select('t.idtarea');
-    $this->db->from('tbltareav2 t');
-    $this->db->where('t.idhorariodetalle', $idhorariodetalle);
-    $query = $this->db->get();
-    if ($query->num_rows() > 0) {
-        return $query->result();
-    } else {
-        return false;    
-}
-}
-public function validarMensajeHorarioDetalle($idhorariodetalle = ''){
-    $this->db->select('m.idmensaje');
-    $this->db->from('tblmensaje m');
-    $this->db->where('m.idmensaje', $idhorariodetalle);
-    $query = $this->db->get();
-    if ($query->num_rows() > 0) {
-        return $query->result();
-    } else {
-        return false;    
-}
-}
+    public function validarAsistenciaHorarioDetalle($idhorariodetalle = '')
+    {
+        $this->db->select('a.idasistencia');
+        $this->db->from('tblasistencia a');
+        $this->db->where('a.idhorariodetalle', $idhorariodetalle);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+    public function validarTareaHorarioDetalle($idhorariodetalle = '')
+    {
+        $this->db->select('t.idtarea');
+        $this->db->from('tbltareav2 t');
+        $this->db->where('t.idhorariodetalle', $idhorariodetalle);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+    public function validarMensajeHorarioDetalle($idhorariodetalle = '')
+    {
+        $this->db->select('m.idmensaje');
+        $this->db->from('tblmensaje m');
+        $this->db->where('m.idmensaje', $idhorariodetalle);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
 
     public function validarActivoHorario($idhorario = '', $idplantel = '')
     {
@@ -358,9 +363,12 @@ FROM(select iddia, horainicial, horafinal, nombreclase,idhorariodetalle,idmateri
         $sql = 'SELECT idmateria,
    concat(DATE_FORMAT(horario.horainicial, "%H:%i")," - ",date_format(horario.horafinal,"%H:%i")) as hora,
    
-    MAX(CASE  WHEN horario.iddia = 1 THEN   CONCAT("<strong>",horario.nombreclase,"</strong> <br> <small>",profesor,"</small>"," <br> <small>",grupo,"</small>")
+    MAX(CASE  WHEN horario.iddia = 1 THEN   CONCAT("<strong>",horario.nombreclase,"</strong> <br> <small>",profesor,"</small>")
       WHEN horario.iddia = "Todos" THEN horario.nombreclase ELSE ""
 END) AS lunes,
+MAX(CASE  WHEN horario.iddia = 1 THEN   grupo
+      WHEN horario.iddia = "Todos" THEN "" ELSE ""
+END) AS lunesgrupo,
  MAX(CASE  WHEN horario.iddia = 1 THEN   urlvideoconferencia
       WHEN horario.iddia = "Todos" THEN "" ELSE ""
 END) AS lunesurl,
@@ -375,10 +383,15 @@ END) AS lunesnumeroanfitrion,
       WHEN horario.iddia = "Todos" THEN "" ELSE ""
 END) AS lunesidhorariodetalle,
      MAX(  CASE  
-     WHEN horario.iddia = 2 THEN    CONCAT("<strong>",horario.nombreclase,"</strong> <br> <small>",profesor,"</small>"," <br> <small>",grupo,"</small>")
+     WHEN horario.iddia = 2 THEN    CONCAT("<strong>",horario.nombreclase,"</strong> <br> <small>",profesor,"</small>")
      WHEN horario.iddia = "Todos" THEN horario.nombreclase 
      ELSE ""
 END )AS martes,
+MAX(  CASE  
+     WHEN horario.iddia = 2 THEN  grupo 
+     WHEN horario.iddia = "Todos" THEN ""
+     ELSE ""
+END )AS martesgrupo,
  MAX(CASE  WHEN horario.iddia = 2 THEN   urlvideoconferencia
       WHEN horario.iddia = "Todos" THEN "" ELSE ""
 END) AS martesurl,
@@ -391,10 +404,14 @@ END) AS martesnumeroanfitrion,
  MAX(CASE  WHEN horario.iddia = 2 THEN   idhorariodetalle
       WHEN horario.iddia = "Todos" THEN "" ELSE ""
 END) AS martesidhorariodetalle,
-      MAX( CASE  WHEN horario.iddia = 3 THEN    CONCAT("<strong>",horario.nombreclase,"</strong> <br> <small>",profesor,"</small>"," <br> <small>",grupo,"</small>")
+      MAX( CASE  WHEN horario.iddia = 3 THEN    CONCAT("<strong>",horario.nombreclase,"</strong> <br> <small>",profesor,"</small>")
         WHEN horario.iddia = "Todos" THEN horario.nombreclase 
         ELSE ""
 END) AS miercoles,
+MAX( CASE  WHEN horario.iddia = 3 THEN   grupo
+        WHEN horario.iddia = "Todos" THEN "" 
+        ELSE ""
+END) AS miercolesgrupo,
  MAX(CASE  WHEN horario.iddia = 3 THEN   urlvideoconferencia
       WHEN horario.iddia = "Todos" THEN "" ELSE ""
 END) AS miercolesurl,
@@ -407,9 +424,12 @@ END) AS miercolesnumeroanfitrion,
  MAX(CASE  WHEN horario.iddia = 3 THEN   idhorariodetalle
       WHEN horario.iddia = "Todos" THEN "" ELSE ""
 END) AS miercolesidhorariodetalle,
-      MAX( CASE  WHEN horario.iddia = 4 THEN   CONCAT("<strong>",horario.nombreclase,"</strong> <br> <small>",profesor,"</small>"," <br> <small>",grupo,"</small>")
+      MAX( CASE  WHEN horario.iddia = 4 THEN   CONCAT("<strong>",horario.nombreclase,"</strong> <br> <small>",profesor,"</small>")
         WHEN horario.iddia = "Todos" THEN horario.nombreclase ELSE ""
 END )AS jueves,
+MAX( CASE  WHEN horario.iddia = 4 THEN   grupo
+        WHEN horario.iddia = "Todos" THEN "" ELSE ""
+END )AS juevesgrupo,
  MAX(CASE  WHEN horario.iddia = 4 THEN   urlvideoconferencia
       WHEN horario.iddia = "Todos" THEN "" ELSE ""
 END) AS juevesurl,
@@ -422,9 +442,12 @@ END) AS juevesnumeroanfitrion,
  MAX(CASE  WHEN horario.iddia = 4 THEN   idhorariodetalle
       WHEN horario.iddia = "Todos" THEN "" ELSE ""
 END) AS juevesidhorariodetalle,
-       MAX(CASE  WHEN horario.iddia = 5 THEN    CONCAT("<strong>",horario.nombreclase,"</strong> <br> <small>",profesor,"</small>"," <br> <small>",grupo,"</small>")
+       MAX(CASE  WHEN horario.iddia = 5 THEN    CONCAT("<strong>",horario.nombreclase,"</strong> <br> <small>",profesor,"</small>")
          WHEN horario.iddia = "Todos" THEN horario.nombreclase ELSE ""
 END )AS viernes,
+MAX(CASE  WHEN horario.iddia = 5 THEN   grupo
+         WHEN horario.iddia = "Todos" THEN "" ELSE ""
+END )AS viernesgrupo,
  MAX(CASE  WHEN horario.iddia = 5 THEN   urlvideoconferencia
       WHEN horario.iddia = "Todos" THEN "" ELSE ""
 END) AS viernesurl,
@@ -579,7 +602,7 @@ FROM(
 
     public function showAllPeriodos($idplantel = '')
     {
-        $this->db->select('p.idperiodo,m.nombremes as mesinicio,m2.nombremes as mesfin,y.nombreyear as yearinicio,y2.nombreyear as yearfin');
+        $this->db->select('p.idperiodo,m.nombremes as mesinicio,m2.nombremes as mesfin,y.nombreyear as yearinicio,y2.nombreyear as yearfin,p.descripcion');
         $this->db->from('tblperiodo p');
         $this->db->join('tblmes m ', ' p.idmesinicio = m.idmes');
         $this->db->join('tblmes m2 ', ' p.idmesfin = m2.idmes');
@@ -777,7 +800,7 @@ FROM(
             't.nombreturno',
             'e.nombreespecialidad'
         );
-        $this->db->select('h.idhorario,h.idperiodo,h.idgrupo,niv.idniveleducativo,m.nombremes as mesinicio,m2.nombremes as mesfin,y.nombreyear as yearinicio,y2.nombreyear as yearfin,ne.nombrenivel,ne.numeroordinaria, ne.numeroromano, g.nombregrupo,h.activo, t.idturno, t.nombreturno, p.activo as periodoactivo, e.idespecialidad, e.nombreespecialidad');
+        $this->db->select('h.idhorario,h.idperiodo,h.idgrupo,niv.idniveleducativo,m.nombremes as mesinicio,m2.nombremes as mesfin,y.nombreyear as yearinicio,y2.nombreyear as yearfin,ne.nombrenivel,ne.numeroordinaria, ne.numeroromano, g.nombregrupo,h.activo, t.idturno, t.nombreturno, p.activo as periodoactivo, e.idespecialidad, e.nombreespecialidad, p.descripcion,h.descripcion as descripcionhorario');
         $this->db->from('tblhorario h');
         $this->db->join('tblperiodo p', 'p.idperiodo = h.idperiodo');
         $this->db->join('tblgrupo g', 'g.idgrupo = h.idgrupo');
@@ -793,11 +816,25 @@ FROM(
         if (isset($idplantel) && !empty($idplantel)) {
             $this->db->where('h.idplantel', $idplantel);
         }
-        $this->db->order_by('h.idhorario DESC');
+        //$this->db->order_by('h.idhorario DESC');
+        $this->db->order_by('h.activo DESC');
         $this->db->like('concat(' . implode(',', $field) . ')', $match);
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();
+        } else {
+            return false;
+        }
+    }
+
+    public function detalleProfesorMateria($idprofesormateria = '')
+    {
+        $this->db->select('pm.idprofesor, pm.idmateria');
+        $this->db->from('tblprofesor_materia pm');
+        $this->db->where('pm.idprofesormateria', $idprofesormateria);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->first_row();
         } else {
             return false;
         }

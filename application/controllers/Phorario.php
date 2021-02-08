@@ -113,6 +113,10 @@ border-top:solid #33C1FF 2px;
             $tabla .= '<td >';
             if (isset($row->lunes) && !empty($row->lunes)) {
                 $tabla .= '<div class="card1"> ' . $row->lunes . '<br>';
+                if ($this->session->idniveleducativo !=  3) {
+                    $tabla .= '<label>' . $row->lunesgrupo . '</label><br>';
+                }
+
                 if (isset($row->lunesurl) && !empty($row->lunesurl)) {
                     $tabla .= '  <a target="_blank" href="' . $row->lunesurl . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> IMPARTIR CLASE</a>';
                 }
@@ -144,6 +148,9 @@ border-top:solid #33C1FF 2px;
             $tabla .= '<td  >';
             if (isset($row->martes) && !empty($row->martes)) {
                 $tabla .= '<div class="card1"> ' . $row->martes . '<br>';
+                if ($this->session->idniveleducativo !=  3) {
+                    $tabla .= '<label>' . $row->martesgrupo . '</label><br>';
+                }
                 if (isset($row->martesurl) && !empty($row->martesurl)) {
                     $tabla .= '  <a target="_blank" href="' . $row->martesurl . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> IMPARTIR CLASE</a>';
                 }
@@ -176,6 +183,9 @@ border-top:solid #33C1FF 2px;
             if (isset($row->miercoles) && !empty($row->miercoles)) {
                 $tabla .= '<div class="card1">  
                                 ' . $row->miercoles . '<br>';
+                if ($this->session->idniveleducativo !=  3) {
+                    $tabla .= '<label>' . $row->miercolesgrupo . '</label><br>';
+                }
                 if (isset($row->miercolesurl) && !empty($row->miercolesurl)) {
                     $tabla .= '  <a target="_blank" href="' . $row->miercolesurl . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> IMPARTIR CLASE</a>';
                 }
@@ -208,6 +218,9 @@ border-top:solid #33C1FF 2px;
             if (isset($row->jueves) && !empty($row->jueves)) {
                 $tabla .= '<div class="card1">  
                                 ' . $row->jueves . '<br>';
+                if ($this->session->idniveleducativo !=  3) {
+                    $tabla .= '<label>' . $row->juevesgrupo . '</label><br>';
+                }
                 if (isset($row->juevesurl) && !empty($row->juevesurl)) {
                     $tabla .= '  <a target="_blank" href="' . $row->juevesurl . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> IMPARTIR CLASE</a>';
                 }
@@ -240,6 +253,9 @@ border-top:solid #33C1FF 2px;
             if (isset($row->viernes) && !empty($row->viernes)) {
                 $tabla .= '<div class="card1">  
                                 '  . $row->viernes . '<br>';
+                if ($this->session->idniveleducativo !=  3) {
+                    $tabla .= '<label>' . $row->viernesgrupo . '</label><br>';
+                }
                 if (isset($row->viernesurl) && !empty($row->viernesurl)) {
                     $tabla .= '  <a target="_blank" href="' . $row->viernesurl . '" style="color:#1e81fb; font-weight:bolder;"><i class="fa fa-external-link"></i> IMPARTIR CLASE</a>';
                 }

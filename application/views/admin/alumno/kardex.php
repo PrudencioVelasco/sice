@@ -8,18 +8,7 @@
                 <div class="x_panel">
                     <div class="x_title">
                         <h2><strong>KARDEX DEL ALUMNO(A)</strong></h2>
-                        <ul class="nav navbar-right panel_toolbox">
-                            <h3><small>Promedio: </small><strong style="color: green">
-                                    <?php
-                                    //$calificacion 
-                                    if (isset($calificacion) && !empty($calificacion)) {
-                                        echo number_format($calificacion, 2);
-                                    } else {
-                                        echo "0.00";
-                                    }
-                                    ?>
-                                </strong></h3>
-                        </ul>
+                        
                         <div class="clearfix"></div>
                     </div>
                     <div class="x_content">
@@ -35,7 +24,7 @@
                                 <label>GRUPO:</label><br>
                                 <label style="color: #000">
                                     <?php
-                                    echo $datoshorario->nombrenivel . ' ' . $datoshorario->nombregrupo . ' - ' . $datoshorario->nombreturno;
+                                    echo $datoshorario->nivelgrupo . ' ' . $datoshorario->nombregrupo . ' - ' . $datoshorario->nombreturno;
                                     ?>
                                 </label>
                             </div>
@@ -52,11 +41,11 @@
                         <div class="row">
                             <div class="col-md-12 col-sm-12 col-xs-12 " align="right">
                                 <?php
-                                if (isset($calificacion) && !empty($calificacion)) {
+                              //  if (isset($calificacion) && !empty($calificacion)) {
                                     ?>
-                                    <a target="_blank" href="<?php echo site_url('Alumno/imprimirkardex/' . $controller->encode($idhorario) . '/' . $controller->encode($idalumno)) ?>" class="btn btn-primary"><i class="fa fa-print"></i> IMPRIMIR KARDEX</a>
+                                 <!--  <a target="_blank" href="<?php //echo site_url('Alumno/imprimirkardex/' . $controller->encode($idhorario) . '/' . $controller->encode($idalumno)) ?>" class="btn btn-primary"><i class="fa fa-print"></i> IMPRIMIR KARDEX</a>-->
                                     <?php
-                                }
+                               // }
                                 ?>
 
                             </div>

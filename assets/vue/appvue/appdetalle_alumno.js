@@ -108,7 +108,7 @@ var vede = new Vue({
 
         },
          calificacionAlumno() {
-            axios.get(this.url + "Alumno/calificacionGlobal/", {
+            axios.get(this.url + "Alumno/promedioGlobal/", {
                 params: {
                     idalumno: this.idalumno
                 }
