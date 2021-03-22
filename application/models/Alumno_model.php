@@ -1633,7 +1633,35 @@ GROUP BY hd.idmateria) tabla");
             return false;
         }
     }
-
+    public function horarioActualAlumno($idalumno, $idprofesormateria)
+    {
+        $this->db->select("ag.idalumnogrupo, hd.idhorariodetalle,h.idhorario, g.idgrupo, h.idhorario, g.nombregrupo, n.nombrenivel, t.nombreturno, CASE niv.idniveleducativo 
+    WHEN 3 THEN n.numeroromano
+    WHEN 5 THEN n.numeroromano
+    WHEN 1 THEN n.numeroordinaria
+    WHEN 2 THEN n.numeroordinaria
+    WHEN 4 THEN n.numeroordinaria
+    ELSE ''
+END AS nivelgrupo");
+        $this->db->from('tblalumno_grupo ag');
+        $this->db->join('tblgrupo g', 'ag.idgrupo = g.idgrupo');
+        $this->db->join('tblnivelestudio n', 'g.idnivelestudio = n.idnivelestudio');
+        $this->db->join('tblturno t', 't.idturno = g.idturno');
+        $this->db->join('tblplantel pla', 'pla.idplantel = g.idplantel');
+        $this->db->join('tblniveleducativo niv', 'pla.idniveleducativo = niv.idniveleducativo');
+        $this->db->join('tblhorario h', 'h.idperiodo = ag.idperiodo');
+        $this->db->join('tblhorario_detalle hd', 'hd.idhorario = h.idhorario');
+        $this->db->where('h.idgrupo = ag.idgrupo');
+        $this->db->where('ag.idalumno', $idalumno);
+        $this->db->where('hd.idmateria', $idprofesormateria);
+        $this->db->where('ag.activo', 1);
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
     public function detalleGrupoActual($idalumno)
     {
         $this->db->select("ag.idalumnogrupo, g.idgrupo, g.nombregrupo, n.nombrenivel, t.nombreturno, CASE niv.idniveleducativo 
@@ -2605,12 +2633,39 @@ GROUP BY hd.idmateria) tabla");
             return false;
         }
     }
+    public function validarQuitarMateria($idalumno = '', $idhorario = '', $idmateria = '')
+    {
+        $this->db->select('qm.*');
+        $this->db->from('tblquitar_materia qm');
+        $this->db->where('qm.idalumno', $idalumno);
+        $this->db->where('qm.idhorario', $idhorario);
+        $this->db->where('qm.idmateria', $idmateria);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
 
     //Nuevo metodos la obtener Horario de Clases por dia.
     public function spObtenerCalificacion($idalumno, $idhorario, $idperiodo)
     {
 
         $query = $this->db->query("CALL spObtenerCalificacion ($idalumno, $idhorario,$idperiodo)");
+        $res = $query->result();
+        //add this two line
+        $query->next_result();
+        $query->free_result();
+        //end of new code
+        return $res;
+    }
+    //Fin de codig
+    //Nuevo metodos la obtener Horario de Clases por dia.
+    public function spObtenerAlumnosGrupo($idperiodo, $idgrupo)
+    {
+
+        $query = $this->db->query("CALL spObtenerAlumnosGrupo ($idperiodo, $idgrupo)");
         $res = $query->result();
         //add this two line
         $query->next_result();

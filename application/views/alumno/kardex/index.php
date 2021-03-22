@@ -25,7 +25,7 @@
                                 <thead class="bg-teal">
                                     <tr>
                                         <th>CICLO ESCOLAR</th>
-                                        <th>NIVEL</th>
+
                                         <th>GRUPO</th>
                                         <th></th>
                                     </tr>
@@ -34,23 +34,20 @@
                                     <?php
                                     if (isset($kardex) && !empty($kardex)) {
                                         foreach ($kardex as $row) {
-                                            ?>
-                                    <tr>
-                                        <td><strong>
-                                                <?php
+                                    ?>
+                                            <tr>
+                                                <td><strong>
+                                                        <?php
                                                         echo $row->mesinicio . " " . $row->yearinicio . " - " . $row->mesfin . " " . $row->yearfin;
                                                         ?>
-                                            </strong>
-                                        </td>
-                                        <td><?php echo $row->nivelgrupo; ?></td>
-                                        <td><?php echo $row->nombregrupo; ?> </td>
-                                        <td align="right">
-                                            <a class="btn btn-default" 
-                                                href="<?php echo site_url('Aalumno/historial/' . $controller->encode($row->idhorario).'/'.$controller->encode($row->idperiodo)) ?>"><i
-                                                    class="fa fa-list-alt" style="color: #249dfa;"></i> Calificaciones</a>
+                                                    </strong>
+                                                </td>
+                                                <td><strong><?php echo $row->nivelgrupo . ' ' . $row->nombregrupo; ?> </strong></td>
+                                                <td align="right">
+                                                    <a class="btn btn-default" href="<?php echo site_url('Aalumno/historial/' . $controller->encode($row->idhorario) . '/' . $controller->encode($row->idperiodo)) ?>"><i class="fa fa-list-alt" style="color: #249dfa;"></i> Calificaciones</a>
 
-                                        </td>
-                                    </tr>
+                                                </td>
+                                            </tr>
                                     <?php }
                                     } else {
                                         echo "<tr><td colspan='4' align='center'>No existe Kardex del alumno.</td></tr>";

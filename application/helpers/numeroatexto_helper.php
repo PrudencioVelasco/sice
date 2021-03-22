@@ -29,6 +29,7 @@ function floordec($zahl, $decimals = 1)
     }
     return $numero;
 }
+
 function eliminarDecimalCero($zahl, $decimals = 1)
 {
     $numero = "";

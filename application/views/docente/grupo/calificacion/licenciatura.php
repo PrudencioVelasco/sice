@@ -51,16 +51,14 @@
                                                 <select style="border-bottom: solid 2px #ccc;" class="form-control" name="unidad" id="">
                                                     <option value="">-- SELECCIONAR --</option>
                                                     <?php
-                                                    if ((isset($unidades) && !empty($unidades)) && (isset($unidades_materia) && !empty($unidades_materia))) {
+                                                    if ((isset($unidades) && !empty($unidades))) {
                                                         foreach ($unidades as $row) {
-                                                            $numero = $row->numero;
-                                                            echo $unidades_materia;
-                                                            if ($numero <= $unidades_materia) {
-                                                    ?>
-                                                                <option value="<?php echo $row->idunidad ?>">
-                                                                    <?php echo $row->nombreunidad; ?></option>
-                                                    <?php
-                                                            }
+                                                            echo '<option value="' . $row->idunidad . '" > ' . $row->nombreunidad . '</option>';
+                                                        }
+                                                    }
+                                                    if ((isset($unidades_trabajo_final) && !empty($unidades_trabajo_final))) {
+                                                        foreach ($unidades_trabajo_final as $value) {
+                                                            echo '<option value="' . $value->idunidad . '" > ' . $value->nombreunidad . '</option>';
                                                         }
                                                     }
                                                     ?>
@@ -101,16 +99,14 @@
                                                         <select style="border-bottom: solid 2px #ccc;" class="form-control" name="unidad">
                                                             <option value="">-- SELECCIONAR --</option>
                                                             <?php
-                                                            if ((isset($unidades) && !empty($unidades)) && (isset($unidades_materia) && !empty($unidades_materia))) {
+                                                            if ((isset($unidades) && !empty($unidades))) {
                                                                 foreach ($unidades as $row) {
-                                                                    $numero = $row->numero;
-                                                                    echo $unidades_materia;
-                                                                    if ($numero <= $unidades_materia) {
-                                                            ?>
-                                                                        <option value="<?php echo $row->idunidad ?>">
-                                                                            <?php echo $row->nombreunidad; ?></option>
-                                                            <?php
-                                                                    }
+                                                                    echo '<option value="' . $row->idunidad . '" > ' . $row->nombreunidad . '</option>';
+                                                                }
+                                                            }
+                                                            if ((isset($unidades_trabajo_final) && !empty($unidades_trabajo_final))) {
+                                                                foreach ($unidades_trabajo_final as $value) {
+                                                                    echo '<option value="' . $value->idunidad . '" > ' . $value->nombreunidad . '</option>';
                                                                 }
                                                             }
                                                             ?>

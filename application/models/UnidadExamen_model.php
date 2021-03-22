@@ -18,7 +18,7 @@ class UnidadExamen_model extends CI_Model
 
     public function showAll($idplantel = '')
     {
-        $this->db->select("t.idunidad,t.numero, t.nombreunidad,t.idplantel, DATE_FORMAT(t.fechainicio,'%d/%m/%Y' ) AS fechainicioshow, DATE_FORMAT(t.fechafin,'%d/%m/%Y' ) AS fechafinshow,t.fechainicio, t.fechafin , p.nombreplantel");
+        $this->db->select("t.idunidad,t.numero, t.tipo, t.nombreunidad,t.idplantel, DATE_FORMAT(t.fechainicio,'%d/%m/%Y' ) AS fechainicioshow, DATE_FORMAT(t.fechafin,'%d/%m/%Y' ) AS fechafinshow,t.fechainicio, t.fechafin , p.nombreplantel");
         $this->db->from('tblunidad t');
         $this->db->join('tblplantel p', 'p.idplantel = t.idplantel');
         if (isset($idplantel) && !empty($idplantel)) {
@@ -162,7 +162,7 @@ class UnidadExamen_model extends CI_Model
             't.nombreunidad',
             'p.nombreplantel'
         );
-        $this->db->select("t.idunidad,t.numero, t.nombreunidad,t.idplantel, DATE_FORMAT(t.fechainicio,'%d/%m/%Y' ) AS fechainicioshow, DATE_FORMAT(t.fechafin,'%d/%m/%Y' ) AS fechafinshow,t.fechainicio, t.fechafin , p.nombreplantel");
+        $this->db->select("t.idunidad,t.numero,t.tipo, t.nombreunidad,t.idplantel, DATE_FORMAT(t.fechainicio,'%d/%m/%Y' ) AS fechainicioshow, DATE_FORMAT(t.fechafin,'%d/%m/%Y' ) AS fechafinshow,t.fechainicio, t.fechafin , p.nombreplantel");
         $this->db->from('tblunidad t');
         $this->db->join('tblplantel p', 'p.idplantel = t.idplantel');
         $this->db->where('p.idplantel', $this->session->idplantel);

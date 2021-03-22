@@ -542,10 +542,20 @@ FROM(
     public function showAllMaterias($idplantel = '')
     {
         # code...
-        $this->db->select('pm.idprofesormateria, m.nombreclase, p.nombre, p.apellidop, p.apellidom');
+        $this->db->select("pm.idprofesormateria, m.nombreclase, p.nombre, p.apellidop, p.apellidom,CASE niv.idniveleducativo 
+        WHEN 3 THEN n.numeroromano
+        WHEN 5 THEN n.numeroromano
+        WHEN 1 THEN n.numeroordinaria
+        WHEN 2 THEN n.numeroordinaria
+        WHEN 4 THEN n.numeroordinaria
+        ELSE ''
+    END AS nivelgrupo");
         $this->db->from('tblprofesor_materia pm');
         $this->db->join('tblmateria m', 'pm.idmateria = m.idmateria');
         $this->db->join('tblprofesor p', 'pm.idprofesor = p.idprofesor');
+        $this->db->join('tblnivelestudio n', 'n.idnivelestudio = m.idnivelestudio');
+        $this->db->join('tblplantel pla ', ' pla.idplantel =  m.idplantel');
+        $this->db->join('tblniveleducativo niv', 'pla.idniveleducativo = niv.idniveleducativo');
         if (isset($idplantel) && !empty($idplantel)) {
             $this->db->where('m.idplantel', $idplantel);
             $this->db->where('p.estatus', 1);

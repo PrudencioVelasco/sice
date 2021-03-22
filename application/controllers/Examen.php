@@ -123,6 +123,14 @@ class Examen extends CI_Controller
                 )
             ),
             array(
+                'field' => 'tipo',
+                'label' => 'Tipo del examen',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => '%s es obligatorio.'
+                )
+            ),
+            array(
                 'field' => 'fechainicio',
                 'label' => 'Fecha inicio de evaluación',
                 'rules' => 'trim',
@@ -145,6 +153,7 @@ class Examen extends CI_Controller
             $result['error'] = true;
             $result['msg'] = array(
                 'nombreunidad' => form_error('nombreunidad'),
+                'tipo' => form_error('tipo'),
                 'fechainicio' => form_error('fechainicio'),
                 'fechafin' => form_error('fechafin')
             );
@@ -153,6 +162,7 @@ class Examen extends CI_Controller
             $nombreunidad = $this->input->post('nombreunidad');
             $fechainicio = $this->input->post('fechainicio');
             $fechafin = $this->input->post('fechafin');
+            $tipo = $this->input->post('tipo');
             $validar = $this->unidadexamen->ultimoRegistro($idplantel);
             if ($validar) {
                 $numero_ultimo = $validar[0]->numero;
@@ -162,6 +172,7 @@ class Examen extends CI_Controller
                     'nombreunidad' => strtoupper($nombreunidad),
                     'fechainicio' => $fechainicio,
                     'fechafin' => $fechafin,
+                    'tipo' => $tipo,
                     'idusuario' => $this->session->user_id,
                     'fecharegistro' => date('Y-m-d H:i:s')
                 );
@@ -173,6 +184,7 @@ class Examen extends CI_Controller
                     'nombreunidad' => strtoupper($nombreunidad),
                     'fechainicio' => $fechainicio,
                     'fechafin' => $fechafin,
+                    'tipo' => $tipo,
                     'idusuario' => $this->session->user_id,
                     'fecharegistro' => date('Y-m-d H:i:s')
                 );
@@ -194,6 +206,8 @@ class Examen extends CI_Controller
                     'required' => '%s es obligatorio.'
                 )
             ),
+
+
             array(
                 'field' => 'fechainicio',
                 'label' => 'Fecha inicio de evaluación',
@@ -217,12 +231,14 @@ class Examen extends CI_Controller
             $result['error'] = true;
             $result['msg'] = array(
                 'idmes' => form_error('idmes'),
+
                 'fechainicio' => form_error('fechainicio'),
                 'fechafin' => form_error('fechafin')
             );
         } else {
             $idunidad = $this->input->post('idunidad');
             $idmes = $this->input->post('idmes');
+
             $fechainicio = $this->input->post('fechainicio');
             $fechafin = $this->input->post('fechafin');
             $validar = $this->unidadexamen->validarMesUnidad($idunidad, $idmes);
@@ -309,6 +325,16 @@ class Examen extends CI_Controller
             echo json_encode($result);
         }
     }
+
+    public function maxNumber($num)
+    {
+        if ($num >= 0 && $num <= 1000) {
+            return true;
+        } else {
+            $this->form_validation->set_message('maxNumber', 'Los creditos de la materia no es correcto');
+            return false;
+        }
+    }
     public function addOportunidad()
     {
         $config = array(
@@ -378,6 +404,14 @@ class Examen extends CI_Controller
                 )
             ),
             array(
+                'field' => 'tipo',
+                'label' => 'Tipo del examen',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => '%s es obligatorio.'
+                )
+            ),
+            array(
                 'field' => 'fechainicio',
                 'label' => 'Fecha inicio de evaluación',
                 'rules' => 'trim',
@@ -401,6 +435,7 @@ class Examen extends CI_Controller
             $result['msg'] = array(
                 'idunidad' => form_error('idunidad'),
                 'nombreunidad' => form_error('nombreunidad'),
+                'tipo' => form_error('tipo'),
                 'fechainicio' => form_error('fechainicio'),
                 'fechafin' => form_error('fechafin')
             );
@@ -408,6 +443,7 @@ class Examen extends CI_Controller
             $idunidad = $this->input->post('idunidad');
             $idplantel = $this->session->idplantel;
             $nombreunidad = $this->input->post('nombreunidad');
+            $tipo = $this->input->post('tipo');
             $fechainicio = $this->input->post('fechainicio');
             $fechafin = $this->input->post('fechafin');
 
@@ -416,6 +452,7 @@ class Examen extends CI_Controller
                 'nombreunidad' => strtoupper($nombreunidad),
                 'fechainicio' => $fechainicio,
                 'fechafin' => $fechafin,
+                'tipo' => $tipo,
                 'idusuario' => $this->session->user_id,
                 'fecharegistro' => date('Y-m-d H:i:s')
             );

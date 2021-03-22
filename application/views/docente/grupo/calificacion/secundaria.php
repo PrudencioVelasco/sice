@@ -150,7 +150,7 @@
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-12 col-sm-12 col-xs-12 ">
-
+                                                    <small><strong>Nota:</strong> Solo agregue la calificación a los alumnos que quiera.</small>
                                                     <table class="table table-striped  ">
                                                         <thead class="bg-teal">
                                                             <tr>

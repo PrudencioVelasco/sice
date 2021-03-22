@@ -299,8 +299,8 @@ class Calificacion_model extends CI_Model
     public function obtenerEspecialidadAlumno($idalumno)
     {
         $query = $this->db->query("
-                SELECT 
-                    CASE 
+                SELECT
+                    CASE
                     WHEN g.idnivelestudio =  1   THEN '10'
                     WHEN g.idnivelestudio =  3 AND a.idespecialidad =  12  THEN '30'
                     WHEN g.idnivelestudio =  3 AND a.idespecialidad =  10  THEN '31'
@@ -308,8 +308,8 @@ class Calificacion_model extends CI_Model
                     WHEN g.idnivelestudio =  5 AND a.idespecialidad =  10  THEN '50'
                     WHEN g.idnivelestudio =  5 AND a.idespecialidad =  9  THEN '51'
                     ELSE '' END AS grupo
-                    FROM tblalumno a INNER JOIN tblalumno_grupo ag ON a.idalumno = ag.idalumno 
-                    INNER JOIN tblgrupo g ON g.idgrupo = ag.idgrupo 
+                    FROM tblalumno a INNER JOIN tblalumno_grupo ag ON a.idalumno = ag.idalumno
+                    INNER JOIN tblgrupo g ON g.idgrupo = ag.idgrupo
                     WHERE a.idalumno = $idalumno");
         if ($query->num_rows() > 0) {
             return $query->result();
@@ -605,6 +605,66 @@ class Calificacion_model extends CI_Model
         //end of new code
         return $res;
     }
+    public function alumnosGrupoStoreProcedure($idperiodo, $idgrupo)
+    {
+        $query = $this->db->query("CALL spObtenerAlumnosGrupo($idperiodo,$idgrupo)");
+        $res = $query->result();
+        //add this two line
+        $query->next_result();
+        $query->free_result();
+        //end of new code
+        return $res;
+    }
+    public function spObtenerCalificacionesAlumnoPorUnidadPL($idalumno, $idhorario, $idunidad)
+    {
+        $query = $this->db->query("CALL  spObtenerCalificacionesAlumnoPorUnidadPL($idalumno, $idhorario,$idunidad)");
+        $res = $query->result();
+        //add this two line
+        $query->next_result();
+        $query->free_result();
+        //end of new code
+        return $res;
+    }
+    public function spObtenerCalificacionesAlumnoPorMesPS($idalumno, $idhorario, $idmes)
+    {
+        $query = $this->db->query("CALL  spObtenerCalificacionesAlumnoPorMesPS($idalumno, $idhorario,$idmes)");
+        $res = $query->result();
+        //add this two line
+        $query->next_result();
+        $query->free_result();
+        //end of new code
+        return $res;
+    }
+    public function spObtenerCalificacionesMateria($idalumno, $idhorario, $idperiodo)
+    {
+        $query = $this->db->query("CALL  spObtenerCalificacion($idalumno, $idhorario,$idperiodo)");
+        $res = $query->result();
+        //add this two line
+        $query->next_result();
+        $query->free_result();
+        //end of new code
+        return $res;
+    }
+    public function spObtenerCalificacionesOportunidad($idalumno, $idhorario, $idperiodo, $idoportunidad)
+    {
+        $query = $this->db->query("CALL  spObtenerCalificacionPorOportunidad($idalumno, $idhorario,$idperiodo,$idoportunidad)");
+        $res = $query->result();
+        //add this two line
+        $query->next_result();
+        $query->free_result();
+        //end of new code
+        return $res;
+    }
+    public function spObtenerCalificacionesPorOportunidad($idalumno, $idhorario, $idperiodo, $idoportunidad)
+    {
+        $query = $this->db->query("CALL  spObtenerCalificacionPorOportunidad($idalumno, $idhorario,$idperiodo,$idperiodo)");
+        $res = $query->result();
+        //add this two line
+        $query->next_result();
+        $query->free_result();
+        //end of new code
+        return $res;
+    }
 
     public function materiasGrupo($idperiodo, $idgrupo)
     {
@@ -784,6 +844,22 @@ class Calificacion_model extends CI_Model
         }
     }
 
+    public function obtenerUnidadXMes($idmes, $idplantel)
+    {
+        $this->db->select('um.idunidad');
+        $this->db->from('tblunidad_mes um');
+        $this->db->join('tblunidad u', 'u.idunidad = um.idunidad');
+        $this->db->where('um.idmes', $idmes);
+        $this->db->where('u.idplantel', $idplantel);
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
+
+
     public  function motivoAsistencia()
     {
         $this->db->select('ma.idmotivo, ma.nombremotivo');
@@ -822,7 +898,7 @@ class Calificacion_model extends CI_Model
         $this->db->join('tbloportunidad_examen oe', 'oe.idoportunidadexamen = c.idoportunidadexamen');
         $this->db->where('hd.idmateria', $idmateria);
         $this->db->where('c.idalumno', $idalumno);
-        //$this->db->where('h.idperiodo', $idperiodo); 
+        //$this->db->where('h.idperiodo', $idperiodo);
         $this->db->where('hd.idhorario', $idhorario);
         $this->db->order_by('oe.numero DESC');
         $this->db->group_by('c.idoportunidadexamen, c.idalumno,c.idhorario, pm.idmateria');
@@ -861,18 +937,18 @@ class Calificacion_model extends CI_Model
     }
     public function showAllAlumnosPreescolar($idperiodo, $idgrupo, $idmes)
     {
-        $query = $this->db->query("SELECT 
+        $query = $this->db->query("SELECT
                 a.idalumno,
                 ag.idperiodo,
                 ag.idgrupo,
                 a.matricula,
                 p.activo,
                 a.nombre,
-                (SELECT ao.faltas FROM tblasistencia_preescolar ao 
+                (SELECT ao.faltas FROM tblasistencia_preescolar ao
                             WHERE  ao.idalumno = a.idalumno
                             AND ao.idperiodo = ag.idperiodo
                             AND ao.idgrupo = ag.idgrupo AND ao.idmes = $idmes) as faltas,
-   (SELECT ao.idasistenciapreescolar FROM tblasistencia_preescolar ao 
+   (SELECT ao.idasistenciapreescolar FROM tblasistencia_preescolar ao
                             WHERE  ao.idalumno = a.idalumno
                             AND ao.idperiodo = ag.idperiodo
                             AND ao.idgrupo = ag.idgrupo AND ao.idmes = $idmes) as idasistenciapreescolar,
@@ -881,15 +957,15 @@ class Calificacion_model extends CI_Model
                         a.apellidom,
                         ' ',
                         a.nombre) nombrealumno,
-                (SELECT 
+                (SELECT
                         COUNT(cp.idalumno)
                     FROM
-                        tblcalificacion_preescolar cp 
+                        tblcalificacion_preescolar cp
                     WHERE
                            cp.idalumno = a.idalumno
                             AND cp.idperiodo = ag.idperiodo
                             AND cp.idgrupo = ag.idgrupo AND cp.idmes = $idmes) AS registrado,
-                (SELECT 
+                (SELECT
                         COUNT(mp.idmateriapreescolar)
                     FROM
                         tblmateria_preescolar mp
@@ -899,8 +975,8 @@ class Calificacion_model extends CI_Model
                 tblalumno a
                     INNER JOIN
                 tblalumno_grupo ag ON a.idalumno = ag.idalumno
-                    INNER JOIN 
-                tblperiodo p ON p.idperiodo = ag.idperiodo 
+                    INNER JOIN
+                tblperiodo p ON p.idperiodo = ag.idperiodo
             WHERE ag.idperiodo = $idperiodo
             AND ag.idgrupo = $idgrupo");
         if ($query->num_rows() > 0) {
@@ -961,7 +1037,7 @@ class Calificacion_model extends CI_Model
 	idprofesormateria,
 	idperiodo,
 	idgrupo,
-	calificacionoportunidad 
+	calificacionoportunidad
 FROM
 	(
 	SELECT
@@ -1023,7 +1099,7 @@ WHERE
 	idperiodo,
 	idgrupo,
 	calificacionoportunidadanterior,
-	calificacionoportunidadactual 
+	calificacionoportunidadactual
 FROM
 	(
 	SELECT
@@ -1077,12 +1153,12 @@ WHERE
     nombre,
     apellidop,
     apellidom,
-    idmateria, 
+    idmateria,
     opcion,
      idgrupo,
-    credito 
+    credito
     FROM (
-SELECT 
+SELECT
     g.idnivelestudio,
     hd.idmateria AS idprofesormateria,
     hd.idhorariodetalle,
@@ -1127,10 +1203,10 @@ FROM
     }
     public function calificacionMateria($idhorario, $idalumno, $idmateria = '')
     {
-        $query = $this->db->query(" SELECT 
+        $query = $this->db->query(" SELECT
     FORMAT((SUM(c.calificacion) / COUNT(c.idunidad)),
         2) AS calificacion,
-        oe.numero 
+        oe.numero
 FROM
     tblhorario h
         INNER JOIN
@@ -1243,10 +1319,10 @@ ORDER BY    oe.numero DESC");
     }
     public function showAllCalificacionesDetalle($idperiodo, $idgrupo, $idmes, $idalumno)
     {
-        $sql = "SELECT 
+        $sql = "SELECT
     numero, nombremateria, tipocalificacion, abreviatura
 FROM
-    (SELECT 
+    (SELECT
         ma.numero,
             ma.nombremateria,
             tc.tipocalificacion,
@@ -1259,7 +1335,7 @@ FROM
         cp.idperiodo = $idperiodo
         AND cp.idgrupo = $idgrupo
             AND cp.idmes = $idmes
-            AND cp.idalumno = $idalumno UNION ALL SELECT 
+            AND cp.idalumno = $idalumno UNION ALL SELECT
         27 AS numero,
             'FALTAS' AS nombremateria,
             ap.faltas AS tipocalificacion,
@@ -1267,10 +1343,10 @@ FROM
     FROM
         tblasistencia_preescolar ap
     WHERE
-         ap.idperiodo = $idperiodo 
+         ap.idperiodo = $idperiodo
             AND ap.idgrupo = $idgrupo
             AND ap.idmes = $idmes
-            AND ap.idalumno = $idalumno) 
+            AND ap.idalumno = $idalumno)
             tblasistencia
             ORDER BY numero ASC";
         $query = $this->db->query($sql);
@@ -1311,6 +1387,24 @@ FROM
         $query = $this->db->get();
         if ($this->db->affected_rows() > 0) {
             return $query->result();
+        } else {
+            return false;
+        }
+    }
+    public function addMateriaNoCalificar($data)
+    {
+        $this->db->insert('tblquitar_materia', $data);
+        $insert_id = $this->db->insert_id();
+        return $insert_id;
+    }
+
+    public function restablecerMateriaQuitada($idquitarmateria = '')
+    {
+        # code...
+        $this->db->where('idquitarmateria', $idquitarmateria);
+        $this->db->delete('tblquitar_materia');
+        if ($this->db->affected_rows() > 0) {
+            return true;
         } else {
             return false;
         }

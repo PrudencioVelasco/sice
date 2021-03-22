@@ -94,6 +94,19 @@ class Perfil extends CI_Controller
             echo json_encode($result);
         }
     }
+    public function showDatosAdministrador()
+    {
+        if ((isset($this->session->idpersonal) && !empty($this->session->idpersonal))) {
+            $idpersonal = $this->session->idpersonal;
+            $datos_tutor = $this->usuario->datosAdministrador($idpersonal);
+            if ($datos_tutor) {
+                $result['personal'] = $this->usuario->datosAdministrador($idpersonal);
+            }
+        }
+        if (isset($result) && !empty($result)) {
+            echo json_encode($result);
+        }
+    }
 
     public function showDatosProfesor()
     {
@@ -635,6 +648,89 @@ class Perfil extends CI_Controller
             echo json_encode($result);
         }
     }
+    public function updatePasswordPersonal()
+    {
+        $config = array(
+            array(
+                'field' => 'passwordanterior',
+                'label' => 'Contraseña anterior',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => '%s es obligatorio.',
+                ),
+            ),
+            array(
+                'field' => 'passwordnueva',
+                'label' => 'Contraseña nueva',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => '%s es obligatorio.',
+                ),
+            ),
+            array(
+                'field' => 'passwordrepita',
+                'label' => 'Repita contraseña nueva',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => '%s es obligatorio.',
+                ),
+            ),
+        );
+
+        $this->form_validation->set_rules($config);
+        if ($this->form_validation->run() == false) {
+            $result['error'] = true;
+            $result['msg'] = array(
+                'passwordanterior' => form_error('passwordanterior'),
+                'passwordnueva' => form_error('passwordnueva'),
+                'passwordrepita' => form_error('passwordrepita'),
+            );
+        } else {
+            if ($this->input->post('passwordnueva') == $this->input->post('passwordrepita')) {
+                if (isset($this->session->idpersonal) && !empty($this->session->idpersonal)) {
+                    $id = $this->session->idpersonal;
+                    $detalle_alumno = $this->usuario->datosAdministrador($id);
+                    if ($detalle_alumno) {
+                        if (password_verify($this->input->post('passwordanterior'), $detalle_alumno->password)) {
+                            $password_encrypted = password_hash(trim($this->input->post('passwordrepita')), PASSWORD_BCRYPT);
+
+                            $data = array(
+                                'password' => $password_encrypted,
+                                'idusuario' => $this->session->user_id,
+                                'fecharegistro' => date('Y-m-d H:i:s'),
+
+                            );
+                            $this->usuario->updatePersonal($id, $data);
+                        } else {
+                            $result['error'] = true;
+                            $result['msg'] = array(
+                                'msgerror' => "La contraseña anterior es incorrecto.",
+                            );
+                        }
+                    } else {
+                        $result['error'] = true;
+                        $result['msg'] = array(
+                            'msgerror' => "Error... Intente mas tarde.",
+                        );
+                    }
+                } else {
+                    $result['error'] = true;
+                    $result['msg'] = array(
+                        'msgerror' => "Error... Intente mas tarde.",
+                    );
+                }
+            } else {
+                $result['error'] = true;
+                $result['msg'] = array(
+                    'msgerror' => "Las Contraseñas no coinciden.",
+                );
+            }
+        }
+
+        if (isset($result) && !empty($result)) {
+            echo json_encode($result);
+        }
+    }
     public function updatePasswordProfesor()
     {
         $config = array(
@@ -763,5 +859,13 @@ class Perfil extends CI_Controller
         if (isset($result) && !empty($result)) {
             echo json_encode($result);
         }
+    }
+
+    public function administrador()
+    {
+        $data = array();
+        $this->load->view('admin/header');
+        $this->load->view('admin/perfil/index', $data);
+        $this->load->view('admin/footer');
     }
 }

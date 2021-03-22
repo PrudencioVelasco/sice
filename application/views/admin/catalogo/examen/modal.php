@@ -24,6 +24,22 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12 ">
+                            <div class="">
+                                <label>
+                                    <font color="red">*</font> TIPO:
+                                </label>
+
+                                <input name="group5" type="radio" id="radio_31" class="with-gap radio-col-green" v-model="newUnidad.tipo" value="0" />
+                                <label for="radio_31">Examen</label>
+                                <input name="group5" type="radio" id="radio_32" class="with-gap radio-col-red" v-model="newUnidad.tipo" value="1" />
+                                <label for="radio_32">Trabajo Final</label>
+
+                                <div class="col-red" v-html="formValidate.tipo"></div>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="row">
                         <div class="col-md-6 col-sm-12 col-xs-12 ">
@@ -97,6 +113,22 @@
                                     <input type="text" v-model="chooseUnidad.nombreunidad" class="form-control" :class="{'is-invalid': formValidate.nombreunidad}" name="po">
                                 </div>
                                 <div class="col-red" v-html="formValidate.nombreunidad"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12 ">
+                            <div class="">
+                                <label>
+                                    <font color="red">*</font> TIPO:
+                                </label>
+
+                                <input name="group5" type="radio" id="radio_31" class="with-gap radio-col-green" v-model="chooseUnidad.tipo" value="0" />
+                                <label for="radio_31">Examen</label>
+                                <input name="group5" type="radio" id="radio_32" class="with-gap radio-col-red" v-model="chooseUnidad.tipo" value="1" />
+                                <label for="radio_32">Trabajo Final</label>
+
+                                <div class="col-red" v-html="formValidate.tipo"></div>
                             </div>
                         </div>
                     </div>

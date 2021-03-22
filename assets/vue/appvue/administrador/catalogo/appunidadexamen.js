@@ -20,6 +20,7 @@ var vu = new Vue({
     emptyResult: false,
     newUnidad: {
       nombreunidad: "",
+      tipo: "",
       fechainicio: "",
       fechafin: "",
       smserror: ""
@@ -168,6 +169,7 @@ var vu = new Vue({
       $("#addRegister").modal("hide");
       vu.newUnidad = {
         nombreunidad: "",
+        tipo: "",
         fechainicio: "",
         fechafin: "",
         smserror: ""

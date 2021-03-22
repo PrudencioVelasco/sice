@@ -294,9 +294,10 @@ class Grupo_model extends CI_Model
         }
     }
 
-    public function showAllGruposProfesor($idprofesor = '')
+    public function showAllGruposProfesor($idprofesor = '', $idplantel = "")
     {
-        $query = $this->db->query("SELECT 
+        $sql = "";
+        $sql .= " SELECT 
     idhorariodetalle,
     idprofesormateria,
     idhorario,
@@ -345,10 +346,16 @@ FROM
     JOIN tblespecialidad e ON e.idespecialidad = g.idespecialidad
     WHERE
          pe.activo = 1 AND h.activo = 1 
-            AND p.idprofesor = $idprofesor 
-             ) grupos
+            AND p.idprofesor = $idprofesor ";
+        if (isset($idplantel) && !empty($idplantel)) {
+            $sql .= " AND h.idplantel = $idplantel";
+        }
+
+
+        $sql .= "  ) grupos
 GROUP BY idmateria , idgrupo
-ORDER BY nombrenivel ASC");
+ORDER BY nombrenivel ASC";
+        $query = $this->db->query($sql);
         if ($query->num_rows() > 0) {
             return $query->result();
         } else {
@@ -490,7 +497,7 @@ ORDER BY nombrenivel ASC");
     public function detalleHorarioDetalle($idhorariodetalle)
     {
         # code...
-        $this->db->select('m.idmateria as idmateriareal,g.idgrupo,n.nombrenivel,m.clave, hd.idmateria as idprofesormateria, pm.idprofesormateria as profesormateria, pe.activo, t.nombreturno, n.numeroordinaria,h.idhorario,m.idclasificacionmateria,m.secalifica, m.nombreclase, pm.idmateria,h.idgrupo,h.idperiodo, m.unidades,p.nombre, p.apellidop, p.apellidom');
+        $this->db->select('n.idnivelestudio,pla.idniveleducativo,m.idmateria as idmateriareal,g.idgrupo,n.nombrenivel,m.clave, hd.idmateria as idprofesormateria, pm.idprofesormateria as profesormateria, pe.activo, t.nombreturno, n.numeroordinaria,h.idhorario,m.idclasificacionmateria,m.secalifica, m.nombreclase, pm.idmateria,h.idgrupo,h.idperiodo, m.unidades,p.nombre, p.apellidop, p.apellidom');
         $this->db->from('tblhorario_detalle hd');
         $this->db->join('tblprofesor_materia pm', 'hd.idmateria = pm.idprofesormateria');
         $this->db->join('tblhorario h', 'h.idhorario  = hd.idhorario');
@@ -500,6 +507,7 @@ ORDER BY nombrenivel ASC");
         $this->db->join('tblturno t', 'g.idturno = t.idturno');
         $this->db->join('tblnivelestudio n', 'n.idnivelestudio = g.idnivelestudio');
         $this->db->join('tblperiodo pe', 'pe.idperiodo = h.idperiodo');
+        $this->db->join('tblplantel pla', 'pla.idplantel = g.idplantel');
         $this->db->where('hd.idhorariodetalle', $idhorariodetalle);
         $query = $this->db->get();
         if ($this->db->affected_rows() > 0) {
@@ -762,6 +770,21 @@ GROUP BY a.idalumno , a.idhorariodetalle , a.idunidad";
         if (isset($unidades_materia) && !empty($unidades_materia)) {
             $this->db->where('u.numero <=', $unidades_materia);
         }
+        $this->db->where('u.tipo', 0);
+        $this->db->order_by('u.numero ASC');
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+    public function unidadesCalificacionFinal($idplantel)
+    {
+        $this->db->select('u.idunidad, u.nombreunidad, u.numero');
+        $this->db->from('tblunidad u');
+        $this->db->where('u.idplantel', $idplantel);
+        $this->db->where('u.tipo', 1);
         $this->db->order_by('u.numero ASC');
         $query = $this->db->get();
         if ($this->db->affected_rows() > 0) {
@@ -1068,13 +1091,19 @@ FROM
     WHERE
         p.idperiodo = ag.idperiodo  
         AND m.secalifica = 1
-            AND (h.activo = 1 OR p.activo = 1)
-            AND ag.activo = 1";
+          ";
         if (isset($idprofesormateria) && !empty($idprofesormateria)) {
             $sql .= " AND hd.idmateria = $idprofesormateria";
         }
         if (isset($idestatus) && !empty($idestatus) && $idestatus == 1) {
-            $sql .= " AND a.idalumnoestatus = 1";
+            $sql .= " AND a.idalumnoestatus = 1
+              
+              AND (h.activo = 1 OR p.activo = 1)
+              AND ag.activo = 1 ";
+        }
+        if (isset($idestatus) && !empty($idestatus) && $idestatus == 0) {
+            $sql .= "  AND (h.activo = 0 OR p.activo = 0)
+            AND ag.activo = 0   ";
         }
 
         $sql .= " AND h.idhorario = $idhorario";

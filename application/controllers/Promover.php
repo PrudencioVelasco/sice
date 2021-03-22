@@ -82,7 +82,7 @@ class Promover extends CI_Controller
         } else {
             $idgrupo = $this->input->post('grupo');
             $idclicloescolar = $this->input->post('cicloescolar');
-            $alumnos = $this->alumno->listaAlumnoPorGrupo($idgrupo, $this->session->idplantel);
+            $alumnos = $this->alumno->spObtenerAlumnosGrupo($idclicloescolar, $idgrupo);
             $tabla = '';
             if (isset($alumnos) && !empty($alumnos)) {
                 $tabla .= ' <table class="table table-striped">
@@ -129,12 +129,12 @@ class Promover extends CI_Controller
                         $total_unidades_faltantes = 0;
                         //FIN DE UNIDADES REGISTRADAS
                         foreach ($calificacion_materias as $row) {
-                            if ($row->mostrar == 'SI') {
+                            if ($row->mostrar == 'SI' || $row->mostrar_calificar == 'SI') {
                                 $idnivelestudio = $this->session->idnivelestudio;
                                 $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
 
 
-                                $contador_materia++;
+
                                 $calificacion_materia =  $row->calificacion + $calificacion_materia;
                                 $maximo_reprobados = $detalle_configuracion[0]->reprovandas_minima;
                                 $calificacion_minima = $detalle_configuracion[0]->calificacion_minima;
@@ -149,6 +149,8 @@ class Promover extends CI_Controller
                                         $total_unidades_faltantes++;
                                     }
                                 }
+
+                                $contador_materia++;
                             }
                         }
 
@@ -168,7 +170,7 @@ class Promover extends CI_Controller
                         }
                         $tabla .= '</td>';
                         $tabla .= '<td align="center">';
-                        $tabla .= '<label>' . $total_materia_aprobada . "/" . $total_materia_reprobada . '</label>';
+                        $tabla .= '<label>' . $total_materia_aprobada . "/" . $contador_materia . '</label>';
                         $tabla .= '</td>';
                         $tabla .= '<td>';
                         $tabla .= '<label>' . ($total_unidades_faltantes > 0) ? 'Algunas unidades estan pendientes para subir las calificaciones' : 'Ok' . '</label>';
@@ -236,16 +238,16 @@ class Promover extends CI_Controller
                     $calificacion_materia = $row->calificacion;
 
                     if ($calificacion_materia < $detalle_configuracion[0]->calificacion_minima) {
-                        $tabla .= '<td style="color:red;">' .  numberFormatPrecision($calificacion_materia, 1, '.') . '</td>';
+                        $tabla .= '<td style="color:red;"><strong>' .  numberFormatPrecision($calificacion_materia, 1, '.') . '</strong></td>';
                     } else {
-                        $tabla .= '<td  style="color:GREEN;">' .    numberFormatPrecision($calificacion_materia, 1, '.') . '</td>';
+                        $tabla .= '<td  style="color:GREEN;"><strong>' .    numberFormatPrecision($calificacion_materia, 1, '.') . '</strong></td>';
                     }
 
                     if ($row->unidadesregistradas != 28) {
                         if ($row->unidadesregistradas == $row->totalunidades) {
-                            $tabla .= '<td>Completo</td>';
+                            $tabla .= '<td style="color:green;"><strong>Completo</strong></td>';
                         } else {
-                            $tabla .= '<td>' . $row->unidadesregistradas . ' de ' . $row->totalunidades . '</td>';
+                            $tabla .= '<td style="color:red;"> <strong>' . $row->unidadesregistradas . ' de ' . $row->totalunidades . '</strong></td>';
                         }
                     } else {
                         $tabla .= '<td>Completo</td>';
