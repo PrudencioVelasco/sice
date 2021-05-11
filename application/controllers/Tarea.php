@@ -832,7 +832,7 @@ class Tarea extends CI_Controller
                     $this->load->library('Autoload');
 
                     $maxsize = 80000000;
-                    $allowed = array('gif', 'png', 'jpg', 'jpeg', 'gif', 'docx', 'doc', 'pdf', 'xls', 'xlsx', 'fla', 'pptx', 'ppt', 'mov', 'mp4', 'avi', 'vfw', 'm4v', 'wmv', 'mkv', 'flv','accdb','mdb','swf');
+                    $allowed = array('gif', 'png', 'jpg', 'jpeg', 'gif', 'docx', 'doc', 'pdf', 'xls', 'xlsx', 'fla', 'pptx', 'ppt', 'mov', 'mp4', 'avi', 'vfw', 'm4v', 'wmv', 'mkv', 'flv', 'accdb', 'mdb', 'swf');
                     $filename = $_FILES['file']['name'];
                     $ext = pathinfo($filename, PATHINFO_EXTENSION);
 
@@ -1213,6 +1213,8 @@ class Tarea extends CI_Controller
                     );
                     $idDetalleTarea = $this->tarea->addDetalleTarea($data);
                     $filesCount = count($_FILES['files']['name']);
+                    $exito = 0;
+                    $fracaso = 0;
                     for ($i = 0; $i < $filesCount; $i++) {
                         $_FILES['file']['name']     = $_FILES['files']['name'][$i];
                         $_FILES['file']['type']     = $_FILES['files']['type'][$i];
@@ -1220,7 +1222,7 @@ class Tarea extends CI_Controller
                         $_FILES['file']['error']     = $_FILES['files']['error'][$i];
                         $_FILES['file']['size']     = $_FILES['files']['size'][$i];
                         $maxsize = 80000000;
-                        $allowed = array('gif', 'png', 'jpg', 'jpeg', 'gif', 'docx', 'doc', 'pdf', 'xls', 'xlsx', 'fla', 'pptx', 'ppt', 'mov', 'mp4', 'avi', 'vfw', 'm4v', 'wmv', 'mkv', 'flv','accdb','mdb','swf');
+                        $allowed = array('gif', 'png', 'jpg', 'jpeg', 'gif', 'docx', 'doc', 'pdf', 'xls', 'xlsx', 'fla', 'pptx', 'ppt', 'mov', 'mp4', 'avi', 'vfw', 'm4v', 'wmv', 'mkv', 'flv', 'accdb', 'mdb', 'swf');
                         $filename = $_FILES['file']['name'];
                         $ext = pathinfo($filename, PATHINFO_EXTENSION);
                         if (in_array(strtolower($ext), $allowed)) {
@@ -1256,6 +1258,11 @@ class Tarea extends CI_Controller
                                         'fecharegistro' => date('Y-m-d H:i:s'),
                                     );
                                     $value = $this->tarea->addDocumentRespuestaTarea($dataDocumentos);
+                                    if ($value) {
+                                        $exito++;
+                                    } else {
+                                        $fracaso++;
+                                    }
                                 } catch (Kunnu\Dropbox\Exceptions\DropboxClientException $e) {
                                     //Eliminar Documento Alumno
                                     $this->tarea->deleteDocumentoAlumno($idDetalleTarea);
@@ -1266,6 +1273,7 @@ class Tarea extends CI_Controller
                                     $result['msg'] = array(
                                         'msgerror' => $e->getMessage()
                                     );
+                                    $fracaso++;
                                 }
                             } else {
                                 $result['error'] = true;
@@ -1279,6 +1287,18 @@ class Tarea extends CI_Controller
                                 'msgerror' => "SOLO ES PERMITDO IMAGENES, WORD, PDF Y EXCEL."
                             );
                         }
+                    }
+                    if ($exito == $filesCount) {
+                        $result['error'] = false;
+                        $result['msg'] = array(
+                            'msgerror' => "SE ENVIO LA TAREA CON EXITO"
+                        );
+                    }
+                    if ($fracaso > 0) {
+                        $result['error'] = true;
+                        $result['msg'] = array(
+                            'msgerror' => "HUBO UN ERROR AL SUBIR LA TAREA INTENTE NUEVAMENTE"
+                        );
                     }
                 } else {
                     if (isset($tarea) && !empty($tarea)) {

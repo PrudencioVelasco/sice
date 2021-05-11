@@ -1491,6 +1491,8 @@ class Calificacion extends CI_Controller
         $materias = $this->calificacion->materiasGrupoStoreProcedure($idespecialidad, $idnivelestudio, $idperiodo, $idgrupo);
         $director = $this->calificacion->obtenerDirector($this->session->idplantel);
         $idhorario = "";
+        //var_dump( $materias);
+        // echo $idespecialidad . '-' . $idnivelestudio . '-' . $idperiodo . '-' . $idgrupo;
 
         $detalle_diciplina = "";
         if (isset($materias) && !empty($materias)) {
@@ -1607,8 +1609,12 @@ class Calificacion extends CI_Controller
       </tr>
       <tr>
       <td colspan="4" align="center">
-      <br /><label class="titulo">BOLETA DE CALIFICACIONES</label>
-      </td>
+      <br /><label class="titulo">BOLETA DE CALIFICACIONES</label><br>';
+        if (($idnivelestudio !=  1) && ($idnivelestudio != 2)) {
+            $tabla .= '<label class="titulo">COMPONENTE DE FORMACIÓN PARA EL TRABAJO:<br>' . $grado_alumno->nombreespecialidad . '</label>';
+        }
+
+        $tabla .= '</td>
       </tr>
       </table>
 
@@ -1707,7 +1713,8 @@ class Calificacion extends CI_Controller
 
                     if ($idclasificacionmateria == 3) {
                         $indice = array_search($idalumno, $noincluir_alumnos, false);
-                        if (isset($indice) && !empty($indice)) {
+                        //var_dump($indice);
+                        if (!$indice) {
                             $validar_taller = $this->calificacion->obtenerMateriaTaller($idalumno, $idprofesormateria, $idhorario);
                             if ($validar_taller) {
                                 $mostrar = TRUE;
@@ -2013,7 +2020,7 @@ class Calificacion extends CI_Controller
       ';
 
         $pdf->writeHTML($tabla, true, false, false, false, '');
-
+        //echo $tabla;
         ob_end_clean();
 
         $pdf->Output('Boleta de Calificaciones', 'I');
@@ -2038,19 +2045,24 @@ class Calificacion extends CI_Controller
             $detalle_periodo = $this->calificacion->detallePeriodo($idperiodo);
             $estatus_periodo = $detalle_periodo->activo;
             $alumnos = $this->calificacion->alumnosGrupo($idperiodo, $idgrupo, $estatus_periodo);
+            //echo  $idperiodo . '<br>' . $idgrupo . '<br>' . $estatus_periodo;
             $logo = base_url() . '/assets/images/escuelas/' . $detalle_logo[0]->logoplantel;
             $logo2 = base_url() . '/assets/images/escuelas/' . $detalle_logo[0]->logosegundo;
 
             $grupo = "";
-            foreach ($alumnos as $alumno) {
-                $idalumno  =  $alumno->idalumno;
-                if (isset($grupo) && empty($grupo)) {
-                    $dato = $this->calificacion->obtenerEspecialidadAlumno($idalumno);
-                    //var_dump($dato);
-                    if ($dato) {
-                        $grupo  .= $dato[0]->grupo;
+            if ($idperiodo == 9) {
+                foreach ($alumnos as $alumno) {
+                    $idalumno  =  $alumno->idalumno;
+                    if (isset($grupo) && empty($grupo)) {
+                        $dato = $this->calificacion->obtenerEspecialidadAlumno($idalumno);
+                        //var_dump($dato);
+                        if ($dato) {
+                            $grupo  .= $dato[0]->grupo;
+                        }
                     }
                 }
+            } else {
+                $grupo .= $detalle->descripcion;
             }
             // echo $grupo;
             $unidades = $this->calificacion->unidades($this->session->idplantel);
@@ -2331,7 +2343,7 @@ class Calificacion extends CI_Controller
             }
             $tabla .= '</table>';
             $pdf->writeHTML($tabla, true, false, false, false, '');
-
+            //echo $tabla;
             // ob_end_clean();
 
             $pdf->Output('ACTA-DE-EVALUACION.pdf', 'D');

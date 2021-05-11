@@ -129,11 +129,16 @@ var v = new Vue({
               v.error = true;
               v.cargando = false;
               $("#btnenviartarea").prop("disabled", false);
-            } else {
+            } 
+            if(!response.data.error) {
               swal({
-                position: "center", type: "success", title: "Enviado!", showConfirmButton: true
+                position: "center", 
+                type: "success", 
+                title:response.data.msg.msgerror, 
+                showConfirmButton: true
                 // timer: 2000
               });
+              
               v.showTareaContestado();
               v.clearAll();
               v.clearMSG();

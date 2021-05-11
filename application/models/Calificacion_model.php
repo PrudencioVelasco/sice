@@ -552,7 +552,7 @@ class Calificacion_model extends CI_Model
         if (isset($idestatus) && !empty($idestatus) && $idestatus == 1) {
             $sql .= " AND idalumnoestatus = 1";
         }
-        $sql .= " ORDER BY apellidop ASC";
+        $sql .= "  group by idalumno ORDER BY apellidop,apellidom ASC";
         $query = $this->db->query($sql);
 
         if ($query->num_rows() > 0) {
@@ -563,11 +563,12 @@ class Calificacion_model extends CI_Model
     }
     public function gradoAlumno($idalumno = '', $idperiodo = '', $idgrupo)
     {
-        $this->db->select('a.idespecialidad, g.idnivelestudio');
+        $this->db->select('a.idespecialidad, g.idnivelestudio,es.nombreespecialidad');
         $this->db->from('tblalumno_grupo ag');
         $this->db->join('tblhorario h', 'h.idperiodo = ag.idperiodo');
         $this->db->join('tblgrupo g', 'g.idgrupo = ag.idgrupo');
         $this->db->join('tblalumno a', 'a.idalumno = ag.idalumno');
+        $this->db->join('tblespecialidad es', 'a.idespecialidad = es.idespecialidad');
         $this->db->where('g.idgrupo = h.idgrupo');
         $this->db->where('ag.idalumno', $idalumno);
         $this->db->where('ag.idperiodo', $idperiodo);

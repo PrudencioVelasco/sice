@@ -33,6 +33,7 @@ var vu = new Vue({
     addModal: false,
     editModal: false,
     cargando: false,
+    cargando_tarea: false,
     error: false,
     tareas: [],
     documentos: {},
@@ -149,6 +150,7 @@ var vu = new Vue({
       XLSX.writeFile(workbook, `${filename}.xlsx`);
     },
     addTarea() {
+      vu.cargando_tarea = true;
       vu.cargando = true;
       vu.error = false;
       var formData = vu.formData(vu.newTarea);
@@ -167,6 +169,7 @@ var vu = new Vue({
           vu.formValidate = response.data.msg;
           vu.error = true;
           vu.cargando = false;
+          vu.cargando_tarea = false;
           //vu.prueba_notificacion();
         } else {
           swal({position: "center", type: "success", title: "Registrado!", showConfirmButton: false, timer: 1500});
@@ -221,6 +224,7 @@ var vu = new Vue({
     updateTarea() {
       vu.cargando = true;
       vu.error = false;
+      vu.cargando_tarea = true;
       var formData = vu.formData(vu.chooseTarea);
       for (var i = 0; i < this.filesSend.length; i++) {
         let file = this.filesSend[i];
@@ -237,6 +241,7 @@ var vu = new Vue({
           vu.formValidate = response.data.msg;
           vu.error = true;
           vu.cargando = false;
+          vu.cargando_tarea = false;
         } else {
           //vu.successMSG = response.data.success;
           swal({position: "center", type: "success", title: "Modificado!", showConfirmButton: false, timer: 1500});
@@ -317,9 +322,10 @@ var vu = new Vue({
     },
     clearAll() {
       this.$refs.fileadd.value = "";
-      v.filesSend = [];
+      vu.filesSend = [];
       vu.cargando = false;
       vu.error = false;
+      vu.cargando_tarea = false;
       $("#editRegister").modal("hide");
       $("#addRegister").modal("hide");
       $("#documentosTareas").modal("hide");

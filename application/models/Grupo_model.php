@@ -497,7 +497,7 @@ ORDER BY nombrenivel ASC";
     public function detalleHorarioDetalle($idhorariodetalle)
     {
         # code...
-        $this->db->select('n.idnivelestudio,pla.idniveleducativo,m.idmateria as idmateriareal,g.idgrupo,n.nombrenivel,m.clave, hd.idmateria as idprofesormateria, pm.idprofesormateria as profesormateria, pe.activo, t.nombreturno, n.numeroordinaria,h.idhorario,m.idclasificacionmateria,m.secalifica, m.nombreclase, pm.idmateria,h.idgrupo,h.idperiodo, m.unidades,p.nombre, p.apellidop, p.apellidom');
+        $this->db->select('h.descripcion,n.idnivelestudio,pla.idniveleducativo,m.idmateria as idmateriareal,g.idgrupo,n.nombrenivel,m.clave, hd.idmateria as idprofesormateria, pm.idprofesormateria as profesormateria, pe.activo, t.nombreturno, n.numeroordinaria,h.idhorario,m.idclasificacionmateria,m.secalifica, m.nombreclase, pm.idmateria,h.idgrupo,h.idperiodo, m.unidades,p.nombre, p.apellidop, p.apellidom');
         $this->db->from('tblhorario_detalle hd');
         $this->db->join('tblprofesor_materia pm', 'hd.idmateria = pm.idprofesormateria');
         $this->db->join('tblhorario h', 'h.idhorario  = hd.idhorario');
@@ -1151,7 +1151,7 @@ WHERE
             $sql .= " AND a.idalumnoestatus = 1";
         }
         $sql .= "  GROUP BY ag.idalumno) alumnos
-            ORDER BY apellidop ASC";
+            ORDER BY apellidop,apellidom ASC";
         $query = $this->db->query($sql);
 
         if ($query->num_rows() > 0) {
@@ -1249,7 +1249,7 @@ WHERE
             $sql .= " AND a.idalumnoestatus = 1";
         }
         $sql .= "  GROUP BY ag.idalumno) alumnos
-            ORDER BY apellidop ASC";
+            ORDER BY apellidop,apellidom ASC";
         $query = $this->db->query($sql);
 
         if ($query->num_rows() > 0) {
@@ -1348,7 +1348,7 @@ WHERE
             $sql .= " AND a.idalumnoestatus = 1";
         }
         $sql .= "  GROUP BY ag.idalumno) alumnos
-            ORDER BY apellidop ASC";
+            ORDER BY apellidop,apellidom ASC";
         $query = $this->db->query($sql);
 
         if ($query->num_rows() > 0) {
