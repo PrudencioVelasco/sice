@@ -1,11 +1,13 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 date_default_timezone_set("America/Mexico_City");
 
-class Colegiatura extends CI_Controller {
+class Colegiatura extends CI_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
 
         if (!isset($_SESSION['user_id'])) {
@@ -20,8 +22,9 @@ class Colegiatura extends CI_Controller {
         $this->load->library('session');
     }
 
- 
-   public function inicio() {
+
+    public function inicio()
+    {
 
         Permission::grant(uri_string());
         $this->load->view('admin/header');
@@ -29,7 +32,8 @@ class Colegiatura extends CI_Controller {
         $this->load->view('admin/footer');
     }
 
-    public function showAll() {
+    public function showAll()
+    {
         $idplantel = $this->session->idplantel;
         $query = $this->colegiatura->showAll($idplantel);
         //var_dump($query);
@@ -41,7 +45,8 @@ class Colegiatura extends CI_Controller {
         }
     }
 
-    public function searchColegiatura() {
+    public function searchColegiatura()
+    {
         $value = $this->input->post('text');
         $query = $this->colegiatura->searchColegiatura($value);
         if ($query) {
@@ -52,7 +57,8 @@ class Colegiatura extends CI_Controller {
         }
     }
 
-    public function showAllUnidadExamen() {
+    public function showAllUnidadExamen()
+    {
         $idplantel = $this->session->idplantel;
         $query = $this->unidadexamen->showAll($idplantel);
         //var_dump($query);
@@ -64,7 +70,8 @@ class Colegiatura extends CI_Controller {
         }
     }
 
-    public function searchUnidadExamen() {
+    public function searchUnidadExamen()
+    {
         //Permission::grant(uri_string());
         $value = $this->input->post('text');
         $query = $this->unidadexamen->searchUnidadExamen($value);
@@ -75,8 +82,21 @@ class Colegiatura extends CI_Controller {
             echo json_encode($result);
         }
     }
+    public function searchConcepto()
+    {
+        //Permission::grant(uri_string());
+        $value = $this->input->post('text');
+        $query = $this->colegiatura->searchConcepto($value);
+        if ($query) {
+            $result['conceptos'] = $query;
+        }
+        if (isset($result) && !empty($result)) {
+            echo json_encode($result);
+        }
+    }
 
-    public function showAllNiveles() {
+    public function showAllNiveles()
+    {
         $query = $this->colegiatura->showAllNiveles();
         //var_dump($query);
         if ($query) {
@@ -87,7 +107,9 @@ class Colegiatura extends CI_Controller {
         }
     }
 
-    public function showAllConceptos() {
+
+    public function showAllConceptos()
+    {
         $query = $this->colegiatura->showAllConceptos();
         //var_dump($query);
         if ($query) {
@@ -98,32 +120,33 @@ class Colegiatura extends CI_Controller {
         }
     }
 
-    public function addColegiatura() {
+    public function addColegiatura()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $config = array(
                 array(
                     'field' => 'idnivel',
-                    'label' => 'Nombre',
+                    'label' => 'Nivel',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
                     'field' => 'idconcepto',
-                    'label' => 'Nombre',
+                    'label' => 'Concepto',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
                     'field' => 'descuento',
-                    'label' => 'Nombre',
+                    'label' => 'Costo',
                     'rules' => 'trim|required|decimal',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.',
-                        'decimal' => 'Formato decimal.'
+                        'required' => '%s es  obligatorio.',
+                        'decimal' => '%s formato decimal.'
                     )
                 )
             );
@@ -168,34 +191,75 @@ class Colegiatura extends CI_Controller {
             echo json_encode($result);
         }
     }
- 
+    public function addConcepto()
+    {
+        //if (Permission::grantValidar(uri_string()) == 1) {
+        $config = array(
+            array(
+                'field' => 'concepto',
+                'label' => 'Concepto',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => '%s es obligatorio.'
+                )
+            )
+        );
 
-    public function updateColegiatura() {
+        $this->form_validation->set_rules($config);
+        if ($this->form_validation->run() == FALSE) {
+            $result['error'] = true;
+            $result['msg'] = array(
+                'concepto' => form_error('concepto'),
+            );
+        } else {
+            $idplantel = $this->session->idplantel;
+            $concepto = $this->input->post('concepto');
+            $data = array(
+                'concepto' =>  mb_strtoupper($concepto),
+                'activo' => 1,
+            );
+            $this->colegiatura->addConcepto($data);
+        }
+        /* } else {
+            $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
+            );
+        }*/
+        if (isset($result) && !empty($result)) {
+            echo json_encode($result);
+        }
+    }
+
+
+
+    public function updateColegiatura()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $config = array(
                 array(
                     'field' => 'idnivelestudio',
-                    'label' => 'Nombre',
+                    'label' => 'Nivel',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es obligatorio.'
                     )
                 ),
                 array(
                     'field' => 'idtipopagocol',
-                    'label' => 'Nombre',
+                    'label' => 'Concepto',
                     'rules' => 'trim|required',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.'
+                        'required' => '%s es  obligatorio.'
                     )
                 ),
                 array(
                     'field' => 'descuento',
-                    'label' => 'Nombre',
+                    'label' => 'Costo',
                     'rules' => 'trim|required|decimal',
                     'errors' => array(
-                        'required' => 'Campo obligatorio.',
-                        'decimal' => 'Formato decimal.'
+                        'required' => '%s es  obligatorio.',
+                        'decimal' => '%s formato decimal.'
                     )
                 )
             );
@@ -244,7 +308,50 @@ class Colegiatura extends CI_Controller {
         }
     }
 
-    public function deleteColegiatura() {
+    public function updateConcepto()
+    {
+        //if (Permission::grantValidar(uri_string()) == 1) {
+        $config = array(
+            array(
+                'field' => 'concepto',
+                'label' => 'Concepto',
+                'rules' => 'trim|required',
+                'errors' => array(
+                    'required' => '%s es  obligatorio.'
+                )
+            ),
+        );
+
+        $this->form_validation->set_rules($config);
+        if ($this->form_validation->run() == FALSE) {
+            $result['error'] = true;
+            $result['msg'] = array(
+                'concepto' => form_error('concepto'),
+            );
+        } else {
+            $idplantel = $this->session->idplantel;
+            $idconcepto = $this->input->post('idtipopagocol');
+            $concepto = $this->input->post('concepto');
+
+            $data = array(
+                'concepto' =>  mb_strtoupper($concepto),
+
+            );
+            $this->colegiatura->updateConcepto($idconcepto, $data);
+        }
+        /*} else {
+            $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
+            );
+        }*/
+        if (isset($result) && !empty($result)) {
+            echo json_encode($result);
+        }
+    }
+
+    public function deleteColegiatura()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $idcolegiatura = $this->input->get('idcolegiatura');
             $data = array(
@@ -270,4 +377,27 @@ class Colegiatura extends CI_Controller {
         }
     }
 
+    public function deleteConcepto()
+    {
+        //if (Permission::grantValidar(uri_string()) == 1) {
+        $idconcepto = $this->input->get('idtipopagocol');
+        $query = $this->colegiatura->deleteConcepto($idconcepto);
+        if ($query) {
+            $result['error'] = false;
+        } else {
+            $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => 'No se puede Elimnar registro.'
+            );
+        }
+        /*} else {
+            $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
+            );
+        }*/
+        if (isset($result) && !empty($result)) {
+            echo json_encode($result);
+        }
+    }
 }

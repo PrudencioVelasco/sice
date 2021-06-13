@@ -1,11 +1,13 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 date_default_timezone_set("America/Mexico_City");
 
-class EstadoCuenta extends CI_Controller {
+class EstadoCuenta extends CI_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
 
         if (!isset($_SESSION['user_id'])) {
@@ -15,6 +17,7 @@ class EstadoCuenta extends CI_Controller {
         $this->load->helper('url');
         $this->load->model('data_model');
         $this->load->model('EstadoCuenta_model', 'estadocuenta');
+        $this->load->model('Colegiatura_model', 'colegiatura');
         $this->load->model('Alumno_model', 'alumno');
         $this->load->model('user_model', 'usuario');
         $this->load->library('permission');
@@ -50,7 +53,8 @@ class EstadoCuenta extends CI_Controller {
       echo json_encode($response);
       } */
 
-    public function imprimir($idpago = '', $idperiodo = '', $idalumno = '', $tipo = '') {
+    public function imprimir($idpago = '', $idperiodo = '', $idalumno = '', $tipo = '')
+    {
         Permission::grant(uri_string());
         $concepto = "";
         if ($tipo == 1) {
@@ -73,10 +77,9 @@ class EstadoCuenta extends CI_Controller {
             return;
         }
         $response = array(
-            'leyenda' => num_to_letras($descuento)
-            , 'cantidad' => $descuento
-        ); 
-        $this->load->library('tcpdf'); 
+            'leyenda' => num_to_letras($descuento), 'cantidad' => $descuento
+        );
+        $this->load->library('tcpdf');
         $fechaactual = date('d/m/Y');
         $pdf = new Pdf('P', 'mm', 'A4', true, 'UTF-8', false);
         $pdf->SetTitle('Recibo de Pago.');
@@ -202,7 +205,8 @@ class EstadoCuenta extends CI_Controller {
         $pdf->Output('Kardex de Calificaciones', 'I');
     }
 
-    public function showAllCicloEscolar() {
+    public function showAllCicloEscolar()
+    {
         $idplantel = $this->session->idplantel;
         $query = $this->estadocuenta->showAllCicloEscolar($idplantel);
         if ($query) {
@@ -212,8 +216,20 @@ class EstadoCuenta extends CI_Controller {
             echo json_encode($result);
         }
     }
+    public function showAllConfiguraciones()
+    {
+        $idplantel = $this->session->idplantel;
+        $query = $this->colegiatura->showAllConfiguraciones($idplantel);
+        if ($query) {
+            $result['configuraciones'] = $this->colegiatura->showAllConfiguraciones($idplantel);
+        }
+        if (isset($result) && !empty($result)) {
+            echo json_encode($result);
+        }
+    }
 
-    public function showAllFormasPago() {
+    public function showAllFormasPago()
+    {
         $query = $this->estadocuenta->showAllFormasPago();
         if ($query) {
             $result['formaspago'] = $this->estadocuenta->showAllFormasPago();
@@ -223,7 +239,8 @@ class EstadoCuenta extends CI_Controller {
         }
     }
 
-    public function showAllTipoPago() {
+    public function showAllTipoPago()
+    {
         $query = $this->estadocuenta->showAllTipoPago();
         if ($query) {
             $result['tipospago'] = $this->estadocuenta->showAllTipoPago();
@@ -232,37 +249,107 @@ class EstadoCuenta extends CI_Controller {
             echo json_encode($result);
         }
     }
-    
-    public function costoPagoInicio() {
+
+    public function eliminarRecargo()
+    {
+        $idconfiguracion = $this->input->get('idconfiguracion');
+        $query = $this->colegiatura->deleteRecargo($idconfiguracion);
+        if ($query) {
+            $result['error'] = false;
+            $result['msg'] = array(
+                'msgerror' => "Fue eliminado el recargo con exito."
+            );
+        } else {
+            $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => "Hubo un error al elimiar el recargo, intente mas tarde."
+            );
+        }
+        if (isset($result) && !empty($result)) {
+            echo json_encode($result);
+        }
+    }
+
+    public function updateRecargo()
+    {
+        // if (Permission::grantValidar(uri_string()) == 1) {
+        $config = array(
+            array(
+                'field' => 'diaultimorecargo',
+                'label' => 'Dia corte',
+                'rules' => 'trim|required|is_natural',
+                'errors' => array(
+                    'required' => '%s es obligatorio.',
+                    'is_natural' => '%s solo número entero.'
+                )
+            ),
+            array(
+                'field' => 'totalrecargo',
+                'label' => 'Recargo',
+                'rules' => 'trim|required|decimal',
+                'errors' => array(
+                    'required' => '%s es  obligatorio.',
+                    'decimal' => '%s formato decimal.'
+                )
+            )
+        );
+
+        $this->form_validation->set_rules($config);
+        if ($this->form_validation->run() == FALSE) {
+            $result['error'] = true;
+            $result['msg'] = array(
+                'diaultimorecargo' => form_error('diaultimorecargo'),
+                'totalrecargo' => form_error('totalrecargo'),
+            );
+        } else {
+            $idconfiguracion  = $this->input->post('idconfiguracion');
+            $data = array(
+                'diaultimorecargo' => $this->input->post('diaultimorecargo'),
+                'totalrecargo' => $this->input->post('totalrecargo'),
+            );
+            $this->colegiatura->updateRecargo($idconfiguracion, $data);
+        }
+        /* } else {
+            $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => 'NO TIENE PERMISO PARA REALIZAR ESTA ACCIÓN.'
+            );
+        }*/
+        if (isset($result) && !empty($result)) {
+            echo json_encode($result);
+        }
+    }
+
+
+    public function costoPagoInicio()
+    {
         $idplantel = $this->session->idplantel;
         $idalumno = $this->input->get('idalumno');
         $idperiodo = $this->input->get('idperiodo');
         $idconcepto = $this->input->get('idconcepto');
         $cobro_colegiatura = 0;
-          $detalle_niveleducativo = $this->alumno->detalleAlumnoNivelEducativo($idalumno,$idperiodo);
-                if($detalle_niveleducativo){
-                      $idniveleducativo = $detalle_niveleducativo->idnivelestudio;
-                     $detalle_descuento = $this->estadocuenta->descuentoPagosInicio($idalumno, $idperiodo, $idconcepto,$idplantel,$idniveleducativo);
-                    if($detalle_descuento){
-                        if ($detalle_descuento[0]->descuento > 0) {
-                            $cobro_colegiatura = $detalle_descuento[0]->descuento;
-                        } else {
-                            $cobro_colegiatura = 0;
-                        }
-                        
-                    }else{
-                        $cobro_colegiatura = 0;
-                    }
-                    }else{
-                        $cobro_colegiatura = 0;
-                    }
+        $detalle_niveleducativo = $this->alumno->detalleAlumnoNivelEducativo($idalumno, $idperiodo);
+        if ($detalle_niveleducativo) {
+            $idniveleducativo = $detalle_niveleducativo->idnivelestudio;
+            $detalle_descuento = $this->estadocuenta->descuentoPagosInicio($idalumno, $idperiodo, $idconcepto, $idplantel, $idniveleducativo);
+            if ($detalle_descuento) {
+                if ($detalle_descuento[0]->descuento > 0) {
+                    $cobro_colegiatura = $detalle_descuento[0]->descuento;
+                } else {
+                    $cobro_colegiatura = 0;
+                }
+            } else {
+                $cobro_colegiatura = 0;
+            }
+        } else {
+            $cobro_colegiatura = 0;
+        }
 
-          $result['cobro_inicio'] =  $cobro_colegiatura;
-        
+        $result['cobro_inicio'] =  $cobro_colegiatura;
+
         if (isset($result) && !empty($result)) {
             echo json_encode($result);
         }
-
     }
     public function agregarCostoColegiatura()
     {
@@ -271,66 +358,65 @@ class EstadoCuenta extends CI_Controller {
         $idperiodo = $this->input->get('idperiodo');
         $idmes = $this->input->get('idmes');
         $costo_colegiatura = 0;
-         $detalle_niveleducativo = $this->alumno->detalleAlumnoNivelEducativo($idalumno,$idperiodo);
-                if($detalle_niveleducativo){
-                      $idniveleducativo = $detalle_niveleducativo->idnivelestudio;
-                      $detalle_descuento = $this->estadocuenta->descuentoPagosInicio($idalumno, $idperiodo, 3,$idplantel, $idniveleducativo);
-                        $detalle_alumno = $this->alumno->detalleAlumno($idalumno); 
-                      $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel,$detalle_alumno->idniveleducativo);  
-                      $recargo = 0;
+        $detalle_niveleducativo = $this->alumno->detalleAlumnoNivelEducativo($idalumno, $idperiodo);
+        if ($detalle_niveleducativo) {
+            $idniveleducativo = $detalle_niveleducativo->idnivelestudio;
+            $detalle_descuento = $this->estadocuenta->descuentoPagosInicio($idalumno, $idperiodo, 3, $idplantel, $idniveleducativo);
+            $detalle_alumno = $this->alumno->detalleAlumno($idalumno);
+            $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $detalle_alumno->idniveleducativo);
+            $recargo = 0;
+            if ($detalle_configuracion && $detalle_configuracion[0]->diaultimorecargo > 0) {
+                if ($detalle_descuento[0]->idniveleducativo == 1) {
+                    //PRIMARIA 
 
-                            if ($detalle_descuento[0]->idniveleducativo == 1) {
-                                //PRIMARIA 
-                               
-                                    $dia_actual = date('Y-m-d');
-                                    $year_actual = date('Y');
-                                    $dia_pago = date('Y-m-d', strtotime($detalle_configuracion[0]->diaultimorecargo . "-" . $idmes . "-" . $year_actual));
-                                    if ($dia_actual > $dia_pago) {
-                                        $recargo += $detalle_configuracion[0]->totalrecargo;
-                                    } else {
-                                        $recargo += 0;
-                                    }
-                                
-                            } elseif ($detalle_descuento[0]->idniveleducativo == 2) {
-                                //SECUNDARIA 
-                               
-                                    $dia_actual = date('Y-m-d');
-                                    $year_actual = date('Y');
-                                    $dia_pago = date('Y-m-d', strtotime($detalle_configuracion[0]->diaultimorecargo . "-" . $idmes . "-" . $year_actual));
-                                    if ($dia_actual > $dia_pago) {
-                                        $recargo += $detalle_configuracion[0]->totalrecargo;
-                                    } else {
-                                        $recargo += 0;
-                                    }
-                                
-                            } elseif ($detalle_descuento[0]->idniveleducativo == 3) {
-                                //PREPA 
-                                 
-                                    $dia_actual = date('Y-m-d');
-                                    $year_actual = date('Y');
-                                    $dia_pago = date('Y-m-d', strtotime($detalle_configuracion[0]->diaultimorecargo . "-" . $idmes . "-" . $year_actual));
-                                    if ($dia_actual > $dia_pago) {
-                                        $recargo += $detalle_configuracion[0]->totalrecargo;
-                                    } else {
-                                        $recargo += 0;
-                                    }
-                               
-                            } else {
-                                $recargo = 0;
-                            }
-                             $descuento_correcto = (($detalle_descuento[0]->descuento - ($detalle_descuento[0]->descuentobeca / 100 * $detalle_descuento[0]->descuento)) * 1) + $recargo;
-                            $costo_colegiatura = $descuento_correcto;
-                            }else{
-                    $costo_colegiatura = 0;
+                    $dia_actual = date('Y-m-d');
+                    $year_actual = date('Y');
+                    $dia_pago = date('Y-m-d', strtotime($detalle_configuracion[0]->diaultimorecargo . "-" . $idmes . "-" . $year_actual));
+                    if ($dia_actual > $dia_pago) {
+                        $recargo += $detalle_configuracion[0]->totalrecargo;
+                    } else {
+                        $recargo += 0;
+                    }
+                } elseif ($detalle_descuento[0]->idniveleducativo == 2) {
+                    //SECUNDARIA 
+
+                    $dia_actual = date('Y-m-d');
+                    $year_actual = date('Y');
+                    $dia_pago = date('Y-m-d', strtotime($detalle_configuracion[0]->diaultimorecargo . "-" . $idmes . "-" . $year_actual));
+                    if ($dia_actual > $dia_pago) {
+                        $recargo += $detalle_configuracion[0]->totalrecargo;
+                    } else {
+                        $recargo += 0;
+                    }
+                } elseif ($detalle_descuento[0]->idniveleducativo == 3) {
+                    //PREPA 
+
+                    $dia_actual = date('Y-m-d');
+                    $year_actual = date('Y');
+                    $dia_pago = date('Y-m-d', strtotime($detalle_configuracion[0]->diaultimorecargo . "-" . $idmes . "-" . $year_actual));
+                    if ($dia_actual > $dia_pago) {
+                        $recargo += $detalle_configuracion[0]->totalrecargo;
+                    } else {
+                        $recargo += 0;
+                    }
+                } else {
+                    $recargo = 0;
                 }
+            }
+            $descuento_correcto = (($detalle_descuento[0]->descuento - ($detalle_descuento[0]->descuentobeca / 100 * $detalle_descuento[0]->descuento)) * 1) + $recargo;
+            $costo_colegiatura = $descuento_correcto;
+        } else {
+            $costo_colegiatura = 0;
+        }
         $result['cobro_colegiatura'] =  $costo_colegiatura;
-        
+
         if (isset($result) && !empty($result)) {
             echo json_encode($result);
         }
     }
 
-    public function showAllMeses() {
+    public function showAllMeses()
+    {
         $idalumno = $this->input->get('idalumno');
         $idperiodo = $this->input->get('idperiodo');
         $detalle = $this->estadocuenta->detalleAlumno($idalumno);
@@ -341,8 +427,8 @@ class EstadoCuenta extends CI_Controller {
                 $query = $this->estadocuenta->showAllMeses($idperiodo, $idalumno);
             } else {
                 $query = $this->estadocuenta->showAllMeses($idperiodo, $idalumno);
-//CODIGO SIGUIENTE PARA MOSTRAR SOLO UN MES PARA SER COBRADO                 
-//$query = $this->estadocuenta->showAllMesesSiguiente($idperiodo, $idalumno);
+                //CODIGO SIGUIENTE PARA MOSTRAR SOLO UN MES PARA SER COBRADO                 
+                //$query = $this->estadocuenta->showAllMesesSiguiente($idperiodo, $idalumno);
             }
         } else {
             $mesinicio = $detalle_periodo->mesinicio;
@@ -351,8 +437,8 @@ class EstadoCuenta extends CI_Controller {
                 $query = $this->estadocuenta->showAllMesPeriodo($idperiodo, $idalumno, $mesinicio, $mesfin);
             } else {
                 $query = $this->estadocuenta->showAllMesPeriodo($idperiodo, $idalumno, $mesinicio, $mesfin);
-//CODIGO SIGUIENTE PARA MOSTRAR SOLO UN MES PARA SER COBRADO                       
-//$query = $this->estadocuenta->showAllSiguienteMesPeriodo($idperiodo, $idalumno, $mesinicio, $mesfin);
+                //CODIGO SIGUIENTE PARA MOSTRAR SOLO UN MES PARA SER COBRADO                       
+                //$query = $this->estadocuenta->showAllSiguienteMesPeriodo($idperiodo, $idalumno, $mesinicio, $mesfin);
             }
         }
 
@@ -364,7 +450,8 @@ class EstadoCuenta extends CI_Controller {
         }
     }
 
-    public function pagosInicio() {
+    public function pagosInicio()
+    {
         $idalumno = $this->input->get('idalumno');
         $idperiodo = $this->input->get('idperiodo');
         //$idalumno = 1;
@@ -379,59 +466,63 @@ class EstadoCuenta extends CI_Controller {
         }
     }
 
-    public function descuentoPagoInicioInscripcion() {
+    public function descuentoPagoInicioInscripcion()
+    {
         $idalumno = $this->input->get('idalumno');
         $idperiodo = $this->input->get('idperiodo');
         $idplantel = $this->session->idplantel;
-         $detalle_niveleducativo = $this->alumno->detalleAlumnoNivelEducativo($idalumno,$idperiodo);
-                if($detalle_niveleducativo){
-                      $idniveleducativo = $detalle_niveleducativo->idnivelestudio;
-        $resultado = $this->estadocuenta->descuentoPagosInicio($idalumno, $idperiodo, 1,$idplantel,$idniveleducativo);
-        if ($resultado) {
-            $result['pagoinscripcion'] = number_format($resultado[0]->beca, 2);
+        $detalle_niveleducativo = $this->alumno->detalleAlumnoNivelEducativo($idalumno, $idperiodo);
+        if ($detalle_niveleducativo) {
+            $idniveleducativo = $detalle_niveleducativo->idnivelestudio;
+            $resultado = $this->estadocuenta->descuentoPagosInicio($idalumno, $idperiodo, 1, $idplantel, $idniveleducativo);
+            if ($resultado) {
+                $result['pagoinscripcion'] = number_format($resultado[0]->beca, 2);
+            }
         }
-    }
         if (isset($result) && !empty($result)) {
             echo json_encode($result);
         }
     }
 
-    public function descuentoPagoInicioReinscripcion() {
+    public function descuentoPagoInicioReinscripcion()
+    {
         $idalumno = $this->input->get('idalumno');
         $idperiodo = $this->input->get('idperiodo');
         $idplantel = $this->session->idplantel;
-          $detalle_niveleducativo = $this->alumno->detalleAlumnoNivelEducativo($idalumno,$idperiodo);
-                if($detalle_niveleducativo){
-                      $idniveleducativo = $detalle_niveleducativo->idnivelestudio;
-        $resultado = $this->estadocuenta->descuentoPagosInicio($idalumno, $idperiodo, 2,$idplantel,$idniveleducativo);
-        //var_dump($resultado);
-        if ($resultado) {
-            $result['pagoreinscripcion'] = number_format($resultado[0]->beca, 2);
+        $detalle_niveleducativo = $this->alumno->detalleAlumnoNivelEducativo($idalumno, $idperiodo);
+        if ($detalle_niveleducativo) {
+            $idniveleducativo = $detalle_niveleducativo->idnivelestudio;
+            $resultado = $this->estadocuenta->descuentoPagosInicio($idalumno, $idperiodo, 2, $idplantel, $idniveleducativo);
+            //var_dump($resultado);
+            if ($resultado) {
+                $result['pagoreinscripcion'] = number_format($resultado[0]->beca, 2);
+            }
         }
-    }
         if (isset($result) && !empty($result)) {
             echo json_encode($result);
         }
     }
 
-    public function descuentoPagoColegiatura() {
+    public function descuentoPagoColegiatura()
+    {
         $idalumno = $this->input->get('idalumno');
         $idperiodo = $this->input->get('idperiodo');
         $idplantel = $this->session->idplantel;
-          $detalle_niveleducativo = $this->alumno->detalleAlumnoNivelEducativo($idalumno,$idperiodo);
-                if($detalle_niveleducativo){
-                      $idniveleducativo = $detalle_niveleducativo->idnivelestudio;
-        $resultado = $this->estadocuenta->descuentoPagosInicio($idalumno, $idperiodo, 3,$idplantel,$idniveleducativo);
-        if ($resultado) {
-            $result['pagocolegiatura'] = number_format($resultado[0]->beca, 2);
+        $detalle_niveleducativo = $this->alumno->detalleAlumnoNivelEducativo($idalumno, $idperiodo);
+        if ($detalle_niveleducativo) {
+            $idniveleducativo = $detalle_niveleducativo->idnivelestudio;
+            $resultado = $this->estadocuenta->descuentoPagosInicio($idalumno, $idperiodo, 3, $idplantel, $idniveleducativo);
+            if ($resultado) {
+                $result['pagocolegiatura'] = number_format($resultado[0]->beca, 2);
+            }
         }
-    }
         if (isset($result) && !empty($result)) {
             echo json_encode($result);
         }
     }
 
-    public function eliminarColegiatura() {
+    public function eliminarColegiatura()
+    {
         $config = array(
             array(
                 'field' => 'usuario',
@@ -488,7 +579,8 @@ class EstadoCuenta extends CI_Controller {
         }
     }
 
-    public function eliminarPrimerCobro() {
+    public function eliminarPrimerCobro()
+    {
         $config = array(
             array(
                 'field' => 'usuario',
@@ -545,7 +637,8 @@ class EstadoCuenta extends CI_Controller {
         }
     }
 
-    public function estadoCuenta() {
+    public function estadoCuenta()
+    {
         # code...
         $idalumno = $this->input->get('idalumno');
         $idperiodo = $this->input->get('idperiodo');
@@ -609,10 +702,11 @@ class EstadoCuenta extends CI_Controller {
             }
         }
 
-//}
+        //}
 
 
-        function compare_lastname($a, $b) {
+        function compare_lastname($a, $b)
+        {
             return strnatcmp($a['idpago'], $b['idpago']);
         }
 
@@ -621,7 +715,8 @@ class EstadoCuenta extends CI_Controller {
         echo json_encode($estadocuentap);
     }
 
-    public function addCobroColegiatura() {
+    public function addCobroColegiatura()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $config = array(
                 array(
@@ -655,35 +750,35 @@ class EstadoCuenta extends CI_Controller {
                 $idplantel = $this->session->idplantel;
                 $idalumno = trim($this->input->post('idalumno'));
                 $detalle_alumno = $this->alumno->detalleAlumno($idalumno);
-                $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel,$detalle_alumno->idniveleducativo);
+                $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $detalle_alumno->idniveleducativo);
                 $array_formapago = json_decode($this->input->post('formapago'));
                 $array_meses_a_pagar = json_decode($this->input->post('meseapagar'));
                 $idperiodo = trim($this->input->post('idperiodo'));
-                $detalle_niveleducativo = $this->alumno->detalleAlumnoNivelEducativo($idalumno,$idperiodo);
-                if($detalle_niveleducativo){
-                      $idniveleducativo = $detalle_niveleducativo->idnivelestudio;
-                if (($this->input->post('condonar')) && ($this->session->idrol == 13 || $this->session->idrol == 14)) {
-                  
-
-                    $folio = generateRandomString();
-                    $total_meses = 0;
-                    foreach ($array_meses_a_pagar as $row) {
-                        $total_meses = 1 + $total_meses;
-                    }
-                    $descuento_enviado = 0;
-                    $total_formapago = 0;
-                    foreach ($array_formapago as $row) {
-                        $descuento_enviado += $row->descuento;
-                        $total_formapago += $total_formapago;
-                    }
-
-                    $detalle_descuento = $this->estadocuenta->descuentoPagosInicio($idalumno, $idperiodo, 3,$idplantel,$idniveleducativo);
-                    if ($detalle_descuento && $detalle_descuento[0]->descuento > 0) {
-                        $descuento_correcto = $detalle_descuento[0]->descuento - ($detalle_descuento[0]->descuentobeca / 100 * $detalle_descuento[0]->descuento);
+                $detalle_niveleducativo = $this->alumno->detalleAlumnoNivelEducativo($idalumno, $idperiodo);
+                if ($detalle_niveleducativo) {
+                    $idniveleducativo = $detalle_niveleducativo->idnivelestudio;
+                    if (($this->input->post('condonar')) && ($this->session->idrol == 13 || $this->session->idrol == 14)) {
 
 
-                        //1.- OBTENER DATOS DE LA TABLA AMORTIZACION Y PONER COMO PAGADO
-                        /* $data_add_amortizacion = array(
+                        $folio = generateRandomString();
+                        $total_meses = 0;
+                        foreach ($array_meses_a_pagar as $row) {
+                            $total_meses = 1 + $total_meses;
+                        }
+                        $descuento_enviado = 0;
+                        $total_formapago = 0;
+                        foreach ($array_formapago as $row) {
+                            $descuento_enviado += $row->descuento;
+                            $total_formapago += $total_formapago;
+                        }
+
+                        $detalle_descuento = $this->estadocuenta->descuentoPagosInicio($idalumno, $idperiodo, 3, $idplantel, $idniveleducativo);
+                        if ($detalle_descuento && $detalle_descuento[0]->descuento > 0) {
+                            $descuento_correcto = $detalle_descuento[0]->descuento - ($detalle_descuento[0]->descuentobeca / 100 * $detalle_descuento[0]->descuento);
+
+
+                            //1.- OBTENER DATOS DE LA TABLA AMORTIZACION Y PONER COMO PAGADO
+                            /* $data_add_amortizacion = array(
                           'idalumno'=>$idalumno,
                           'idperiodo'=>$idperiodo,
                           'idperiodopago'=>$idmes,
@@ -693,178 +788,15 @@ class EstadoCuenta extends CI_Controller {
                           'fecharegistro' => date('Y-m-d H:i:s')
                           );
                           $idamortizacion = $this->estadocuenta->addAmortizacion($data_add_amortizacion); */
-                        if ($total_formapago == 0 && $descuento_enviado == 0) {
-                            $data_estadocuenta = array(
-                                'folio' => $folio,
-                                'idperiodo' => $idperiodo,
-                                'idalumno' => $idalumno,
-                                'descuento' => $descuento_enviado,
-                                'totalrecargo' => 0,
-                                'recargo' => 0,
-                                'condonar' => 1,
-                                'idopenpay' => '',
-                                'idorden' => '',
-                                'online' => 0,
-                                'pagado' => 1,
-                                'fechapago' => date('Y-m-d H:i:s'),
-                                'eliminado' => 0,
-                                'idusuario' => $this->session->user_id,
-                                'fecharegistro' => date('Y-m-d H:i:s')
-                            );
-
-                            $idestadocuenta = $this->estadocuenta->addEstadoCuenta($data_estadocuenta);
-                            foreach ($array_formapago as $row) {
-
-                                $idformapago = $row->idformapago;
-                                $autorizacion = $row->autorizacion;
-                                $abono = $row->descuento;
-                                if ($idformapago == 1) {
-                                    //FORMA DE PAGO EN EFECTIVO 
-
-                                    $data_detallepago = array(
-                                        'idestadocuenta' => $idestadocuenta,
-                                        'idformapago' => $idformapago,
-                                        'descuento' => $abono,
-                                        'autorizacion' => '',
-                                        'fechapago' => date('Y-m-d H:i:s'),
-                                        'idusuario' => $this->session->user_id,
-                                        'fecharegistro' => date('Y-m-d H:i:s')
-                                    );
-                                    $this->estadocuenta->addDetalleEstadoCuenta($data_detallepago);
-                                } elseif ($idformapago == 2 && !empty($autorizacion)) {
-                                    //FORMA DE PAGO EN TARJETA   
-                                    $data_detallepago = array(
-                                        'idestadocuenta' => $idestadocuenta,
-                                        'idmes' => $row,
-                                        'idformapago' => $idformapago,
-                                        'descuento' => $abono,
-                                        'autorizacion' => $autorizacion,
-                                        'fechapago' => date('Y-m-d H:i:s'),
-                                        'idusuario' => $this->session->user_id,
-                                        'fecharegistro' => date('Y-m-d H:i:s')
-                                    );
-                                    $this->estadocuenta->addDetalleEstadoCuenta($data_detallepago);
-                                } else {
-                                    $result['error'] = true;
-                                    $result['msg'] = array(
-                                        'msgerror' => 'Es necesario registrar el Número Autorización.'
-                                    );
-                                }
-                            }
-
-                            foreach ($array_meses_a_pagar as $row) {
-                                //AGREGAR A DETALLE ESTADO CUENTA
-                                $data = array(
-                                    'idestadocuenta' => $idestadocuenta,
-                                    'idmes' => $row,
-                                    'idusuario' => $this->session->user_id,
-                                    'fecharegistro' => date('Y-m-d H:i:s')
-                                );
-                                $this->estadocuenta->addEstadoCuentaDetalle($data);
-                            }
-                        } else {
-                            $result['error'] = true;
-                            $result['msg'] = array(
-                                'msgerror' => 'Debe de ser solo una forma de pago y el total a pagar igual 0.'
-                            );
-                        }
-                    } else {
-                        $result['error'] = true;
-                        $result['msg'] = array(
-                            'msgerror' => 'No esta registrado el costo para cobrar.'
-                        );
-                    }
-                } else {
-
-                    //PAGOS NORMALES
-
-                    $total_meses = 0;
-                    foreach ($array_meses_a_pagar as $row) {
-                        $total_meses = 1 + $total_meses;
-                    }
-
-                    // $validar = $this->estadocuenta->validarAddColegiatura($idalumno,$idperiodo,$idmes);
-                    $folio = generateRandomString();
-                    if ($total_meses > 0) {
-                        $descuento_enviado = 0;
-                        foreach ($array_formapago as $row) {
-                            $descuento_enviado += $row->descuento;
-                        }
-
-                        $detalle_descuento = $this->estadocuenta->descuentoPagosInicio($idalumno, $idperiodo, 3,$idplantel, $idniveleducativo);
-                       
-                      
-                                if ($detalle_descuento && $detalle_descuento[0]->descuento > 0) {
-                            $recargo = 0;
-
-                            if ($detalle_descuento[0]->idniveleducativo == 1) {
-                                //PRIMARIA 
-                                foreach ($array_meses_a_pagar as $row) {
-                                    $dia_actual = date('Y-m-d');
-                                    $year_actual = date('Y');
-                                    $dia_pago = date('Y-m-d', strtotime($detalle_configuracion[0]->diaultimorecargo . "-" . $row . "-" . $year_actual));
-                                    if ($dia_actual > $dia_pago) {
-                                        $recargo += $detalle_configuracion[0]->totalrecargo;
-                                    } else {
-                                        $recargo += 0;
-                                    }
-                                }
-                            } elseif ($detalle_descuento[0]->idniveleducativo == 2) {
-                                //SECUNDARIA 
-                                foreach ($array_meses_a_pagar as $row) {
-                                    $dia_actual = date('Y-m-d');
-                                    $year_actual = date('Y');
-                                    $dia_pago = date('Y-m-d', strtotime($detalle_configuracion[0]->diaultimorecargo . "-" . $row . "-" . $year_actual));
-                                    if ($dia_actual > $dia_pago) {
-                                        $recargo += $detalle_configuracion[0]->totalrecargo;
-                                    } else {
-                                        $recargo += 0;
-                                    }
-                                }
-                            } elseif ($detalle_descuento[0]->idniveleducativo == 3) {
-                                //PREPA 
-                                foreach ($array_meses_a_pagar as $row) {
-                                    $dia_actual = date('Y-m-d');
-                                    $year_actual = date('Y');
-                                    $dia_pago = date('Y-m-d', strtotime($detalle_configuracion[0]->diaultimorecargo . "-" . $row . "-" . $year_actual));
-                                    if ($dia_actual > $dia_pago) {
-                                        $recargo += $detalle_configuracion[0]->totalrecargo;
-                                    } else {
-                                        $recargo += 0;
-                                    }
-                                }
-                            } else {
-                                $recargo = 0;
-                            }
-// (co.descuento - (b.descuento / 100 * co.descuento)) AS beca
-                          
-                            $descuento_correcto = (($detalle_descuento[0]->descuento - ($detalle_descuento[0]->descuentobeca / 100 * $detalle_descuento[0]->descuento)) * $total_meses) + $recargo;
-                            if ($descuento_enviado == $descuento_correcto) {
-
-                                //1.- OBTENER DATOS DE LA TABLA AMORTIZACION Y PONER COMO PAGADO
-                                /* $data_add_amortizacion = array(
-                                  'idalumno'=>$idalumno,
-                                  'idperiodo'=>$idperiodo,
-                                  'idperiodopago'=>$idmes,
-                                  'descuento'=>$descuento_enviado,
-                                  'pagado'=>1,
-                                  'idusuario' => $this->session->user_id,
-                                  'fecharegistro' => date('Y-m-d H:i:s')
-                                  );
-                                  $idamortizacion = $this->estadocuenta->addAmortizacion($data_add_amortizacion); */
-
-                                $si_recargo = 0;
-                                if ($recargo > 0) {
-                                    $si_recargo += 1;
-                                }
+                            if ($total_formapago == 0 && $descuento_enviado == 0) {
                                 $data_estadocuenta = array(
                                     'folio' => $folio,
                                     'idperiodo' => $idperiodo,
                                     'idalumno' => $idalumno,
                                     'descuento' => $descuento_enviado,
-                                    'totalrecargo' => $recargo,
-                                    'recargo' => $si_recargo,
-                                    'condonar' => 0,
+                                    'totalrecargo' => 0,
+                                    'recargo' => 0,
+                                    'condonar' => 1,
                                     'idopenpay' => '',
                                     'idorden' => '',
                                     'online' => 0,
@@ -895,10 +827,10 @@ class EstadoCuenta extends CI_Controller {
                                         );
                                         $this->estadocuenta->addDetalleEstadoCuenta($data_detallepago);
                                     } elseif ($idformapago == 2 && !empty($autorizacion)) {
-                                        //FORMA DE PAGO EN TARJETA  
-
+                                        //FORMA DE PAGO EN TARJETA   
                                         $data_detallepago = array(
                                             'idestadocuenta' => $idestadocuenta,
+                                            'idmes' => $row,
                                             'idformapago' => $idformapago,
                                             'descuento' => $abono,
                                             'autorizacion' => $autorizacion,
@@ -914,6 +846,7 @@ class EstadoCuenta extends CI_Controller {
                                         );
                                     }
                                 }
+
                                 foreach ($array_meses_a_pagar as $row) {
                                     //AGREGAR A DETALLE ESTADO CUENTA
                                     $data = array(
@@ -927,7 +860,7 @@ class EstadoCuenta extends CI_Controller {
                             } else {
                                 $result['error'] = true;
                                 $result['msg'] = array(
-                                    'msgerror' => 'El pago debe de ser de: ' . number_format($descuento_correcto, 2)
+                                    'msgerror' => 'Debe de ser solo una forma de pago y el total a pagar igual 0.'
                                 );
                             }
                         } else {
@@ -937,20 +870,180 @@ class EstadoCuenta extends CI_Controller {
                             );
                         }
                     } else {
-                        $result['error'] = true;
-                        $result['msg'] = array(
-                            'msgerror' => 'Solo debe de marcar un Mes.'
-                        );
+
+                        //PAGOS NORMALES
+
+                        $total_meses = 0;
+                        foreach ($array_meses_a_pagar as $row) {
+                            $total_meses = 1 + $total_meses;
+                        }
+
+                        // $validar = $this->estadocuenta->validarAddColegiatura($idalumno,$idperiodo,$idmes);
+                        $folio = generateRandomString();
+                        if ($total_meses > 0) {
+                            $descuento_enviado = 0;
+                            foreach ($array_formapago as $row) {
+                                $descuento_enviado += $row->descuento;
+                            }
+
+                            $detalle_descuento = $this->estadocuenta->descuentoPagosInicio($idalumno, $idperiodo, 3, $idplantel, $idniveleducativo);
+
+
+                            if ($detalle_descuento && $detalle_descuento[0]->descuento > 0) {
+                                $recargo = 0;
+
+                                if ($detalle_descuento[0]->idniveleducativo == 1) {
+                                    //PRIMARIA 
+                                    foreach ($array_meses_a_pagar as $row) {
+                                        $dia_actual = date('Y-m-d');
+                                        $year_actual = date('Y');
+                                        $dia_pago = date('Y-m-d', strtotime($detalle_configuracion[0]->diaultimorecargo . "-" . $row . "-" . $year_actual));
+                                        if ($dia_actual > $dia_pago) {
+                                            $recargo += $detalle_configuracion[0]->totalrecargo;
+                                        } else {
+                                            $recargo += 0;
+                                        }
+                                    }
+                                } elseif ($detalle_descuento[0]->idniveleducativo == 2) {
+                                    //SECUNDARIA 
+                                    foreach ($array_meses_a_pagar as $row) {
+                                        $dia_actual = date('Y-m-d');
+                                        $year_actual = date('Y');
+                                        $dia_pago = date('Y-m-d', strtotime($detalle_configuracion[0]->diaultimorecargo . "-" . $row . "-" . $year_actual));
+                                        if ($dia_actual > $dia_pago) {
+                                            $recargo += $detalle_configuracion[0]->totalrecargo;
+                                        } else {
+                                            $recargo += 0;
+                                        }
+                                    }
+                                } elseif ($detalle_descuento[0]->idniveleducativo == 3) {
+                                    //PREPA 
+                                    foreach ($array_meses_a_pagar as $row) {
+                                        $dia_actual = date('Y-m-d');
+                                        $year_actual = date('Y');
+                                        $dia_pago = date('Y-m-d', strtotime($detalle_configuracion[0]->diaultimorecargo . "-" . $row . "-" . $year_actual));
+                                        if ($dia_actual > $dia_pago) {
+                                            $recargo += $detalle_configuracion[0]->totalrecargo;
+                                        } else {
+                                            $recargo += 0;
+                                        }
+                                    }
+                                } else {
+                                    $recargo = 0;
+                                }
+                                // (co.descuento - (b.descuento / 100 * co.descuento)) AS beca
+
+                                $descuento_correcto = (($detalle_descuento[0]->descuento - ($detalle_descuento[0]->descuentobeca / 100 * $detalle_descuento[0]->descuento)) * $total_meses) + $recargo;
+                                if ($descuento_enviado == $descuento_correcto) {
+
+                                    //1.- OBTENER DATOS DE LA TABLA AMORTIZACION Y PONER COMO PAGADO
+                                    /* $data_add_amortizacion = array(
+                                  'idalumno'=>$idalumno,
+                                  'idperiodo'=>$idperiodo,
+                                  'idperiodopago'=>$idmes,
+                                  'descuento'=>$descuento_enviado,
+                                  'pagado'=>1,
+                                  'idusuario' => $this->session->user_id,
+                                  'fecharegistro' => date('Y-m-d H:i:s')
+                                  );
+                                  $idamortizacion = $this->estadocuenta->addAmortizacion($data_add_amortizacion); */
+
+                                    $si_recargo = 0;
+                                    if ($recargo > 0) {
+                                        $si_recargo += 1;
+                                    }
+                                    $data_estadocuenta = array(
+                                        'folio' => $folio,
+                                        'idperiodo' => $idperiodo,
+                                        'idalumno' => $idalumno,
+                                        'descuento' => $descuento_enviado,
+                                        'totalrecargo' => $recargo,
+                                        'recargo' => $si_recargo,
+                                        'condonar' => 0,
+                                        'idopenpay' => '',
+                                        'idorden' => '',
+                                        'online' => 0,
+                                        'pagado' => 1,
+                                        'fechapago' => date('Y-m-d H:i:s'),
+                                        'eliminado' => 0,
+                                        'idusuario' => $this->session->user_id,
+                                        'fecharegistro' => date('Y-m-d H:i:s')
+                                    );
+
+                                    $idestadocuenta = $this->estadocuenta->addEstadoCuenta($data_estadocuenta);
+                                    foreach ($array_formapago as $row) {
+
+                                        $idformapago = $row->idformapago;
+                                        $autorizacion = $row->autorizacion;
+                                        $abono = $row->descuento;
+                                        if ($idformapago == 1) {
+                                            //FORMA DE PAGO EN EFECTIVO 
+
+                                            $data_detallepago = array(
+                                                'idestadocuenta' => $idestadocuenta,
+                                                'idformapago' => $idformapago,
+                                                'descuento' => $abono,
+                                                'autorizacion' => '',
+                                                'fechapago' => date('Y-m-d H:i:s'),
+                                                'idusuario' => $this->session->user_id,
+                                                'fecharegistro' => date('Y-m-d H:i:s')
+                                            );
+                                            $this->estadocuenta->addDetalleEstadoCuenta($data_detallepago);
+                                        } elseif ($idformapago == 2 && !empty($autorizacion)) {
+                                            //FORMA DE PAGO EN TARJETA  
+
+                                            $data_detallepago = array(
+                                                'idestadocuenta' => $idestadocuenta,
+                                                'idformapago' => $idformapago,
+                                                'descuento' => $abono,
+                                                'autorizacion' => $autorizacion,
+                                                'fechapago' => date('Y-m-d H:i:s'),
+                                                'idusuario' => $this->session->user_id,
+                                                'fecharegistro' => date('Y-m-d H:i:s')
+                                            );
+                                            $this->estadocuenta->addDetalleEstadoCuenta($data_detallepago);
+                                        } else {
+                                            $result['error'] = true;
+                                            $result['msg'] = array(
+                                                'msgerror' => 'Es necesario registrar el Número Autorización.'
+                                            );
+                                        }
+                                    }
+                                    foreach ($array_meses_a_pagar as $row) {
+                                        //AGREGAR A DETALLE ESTADO CUENTA
+                                        $data = array(
+                                            'idestadocuenta' => $idestadocuenta,
+                                            'idmes' => $row,
+                                            'idusuario' => $this->session->user_id,
+                                            'fecharegistro' => date('Y-m-d H:i:s')
+                                        );
+                                        $this->estadocuenta->addEstadoCuentaDetalle($data);
+                                    }
+                                } else {
+                                    $result['error'] = true;
+                                    $result['msg'] = array(
+                                        'msgerror' => 'El pago debe de ser de: ' . number_format($descuento_correcto, 2)
+                                    );
+                                }
+                            } else {
+                                $result['error'] = true;
+                                $result['msg'] = array(
+                                    'msgerror' => 'No esta registrado el costo para cobrar.'
+                                );
+                            }
+                        } else {
+                            $result['error'] = true;
+                            $result['msg'] = array(
+                                'msgerror' => 'Solo debe de marcar un Mes.'
+                            );
+                        }
                     }
+                } else {
+                    $result['error'] = true;
+                    $result['msg'] = array(
+                        'msgerror' => 'No esta registrado el costo para cobrar.'
+                    );
                 }
-
-                 } else {
-                        $result['error'] = true;
-                        $result['msg'] = array(
-                            'msgerror' => 'No esta registrado el costo para cobrar.'
-                        );
-                    }
-
             }
         } else {
             $result['error'] = true;
@@ -963,7 +1056,8 @@ class EstadoCuenta extends CI_Controller {
         }
     }
 
-    public function addCobro() {
+    public function addCobro()
+    {
         $config = array(
             array(
                 'field' => 'idformapago',
@@ -1080,7 +1174,8 @@ class EstadoCuenta extends CI_Controller {
         }
     }
 
-    public function addCobroInicio() {
+    public function addCobroInicio()
+    {
         if (Permission::grantValidar(uri_string()) == 1) {
             $config = array(
                 array(
@@ -1109,107 +1204,110 @@ class EstadoCuenta extends CI_Controller {
                     'idtipopagocol' => form_error('idtipopagocol')
                 );
             } else {
-                    $idplantel = $this->session->idplantel;
-                     $idperiodo = trim($this->input->post('idperiodobuscado'));
-                    $idalumno = trim($this->input->post('idalumno'));
-                    $idtipopagocol = trim($this->input->post('idtipopagocol'));
-                $detalle_niveleducativo = $this->alumno->detalleAlumnoNivelEducativo($idalumno,$idperiodo);
-                if($detalle_niveleducativo){
-                      $idniveleducativo = $detalle_niveleducativo->idnivelestudio;
-                
-                if (($this->input->post('condonar')) && ($this->session->idrol == 13 || $this->session->idrol == 14)) {
+                $idplantel = $this->session->idplantel;
+                $idperiodo = trim($this->input->post('idperiodobuscado'));
+                $idalumno = trim($this->input->post('idalumno'));
+                $idtipopagocol = trim($this->input->post('idtipopagocol'));
+                $detalle_niveleducativo = $this->alumno->detalleAlumnoNivelEducativo($idalumno, $idperiodo);
+                if ($detalle_niveleducativo) {
+                    $idniveleducativo = $detalle_niveleducativo->idnivelestudio;
 
-                    //CONDONAR
-                    $array_formapago = json_decode($this->input->post('formapago'));
-                    $descuento_enviado = 0;
-                    $total_formapago = 0;
-                    foreach ($array_formapago as $row) {
-                        $descuento_enviado += $row->descuento;
-                        $total_formapago += $total_formapago;
-                    }
-                   
-                    $detalle_descuento = $this->estadocuenta->descuentoPagosInicio($idalumno, $idperiodo, $idtipopagocol,$idplantel,$idniveleducativo);
-                    if ($detalle_descuento && $detalle_descuento[0]->descuento > 0) {
-                        // $descuento_correcto = $detalle_descuento[0]->descuento - ($detalle_descuento[0]->descuentobeca / 100 * $detalle_descuento[0]->descuento);
-                        if ($total_formapago == 0 && $descuento_enviado == 0) {
-                            $folio = generateRandomString();
-                            $data_estadocuenta = array(
-                                'folio' => $folio,
-                                'idperiodo' => $idperiodo,
-                                'idalumno' => $idalumno,
-                                //'idformapago'=>$idformapago,
-                                'idtipopagocol' => $idtipopagocol,
-                                'descuento' => $descuento_enviado,
-                                'totalrecargo' => 0,
-                                'recargo' => 0,
-                                'condonar' => 1,
-                                //'autorizacion'=>'',
-                                'online' => 0,
-                                'pagado' => 1,
-                                'fechapago' => date('Y-m-d H:i:s'),
-                                'idusuario' => $this->session->user_id,
-                                'fecharegistro' => date('Y-m-d H:i:s')
-                            );
+                    if (($this->input->post('condonar')) && ($this->session->idrol == 13 || $this->session->idrol == 14)) {
 
-                            $idestadocuenta = $this->estadocuenta->addPagoInicio($data_estadocuenta);
+                        //CONDONAR
+                        $array_formapago = json_decode($this->input->post('formapago'));
+                        $descuento_enviado = 0;
+                        $total_formapago = 0;
+                        foreach ($array_formapago as $row) {
+                            $descuento_enviado += $row->descuento;
+                            $total_formapago += $total_formapago;
+                        }
 
-                            foreach ($array_formapago as $row) {
-                                $idformapago = $row->idformapago;
-                                $autorizacion = $row->autorizacion;
-                                $descuento = $row->descuento;
-                                if ($idformapago == 1) {
-                                    //EFECTIVO FORMA PAGO  
+                        $detalle_descuento = $this->estadocuenta->descuentoPagosInicio($idalumno, $idperiodo, $idtipopagocol, $idplantel, $idniveleducativo);
+                        if ($detalle_descuento && $detalle_descuento[0]->descuento > 0) {
+                            // $descuento_correcto = $detalle_descuento[0]->descuento - ($detalle_descuento[0]->descuentobeca / 100 * $detalle_descuento[0]->descuento);
+                            if ($total_formapago == 0 && $descuento_enviado == 0) {
+                                $folio = generateRandomString();
+                                $data_estadocuenta = array(
+                                    'folio' => $folio,
+                                    'idperiodo' => $idperiodo,
+                                    'idalumno' => $idalumno,
+                                    //'idformapago'=>$idformapago,
+                                    'idtipopagocol' => $idtipopagocol,
+                                    'descuento' => $descuento_enviado,
+                                    'totalrecargo' => 0,
+                                    'recargo' => 0,
+                                    'condonar' => 1,
+                                    //'autorizacion'=>'',
+                                    'online' => 0,
+                                    'pagado' => 1,
+                                    'fechapago' => date('Y-m-d H:i:s'),
+                                    'idusuario' => $this->session->user_id,
+                                    'fecharegistro' => date('Y-m-d H:i:s')
+                                );
 
-                                    $data_detalle = array(
-                                        'idpago' => $idestadocuenta,
-                                        'idformapago' => $idformapago,
-                                        'autorizacion' => '',
-                                        'descuento' => $descuento,
-                                        'idusuario' => $this->session->user_id,
-                                        'fecharegistro' => date('Y-m-d H:i:s')
-                                    );
-                                    $this->estadocuenta->addDetallePagoInicio($data_detalle);
-                                } elseif ($idformapago == 2 && !empty($autorizacion)) {
-                                    //TARJETA 
+                                $idestadocuenta = $this->estadocuenta->addPagoInicio($data_estadocuenta);
 
-                                    $data_detalle = array(
-                                        'idpago' => $idestadocuenta,
-                                        'idformapago' => $idformapago,
-                                        'autorizacion' => $autorizacion,
-                                        'descuento' => $descuento,
-                                        'idusuario' => $this->session->user_id,
-                                        'fecharegistro' => date('Y-m-d H:i:s')
-                                    );
-                                    $this->estadocuenta->addDetallePagoInicio($data_detalle);
-                                } else {
-                                    $result['error'] = true;
-                                    $result['msg'] = array(
-                                        'msgerror' => 'Es necesario registrar el Número Autorización.'
-                                    );
+                                foreach ($array_formapago as $row) {
+                                    $idformapago = $row->idformapago;
+                                    $autorizacion = $row->autorizacion;
+                                    $descuento = $row->descuento;
+                                    if ($idformapago == 1) {
+                                        //EFECTIVO FORMA PAGO  
+
+                                        $data_detalle = array(
+                                            'idpago' => $idestadocuenta,
+                                            'idformapago' => $idformapago,
+                                            'autorizacion' => '',
+                                            'descuento' => $descuento,
+                                            'idusuario' => $this->session->user_id,
+                                            'fecharegistro' => date('Y-m-d H:i:s')
+                                        );
+                                        $this->estadocuenta->addDetallePagoInicio($data_detalle);
+                                    } elseif ($idformapago == 2 && !empty($autorizacion)) {
+                                        //TARJETA 
+
+                                        $data_detalle = array(
+                                            'idpago' => $idestadocuenta,
+                                            'idformapago' => $idformapago,
+                                            'autorizacion' => $autorizacion,
+                                            'descuento' => $descuento,
+                                            'idusuario' => $this->session->user_id,
+                                            'fecharegistro' => date('Y-m-d H:i:s')
+                                        );
+                                        $this->estadocuenta->addDetallePagoInicio($data_detalle);
+                                    } else {
+                                        $result['error'] = true;
+                                        $result['msg'] = array(
+                                            'msgerror' => 'Es necesario registrar el Número Autorización.'
+                                        );
+                                    }
                                 }
+                            } else {
+                                $result['error'] = true;
+                                $result['msg'] = array(
+                                    'msgerror' => 'Debe de ser solo una forma de pago y el total a pagar igual 0.'
+                                );
                             }
                         } else {
                             $result['error'] = true;
                             $result['msg'] = array(
-                                'msgerror' => 'Debe de ser solo una forma de pago y el total a pagar igual 0.'
+                                'msgerror' => 'No esta registrado el costo para cobrar.'
                             );
                         }
                     } else {
-                        $result['error'] = true;
-                        $result['msg'] = array(
-                            'msgerror' => 'No esta registrado el costo para cobrar.'
-                        );
-                    }
-                } else {
-                    //COBRO NORMAL
-                    $array_formapago = json_decode($this->input->post('formapago'));
-                    $descuento_enviado = 0;
-                    foreach ($array_formapago as $row) {
-                        $descuento_enviado += $row->descuento;
-                    }
-                    $detalle_descuento = $this->estadocuenta->descuentoPagosInicio($idalumno, $idperiodo, $idtipopagocol,$idplantel,$idniveleducativo);
-                    if ($detalle_descuento && $detalle_descuento[0]->descuento > 0) {
-                        $descuento_correcto = $detalle_descuento[0]->descuento - ($detalle_descuento[0]->descuentobeca / 100 * $detalle_descuento[0]->descuento);
+                        //COBRO NORMAL
+                        $array_formapago = json_decode($this->input->post('formapago'));
+                        $descuento_enviado = 0;
+                        $descuento_correcto = 0;
+                        foreach ($array_formapago as $row) {
+                            $descuento_enviado += $row->descuento;
+                            $detalle_descuento = $this->estadocuenta->descuentoPagosInicio($idalumno, $idperiodo, $row->idconcepto, $idplantel, $idniveleducativo);
+                            $descuento_correcto = $detalle_descuento[0]->descuento - ($detalle_descuento[0]->descuentobeca / 100 * $detalle_descuento[0]->descuento);
+                        }
+                        //$detalle_descuento = $this->estadocuenta->descuentoPagosInicio($idalumno, $idperiodo, $idtipopagocol, $idplantel, $idniveleducativo);
+                        //if ($detalle_descuento && $detalle_descuento[0]->descuento > 0) {
+                        //  $descuento_correcto = $detalle_descuento[0]->descuento - ($detalle_descuento[0]->descuentobeca / 100 * $detalle_descuento[0]->descuento);
                         if ($descuento_enviado == $descuento_correcto) {
                             $folio = generateRandomString();
                             $data_estadocuenta = array(
@@ -1217,7 +1315,7 @@ class EstadoCuenta extends CI_Controller {
                                 'idperiodo' => $idperiodo,
                                 'idalumno' => $idalumno,
                                 //'idformapago'=>$idformapago,
-                                'idtipopagocol' => $idtipopagocol,
+                                //'idtipopagocol' => $idtipopagocol,
                                 'descuento' => $descuento_enviado,
                                 //'autorizacion'=>'',
                                 'online' => 0,
@@ -1238,6 +1336,7 @@ class EstadoCuenta extends CI_Controller {
 
                                     $data_detalle = array(
                                         'idpago' => $idestadocuenta,
+                                        'idconcepto' => $row->idconcepto,
                                         'idformapago' => $idformapago,
                                         'autorizacion' => '',
                                         'descuento' => $descuento,
@@ -1250,6 +1349,7 @@ class EstadoCuenta extends CI_Controller {
 
                                     $data_detalle = array(
                                         'idpago' => $idestadocuenta,
+                                        'idconcepto' => $row->idconcepto,
                                         'idformapago' => $idformapago,
                                         'autorizacion' => $autorizacion,
                                         'descuento' => $descuento,
@@ -1270,20 +1370,19 @@ class EstadoCuenta extends CI_Controller {
                                 'msgerror' => 'El pago debe de ser de: ' . number_format($descuento_correcto, 2)
                             );
                         }
-                    } else {
-                        $result['error'] = true;
-                        $result['msg'] = array(
-                            'msgerror' => 'No esta registrado el costo para cobrar.'
-                        );
+                        /*} else {
+                            $result['error'] = true;
+                            $result['msg'] = array(
+                                'msgerror' => 'No esta registrado el costo para cobrar.'
+                            );
+                        }*/
                     }
-                }
                 } else {
-                        $result['error'] = true;
-                        $result['msg'] = array(
-                            'msgerror' => 'No esta registrado el costo para cobrar.'
-                        );
-                    }
-
+                    $result['error'] = true;
+                    $result['msg'] = array(
+                        'msgerror' => 'No esta registrado el costo para cobrar.'
+                    );
+                }
             }
         } else {
             $result['error'] = true;
@@ -1295,5 +1394,4 @@ class EstadoCuenta extends CI_Controller {
             echo json_encode($result);
         }
     }
-
 }
