@@ -46,6 +46,7 @@ class Tarea_model extends CI_Model
         if (isset($idhorariodetalle) && !empty($idhorariodetalle)) {
             $this->db->where('t.idhorariodetalle', $idhorariodetalle);
         }
+        $this->db->order_by('t.fecharegistro DESC');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();
@@ -313,6 +314,7 @@ FROM
             1 AS opcion,
             hd.idmateria,
            COALESCE( (SELECT COUNT(dt.idalumno) FROM tbldetalle_tarea dt WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea),0) AS estatustarea,
+           a.idalumnoestatus,
   COALESCE( (SELECT ( SUM(dt.calificacion) / COUNT(dt.idalumno)) FROM tbldetalle_tarea dt WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea),0) AS calificacion
             
     FROM
@@ -325,6 +327,7 @@ FROM
     INNER JOIN tblperiodo p ON p.idperiodo = h.idperiodo
     WHERE
         p.idperiodo = ag.idperiodo
+        AND  a.idalumnoestatus in (1,2)
             AND (h.activo = 1 OR p.activo = 1)
             AND ag.activo = 1
             AND h.idhorario = $idhorario";
@@ -352,6 +355,7 @@ WHERE
             0 AS opcion,
             hd.idmateria,
             COALESCE( (SELECT COUNT(dt.idalumno) FROM tbldetalle_tarea dt WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea),0) AS estatustarea,
+            a.idalumnoestatus,
  COALESCE( (SELECT ( SUM(dt.calificacion) / COUNT(dt.idalumno)) FROM tbldetalle_tarea dt WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea),0) AS calificacion
     FROM
         tblalumno a
@@ -364,12 +368,13 @@ WHERE
     INNER JOIN tblnivelestudio ne ON ne.idnivelestudio = g.idnivelestudio
     INNER JOIN tblperiodo p ON p.idperiodo = h.idperiodo
     WHERE
-        (h.activo = 1 OR p.activo = 1)";
+        (h.activo = 1 OR p.activo = 1)
+        AND  a.idalumnoestatus in (1,2) ";
         if (isset($idprofesormateria) && !empty($idprofesormateria)) {
             $sql .= " AND dr.idprofesormateria = $idprofesormateria";
         }
         $sql .= " AND mr.estatus = 1  AND dr.idhorario = $idhorario GROUP BY ag.idalumno) alumnos
-            ORDER BY apellidop ASC";
+          ORDER BY apellidop, apellidom ASC";
         $query = $this->db->query($sql);
 
         if ($query->num_rows() > 0) {
@@ -392,6 +397,7 @@ SELECT
     nombregrupo,
     opcion,
     estatustarea,
+    idalumnoestatus,
 FORMAT(calificacion,1) AS calificacion
 FROM
     (SELECT 
@@ -405,6 +411,7 @@ FROM
             1 AS opcion,
             hd.idmateria,
            COALESCE( (SELECT COUNT(dt.idalumno) FROM tbldetalle_tarea dt WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea),0) AS estatustarea,
+           a.idalumnoestatus,
           COALESCE( (SELECT ( SUM(dt.calificacion) / COUNT(dt.idalumno)) FROM tbldetalle_tarea dt WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea),0) AS calificacion
             
     FROM
@@ -420,7 +427,8 @@ FROM
 
     WHERE
         p.idperiodo = ag.idperiodo
-        AND m.idclasificacionmateria NOT IN (3)   
+        AND m.idclasificacionmateria NOT IN (3)  
+        
         AND (h.activo = 1 OR p.activo = 1)
             AND ag.activo = 1
             AND h.idhorario = $idhorario";
@@ -451,6 +459,7 @@ WHERE
             1 AS opcion,
             hd.idmateria,
            COALESCE( (SELECT COUNT(dt.idalumno) FROM tbldetalle_tarea dt WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea),0) AS estatustarea,
+           a.idalumnoestatus,
           COALESCE( (SELECT ( SUM(dt.calificacion) / COUNT(dt.idalumno)) FROM tbldetalle_tarea dt WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea),0) AS calificacion
             
     FROM
@@ -498,6 +507,7 @@ WHERE
             0 AS opcion,
             hd.idmateria,
             COALESCE( (SELECT COUNT(dt.idalumno) FROM tbldetalle_tarea dt WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea),0) AS estatustarea,
+            a.idalumnoestatus,
  COALESCE( (SELECT ( SUM(dt.calificacion) / COUNT(dt.idalumno)) FROM tbldetalle_tarea dt WHERE dt.idalumno = a.idalumno AND dt.idtarea = $idtarea),0) AS calificacion
     FROM
         tblalumno a
@@ -514,8 +524,8 @@ WHERE
         if (isset($idprofesormateria) && !empty($idprofesormateria)) {
             $sql .= " AND dr.idprofesormateria = $idprofesormateria";
         }
-        $sql .= " AND mr.estatus = 1  AND dr.idhorario = $idhorario GROUP BY ag.idalumno) alumnos GROUP BY idalumno
-            ORDER BY apellidop ASC";
+        $sql .= " AND mr.estatus = 1  AND dr.idhorario = $idhorario GROUP BY ag.idalumno) alumnos WHERE   idalumnoestatus IN (1,2) GROUP BY idalumno
+            ORDER BY apellidop,apellidom ASC";
         $query = $this->db->query($sql);
 
         if ($query->num_rows() > 0) {
@@ -648,6 +658,7 @@ WHERE
             $this->db->where('t.fechaentrega BETWEEN "' . $fechainicio . '" and "' . $fechafin . '"');
         }
         $this->db->like('concat(' . $field . ')', $match);
+        $this->db->order_by('t.fecharegistro DESC');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();

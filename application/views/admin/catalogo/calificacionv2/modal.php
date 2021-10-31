@@ -29,7 +29,7 @@
                                         <th></th>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="row in calificaciones" v-if="row.mostrar == 'SI' && row.calificacion != '0.0' && row.totalcalificado != '0' ">
+                                        <tr v-for="row in calificaciones" v-if="row.mostrar == 'SI' && row.calificacion != 'null' && row.totalcalificado != 0 ">
                                             <div>
                                                 <td>
                                                     <span v-if="row.mostrar_calificar == 'NO'">
@@ -85,6 +85,8 @@
                     <div class="col-md-12 col-sm-12 col-xs-12 " align="right">
                         <button type="button" class="btn btn-danger waves-effect waves-black" @click="clearAll"> <i class="fa fa-times"></i> Cancelar</button>
                         <a href="#" target="_blank" v-if="chooseAlumno.editar_diciplina == 'SI'" class="btn btn-default" v-bind:href="'descargarBoletaPDF/'+idperiodo+'/'+idgrupo+'/'+ chooseAlumno.idalumno"> <i class="fa fa-cloud-download"></i> Descargar Boleta</a>
+                        <a href="#" target="_blank" v-if="chooseAlumno.editar_diciplina == 'SI'" class="btn btn-default" v-bind:href="'descargarBoletaPDFNuevoFormato/'+idperiodo+'/'+idgrupo+'/'+ chooseAlumno.idalumno"> <i class="fa fa-cloud-download"></i> Descargar Nueva Boleta</a>
+
                     </div>
                 </div>
             </div>
@@ -104,31 +106,65 @@
                 </div>
             </div>
             <div class="modal-body">
-                <div style="padding-top:13px; padding-right:15px;">
+                <div style=" ">
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12 ">
-                            <label style="color: red" v-html="formValidate.msgerror"></label>
+                            <div class="col-red" v-html="formValidate.msgerror"></div>
+
                         </div>
                     </div>
-
-
+                    <br />
                     <div class="row clearfix">
-                        <div class="col-md-12 col-sm-12 col-xs-12 ">
-                            <div class="form-group form-float">
+                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                            <div class="form-group form-float ">
+                                <div class="form-line focused">
+                                    <label class="form-label">
+                                        <font color="red">*</font> FORMACION EN VALORES
+                                    </label>
+                                    <input type="text" v-model="chooseAlumno.formacionvalores" class="form-control" :class="{'is-invalid': formValidate.disciplina}" name="po">
+                                </div>
+                                <div class="col-red" align="left" v-html="formValidate.formacionvalores"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                            <div class="form-group form-float ">
+                                <div class="form-line focused">
+                                    <label class="form-label">
+                                        <font color="red">*</font> ASISTENCIA
+                                    </label>
+                                    <input type="text" v-model="chooseAlumno.asistencia" class="form-control" :class="{'is-invalid': formValidate.disciplina}" name="po">
+                                </div>
+                                <div class="col-red" align="left" v-html="formValidate.asistencia"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix">
+                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                            <div class="form-group form-float ">
+                                <div class="form-line focused">
+                                    <label class="form-label">
+                                        <font color="red">*</font> PUNTUALIDAD
+                                    </label>
+                                    <input type="text" v-model="chooseAlumno.puntualidad" class="form-control" :class="{'is-invalid': formValidate.disciplina}" name="po">
+                                </div>
+                                <div class="col-red" align="left" v-html="formValidate.puntualidad"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                            <div class="form-group form-float ">
                                 <div class="form-line focused">
                                     <label class="form-label">
                                         <font color="red">*</font> DISCIPLINA
                                     </label>
-                                    <input type="text" v-model="chooseAlumno.disciplina" class="form-control" :value="chooseAlumno.disciplina" :class="{'is-invalid': formValidate.disciplina}" name="po">
+                                    <input type="text" v-model="chooseAlumno.disciplina" class="form-control" :class="{'is-invalid': formValidate.disciplina}" name="po">
                                 </div>
                                 <div class="col-red" align="left" v-html="formValidate.disciplina"></div>
                             </div>
                         </div>
                     </div>
                     <div class="row clearfix">
-
-                        <div class="col-md-12 col-sm-12 col-xs-12 ">
-                            <div class="form-group form-float">
+                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                            <div class="form-group form-float ">
                                 <div class="form-line focused">
                                     <label class="form-label">
                                         <font color="red">*</font> PRESENTACION PERSONAL
@@ -138,7 +174,30 @@
                                 <div class="col-red" align="left" v-html="formValidate.presentacionpersonal"></div>
                             </div>
                         </div>
-
+                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                            <div class="form-group form-float ">
+                                <div class="form-line focused">
+                                    <label class="form-label">
+                                        <font color="red">*</font> CONDUCTA
+                                    </label>
+                                    <input type="text" v-model="chooseAlumno.conducta" class="form-control" :class="{'is-invalid': formValidate.disciplina}" name="po">
+                                </div>
+                                <div class="col-red" align="left" v-html="formValidate.conducta"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix">
+                        <div class="col-md-12 col-sm-12 col-xs-12 ">
+                            <div class="form-group form-float ">
+                                <div class="form-line focused">
+                                    <label class="form-label">
+                                        <font color="red">*</font> RESPONSABILIDAD
+                                    </label>
+                                    <input type="text" v-model="chooseAlumno.responsabilidad" class="form-control" :class="{'is-invalid': formValidate.disciplina}" name="po">
+                                </div>
+                                <div class="col-red" align="left" v-html="formValidate.responsabilidad"></div>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
@@ -175,7 +234,42 @@
                     </div>
                     <br />
                     <div class="row clearfix">
-                        <div class="col-md-12 col-sm-12 col-xs-12 ">
+                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                            <div class="form-group form-float ">
+                                <div class="form-line">
+                                    <label class="form-label">
+                                        <font color="red">*</font> FORMACION EN VALORES
+                                    </label>
+                                    <input type="text" v-model="newDisciplina.formacionvalores" class="form-control" :class="{'is-invalid': formValidate.disciplina}" name="po">
+                                </div>
+                                <div class="col-red" align="left" v-html="formValidate.formacionvalores"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                            <div class="form-group form-float ">
+                                <div class="form-line">
+                                    <label class="form-label">
+                                        <font color="red">*</font> ASISTENCIA
+                                    </label>
+                                    <input type="text" v-model="newDisciplina.asistencia" class="form-control" :class="{'is-invalid': formValidate.disciplina}" name="po">
+                                </div>
+                                <div class="col-red" align="left" v-html="formValidate.asistencia"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix">
+                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                            <div class="form-group form-float ">
+                                <div class="form-line">
+                                    <label class="form-label">
+                                        <font color="red">*</font> PUNTUALIDAD
+                                    </label>
+                                    <input type="text" v-model="newDisciplina.puntualidad" class="form-control" :class="{'is-invalid': formValidate.disciplina}" name="po">
+                                </div>
+                                <div class="col-red" align="left" v-html="formValidate.puntualidad"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-12 col-xs-12 ">
                             <div class="form-group form-float ">
                                 <div class="form-line">
                                     <label class="form-label">
@@ -186,13 +280,9 @@
                                 <div class="col-red" align="left" v-html="formValidate.disciplina"></div>
                             </div>
                         </div>
-
-
-
                     </div>
-
                     <div class="row clearfix">
-                        <div class="col-md-12 col-sm-12 col-xs-12 ">
+                        <div class="col-md-6 col-sm-12 col-xs-12 ">
                             <div class="form-group form-float ">
                                 <div class="form-line">
                                     <label class="form-label">
@@ -203,13 +293,31 @@
                                 <div class="col-red" align="left" v-html="formValidate.presentacionpersonal"></div>
                             </div>
                         </div>
-
-
-
+                        <div class="col-md-6 col-sm-12 col-xs-12 ">
+                            <div class="form-group form-float ">
+                                <div class="form-line">
+                                    <label class="form-label">
+                                        <font color="red">*</font> CONDUCTA
+                                    </label>
+                                    <input type="text" v-model="newDisciplina.conducta" class="form-control" :class="{'is-invalid': formValidate.disciplina}" name="po">
+                                </div>
+                                <div class="col-red" align="left" v-html="formValidate.conducta"></div>
+                            </div>
+                        </div>
                     </div>
-
-
-
+                    <div class="row clearfix">
+                        <div class="col-md-12 col-sm-12 col-xs-12 ">
+                            <div class="form-group form-float ">
+                                <div class="form-line">
+                                    <label class="form-label">
+                                        <font color="red">*</font> RESPONSABILIDAD
+                                    </label>
+                                    <input type="text" v-model="newDisciplina.responsabilidad" class="form-control" :class="{'is-invalid': formValidate.disciplina}" name="po">
+                                </div>
+                                <div class="col-red" align="left" v-html="formValidate.responsabilidad"></div>
+                            </div>
+                        </div>
+                    </div>
 
                 </div>
             </div>
@@ -317,6 +425,9 @@
     </div>
 </div>
 
+
+
+
 <div class="modal fade" id="abrirModalCalificacionPS" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -381,6 +492,8 @@
                     <div class="col-md-12 col-sm-12 col-xs-12 " align="right">
                         <button type="button" class="btn btn-danger waves-effect waves-black" @click="clearAll"> <i class="fa fa-times"></i> Cancelar</button>
                         <a href="#" v-if="chooseAlumno.editar_diciplina == 'SI'" class="btn btn-default" v-bind:href="'descargarBoletaPDF/'+idperiodo+'/'+idgrupo+'/'+ chooseAlumno.idalumno">Descargar Boleta</a>
+                        <a href="#" v-if="chooseAlumno.editar_diciplina == 'SI'" class="btn btn-default" v-bind:href="'descargarBoletaPDFNuevoFormato/'+idperiodo+'/'+idgrupo+'/'+ chooseAlumno.idalumno">Descargar Nueva Boleta</a>
+
                     </div>
                 </div>
             </div>
@@ -576,7 +689,8 @@
                                 <table class=" table table-striped dt-responsive nowrap" cellspacing="0">
                                     <thead class="bg-teal">
                                         <th>CURSO</th>
-                                        <th>CALIFICACIÓN</th>
+                                        <th>CALIFICACIÓN ANTERIOR</th>
+                                        <th>{{chooseAlumno.nombreoportunidad}}</th>
                                     </thead>
                                     <tbody>
                                         <tr v-for="row in calificaciones" v-if="row.mostrar == 'SI' ">
@@ -585,6 +699,27 @@
                                                 <td>
                                                     <strong v-if="row.calificacion == '' || row.calificacion == 'null' || !row.calificacion">No registrado</strong>
                                                     <strong v-else>{{row.calificacion}}</strong>
+                                                </td>
+                                                <td>
+                                                    <div v-show="row.calificacionoportunidad == '' || row.calificacionoportunidad == 'null'|| row.calificacionoportunidad == null  ">
+
+                                                        <div v-if="parseFloat(row.calificacion) < parseFloat(calificacionminima)">
+
+                                                            <button class="btn btn-primary  waves-effect waves-black" data-toggle="modal" @click="selectCalificacionOportunidadPrepa(row);abrirModalAddCalificacionOportunidadPrepa();"><i class="fa fa-plus"></i> Agregar</button>
+                                                        </div>
+                                                        <div v-else>
+                                                            <span class="label label-success">APROBADO</span>
+                                                        </div>
+
+                                                    </div>
+                                                    <div v-show="!(row.calificacionoportunidad == '' || row.calificacionoportunidad == null|| row.calificacionoportunidad == 'null')">
+                                                        <div v-if="parseFloat(row.calificacionoportunidad) < parseFloat(calificacionminima)">
+                                                            <span class="label label-danger">{{row.calificacionoportunidad}}</span> <a title="CAMBIAR" href="#" @click="selectCalificacionOportunidadPrepa(row);abrirModalEditCalificacionOportunidadPrepa()"><i class="fa fa-pencil-square-o fa-sm"></i></a> | <a href="#" title="ELIMINAR" @click="selectCalificacionOportunidadPrepa(row);eliminarCalificacionOportunidadPrepa()"><i class="fa fa-trash" style="color: red;"></i></a>
+                                                        </div>
+                                                        <div v-else>
+                                                            <span class="label label-success">{{row.calificacionoportunidad}}</span> <a title="CAMBIAR" href="#" @click="selectCalificacionOportunidadPrepa(row);abrirModalEditCalificacionOportunidadPrepa()"><i class="fa fa-pencil-square-o fa-sm"></i></a> | <a href="#" title="ELIMINAR" @click="selectCalificacionOportunidadPrepa(row);eliminarCalificacionOportunidadPrepa()"><i class="fa fa-trash" style="color: red;"></i></a>
+                                                        </div>
+                                                    </div>
                                                 </td>
 
 
@@ -608,6 +743,85 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+<!--AGREGAR CALIFICACION POR OPORTUNIDADES PREPA-->
+<div class="modal fade " id="modalAddCalificacionOportunidadPrepa2" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h4 class="modal-title" id="defaultModalLabel"><i class="fa fa-user"></i> ALUMNO(A): {{chooseAlumno.nombre}}</h4>
+                <h4 class="modal-title" id="defaultModalLabel"><i class="fa fa-book"></i> CURSO: {{chooseCalificacionOportunidadPrepa.nombreclase}}</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12 ">
+                        <div class="col-red" v-html="formValidate.msgerror"></div>
+
+                    </div>
+                </div>
+                <br />
+                <div class="row clearfix">
+                    <div class="col-md-12 col-sm-12 col-xs-12 ">
+                        <div class="form-group form-float ">
+                            <div class="form-line focused">
+                                <label class="form-label">
+                                    <font color="red">*</font> CALIFICACIÓN
+                                </label>
+                                <input type="text" v-model="newCalificacionOportunidadPrepa.calificacion" class="form-control" :class="{'is-invalid': formValidate.calificacion}" name="po">
+                            </div>
+                            <div class="col-red" align="left" v-html="formValidate.calificacion"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger waves-effect waves-black" @click="cerrarVentanaAddOportunidadPrepa"><i class='fa fa-ban'></i> Cancelar</button>
+                <button class="btn btn-primary waves-effect waves-black" @click="addCalificacionOportunidadPrepa"><i class='fa fa-floppy-o'></i> Agregar</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!--AGREGAR CALIFICACION POR OPORTUNIDADES PREPA-->
+<div class="modal fade " id="modalEditCalificacionOportunidadPrepa2" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h4 class="modal-title" id="defaultModalLabel"><i class="fa fa-user"></i> ALUMNO(A): {{chooseAlumno.nombre}}</h4>
+                <h4 class="modal-title" id="defaultModalLabel"><i class="fa fa-book"></i> CURSO: {{chooseCalificacionOportunidadPrepa.nombreclase}}</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12 ">
+                        <div class="col-red" v-html="formValidate.msgerror"></div>
+
+                    </div>
+                </div>
+                <br />
+                <div class="row clearfix">
+                    <div class="col-md-12 col-sm-12 col-xs-12 ">
+                        <div class="form-group form-float ">
+                            <div class="form-line focused">
+                                <label class="form-label">
+                                    <font color="red">*</font> CALIFICACIÓN
+                                </label>
+                                <input type="text" v-model="chooseCalificacionOportunidadPrepa.calificacionoportunidad" class="form-control" :class="{'is-invalid': formValidate.calificacion}" name="po">
+                            </div>
+                            <div class="col-red" align="left" v-html="formValidate.calificacionoportunidad"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger waves-effect waves-black" @click="cerrarVentanaEditOportunidadPrepa"><i class='fa fa-ban'></i> Cancelar</button>
+                <button class="btn btn-primary waves-effect waves-black" @click="editCalificacionOportunidadPrepa"><i class='fa fa-edit'></i> Modificar</button>
+            </div>
+
         </div>
     </div>
 </div>

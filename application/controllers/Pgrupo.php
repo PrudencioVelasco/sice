@@ -169,6 +169,98 @@ class pGrupo extends CI_Controller
 			$this->load->view('docente/footer');
 		}
 	}
+	public function areaaxiologica($idhorario = '', $idhorariodetalle)
+	{
+		$idhorario = $this->decode($idhorario);
+		$idhorariodetalle = $this->decode($idhorariodetalle);
+
+		if ((isset($idhorario) && !empty($idhorario)) && (isset($idhorariodetalle) && !empty($idhorariodetalle))) {
+			$unidades = $this->grupo->unidades($this->session->idplantel);
+			$detalle_horario = $this->grupo->detalleHorarioDetalle($idhorariodetalle);
+			$idprofesormateria = $detalle_horario->idprofesormateria;
+			$idmateria = $detalle_horario->idmateria;
+			$idmateriareal = $detalle_horario->idmateriareal;
+			$unidades_materia = $detalle_horario->unidades;
+			$estatus_alumno = $detalle_horario->activo;
+			$alumns = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria, $estatus_alumno);
+
+			$detalle = $this->grupo->detalleClase($idhorariodetalle);
+			$mes = $this->calificacion->allMeses();
+			$nombreclase = $detalle[0]->nombreclase;
+
+			$data = array(
+				'alumnos' => $alumns,
+				'idhorario' => $idhorario,
+				'idhorariodetalle' => $idhorariodetalle,
+				'unidades' => $unidades,
+				'nombreclase' => $nombreclase,
+				'mes' => $mes,
+				'unidades_materia' => $unidades_materia,
+				'tabla' => $this->obtenerTablaCalificacionInterna($idhorario, $idhorariodetalle),
+				'oportunidades' => $this->grupo->showAllOportunidades($this->session->idplantel),
+				'controller' => $this,
+				'idmateria' => $idmateriareal
+			);
+
+			$this->load->view('docente/header');
+			$this->load->view('docente/grupo/calificacion/area_axiologica', $data);
+			$this->load->view('docente/footer');
+		} else {
+			$data = array(
+				'heading' => 'Error',
+				'message' => 'Error intente mas tarde.'
+			);
+			$this->load->view('docente/header');
+			$this->load->view('docente/error/general', $data);
+			$this->load->view('docente/footer');
+		}
+	}
+	public function formacioninterna($idhorario = '', $idhorariodetalle)
+	{
+		$idhorario = $this->decode($idhorario);
+		$idhorariodetalle = $this->decode($idhorariodetalle);
+
+		if ((isset($idhorario) && !empty($idhorario)) && (isset($idhorariodetalle) && !empty($idhorariodetalle))) {
+			$unidades = $this->grupo->unidades($this->session->idplantel);
+			$detalle_horario = $this->grupo->detalleHorarioDetalle($idhorariodetalle);
+			$idprofesormateria = $detalle_horario->idprofesormateria;
+			$idmateria = $detalle_horario->idmateria;
+			$idmateriareal = $detalle_horario->idmateriareal;
+			$unidades_materia = $detalle_horario->unidades;
+			$estatus_alumno = $detalle_horario->activo;
+			$alumns = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria, $estatus_alumno);
+
+			$detalle = $this->grupo->detalleClase($idhorariodetalle);
+			$mes = $this->calificacion->allMeses();
+			$nombreclase = $detalle[0]->nombreclase;
+
+			$data = array(
+				'alumnos' => $alumns,
+				'idhorario' => $idhorario,
+				'idhorariodetalle' => $idhorariodetalle,
+				'unidades' => $unidades,
+				'nombreclase' => $nombreclase,
+				'mes' => $mes,
+				'unidades_materia' => $unidades_materia,
+				'tabla' => $this->obtenerTablaCalificacionInterna($idhorario, $idhorariodetalle),
+				'oportunidades' => $this->grupo->showAllOportunidades($this->session->idplantel),
+				'controller' => $this,
+				'idmateria' => $idmateriareal
+			);
+
+			$this->load->view('docente/header');
+			$this->load->view('docente/grupo/calificacion/formacioninterna', $data);
+			$this->load->view('docente/footer');
+		} else {
+			$data = array(
+				'heading' => 'Error',
+				'message' => 'Error intente mas tarde.'
+			);
+			$this->load->view('docente/header');
+			$this->load->view('docente/error/general', $data);
+			$this->load->view('docente/footer');
+		}
+	}
 	public function calificacionPree($idhorario = '')
 	{
 		Permission::grant(uri_string());
@@ -266,6 +358,131 @@ class pGrupo extends CI_Controller
 			}
 		}
 	}
+	public function eliminarCalificacionInterna()
+	{
+		$config = array(
+
+			array(
+				'field' => 'idcalificacion',
+				'label' => 'Id Calificacion',
+				'rules' => 'trim|required',
+				'errors' => array(
+					'required' => 'Id Calificacion es requerido.'
+				)
+			)
+		);
+		$this->form_validation->set_rules($config);
+		if ($this->form_validation->run() == false) {
+			$errors = validation_errors();
+			echo json_encode([
+				'error' => $errors
+			]);
+		} else {
+			$idcalificacion = $this->input->post('idcalificacion');
+			$iddetallecalificacion = $this->input->post('iddetallecalificacion');
+			//	$calificacion = $this->input->post('calificacion');
+			// OPTENER LA SUMA DE CALIFICACION EXEPTO DE QUE SE VA A MODIFICAR
+			$detalle_calificacion = $this->grupo->sumaCalificacionTipoEvaluacion($idcalificacion, $iddetallecalificacion);
+			if ($detalle_calificacion) {
+				// YA EXISTE REGISTRO
+				if ($detalle_calificacion[0]->calificacion > 0) {
+					$suma_anterior = $detalle_calificacion[0]->calificacion;
+					$suma_total = $suma_anterior;
+					$meses_anteriores = $detalle_calificacion[0]->contador;
+					$suma_total_meses = $meses_anteriores + 1;
+					$nueva_calificacion = $suma_total / $suma_total_meses;
+					$data2 = array(
+						'calificacion' => floordec($nueva_calificacion)
+					);
+
+					if ($this->grupo->eliminacionDetalleCalificacionInterna($iddetallecalificacion)) {
+						$this->grupo->updateCalificacionInterna($idcalificacion, $data2);
+					}
+					echo json_encode([
+						'success' => 'Ok',
+						'mensaje' => 'Fueron eliminado la calificación.'
+					]);
+					//ELIMINAR DETALLE CALIFICACION
+
+				} else {
+					// ES EL PRIMER REGISTRO
+					if ($this->grupo->eliminacionDetalleCalificacionInterna($iddetallecalificacion)) {
+						$this->grupo->eliminacionCalificacionInterna($idcalificacion);
+					}
+					echo json_encode([
+						'success' => 'Ok',
+						'mensaje' => 'Fueron eliminado la calificación.'
+					]);
+				}
+			}
+		}
+	}
+	public function updateCalificacionInterna()
+	{
+		$config = array(
+
+			array(
+				'field' => 'calificacion',
+				'label' => 'Calificacion',
+				'rules' => 'trim|required|numeric|callback_maxNumber',
+				'errors' => array(
+					'numeric' => 'Las calificacion debe de ser números decimales.',
+					'required' => 'La calificacion es requerido'
+				)
+			)
+		);
+		$this->form_validation->set_rules($config);
+		if ($this->form_validation->run() == false) {
+			$errors = validation_errors();
+			echo json_encode([
+				'error' => $errors
+			]);
+		} else {
+			$idcalificacion = $this->input->post('idcalificacion');
+			$iddetallecalificacion = $this->input->post('iddetallecalificacion');
+			$calificacion = $this->input->post('calificacion');
+			// OPTENER LA SUMA DE CALIFICACION EXEPTO DE QUE SE VA A MODIFICAR
+			$detalle_calificacion = $this->grupo->sumaCalificacionTipoEvaluacion($idcalificacion, $iddetallecalificacion);
+			if ($detalle_calificacion) {
+				// YA EXISTE REGISTRO
+				if ($detalle_calificacion[0]->calificacion > 0) {
+					$suma_anterior = $detalle_calificacion[0]->calificacion;
+					$suma_total = $suma_anterior + $calificacion;
+					$meses_anteriores = $detalle_calificacion[0]->contador;
+					$suma_total_meses = $meses_anteriores + 1;
+					$data1 = array(
+						'calificacion' => $calificacion
+					);
+					$this->grupo->updateDetalleCalificacionInterna($iddetallecalificacion, $data1);
+					$nueva_calificacion = $suma_total / $suma_total_meses;
+
+					$data2 = array(
+						'calificacion' => floordec($nueva_calificacion)
+					);
+					$this->grupo->updateCalificacionInterna($idcalificacion, $data2);
+					echo json_encode([
+						'success' => 'Ok',
+						'mensaje' => 'Fueron modificado la calificación.'
+					]);
+				} else {
+					// ES EL PRIMER REGISTRO
+					$data1 = array(
+						'calificacion' => $calificacion
+					);
+					$this->grupo->updateDetalleCalificacionInterna($iddetallecalificacion, $data1);
+
+					$data2 = array(
+						'calificacion' => $calificacion
+					);
+					$this->grupo->updateCalificacionInterna($idcalificacion, $data2);
+					echo json_encode([
+						'success' => 'Ok',
+						'mensaje' => 'Fueron modificado la calificación.'
+					]);
+				}
+			}
+		}
+	}
 	public function addCalificacionSecu()
 	{
 		Permission::grant(uri_string());
@@ -289,9 +506,9 @@ class pGrupo extends CI_Controller
 			array(
 				'field' => 'calificacion[]',
 				'label' => 'Calificacion',
-				'rules' => 'trim|decimal|callback_maxNumber',
+				'rules' => 'trim|numeric|callback_maxNumber',
 				'errors' => array(
-					'decimal' => 'Debe de ser Números decimales.'
+					'numeric' => 'Debe de ser Números decimales.'
 				)
 			)
 		);
@@ -450,9 +667,522 @@ class pGrupo extends CI_Controller
 			}
 		}
 	}
-	public function test()
+	public function addCalificacionInterno()
 	{
-		echo floordec(9.9);
+		Permission::grant(uri_string());
+		$config = array(
+			array(
+				'field' => 'unidad',
+				'label' => 'Unidad',
+				'rules' => 'trim|required',
+				'errors' => array(
+					'required' => 'Seleccionar la Unidad.'
+				)
+			),
+			array(
+				'field' => 'mes',
+				'label' => 'Mes',
+				'rules' => 'trim|required',
+				'errors' => array(
+					'required' => 'Seleccionar el Mes.'
+				)
+			),
+			array(
+				'field' => 'conducta[]',
+				'label' => 'Mes',
+				'rules' => 'trim|numeric|callback_maxNumber',
+				'errors' => array(
+					'numeric' => 'Las calificaciones de conducta debe de ser números decimales.'
+				)
+			),
+			array(
+				'field' => 'limpieza[]',
+				'label' => 'Mes',
+				'rules' => 'trim|numeric|callback_maxNumber',
+				'errors' => array(
+					'numeric' => 'Las calificaciones de limpieza debe de ser números decimales.'
+				)
+			),
+			array(
+				'field' => 'orden[]',
+				'label' => 'Mes',
+				'rules' => 'trim|numeric|callback_maxNumber',
+				'errors' => array(
+					'numeric' => 'Las calificaciones de orden debe de ser números decimales.'
+				)
+			),
+			array(
+				'field' => 'puntualidad[]',
+				'label' => 'Mes',
+				'rules' => 'trim|numeric|callback_maxNumber',
+				'errors' => array(
+					'numeric' => 'Las calificaciones de puntualidad debe de ser números decimales.'
+				)
+			),
+			array(
+				'field' => 'uniforme[]',
+				'label' => 'Mes',
+				'rules' => 'trim|numeric|callback_maxNumber',
+				'errors' => array(
+					'numeric' => 'Las calificaciones de uniforme debe de ser números decimales.'
+				)
+			),
+			array(
+				'field' => 'robotica[]',
+				'label' => 'Mes',
+				'rules' => 'trim|numeric|callback_maxNumber',
+				'errors' => array(
+					'numeric' => 'Las calificaciones de uniforme debe de ser números decimales.'
+				)
+			),
+		);
+		$this->form_validation->set_rules($config);
+		if ($this->form_validation->run() == false) {
+			$errors = validation_errors();
+			echo json_encode([
+				'error' => $errors
+			]);
+		} else {
+			$idhorario = $this->input->post('idhorario');
+			$idhorariodetalle = $this->input->post('idhorariodetalle');
+			$idalumno = $this->input->post('idalumno');
+			$unidad = $this->input->post('unidad');
+			$idmes = $this->input->post('mes');
+			$validar_mes_unidad = $this->grupo->validarMesUnidad($idmes, $unidad);
+			if ($validar_mes_unidad) {
+				$conducta = $this->input->post('conducta');
+				$limpieza = $this->input->post('limpieza');
+				$orden = $this->input->post('orden');
+				$puntualidad = $this->input->post('puntualidad');
+				$uniforme = $this->input->post('uniforme');
+				$robotica = $this->input->post('robotica');
+				$detalle_oportunidad = $this->grupo->primeraOportunidad($this->session->idplantel);
+				$detalle_horario = $this->horario->detalleHorarioDetalle($idhorariodetalle);
+				$idmateria = $detalle_horario[0]->idmateria;
+				$idprofesor = $this->session->idprofesor;
+				$validar_profesor_materia = $this->grupo->validarSiLePerteneceLaMateria($idmateria, $idprofesor, $idhorario);
+				if ($validar_profesor_materia) {
+					if ($detalle_oportunidad) {
+						$idopotunidad = $detalle_oportunidad[0]->idoportunidadexamen;
+						$contador_no_insertado = 0;
+						$contador_insertado = 0;
+						foreach ($idalumno as $key => $value) {
+							$idalumno2 = $value;
+							$calificacion_conducta = floordec($conducta[$key]);
+							$calificacion_limpieza = floordec($limpieza[$key]);
+							$calificacion_orden = floordec($orden[$key]);
+							$calificacion_puntualidad = floordec($puntualidad[$key]);
+							$calificacion_uniforme = floordec($uniforme[$key]);
+							$calificacion_robotica = floordec($robotica[$key]);
+							$idtipoevaluacion = array(15, 16, 17, 18, 19, 20);
+							foreach ($idtipoevaluacion as $value) {
+								//if (isset($calificacion_final) && !empty($calificacion_final)  && $calificacion_final > 0) {
+								$validar = $this->grupo->validarAgregarCalificacionInterna($unidad, $idhorario, $idopotunidad, $idalumno2, $value, $idmateria);
+								if (!$validar) {
+									// ES LA PRIMERA VEZ QUE SE REGISTRA LA CALIFICACION
+									if ($this->obtenerCalificacionInterna($value, $calificacion_conducta, $calificacion_limpieza, $calificacion_orden, $calificacion_puntualidad, $calificacion_uniforme, $calificacion_robotica) > 0) {
+										$data = array(
+											'idunidad' => $unidad,
+											'idoportunidadexamen' => $idopotunidad,
+											'idalumno' => $idalumno2,
+											'idhorario' => $idhorario,
+											'idhorariodetalle' => $idhorariodetalle,
+											'idtipoevaluacion' => $value,
+											'calificacion' => $this->obtenerCalificacionInterna($value, $calificacion_conducta, $calificacion_limpieza, $calificacion_orden, $calificacion_puntualidad, $calificacion_uniforme, $calificacion_robotica),
+											'idusuario' => $this->session->user_id,
+											'fecharegistro' => date('Y-m-d H:i:s')
+										);
+										$idcalificacion = $this->grupo->addCalificacionInterna($data);
+										$data_detalle = array(
+											'idcalificacion' => $idcalificacion,
+											'idmes' => $idmes,
+											'idtipoevaluacion' => $value,
+											'calificacion' => $this->obtenerCalificacionInterna($value, $calificacion_conducta, $calificacion_limpieza, $calificacion_orden, $calificacion_puntualidad, $calificacion_uniforme, $calificacion_robotica),
+											'idusuario' => $this->session->user_id,
+											'fecharegistro' => date('Y-m-d H:i:s')
+										);
+										$this->grupo->addDetalleCalificacionInterna($data_detalle);
+										$contador_insertado++;
+										//	} else {
+										//		$contador_no_insertado++;
+										//	}
+
+									}
+								} else {
+									if ($this->obtenerCalificacionInterna($value, $calificacion_conducta, $calificacion_limpieza, $calificacion_orden, $calificacion_puntualidad, $calificacion_uniforme, $calificacion_robotica) > 0) {
+										$idcalificacion_registrado = $validar[0]->idcalificacion;
+										$validar_mes = $this->grupo->validarTipoEvaluacionDetalleCalificacion($idmes, $value, $idcalificacion_registrado);
+										if ($validar_mes == false) {
+											// SE AGREGA LA CALIFICACION EN LA TABLA DETALLE PORQUE EL MES NO ESTA REGISTRADO
+											$registro_detalle = $this->grupo->showAllDetalleCalificacionInterna($idcalificacion_registrado);
+											$calificacion  = $this->obtenerCalificacionInterna($value, $calificacion_conducta, $calificacion_limpieza, $calificacion_orden, $calificacion_puntualidad, $calificacion_uniforme, $calificacion_robotica);
+											$total_suma = 0;
+											$contado = 1;
+											foreach ($registro_detalle as $row) {
+												$total_suma += $row->calificacion;
+												$contado++;
+											}
+											$suma = ($total_suma + $calificacion) / $contado;
+											$data = array(
+												'calificacion' => floordec($suma),
+												'idusuario' => $this->session->user_id,
+												'fecharegistro' => date('Y-m-d H:i:s')
+											);
+											$editar = $this->grupo->updateCalificacionInterna($idcalificacion_registrado, $data);
+											if ($editar) {
+												$data_detalle = array(
+													'idcalificacion' => $idcalificacion_registrado,
+													'idmes' => $idmes,
+													'idtipoevaluacion' => $value,
+													'calificacion' => $calificacion,
+													'idusuario' => $this->session->user_id,
+													'fecharegistro' => date('Y-m-d H:i:s')
+												);
+												$this->grupo->addDetalleCalificacionInterna($data_detalle);
+												$contador_insertado++;
+											} else {
+
+												$contador_no_insertado++;
+											}
+										} else {
+											if ($this->obtenerCalificacionInterna($value, $calificacion_conducta, $calificacion_limpieza, $calificacion_orden, $calificacion_puntualidad, $calificacion_uniforme, $calificacion_robotica) > 0) {
+												$calificacion2  = $this->obtenerCalificacionInterna($value, $calificacion_conducta, $calificacion_limpieza, $calificacion_orden, $calificacion_puntualidad, $calificacion_uniforme, $calificacion_robotica);
+												$idcalificacion2 = $validar_mes[0]->idcalificacion;
+												$fecharegistro = $validar_mes[0]->fecharegistro;
+												$fecha_inicio = date('Y-m-d');
+												$fecha_fin = date('Y-m-d', strtotime($fecharegistro));
+												$total_dias = dias_pasados($fecha_inicio, $fecha_fin);
+												if ($total_dias <= $this->dias) {
+													$iddetallecalificacion = $validar_mes[0]->iddetallecalificacion;
+													$detalle_calificacion = $this->grupo->sumaCalificacionTipoEvaluacion($idcalificacion2, $iddetallecalificacion);
+													$suma_anterior = $detalle_calificacion[0]->calificacion;
+													$suma_total = $suma_anterior + $calificacion2;
+													$meses_anteriores = $detalle_calificacion[0]->contador;
+													$suma_total_meses = $meses_anteriores + 1;
+													$suma_total2 = $suma_total / $suma_total_meses;
+													// floordec($suma_total2);
+													$data2 = array(
+														'calificacion' => floordec($suma_total2)
+													);
+													$this->grupo->updateCalificacionInterna($idcalificacion2, $data2);
+
+													$data1 = array(
+														'calificacion' => $calificacion2
+													);
+													$this->grupo->updateDetalleCalificacionInterna($iddetallecalificacion, $data1);
+													$contador_insertado++;
+												} else {
+													$contador_no_insertado++;
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+
+						if ($contador_no_insertado > 0) {
+							echo json_encode([
+								'success' => 'Ok',
+								'mensaje' => 'Algunas calificaciones no fueron registrados, porque ya estan registrada.'
+							]);
+						} else {
+							echo json_encode([
+								'success' => 'Ok',
+								'mensaje' => 'Fueron registrados las calificaciones.'
+							]);
+						}
+					} else {
+						echo json_encode([
+							'error' => 'No esta registrado la Oportunidad.'
+						]);
+					}
+				} else {
+					echo json_encode([
+						'error' => 'Esta Asignatura no le pertenece a Usted.'
+					]);
+				}
+			} else {
+				echo json_encode([
+					'error' => 'El mes no le corresponde al trimestre.'
+				]);
+			}
+		}
+	}
+	public function addCalificacionExamenAareaAxiologica()
+	{
+		//Permission::grant(uri_string());
+		$config = array(
+			array(
+				'field' => 'unidad',
+				'label' => 'Unidad',
+				'rules' => 'trim|required',
+				'errors' => array(
+					'required' => 'Seleccionar la Unidad.'
+				)
+			),
+			array(
+				'field' => 'mes',
+				'label' => 'Mes',
+				'rules' => 'trim|required',
+				'errors' => array(
+					'required' => 'Seleccionar el Mes.'
+				)
+			),
+			array(
+				'field' => 'asistencia[]',
+				'label' => 'Asistencia',
+				'rules' => 'trim|numeric|callback_maxNumberAreaAxiologica',
+				'errors' => array(
+					'numeric' => 'Las calificaciones de asistencia debe de ser números decimales.'
+				)
+			),
+			array(
+				'field' => 'puntualidad[]',
+				'label' => 'Puntualidad',
+				'rules' => 'trim|numeric|callback_maxNumberAreaAxiologica',
+				'errors' => array(
+					'numeric' => 'Las calificaciones de puntualidad debe de ser números decimales.'
+				)
+			),
+			array(
+				'field' => 'presentacionpersonal[]',
+				'label' => 'Presentacion personal',
+				'rules' => 'trim|numeric|callback_maxNumberAreaAxiologica',
+				'errors' => array(
+					'numeric' => 'Las calificaciones de presentación Personal debe de ser números decimales.'
+				)
+			),
+			array(
+				'field' => 'responsabilidad[]',
+				'label' => 'Responsabilidad',
+				'rules' => 'trim|numeric|callback_maxNumberAreaAxiologica',
+				'errors' => array(
+					'numeric' => 'Las calificaciones de responsabilidad debe de ser números decimales.'
+				)
+			),
+		);
+		$this->form_validation->set_rules($config);
+		if ($this->form_validation->run() == false) {
+			$errors = validation_errors();
+			echo json_encode([
+				'error' => $errors
+			]);
+		} else {
+			$idhorario = $this->input->post('idhorario');
+			$idhorariodetalle = $this->input->post('idhorariodetalle');
+			$idalumno = $this->input->post('idalumno');
+			$unidad = $this->input->post('unidad');
+			$idmes = $this->input->post('mes');
+			$validar_mes_unidad = $this->grupo->validarMesUnidad($idmes, $unidad);
+			if ($validar_mes_unidad) {
+				$asistencia = $this->input->post('asistencia');
+				$puntualidad = $this->input->post('puntualidad');
+				$presentacionpersonal = $this->input->post('presentacionpersonal');
+				$responsabilidad = $this->input->post('responsabilidad');
+				$detalle_oportunidad = $this->grupo->primeraOportunidad($this->session->idplantel);
+				$detalle_horario = $this->horario->detalleHorarioDetalle($idhorariodetalle);
+				$idmateria = $detalle_horario[0]->idmateria;
+				$idprofesor = $this->session->idprofesor;
+				$validar_profesor_materia = $this->grupo->validarSiLePerteneceLaMateria($idmateria, $idprofesor, $idhorario);
+				if ($validar_profesor_materia) {
+					if ($detalle_oportunidad) {
+						$idopotunidad = $detalle_oportunidad[0]->idoportunidadexamen;
+						$contador_no_insertado = 0;
+						$contador_insertado = 0;
+						foreach ($idalumno as $key => $value) {
+							$idalumno2 = $value;
+							$calificacion_asistencia = floordec($asistencia[$key]);
+							$calificacion_puntualidad = floordec($puntualidad[$key]);
+							$calificacion_presentacionpersonal = floordec($presentacionpersonal[$key]);
+							$calificacion_responsabilidad = floordec($responsabilidad[$key]);
+							$idtipoevaluacion = array(21, 22, 23, 24);
+							foreach ($idtipoevaluacion as $value) {
+								//if (isset($calificacion_final) && !empty($calificacion_final)  && $calificacion_final > 0) {
+								$validar = $this->grupo->validarAgregarCalificacionInterna($unidad, $idhorario, $idopotunidad, $idalumno2, $value, $idmateria);
+								if (!$validar) {
+									// ES LA PRIMERA VEZ QUE SE REGISTRA LA CALIFICACION
+									if ($this->obtenerCalificacionInterna($value, 0, 0, 0, 0, 0, 0, $calificacion_asistencia, $calificacion_puntualidad, $calificacion_presentacionpersonal, $calificacion_responsabilidad) > 0) {
+										$data = array(
+											'idunidad' => $unidad,
+											'idoportunidadexamen' => $idopotunidad,
+											'idalumno' => $idalumno2,
+											'idhorario' => $idhorario,
+											'idhorariodetalle' => $idhorariodetalle,
+											'idtipoevaluacion' => $value,
+											'calificacion' => $this->obtenerCalificacionInterna($value, 0, 0, 0, 0, 0, 0, $calificacion_asistencia, $calificacion_puntualidad, $calificacion_presentacionpersonal, $calificacion_responsabilidad),
+											'idusuario' => $this->session->user_id,
+											'fecharegistro' => date('Y-m-d H:i:s')
+										);
+										$idcalificacion = $this->grupo->addCalificacionInterna($data);
+										$data_detalle = array(
+											'idcalificacion' => $idcalificacion,
+											'idmes' => $idmes,
+											'idtipoevaluacion' => $value,
+											'calificacion' => $this->obtenerCalificacionInterna($value, 0, 0, 0, 0, 0, 0, $calificacion_asistencia, $calificacion_puntualidad, $calificacion_presentacionpersonal, $calificacion_responsabilidad),
+											'idusuario' => $this->session->user_id,
+											'fecharegistro' => date('Y-m-d H:i:s')
+										);
+										$this->grupo->addDetalleCalificacionInterna($data_detalle);
+										$contador_insertado++;
+										//	} else {
+										//		$contador_no_insertado++;
+										//	}
+
+									}
+								} else {
+									if ($this->obtenerCalificacionInterna($value, 0, 0, 0, 0, 0, 0, $calificacion_asistencia, $calificacion_puntualidad, $calificacion_presentacionpersonal, $calificacion_responsabilidad) > 0) {
+										$idcalificacion_registrado = $validar[0]->idcalificacion;
+										$validar_mes = $this->grupo->validarTipoEvaluacionDetalleCalificacion($idmes, $value, $idcalificacion_registrado);
+										if ($validar_mes == false) {
+											// SE AGREGA LA CALIFICACION EN LA TABLA DETALLE PORQUE EL MES NO ESTA REGISTRADO
+											$registro_detalle = $this->grupo->showAllDetalleCalificacionInterna($idcalificacion_registrado);
+											$calificacion  = $this->obtenerCalificacionInterna($value, 0, 0, 0, 0, 0, 0, $calificacion_asistencia, $calificacion_puntualidad, $calificacion_presentacionpersonal, $calificacion_responsabilidad);
+											$total_suma = 0;
+											$contado = 1;
+											foreach ($registro_detalle as $row) {
+												$total_suma += $row->calificacion;
+												$contado++;
+											}
+											$suma = ($total_suma + $calificacion) / $contado;
+											$data = array(
+												'calificacion' => floordec($suma),
+												'idusuario' => $this->session->user_id,
+												'fecharegistro' => date('Y-m-d H:i:s')
+											);
+											$editar = $this->grupo->updateCalificacionInterna($idcalificacion_registrado, $data);
+											if ($editar) {
+												$data_detalle = array(
+													'idcalificacion' => $idcalificacion_registrado,
+													'idmes' => $idmes,
+													'idtipoevaluacion' => $value,
+													'calificacion' => $calificacion,
+													'idusuario' => $this->session->user_id,
+													'fecharegistro' => date('Y-m-d H:i:s')
+												);
+												$this->grupo->addDetalleCalificacionInterna($data_detalle);
+												$contador_insertado++;
+											} else {
+
+												$contador_no_insertado++;
+											}
+										} else {
+											if ($this->obtenerCalificacionInterna($value, 0, 0, 0, 0, 0, 0, $calificacion_asistencia, $calificacion_puntualidad, $calificacion_presentacionpersonal, $calificacion_responsabilidad) > 0) {
+												$calificacion2  = $this->obtenerCalificacionInterna($value, 0, 0, 0, 0, 0, 0, $calificacion_asistencia, $calificacion_puntualidad, $calificacion_presentacionpersonal, $calificacion_responsabilidad);
+												$idcalificacion2 = $validar_mes[0]->idcalificacion;
+												$fecharegistro = $validar_mes[0]->fecharegistro;
+												$fecha_inicio = date('Y-m-d');
+												$fecha_fin = date('Y-m-d', strtotime($fecharegistro));
+												$total_dias = dias_pasados($fecha_inicio, $fecha_fin);
+												if ($total_dias <= $this->dias) {
+													$iddetallecalificacion = $validar_mes[0]->iddetallecalificacion;
+													$detalle_calificacion = $this->grupo->sumaCalificacionTipoEvaluacion($idcalificacion2, $iddetallecalificacion);
+													$suma_anterior = $detalle_calificacion[0]->calificacion;
+													$suma_total = $suma_anterior + $calificacion2;
+													$meses_anteriores = $detalle_calificacion[0]->contador;
+													$suma_total_meses = $meses_anteriores + 1;
+													$suma_total2 = $suma_total / $suma_total_meses;
+													// floordec($suma_total2);
+													$data2 = array(
+														'calificacion' => floordec($suma_total2)
+													);
+													$this->grupo->updateCalificacionInterna($idcalificacion2, $data2);
+
+													$data1 = array(
+														'calificacion' => $calificacion2
+													);
+													$this->grupo->updateDetalleCalificacionInterna($iddetallecalificacion, $data1);
+													$contador_insertado++;
+												} else {
+													$contador_no_insertado++;
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+
+						if ($contador_no_insertado > 0) {
+							echo json_encode([
+								'success' => 'Ok',
+								'mensaje' => 'Algunas calificaciones no fueron registrados, porque ya estan registrada.'
+							]);
+						} else {
+							echo json_encode([
+								'success' => 'Ok',
+								'mensaje' => 'Fueron registrados las calificaciones.'
+							]);
+						}
+					} else {
+						echo json_encode([
+							'error' => 'No esta registrado la Oportunidad.'
+						]);
+					}
+				} else {
+					echo json_encode([
+						'error' => 'Esta Asignatura no le pertenece a Usted.'
+					]);
+				}
+			} else {
+				echo json_encode([
+					'error' => 'El mes no le corresponde al trimestre.'
+				]);
+			}
+		}
+	}
+	public function obtenerCalificacionInterna(
+		$idtipoevaluacion = '',
+		$calificacion_conducta = 0,
+		$calificacion_limpieza = 0,
+		$calificacion_orden = 0,
+		$calificacion_puntualidad = 0,
+		$calificacion_uniforme = 0,
+		$calificacion_robotica = 0,
+		$calificacion_asistencia = 0,
+		$calificacion_puntualidadsecu = 0,
+		$calificacion_presentacionpersonal = 0,
+		$calificacion_responsabilidad
+	) {
+		$calificacion = 0;
+		switch ($idtipoevaluacion) {
+
+			case '15':
+				$calificacion = $calificacion_conducta;
+				break;
+			case '16':
+				$calificacion = $calificacion_limpieza;
+				break;
+			case '17':
+				$calificacion = $calificacion_orden;
+				break;
+			case '18':
+				$calificacion = $calificacion_puntualidad;
+				break;
+			case '19':
+				$calificacion = $calificacion_uniforme;
+				break;
+			case '20':
+				$calificacion = $calificacion_robotica;
+				break;
+			case '21':
+				$calificacion = $calificacion_asistencia;
+				break;
+			case '22':
+				$calificacion = $calificacion_puntualidadsecu;
+				break;
+			case '23':
+				$calificacion = $calificacion_presentacionpersonal;
+				break;
+			case '24':
+				$calificacion = $calificacion_responsabilidad;
+				break;
+
+			default:
+				$calificacion = 0;
+				break;
+		}
+		return $calificacion;
 	}
 	// FIN EXAMEN SECUNDARIA
 	public function buscarAsistencia($idhorario, $idhorariodetalle, $fechainicio, $fechafin, $idunidad)
@@ -613,7 +1343,7 @@ class pGrupo extends CI_Controller
 
 			$tabla .= '  <table id="tablageneral2" class="table table-striped  dt-responsive nowrap" cellspacing="0" width="100%">
             <thead class="bg-teal">
-            <th>#</th>
+            <th></th>
             <th>ALUMNO</th>';
 			for ($i = 0; $i < $range; $i++) :
 				setlocale(LC_ALL, 'es_ES');
@@ -630,7 +1360,10 @@ class pGrupo extends CI_Controller
 			$n = 1;
 			foreach ($alumns as $alumn) {
 				$tabla .= ' <tr>';
-				$tabla .= '<td>' . $n++ . '</td>';
+				//$tabla .= '<td>' . $n++ . '</td>';
+				$tabla .= '<td>';
+
+				$tabla .= '</td>';
 				$tabla .= '<td >' . $alumn->apellidop . " " . $alumn->apellidom . " " . $alumn->nombre . '</td>';
 				for ($i = 0; $i < $range; $i++) :
 					$date_at = date("Y-m-d", strtotime($fechainicio) + ($i * (24 * 60 * 60)));
@@ -870,6 +1603,78 @@ class pGrupo extends CI_Controller
 		$tabla .= '</table>';
 		return $tabla;
 	}
+	public function obtenerTablaCalificacionInterna($idhorario = '', $idhorariodetalle)
+	{
+		# code...
+		Permission::grant(uri_string());
+		$unidades = $this->grupo->unidades($this->session->idplantel);
+		$detalle_horario = $this->grupo->detalleHorarioDetalle($idhorariodetalle);
+		$idprofesormateria = $detalle_horario->idprofesormateria;
+		$idmateria = $detalle_horario->idmateria;
+		$estatus_alumno = $detalle_horario->activo;
+		$alumnos = $this->grupo->alumnosGrupo($idhorario, $idprofesormateria, $idmateria, $estatus_alumno);
+		$datoshorario = $this->horario->showNivelGrupo($idhorario);
+
+		$idnivelestudio = $datoshorario->idnivelestudio;
+		$detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
+		$tabla = "";
+		$tabla .= ' <table id="tablageneral2" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+      <thead class="bg-teal">
+      <th>#</th>
+      <th>NOMBRE</th>';
+		foreach ($unidades as $block) :
+			$tabla .= '<th align="center" >' . $block->nombreunidad . '</th>';
+		endforeach;
+		$tabla .= '</thead>';
+		$c = 1;
+		$total_unidades = 0;
+		if (isset($alumnos) && !empty($alumnos)) {
+			foreach ($alumnos as $row) {
+				$tabla .= '<tr>';
+				$tabla .= '  <td>' . $c++ . '</td>';
+				if ($row->opcion == 0) {
+					$tabla .= '<td><label style="color:red;">R:</label> ' . $row->apellidop . " " . $row->apellidom . " " . $row->nombre . '</td>';
+				} else {
+					$tabla .= '<td>' . $row->apellidop . " " . $row->apellidom . " " . $row->nombre . '</td>';
+				}
+				$suma_calificacion = 0;
+				$total_unidades = 0;
+				foreach ($unidades as $block) :
+					$total_unidades += 1;
+					$idalumno3 = $row->idalumno;
+					$idunidad3 =  $block->idunidad;
+					$idhorario3 = $idhorario;
+					$val = $this->grupo->obtenerCalificacionValidandoInterna($row->idalumno, $block->idunidad, $idhorario);
+
+					$tabla .= '<td align="center">';
+					if ($val) {
+						$idcalificacion = $val->idcalificacion;
+						//$detalle_calificacion = $this->grupo->detalleCalificacionInterna($idcalificacion);
+						//$suma_calificacion = $suma_calificacion + $val->calificaciondetalle;
+						//$tabla .= '<label style="font-size:16px;">' . eliminarDecimalCero(numberFormatPrecision($val->calificaciondetalle, 1, '.')) . '  </label>';
+						$fecha_inicio = date('Y-m-d');
+						$fecha_fin = date('Y-m-d', strtotime($val->fecharegistro));
+						$total_dias = dias_pasados($fecha_inicio, $fecha_fin);
+						///if ($detalle_calificacion) {
+
+						$idalumnop = $this->encode($row->idalumno);
+						$idunidadp = $this->encode($block->idunidad);
+						$idhorariop = $this->encode($idhorario);
+						$datos = $idalumnop . '/' . $idunidadp . '/' . $idhorariop . '/' . $this->encode($idhorariodetalle);
+						$tabla .= '       <a   href="' . base_url() . '/Pgrupo/detalleCalificacionInterna/' . $datos . '"><i class="fa fa-eye fa-lg"  style = "color:#3396FF;" title="Ver detalles de las Calificaciones"></i> Detalle</a> ';
+						//	}
+					} else {
+						$tabla .= '<small>No registrado</small>';
+					}
+					$tabla .= '</td>';
+				endforeach;
+
+				$tabla .= '</tr>';
+			}
+		}
+		$tabla .= '</table>';
+		return $tabla;
+	}
 	public function detalleCalificacionSecu($idcalificacion)
 	{
 		$idcalificacion = $this->decode($idcalificacion);
@@ -881,6 +1686,27 @@ class pGrupo extends CI_Controller
 			);
 			$this->load->view('docente/header');
 			$this->load->view('docente/grupo/calificacion/detalle_calificacion_secu', $data);
+			$this->load->view('docente/footer');
+		}
+	}
+	public function detalleCalificacionInterna($idalumno, $idunidad, $idhorario, $idhorariodetalle)
+	{
+		$idalumno = $this->decode($idalumno);
+		$idunidad = $this->decode($idunidad);
+		$idhorario = $this->decode($idhorario);
+		$idhorariodetalle = $this->decode($idhorariodetalle);
+		if ((isset($idalumno) && !empty($idalumno)) &&
+			(isset($idunidad) && !empty($idunidad)) &&
+			(isset($idhorario) && !empty($idhorario)) &&
+			(isset($idhorariodetalle) && !empty($idhorariodetalle))
+		) {
+			$detalle = $this->grupo->detalleCalificacionInternaPorAlumno($idalumno, $idunidad, $idhorario, $idhorariodetalle);
+
+			$data = array(
+				'detalle' => $detalle
+			);
+			$this->load->view('docente/header');
+			$this->load->view('docente/grupo/calificacion/detalle_calificacion_interna', $data);
 			$this->load->view('docente/footer');
 		}
 	}
@@ -1846,6 +2672,19 @@ class pGrupo extends CI_Controller
 		} else {
 			$this->form_validation->set_message('maxNumber', 'Las calificaciones debe de ser entre 0.0 a 10');
 			return false;
+		}
+	}
+	public function maxNumberAreaAxiologica($num)
+	{
+		if (isset($num) && !empty($num) && $num > 0) {
+			if ($num >= 5.0 && $num <= 10.0) {
+				return true;
+			} else {
+				$this->form_validation->set_message('maxNumberAreaAxiologica', 'Las calificaciones debe de ser entre 5.0 a 10');
+				return false;
+			}
+		} else {
+			return true;
 		}
 	}
 	public function maxNumberSecundaria($num)

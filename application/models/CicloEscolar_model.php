@@ -73,7 +73,7 @@ class CicloEscolar_model extends CI_Model
     }
     public function detalleGrupo($idhorario = '')
     {
-        $this->db->select('g.nombregrupo,ne.primaria');
+        $this->db->select('g.nombregrupo,ne.primaria,h.idperiodo,g.idgrupo');
         $this->db->from('tblhorario h');
         $this->db->join('tblgrupo g ', ' h.idgrupo = g.idgrupo');
         $this->db->join('tblnivelestudio ne ', ' ne.idnivelestudio = g.idnivelestudio');
@@ -144,6 +144,22 @@ class CicloEscolar_model extends CI_Model
             return false;
         }
     }
+    public function showAllMesesDeTrimestre($idunidad)
+    {
+        //  $in = array(4, 5, 6);
+        $this->db->select('m.idmes');
+        $this->db->from('tblmes m');
+        $this->db->join('tblunidad_mes um', 'm.idmes = um.idmes');
+        $this->db->where('um.idunidad', $idunidad);
+        $this->db->where('um.activo', 1);
+        $this->db->order_by('m.enumeracion ASC');
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
 
     public function calificacionXMes($idprofesormateria = '', $idalumno = '', $idmes, $idhorario)
     {
@@ -165,6 +181,95 @@ class CicloEscolar_model extends CI_Model
         }
     }
 
+    public function calificacionXMesMaterias($idprofesormateria, $idalumno = '', $idmes, $idhorario)
+    {
+        $sql = "
+        select
+	SUM(dc.calificacion) as sumacalificacion
+from
+	tblcalificacion c
+join tbldetalle_calificacion dc on
+	c.idcalificacion = dc.idcalificacion
+join tblhorario_detalle hd on
+	hd.idhorariodetalle = c.idhorariodetalle
+join tblmes m on
+	m.idmes = dc.idmes
+        where hd.idhorario = $idhorario
+        and c.idalumno = $idalumno
+        and hd.idmateria in($idprofesormateria)
+        and dc.idmes = $idmes
+    order by
+        m.enumeracion asc";
+        $query = $this->db->query($sql);
+        if ($query->num_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
+    public function obtenerCalificacionInterna($idalumno, $idhorario, $idtipoevaluacion, $idmes)
+    {
+        $sql = "
+            select
+                SUM(dci.calificacion) as calificacion 
+            from
+                tblcalificacion_interna ci
+            inner join tbldetalle_calificacioninterna dci on
+                ci.idcalificacion = dci.idcalificacion
+            where  ci.idalumno =$idalumno
+            and ci.idhorario =$idhorario
+            and ci.idtipoevaluacion =$idtipoevaluacion
+            and dci.idmes =$idmes";
+        $query = $this->db->query($sql);
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+    public function obtenerCalificacionInternaSecu($idalumno, $idmes, $idhorario)
+    {
+        $sql = "
+            select
+                SUM(dc.calificacion) as sumacalificacion
+            from
+                tblcalificacion_interna c
+            join tbldetalle_calificacioninterna dc on
+                c.idcalificacion = dc.idcalificacion
+            join tblhorario_detalle hd on
+                hd.idhorariodetalle = c.idhorariodetalle
+            join tblmes m on
+                m.idmes = dc.idmes
+            join tbltipo_evaluacion te on
+                dc.idtipoevaluacion = te.idtipoevaluacion
+            where
+                hd.idhorario = $idhorario
+                and c.idalumno = $idalumno
+                and te.idniveleducativo = 2
+                and dc.idtipoevaluacion in (21, 22, 23, 24)
+                and dc.idmes = $idmes
+            order by
+                m.enumeracion asc";
+        $query = $this->db->query($sql);
+        if ($query->num_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
+    public function obtenerTotalFaltas($idalumno, $idhorario, $idunidad, $mes)
+    {
+        $sql = "
+            select count(a.idasistencia) as totalfaltas
+        from tblasistencia a where a.idunidad = $idunidad and month(a.fecha) = $mes and a.idalumno = $idalumno and a.idhorario = $idhorario and a.idmotivo = 4";
+        $query = $this->db->query($sql);
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+
 
     public function showAllCicloEscolarActivo($idplantel = '')
     {
@@ -178,6 +283,26 @@ class CicloEscolar_model extends CI_Model
             $this->db->where('p.idplantel', $idplantel);
         }
         $this->db->where('p.activo', 1);
+        $this->db->order_by('p.idperiodo DESC');
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+    public function showAllCicloEscolarDesActivo($idplantel = '')
+    {
+        $this->db->select('p.*,m.nombremes as mesinicio,m2.nombremes as mesfin,y.nombreyear as yearinicio,y2.nombreyear as yearfin');
+        $this->db->from('tblperiodo p');
+        $this->db->join('tblmes m ', ' p.idmesinicio = m.idmes');
+        $this->db->join('tblmes m2 ', ' p.idmesfin = m2.idmes');
+        $this->db->join('tblyear y ', ' p.idyearinicio = y.idyear');
+        $this->db->join('tblyear y2 ', ' p.idyearfin = y2.idyear');
+        if (isset($idplantel) && !empty($idplantel)) {
+            $this->db->where('p.idplantel', $idplantel);
+        }
+        $this->db->where('p.activo', 0);
         $this->db->order_by('p.idperiodo DESC');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {

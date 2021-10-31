@@ -1,6 +1,8 @@
 <?php
 
 use Kunnu\Dropbox\Exceptions\DropboxClientException;
+use Aws\Resource\Aws;
+use Aws\S3\S3Client;
 
 defined('BASEPATH') or exit('No direct script access allowed');
 date_default_timezone_set("America/Mexico_City");
@@ -36,7 +38,6 @@ class Tarea extends CI_Controller
         $this->appsecret = "h2dpotger3jzj6v";
         $this->token = "c79HAsllhxMAAAAAAAAAAXUL93C-XCQ3da-PwoSQyO-c7st-LqeM4aS6Hhu9vY73";
     }
-
 
     public function showAll()
     {
@@ -205,6 +206,7 @@ class Tarea extends CI_Controller
                         $note_array["file"] = $documento->iddocumento;
                         $note_array["extension"] = $documento->extension;
                         if (empty($documento->iddocumento) && !empty($documento->nombredocumento)) {
+
                             $app = new Kunnu\Dropbox\DropboxApp($this->appkey, $this->appsecret, $this->token);
                             $dropbox = new Kunnu\Dropbox\Dropbox($app);
                             $temporaryLink = $dropbox->getTemporaryLink("/" . $documento->nombredocumento);
@@ -262,18 +264,31 @@ class Tarea extends CI_Controller
                         $note_array["file"] = $documento->iddocumento;
                         $note_array["extension"] = $documento->extension;
                         if (empty($documento->iddocumento) && !empty($documento->nombredocumento)) {
-                            $app = new Kunnu\Dropbox\DropboxApp($this->appkey, $this->appsecret,  $this->token);
-                            $dropbox = new Kunnu\Dropbox\Dropbox($app);
-                            $temporaryLink = $dropbox->getTemporaryLink("/" . $documento->nombredocumento);
+                            try {
+                                $app = new Kunnu\Dropbox\DropboxApp($this->appkey, $this->appsecret,  $this->token);
+                                $dropbox = new Kunnu\Dropbox\Dropbox($app);
+                                $temporaryLink = $dropbox->getTemporaryLink("/" . $documento->nombredocumento);
 
-                            //Get File Metadata
-                            $file = $temporaryLink->getMetadata();
+                                //Get File Metadata
 
-                            //Get Link
-                            $temporaryLink->getLink();
-                            $note_array['link'] = $temporaryLink->getLink();
+                                $file = $temporaryLink->getMetadata();
+
+                                //Get Link
+                                $temporaryLink->getLink();
+
+                                $note_array['link'] = $temporaryLink->getLink();
+                                $note_array['error'] = false;
+                                $note_array['msg'] = '';
+                            } catch (DropboxClientException $e) {
+                                //echo $e->getMessage();
+                                $note_array['link'] = "";
+                                $note_array['error'] = true;
+                                $note_array['msg'] = "Problema con su internet para cargar sus archivos.";
+                            }
                         } else {
                             $note_array['link'] = "";
+                            $note_array['error'] = false;
+                            $note_array['msg'] = '';
                         }
                         array_push($user_array['documentos'], $note_array);
                     }
@@ -1172,7 +1187,86 @@ class Tarea extends CI_Controller
         $string = strtr($string, array('~' => '/'));
         return $this->encryption->decrypt($string);
     }
+    public function subirTareaPorUno()
+    {
+        $file_name = $_FILES['file']['name']; //ruta al archivo
+        $tmp = explode('.', $file_name);
+        $extension_img = end($tmp);
+        $user_img_profile = $this->session->user_id . '-' . date("Ymdhis") . '.' . $extension_img;
+        $config['file_name'] = $user_img_profile;
+        $fileName = $user_img_profile;
 
+
+        $idtarea = trim($this->input->post('idtarea'));
+        $tarea = trim($this->input->post('tarea'));
+        $detalle_tarea = $this->tarea->detalleTareaAlumno($idtarea);
+        $horaentraga = $detalle_tarea->horaentrega;
+        $fechaentrega = $detalle_tarea->fechaentregareal;
+        $fecha_antes = $detalle_tarea->fechaantes;
+        $fechaactual = date('Y-m-d H:i:s');
+        $idalumno = $this->session->idalumno;
+        $data = array(
+            'idtarea' => $idtarea,
+            'idalumno' => $idalumno,
+            'idestatustarea' => 1,
+            'mensaje' => $tarea,
+            'nombrearchivo' => '',
+            'iddocumento' => '',
+            'eliminado' => 0,
+            'idusuario' => $this->session->user_id,
+            'fecharegistro' => date('Y-m-d H:i:s')
+        );
+        $idDetalleTarea = $this->tarea->addDetalleTarea($data);
+        $exito = 0;
+        $fracaso = 0;
+
+
+        $app = new Kunnu\Dropbox\DropboxApp($this->appkey, $this->appsecret,  $this->token);
+        //Configure Dropbox service
+        //$dropbox = new Dropbox($app);
+        $dropbox = new Kunnu\Dropbox\Dropbox($app);
+        //Get File Metadata 
+        // File to Upload
+        $file = $_FILES['file'];
+        // File Path
+        // $fileName = $file['name'];
+        $filePath = $file['tmp_name'];
+        try {
+            // Create Dropbox File from Path
+            $dropboxFile = new Kunnu\Dropbox\DropboxFile($filePath);
+            // Upload the file to Dropbox
+            $uploadedFile = $dropbox->upload($dropboxFile, "/" . $fileName,     ['autorename' => true]);
+            // File Uploaded
+            $uploadedFile->getPathDisplay();
+            $dataDocumentos = array(
+                'iddetalletarea' => $idDetalleTarea,
+                'nombredocumento' => $fileName,
+                'iddocumento' => "",
+                'idusuario' => $this->session->user_id,
+                'fecharegistro' => date('Y-m-d H:i:s'),
+            );
+            $value = $this->tarea->addDocumentRespuestaTarea($dataDocumentos);
+            if ($value) {
+                $exito++;
+            } else {
+                $fracaso++;
+            }
+        } catch (Kunnu\Dropbox\Exceptions\DropboxClientException $e) {
+            //Eliminar Documento Alumno
+            $this->tarea->deleteDocumentoAlumno($idDetalleTarea);
+            //Eliminar Detalle Tarea
+            $this->tarea->deleteDetalleTarea($idDetalleTarea);
+            //$dropboxFile = new Kunnu\Dropbox\Exceptions\DropboxClientException;
+            $result['error'] = true;
+            $result['msg'] = array(
+                'msgerror' => $e->getMessage()
+            );
+            $fracaso++;
+        }
+        if (isset($result) && !empty($result)) {
+            echo json_encode($result);
+        }
+    }
     public function responderTareaAlumno()
     {
         $config = array(
@@ -1198,11 +1292,14 @@ class Tarea extends CI_Controller
             $fechaentrega = $detalle_tarea->fechaentregareal;
             $fecha_antes = $detalle_tarea->fechaantes;
             $fechaactual = date('Y-m-d H:i:s');
-            if ($fechaactual <= $fecha_antes) {
+            $idalumno = $this->session->idalumno;
+
+            if (!empty($idalumno)) {
+                // if ($fechaactual <= $fecha_antes) {
                 if (!empty($_FILES['files']) && count(array_filter($_FILES['files'])) > 0) {
                     $data = array(
                         'idtarea' => $idtarea,
-                        'idalumno' => $this->session->idalumno,
+                        'idalumno' => $idalumno,
                         'idestatustarea' => 1,
                         'mensaje' => $tarea,
                         'nombrearchivo' => '',
@@ -1304,7 +1401,7 @@ class Tarea extends CI_Controller
                     if (isset($tarea) && !empty($tarea)) {
                         $data = array(
                             'idtarea' => $idtarea,
-                            'idalumno' => $this->session->idalumno,
+                            'idalumno' => $idalumno,
                             'idestatustarea' => 1,
                             'mensaje' => $tarea,
                             'nombrearchivo' => '',
@@ -1314,6 +1411,18 @@ class Tarea extends CI_Controller
                             'fecharegistro' => date('Y-m-d H:i:s'),
                         );
                         $value = $this->tarea->addDetalleTarea($data);
+
+                        if ($value) {
+                            $result['error'] = true;
+                            $result['msg'] = array(
+                                'msgerror' => "HUBO UN ERROR AL SUBIR LA TAREA INTENTE NUEVAMENTE"
+                            );
+                        } else {
+                            $result['error'] = false;
+                            $result['msg'] = array(
+                                'msgerror' => "SE ENVIO LA TAREA CON EXITO"
+                            );
+                        }
                     } else {
                         $result['error'] = true;
                         $result['msg'] = array(
@@ -1324,12 +1433,30 @@ class Tarea extends CI_Controller
             } else {
                 $result['error'] = true;
                 $result['msg'] = array(
-                    'msgerror' => "USTED DEBIO DE ENTRAGAR LA TAREA ANTES DE " . $fecha_antes
+                    'msgerror' => "Cierre sesion y vuelva entrar, para subir su tarea." . $idalumno
                 );
             }
+            /* } else {
+                $result['error'] = true;
+                $result['msg'] = array(
+                    'msgerror' => "USTED DEBIO DE ENTRAGAR LA TAREA ANTES DE " . $fecha_antes
+                );
+            }*/
         }
         if (isset($result) && !empty($result)) {
             echo json_encode($result);
         }
+    }
+    public function tareav3()
+    {
+        $this->load->view('alumno/header');
+        $this->load->view('alumno/tarea/indexv3');
+        $this->load->view('alumno/footer');
+    }
+    public function responder2()
+    {
+        sleep(10);
+        $upload = 'ok';
+        echo $upload;
     }
 }

@@ -32,13 +32,13 @@
     <script src="<?php echo base_url(); ?>/assets/vue/pagination/pagination.js"></script>
     <script src="<?php echo base_url(); ?>/assets/vue/vue-column-sortable.js"></script>
 
-
+    <script src="<?php echo base_url(); ?>/assets/vue/exportarexcel/xlsx.full.min.js"></script>
     <!-- select2 -->
     <link href="<?php echo base_url(); ?>/assets/css/select/select2.min.css" rel="stylesheet">
     <!-- Bootstrap Select Css -->
     <link href="<?php echo base_url(); ?>/assets/plugins/bootstrap-select/css/bootstrap-select.css" rel="stylesheet" />
 
-
+    <link rel="stylesheet" href="<?php echo base_url(); ?>/assets/css/switchery/switchery.min.css" />
     <!-- SweetAlert -->
     <script src="<?php echo base_url(); ?>/assets/js/sweetalert2/dist/sweetalert2.min.js"></script>
     <link rel="stylesheet" href="<?php echo base_url(); ?>/assets/js/sweetalert2/dist/sweetalert2.min.css">
@@ -160,7 +160,7 @@
                                 <li><a href="<?= base_url('/CicloEscolar/inicio') ?>"><i class="fa fa-bookmark-o"></i> Periodo Escolar</a></li>
                                 <li><a href="<?= base_url('/Grupo/inicio') ?>"><i class="fa fa-graduation-cap"></i> Grupo</a></li>
                                 <li><a href="<?= base_url('/Horario/inicio') ?>"><i class="fa fa-clock-o"></i> Horario</a></li>
-                                <li><a href="<?= base_url('/Promover/') ?>"><i class="fa fa-arrow-up"></i> Promoción Alumno</a></li>
+                                <li><a href="<?= base_url('/Promover/admin') ?>"><i class="fa fa-arrow-up"></i> Promoción Alumno</a></li>
 
                                 <li><a href="<?= base_url('/Catalogo/inicio') ?>"><i class="fa fa-folder-open"></i> Catalogo</a></li>
 

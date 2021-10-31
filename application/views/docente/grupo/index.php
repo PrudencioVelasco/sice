@@ -15,8 +15,30 @@
                         <div class="clearfix"></div>
                     </div>
                     <div class="x_content">
-                        <div class="row" align="right">
+                        <div class="row">
                             <div class="col-md-12 col-sm-12 col-xs-12 ">
+
+                                <?php
+
+                                if (isset($this->session->idplantel) && ($this->session->idplantel == 1)) {
+                                ?>
+                                    <div class="alert alert-info alert-dismissible fade in" role="alert">
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
+                                        </button>
+                                        <strong>Información!</strong> Registrar las calificaciones de <strong>FORMACION INTERNA</strong> seleccionando C. Interna dentro de Opciones de cada una de las materias.
+                                    </div>
+                                <?php
+                                }
+                                if (isset($this->session->idplantel) && ($this->session->idplantel == 3)) {
+                                ?>
+                                    <div class="alert alert-info alert-dismissible fade in" role="alert">
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
+                                        </button>
+                                        <strong>Información!</strong> Si usted da la materia de TUTORIAS debe de registrar las calificaciones de <strong>ÁREA AXIOLÓGICA</strong> seleccionando C. ÁREA AXIOLÓGICA dentro de Opciones de cada una de las materias.
+                                    </div>
+                                <?php
+                                }
+                                ?>
                                 <form method="post" action="<?php echo base_url() . 'Pgrupo/generarReporter' ?>">
                                     <div class="row">
                                         <div class="col-md-2 col-sm-2 col-xs-12 "></div>
@@ -130,7 +152,18 @@
                                                                         <li><a href="<?php echo site_url('Pgrupo/examen/' . $controller->encode($value->idhorario) . '/' . $controller->encode($value->idhorariodetalle)) ?>">
                                                                                 <i style="color: #0b94e3;" class="fa fa-file-text-o"></i> Calificación</a>
                                                                         </li>
-                                                                    <?php } ?>
+                                                                    <?php }
+                                                                    if ((isset($this->session->idniveleducativo) && !empty($this->session->idniveleducativo)) && ($this->session->idniveleducativo == 1)) { ?>
+                                                                        <li><a href="<?php echo site_url('Pgrupo/formacioninterna/' . $controller->encode($value->idhorario) . '/' . $controller->encode($value->idhorariodetalle)) ?>">
+                                                                                <i style="color: #0b94e3;" class="fa fa-file-text-o"></i> C. Interna</a>
+                                                                        </li>
+                                                                    <?php  } ?>
+                                                                    <?php
+                                                                    if ((isset($this->session->idniveleducativo) && !empty($this->session->idniveleducativo)) && ($this->session->idniveleducativo == 2 || $value->idmateria == 43)) { ?>
+                                                                        <li><a href="<?php echo site_url('Pgrupo/areaaxiologica/' . $controller->encode($value->idhorario) . '/' . $controller->encode($value->idhorariodetalle)) ?>">
+                                                                                <i style="color: #0b94e3;" class="fa fa-file-text-o"></i> C. Área Axiológica</a>
+                                                                        </li>
+                                                                    <?php  } ?>
                                                                     <li><a href="<?php echo site_url('Pgrupo/asistencia/' . $controller->encode($value->idhorario) . '/' . $controller->encode($value->idhorariodetalle)) ?>">
                                                                             <i style="color: #31d50b;" class="fa fa-check-circle"></i> Asistencia</a>
                                                                     </li>

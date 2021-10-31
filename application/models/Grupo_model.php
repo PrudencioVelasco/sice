@@ -405,6 +405,20 @@ ORDER BY nombrenivel ASC";
             return false;
         }
     }
+    public function detalleCalificacionInterna($idcalificacion = '')
+    {
+        # code...
+        $this->db->select('c.idcalificacion, dc.iddetallecalificacion, dc.calificacion');
+        $this->db->from('tblcalificacion_interna c');
+        $this->db->join('tbldetalle_calificacioninterna dc', 'dc.idcalificacion = c.idcalificacion');
+        $this->db->where('c.idcalificacion', $idcalificacion);
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
 
     public function detalleCalificacionUnidad($idunidad = '', $idhorariodetalle)
     {
@@ -601,6 +615,19 @@ GROUP BY a.idalumno , a.idhorariodetalle , a.idunidad";
             return false;
         }
     }
+    public function showAllDetalleCalificacionInterna($idcalificacion = '')
+    {
+        # code...
+        $this->db->select('dc.*');
+        $this->db->from('tbldetalle_calificacioninterna dc');
+        $this->db->where('dc.idcalificacion', $idcalificacion);
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
     public function calificacionXMes($idalumno, $idhorariodetalle, $idmes)
     {
         $this->db->select('dc.calificacion');
@@ -618,10 +645,24 @@ GROUP BY a.idalumno , a.idhorariodetalle , a.idunidad";
         }
     }
 
+
     public function sumaCalificacion($idcalificacion, $iddetallecalificacion)
     {
         $this->db->select('count(dc.calificacion) as contador, sum(dc.calificacion) as calificacion');
         $this->db->from('tbldetalle_calificacion dc');
+        $this->db->where('dc.idcalificacion', $idcalificacion);
+        $this->db->where('dc.iddetallecalificacion !=', $iddetallecalificacion);
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+    public function sumaCalificacionTipoEvaluacion($idcalificacion, $iddetallecalificacion)
+    {
+        $this->db->select('count(dc.calificacion) as contador, sum(dc.calificacion) as calificacion');
+        $this->db->from('tbldetalle_calificacioninterna dc');
         $this->db->where('dc.idcalificacion', $idcalificacion);
         $this->db->where('dc.iddetallecalificacion !=', $iddetallecalificacion);
         $query = $this->db->get();
@@ -651,12 +692,49 @@ GROUP BY a.idalumno , a.idhorariodetalle , a.idunidad";
             return false;
         }
     }
+    public function detalleCalificacionInternaPorAlumno($idalumno = '', $idunidad = '', $idhorario = '', $idhorariodetalle = '')
+    {
+        # code...
+        $this->db->select('dc.iddetallecalificacion,dc.calificacion, dc.idcalificacion,  a.nombre, a.apellidop, a.apellidom,TIMESTAMPDIFF(day,curdate(),dc.fecharegistro) as dias,me.nombremes, u.nombreunidad,tp.nombre as nombretipoevaluacion');
+        $this->db->from('tbldetalle_calificacioninterna dc');
+        $this->db->join('tblcalificacion_interna c', 'c.idcalificacion = dc.idcalificacion');
+        $this->db->join('tbltipo_evaluacion tp', 'dc.idtipoevaluacion = tp.idtipoevaluacion');
+        $this->db->join('tblalumno a', 'a.idalumno =  c.idalumno');
+        $this->db->join('tblmes me', 'me.idmes =  dc.idmes');
+        $this->db->join('tblunidad u', 'u.idunidad =  c.idunidad');
+        $this->db->where('c.idunidad', $idunidad);
+        $this->db->where('c.idhorario', $idhorario);
+        $this->db->where('c.idhorariodetalle', $idhorariodetalle);
+        $this->db->where('c.idalumno', $idalumno);
+        $this->db->order_by('me.enumeracion ASC');
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
     public function validarMesDetalleCalificacion($idmes, $idcalificacion = '')
     {
         # code...
         $this->db->select('dc.*');
         $this->db->from('tbldetalle_calificacion dc');
         $this->db->where('dc.idcalificacion', $idcalificacion);
+        $this->db->where('dc.idmes', $idmes);
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+    public function validarTipoEvaluacionDetalleCalificacion($idmes, $idtipoevaluacion, $idcalificacion = '')
+    {
+        # code...
+        $this->db->select('dc.*');
+        $this->db->from('tbldetalle_calificacioninterna dc');
+        $this->db->where('dc.idcalificacion', $idcalificacion);
+        $this->db->where('dc.idtipoevaluacion', $idtipoevaluacion);
         $this->db->where('dc.idmes', $idmes);
         $query = $this->db->get();
         if ($this->db->affected_rows() > 0) {
@@ -704,6 +782,31 @@ GROUP BY a.idalumno , a.idhorariodetalle , a.idunidad";
         $this->db->where('pm.idmateria', $idmateria);
         $this->db->where('c.idunidad', $idunidad);
         $this->db->order_by('c.fecharegistro ASC');
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+
+    public function validarAgregarCalificacionInterna($idunidad, $idhorario = '', $idoportunidad = '', $idalumno = '', $idtipoevaluacion, $idmateria)
+    {
+        # code...
+        $this->db->select('c.idcalificacion');
+        $this->db->from('tblcalificacion_interna c');
+        $this->db->join('tblunidad u', 'c.idunidad = u.idunidad');
+        $this->db->join('tbloportunidad_examen op', 'op.idoportunidadexamen = c.idoportunidadexamen');
+        $this->db->join('tblhorario_detalle hd', 'c.idhorariodetalle = hd.idhorariodetalle');
+        $this->db->join('tblprofesor_materia pm', 'pm.idprofesormateria = hd.idmateria');
+        $this->db->where('c.idalumno', $idalumno);
+        if (isset($idoportunidad) && !empty($idoportunidad)) {
+            $this->db->where('c.idoportunidadexamen', $idoportunidad);
+        }
+        $this->db->where('c.idhorario', $idhorario);
+        $this->db->where('pm.idmateria', $idmateria);
+        $this->db->where('c.idunidad', $idunidad);
+        $this->db->where('c.idtipoevaluacion', $idtipoevaluacion);
         $query = $this->db->get();
         if ($this->db->affected_rows() > 0) {
             return $query->result();
@@ -871,6 +974,12 @@ GROUP BY a.idalumno , a.idhorariodetalle , a.idunidad";
         $insert_id = $this->db->insert_id();
         return $insert_id;
     }
+    public function addDetalleCalificacionInterna($data)
+    {
+        $this->db->insert('tbldetalle_calificacioninterna', $data);
+        $insert_id = $this->db->insert_id();
+        return $insert_id;
+    }
 
     public function addAsistencia($data)
     {
@@ -899,12 +1008,40 @@ GROUP BY a.idalumno , a.idhorariodetalle , a.idunidad";
         $insert_id = $this->db->insert_id();
         return $insert_id;
     }
+    public function addCalificacionInterna($data)
+    {
+        $this->db->insert('tblcalificacion_interna', $data);
+        $insert_id = $this->db->insert_id();
+        return $insert_id;
+    }
 
     public function eliminarPlaneacion($idplaneacion = '')
     {
         # code...
         $this->db->where('idplaneacion', $idplaneacion);
         $this->db->delete('tblplaneacion');
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public function eliminacionCalificacionInterna($idcalificacion = '')
+    {
+        # code...
+        $this->db->where('idcalificacion', $idcalificacion);
+        $this->db->delete('tblcalificacion_interna');
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public function eliminacionDetalleCalificacionInterna($iddetallecalificacion = '')
+    {
+        # code...
+        $this->db->where('iddetallecalificacion', $iddetallecalificacion);
+        $this->db->delete('tbldetalle_calificacioninterna');
         if ($this->db->affected_rows() > 0) {
             return true;
         } else {
@@ -1450,6 +1587,16 @@ WHERE
             return false;
         }
     }
+    public function updateDetalleCalificacionInterna($id, $field)
+    {
+        $this->db->where('iddetallecalificacion', $id);
+        $this->db->update('tbldetalle_calificacioninterna', $field);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     public function updateAsistencia($id, $field)
     {
@@ -1477,6 +1624,16 @@ WHERE
     {
         $this->db->where('idcalificacion', $id);
         $this->db->update('tblcalificacion', $field);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public function updateCalificacionInterna($id, $field)
+    {
+        $this->db->where('idcalificacion', $id);
+        $this->db->update('tblcalificacion_interna', $field);
         if ($this->db->affected_rows() > 0) {
             return true;
         } else {
@@ -1515,6 +1672,24 @@ WHERE
         $this->db->where('pm.idmateria', $idmateria);
         $this->db->where('c.idunidad', $idunidad);
         $this->db->order_by('c.fecharegistro ASC');
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
+    public  function obtenerCalificacionValidandoInterna($idalumno = '', $idunidad = '', $idhorario = '')
+    {
+        $this->db->select('c.idcalificacion, c.calificacion, date(c.fecharegistro) as fecharegistro,COALESCE((SELECT(SUM(dc.calificacion) / COUNT(dc.idtipoevaluacion)) FROM tbldetalle_calificacioninterna dc WHERE dc.idcalificacion =  c.idcalificacion),0) as calificaciondetalle');
+        $this->db->from('tblcalificacion_interna c');
+        $this->db->join('tblunidad u', 'c.idunidad = u.idunidad');
+        $this->db->join('tbloportunidad_examen op', 'op.idoportunidadexamen = c.idoportunidadexamen');
+        $this->db->where('c.idalumno', $idalumno);
+        $this->db->where('op.numero', 1);
+        $this->db->where('c.idhorario', $idhorario);
+        $this->db->where('c.idunidad', $idunidad);
+
         $query = $this->db->get();
         if ($this->db->affected_rows() > 0) {
             return $query->first_row();

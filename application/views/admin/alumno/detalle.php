@@ -15,28 +15,38 @@
 
                         <div class="col-md-3 col-sm-3 col-xs-12 profile_left">
                             <div id="appdetalle">
-                                <div class="profile_img">
 
-                                    <!-- end of image cropping -->
-                                    <div id="crop-avatar">
-                                        <!-- Current avatar -->
-                                        <div class="avatar-view">
-                                            <img v-if="alumno.foto" v-bind:src="url_image+alumno.foto" alt="Avatar">
-                                            <img v-else src="<?php echo base_url(); ?>/assets/images/user2.png" />
+                                <div class="card profile-card">
+                                    <div class="profile-header">&nbsp;</div>
+                                    <div class="profile-body">
+                                        <div class="image-area">
+                                            <img v-if="alumno.foto" style="width: 128px; height: 128px;" v-bind:src="url_image+alumno.foto" alt="AdminBSB - Profile Image" />
+                                            <img v-else style="width: 128px;  height: 128px;" src="<?php echo base_url(); ?>/assets/images/user2.png" />
+                                        </div>
+                                        <div class="content-area">
+                                            <h3>{{alumno.nombre}} {{alumno.apellidop}}
+                                                {{alumno.apellidom}}
+                                            </h3>
                                         </div>
                                     </div>
-                                    <!-- end of image cropping -->
-
                                 </div>
-                                <h3>{{alumno.nombre}} {{alumno.apellidop}} {{alumno.apellidom}}</h3>
 
                                 <ul class="list-unstyled user_data">
+                                    <li v-if="!estatusoperaciones.activo">
+                                        <div align="center" class="alert alert-success alert-dismissible fade in" role="alert">
+                                            <strong><i class="fa fa-check-circle"></i> FINALIZADO!</strong>
+                                        </div>
+                                    </li>
                                     <li><i class="fa fa-key" style="color:#d4d209;"></i> <label>Matricula: {{alumno.matricula}}</label></li>
 
                                     <li>
-                                        <i class="fa fa-home" style="color:#098fd4;"></i> <label>
+                                        <i class="fa fa-home" style="color:#098fd4;"></i>
+                                        <label v-if="estatusoperaciones.activo">
                                             <span v-if="grupo_actual">{{grupo_actual.nivelgrupo}} {{grupo_actual.nombregrupo}} - {{grupo_actual.nombreturno}}</span>
                                             <span v-if="!grupo_actual">Grupo no asignado.</span>
+                                        </label>
+                                        <label v-else>
+                                            <span>{{estatusoperaciones.grupo}}</span>
                                         </label>
                                     </li>
                                     <li>
@@ -46,7 +56,7 @@
                                     </li>
                                     <li>
                                         <i class="fa fa-check-circle " style="color:#0cb62c;"></i> <label>{{alumno.nombreespecialidad}}</label>
-                                        <i class="fa fa-pencil" v-if="estatus_alumno" @click="abrirEditModalEspecialidad()" title="Modificar Beca."></i>
+                                        <i class="fa fa-pencil" v-if="estatusoperaciones.cambiarespecialidad" @click="abrirEditModalEspecialidad()" title="Agregar Especialidad."></i>
                                     </li>
                                     <li>
                                         <i class="fa fa-check-circle " style="color:#0cb62c;"></i> <label>Beca:
@@ -65,7 +75,7 @@
                                             <span v-if="estatus_alumno.idestatusalumno == 2" style="color: #F4A82F;">{{estatus_alumno.nombreestatus}}</span>
                                             <span v-if="estatus_alumno.idestatusalumno == 3" style="color: #D9534F;">{{estatus_alumno.nombreestatus}}</span>
                                         </label>
-                                        <i class="fa fa-pencil" v-if="estatus_alumno" @click="abrirEditModalCambiarEstatus()" title="Modificar Beca."></i>
+                                        <i class="fa fa-pencil" v-if="estatusoperaciones.editarestatus" @click="abrirEditModalCambiarEstatus()" title="Modificar Beca."></i>
                                     </li>
                                     <li>
                                         <button @click=" abrirAddModalFoto()" class="btn btn-info waves-effect btn-block btn-sm "> <i class="fa fa-cloud-upload"></i> SUBIR FOTO</button>
@@ -76,8 +86,8 @@
                                     <div class="col-md-12 col-sm-12 col-xs-12 " align="left">
                                         <div class="form-group">
 
-                                            <button type="button" v-if="!grupo_actual" @click="abrirAddModalAsignarGrupo()" class="btn btn-default btn-sm  btn-block"><i class="fa fa-plus"></i> ASIGNAR GRUPO</button>
-                                            <button type="button" v-if="grupo_actual" @click="abrirEditModalGrupo()" class="btn btn-default btn-sm  btn-block"><i class="fa fa-pencil"></i> CAMBIAR GRUPO</button>
+                                            <button type="button" v-if="estatusoperaciones.agregaralumnogrupo" @click="abrirAddModalAsignarGrupo()" class="btn btn-default btn-sm  btn-block"><i class="fa fa-plus"></i> ASIGNAR GRUPO</button>
+                                            <button type="button" v-if="estatusoperaciones.editaralumnogrupo" @click="abrirEditModalGrupo()" class="btn btn-default btn-sm  btn-block"><i class="fa fa-pencil"></i> CAMBIAR GRUPO</button>
 
                                         </div>
                                     </div>
@@ -134,23 +144,6 @@
                                                             </td>
                                                             <td align="right">
                                                                 <a class="btn btn-default  waves-effect waves-black" href="<?php echo site_url('Alumno/historial/' . $row->idhorario . '/' . $id . '/' . $row->idperiodo) ?>"><i class="fa fa-list-alt" aria-hidden="true"></i> Boleta</a>
-                                                                <!--                                                                <div class="btn-group" role="group">
-                                                                    <div class="btn-group" role="group">
-                                                                        <button type="button" class="btn btn-primary waves-effect dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                                            Opciones
-                                                                            <span class="caret"></span>
-                                                                        </button>
-                                                                        <ul class="dropdown-menu"> 
-                                                                            <li><a href="<?php// echo site_url('Alumno/historial/' . $row->idhorario . '/' . $id) ?>"><i class="fa fa-list-alt" aria-hidden="true"></i> Boleta</a></li> 
-                                                                            <li><a href="<?php //echo site_url('Alumno/horario/' . $row->idhorario . '/' . $id) 
-                                                                                            ?>"><i class="fa fa-clock-o"></i> Horario</a></li> 
-                                                                            <li><a href="<?php //echo site_url('alumno/asistencia/'.$row->idhorario.'/'.$id)  
-                                                                                            ?>"> <i class="fa fa-check"></i> Asistencia</a></li>  
-
-
-                                                                        </ul>
-                                                                    </div>
-                                                                </div>-->
 
 
                                                             </td>
@@ -634,4 +627,4 @@
 <script src="<?php echo base_url(); ?>/assets/vue/vue2-filters.min.js"></script>
 <script data-my_var_1="<?php echo base_url() ?>" data-my_var_2="<?php echo $id ?>" src="<?php echo base_url(); ?>/assets/vue/appvue/appalumnotutor.js"></script>
 <script data-my_var_1="<?php echo base_url() ?>" data-my_var_2="<?php echo $id ?>" data-my_var_3="<?php echo $this->session->idrol; ?>" src="<?php echo base_url(); ?>/assets/vue/appvue/appestadocuenta.js"></script>
-<script data-my_var_1="<?php echo base_url() ?>" data-my_var_2="<?php echo $id ?>" src="<?php echo base_url(); ?>/assets/vue/appvue/appdetalle_alumno.js"></script>
+<script data-my_var_1="<?php echo base_url() ?>" data-my_var_2="<?php echo $id ?>" src="<?php echo base_url(); ?>/assets/vue/appvue/appdetalle_alumno.js?v1.1"></script>

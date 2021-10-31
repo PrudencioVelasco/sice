@@ -94,6 +94,7 @@ class Welcome extends CI_Controller
                         'idplantel' => $result->idplantel,
                         'idniveleducativo' => $result->idniveleducativo,
                         'idtipousuario' => $result->idtipousuario,
+                        'foto' => $result->foto,
                     ]);
                     $this->session->set_flashdata('saludar', $this->saludar());
                     $this->session->set_flashdata('nombre_saludar', $result->nombre);
@@ -193,7 +194,8 @@ class Welcome extends CI_Controller
                             'nivel_educativo' => $value->nombreniveleducativo,
                             'idniveleducativo' => $value->idniveleducativo,
                             'idtipousuario' => $value->idtipousuario,
-                            'planteles' => $escuelas
+                            'planteles' => $escuelas,
+                            'foto' => $value->foto
                         ]);
                         $this->session->set_flashdata('saludar', $this->saludar());
                         $this->session->set_flashdata('nombre_saludar', $value->nombre);
@@ -376,17 +378,19 @@ class Welcome extends CI_Controller
     public function cambiarplantel($idplantel, $idprofesor)
     {
         $detalle_plantel = $this->usuario->detallePlantel($idplantel);
+        $detalle_profesor = $this->usuario->detalleProfesor($idprofesor);
         $data_session = array(
             'user_id' => $this->session->user_id,
             'idprofesor' => $idprofesor,
-            'nombre' => $this->session->nombre,
-            'apellidop' => $this->session->apellidop,
-            'apellidom' => $this->session->apellidom,
+            'nombre' => $detalle_profesor->nombre,
+            'apellidop' => $detalle_profesor->apellidop,
+            'apellidom' => $detalle_profesor->apellidom,
             'idplantel' => $idplantel,
             'idtipousuario' => $this->session->idtipousuario,
             'nivel_educativo' => $detalle_plantel->nombreniveleducativo,
             'idniveleducativo' => $detalle_plantel->idniveleducativo,
-            'planteles' => $this->session->planteles
+            'planteles' => $this->session->planteles,
+            'foto' => $detalle_profesor->foto,
         );
         $this->session->set_userdata($data_session);
         $this->session->set_userdata('notificaciones_calificaciones', $this->notificaciones());

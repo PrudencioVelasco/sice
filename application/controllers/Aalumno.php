@@ -2107,9 +2107,15 @@ tblcalificacion  {border-collapse:collapse}
         $tabla = "";
         $tabla .= '
         <div class="row">
-             <div class="col-md-12 col-sm-12 col-xs-12 ">
-             <a target="_blank" class="btn  btn-default" href="' . base_url() . '/Aalumno/imprimirBoleta/' . $idhorarioe . '/' . $idalumnoe . '"><i class="fa fa-cloud-download"></i> Descargar Boleta</a>
-             </div>
+             <div class="col-md-12 col-sm-12 col-xs-12 ">';
+        if ($this->session->idniveleducativo == 1) {
+            $tabla .= ' <a target="_blank" class="btn  btn-default" href="' . base_url() . '/Aalumno/imprimirBoleta/' . $idhorarioe . '/' . $idalumnoe . '"><i class="fa fa-cloud-download"></i> Descargar Boleta</a>';
+        }
+        if ($this->session->idniveleducativo == 2) {
+            $tabla .= ' <a target="_blank" class="btn  btn-default" href="' . base_url() . '/Aalumno/imprimirBoletaSecundaria/' . $idhorarioe . '/' . $idalumnoe . '"><i class="fa fa-cloud-download"></i> Descargar Boleta</a>';
+        }
+
+        $tabla .= ' </div>
         </div>
         <div class="table-responsive"> 
 <table class="table  table-striped  table-hover" style="width:100%;" id="datatablebodega">
@@ -2242,7 +2248,12 @@ tblcalificacion  {border-collapse:collapse}
 
             $detalle_logo = $this->alumno->logo($this->session->idplantel);
             $alumno = $this->alumno->detalleAlumno($idalumno);
+            $detalle_grupo = $this->cicloescolar->detalleGrupo($idhorario);
+            $grado_alumno = $this->calificacion->gradoAlumno($idalumno, $detalle_grupo->idperiodo, $detalle_grupo->idgrupo);
+            $idnivelestudio = $grado_alumno->idnivelestudio;
+            $idespecialidad = $grado_alumno->idespecialidad;
             $ubicacion_imagen = '../../assets/images/escuelas/';
+            $encabezadoprimaria = base_url() . '/assets/images/escuelas/encabezadoprimaria.png';
             $logo = base_url() . '/assets/images/escuelas/principal_licenciatura.png';
             $logo2 = base_url() . '/assets/images/escuelas/secundario_licenciatura.png';
             $dato = $_SERVER['DOCUMENT_ROOT'] . '/sice/assets/images/escuelas/' . 'secundario_licenciatura.png';
@@ -2259,7 +2270,7 @@ tblcalificacion  {border-collapse:collapse}
             $mayo = base_url() . '/assets/images/meses/mayo.png';
             $junio = base_url() . '/assets/images/meses/junio.png';
             $detalle_cicloescolar = $this->cicloescolar->detalleCicloEscolarHorario($idhorario);
-            $detalle_grupo = $this->cicloescolar->detalleGrupo($idhorario);
+
 
             $array_materias_reprobadas = array();
             $materias_reprobadas = $this->alumno->obtenerTodasMateriaReprobadasActivas($idalumno);
@@ -2270,8 +2281,14 @@ tblcalificacion  {border-collapse:collapse}
             }
             $reprobadas = implode(",", $array_materias_reprobadas);
 
-            $materias = $this->alumno->showAllMaterias($idhorario, $reprobadas, $idalumno);
-
+            $materias = $this->alumno->showAllMateriasGrupo($idhorario, $reprobadas, $idalumno, $idespecialidad, $idnivelestudio);
+            $materiasinternas = $this->alumno->obtenerMateriasInternas();
+            $total_recorrido = 0;
+            foreach ($materias as $materia) {
+                if ($materia->sepromedia == 1) {
+                    $total_recorrido++;
+                }
+            }
             $data = array(
                 'detalle_logo' => $this->alumno->logo($this->session->idplantel),
                 'alumno' => $this->alumno->detalleAlumno($idalumno),
@@ -2281,6 +2298,62 @@ tblcalificacion  {border-collapse:collapse}
                 'idalumno' => $idalumno,
                 'idhorario' => $idhorario
             );
+
+
+            $row_area_academica = 0;
+            $row_para_escolares = 0;
+            $total_area_academica = 0;
+            //$total_para_escolares = 5;
+
+            switch ($idnivelestudio) {
+                case 1:
+                    //PRIMER SEMESTRE
+                    $row_area_academica = 5;
+                    $row_para_escolares = ($total_recorrido - 5);
+                    $total_area_academica = $row_area_academica + 1;
+                    break;
+                case 2:
+                    //SEGUNDO SEMESTRE
+                    $row_area_academica = 5;
+                    $row_para_escolares = ($total_recorrido - 5);
+                    $total_area_academica = $row_area_academica + 1;
+                    break;
+                case 3:
+                    //TERCER SEMESTRE
+                    $row_area_academica = 5;
+                    $row_para_escolares = ($total_recorrido - 5);
+                    $total_area_academica = $row_area_academica + 1;
+                    break;
+                case 4:
+                    //CUARTO SEMESTRE
+                    $row_area_academica = 7;
+                    $row_para_escolares = ($total_recorrido - 7);
+                    $total_area_academica = $row_area_academica + 1;
+                    break;
+                case 5:
+                    //QUINTO SEMESTRE 
+                    $row_area_academica = 7;
+                    $row_para_escolares = ($total_recorrido - 7);
+                    $total_area_academica = $row_area_academica + 1;
+                    break;
+                case 6:
+                    //SEXTO SEMESTRE
+                    $row_area_academica = 7;
+                    $row_para_escolares = ($total_recorrido - 7);
+                    $total_area_academica = $row_area_academica + 1;
+                    break;
+
+
+                default:
+                    # code...
+                    break;
+            }
+
+            $pasoprimero = 0;
+            $pasosegundo = 0;
+            $pasotercero = 0;
+            $ya_paso_area_academica = false;
+            $ya_paso_para_escolares = false;
             // $html = $this->load->view('alumno/calificacion/boletapdf', $data, true);
             // $html = $this->output->get_output();
 
@@ -2299,6 +2372,11 @@ tblcalificacion  {border-collapse:collapse}
              * ]);
              * $dompdf->setHttpContext($contxt);
              */
+            $formacioninterna = base_url() . '/assets/images/formacioninterna.png';
+            $desarrollopersonalysocial = base_url() . '/assets/images/desarrollopersonalysocial.png';
+            $componentecurricular = base_url() . '/assets/images/componentecurricular.png';
+            $formacionacademica = base_url() . '/assets/images/formacionacademica.png';
+
             $this->load->library('tcpdf');
             $hora = date("h:i:s a");
             $fechaactual = date('d/m/Y');
@@ -2318,7 +2396,7 @@ tblcalificacion  {border-collapse:collapse}
             $pdf->SetFooterMargin(15);
 
             // set auto page breaks
-            $pdf->SetAutoPageBreak(TRUE, 15);
+            $pdf->SetAutoPageBreak(false, 15);
             $pdf->AddPage();
             $tabla = '
              <style>
@@ -2411,7 +2489,9 @@ tblcalificacion  {border-collapse:collapse}
           tr:nth-of-type(5) td:nth-of-type(1){
               visible:hidden;
           }
-
+td{
+    padding:0;
+}
           .rotate{
         
            white-space:nowrap;
@@ -2478,31 +2558,20 @@ tblcalificacion  {border-collapse:collapse}
             font-family: sans-serif; 
           }
           .director{
-            font-size: 9px;
-            font-weight:bolder;
+            font-size: 8px; 
             font-family: sans-serif; 
           }
           .img{
               width:30px;
           }
-
+          .bg-prom {
+            background-color: #ccc;
+        }
              </style>
           
-             <table  border="0" cellpadding="2"  cellspacing="0">
+             <table  border="0" width="520" cellpadding="2"  cellspacing="0">
              <tr>
-             <td width="120" align="center">
-             <img src="' . $logo . '" width="150" height="90" />
-             </td>
-             <td colspan="2" width="300" align="center">
-             <label class="slogan">"' . str_replace("INSTITUTO MORELOS", "", $detalle_logo[0]->nombreplantel) . '"</label><br />
-             <label class="nombreplantel">' . str_replace("VALOR Y CONFIANZA", "", $detalle_logo[0]->nombreplantel) . '</label><br />
-             <label class="tipoplantel">' . $detalle_logo[0]->asociado . '  ' . $detalle_logo[0]->clave . '</label><br />
-             <label class="clave">Ciclo Escolar: ' . $detalle_cicloescolar->yearinicio . ' - ' . $detalle_cicloescolar->yearfin . '</label><br />
-             <label class="txtn">136 años educando a la niñez y juventud</label
-             ></td>
-             <td width="120" align="center">
-             <img src="' . $logo2 . '" width="150" height="70" />
-             </td>
+             <td align="center" colspan="4" class="boleta">  <img src="' . $encabezadoprimaria . '"  /></td>
              </tr>
              
              <tr>
@@ -2522,13 +2591,14 @@ tblcalificacion  {border-collapse:collapse}
             $tabla .= ' 
             <table class="tblcalificacion"  style="margin-top:300px;" cellpadding="2" cellspacing="0">
             <tr>
-              <td width="260" rowspan="2" class="asignatura">ASIGNATURA AREAS</td>
+              <td   width="40"  rowspan="2"   >   <img src="' . $componentecurricular . '" height="60" /></td>
+              <td width="200" rowspan="2" class="asignatura"><br><br><br>ASIGNATURA AREAS</td>
               <td colspan="4"   width="80"    class="trimestre">1° TRIMESTRE</td>
               <td colspan="5"   width="100"  class="trimestre">2° TRIMESTRE</td>
               <td colspan="4"   width="80" class="trimestre">3° TRIMESTRE</td>
               <td rowspan="2" width="20"    style="margin-left:1000px;" ><img  src="' . $promediofinal . '"   height="70" /></td>
             </tr>
-            <tr  >
+            <tr  > 
               <td height="20" class="rotate" width="20"  > <img src="' . $septiembre . '"   height="50" /></td>
               <td height="20" class="rotate" width="20"   ><img src="' . $octubre . '"   height="50" /></td>
               <td height="20" class="rotate" width="20"   ><img src="' . $noviembre . '"   height="50" /></td>
@@ -2538,11 +2608,13 @@ tblcalificacion  {border-collapse:collapse}
               <td height="20" class="rotate" width="20"   ><img src="' . $febrero . '"   height="50" /></td>
               <td height="20" class="rotate" width="20"   ><img src="' . $marzo . '"   height="50" /></td>
               <td height="20" class="rotate" width="20"   ><img src="' . $promedio . '"   height="50" /></td>
-              <td height="20" class="rotate"   width="20" ><img src="' . $abril . '"   height="50" /></td>
+              <td height="20" class="rotate"  width="20" ><img src="' . $abril . '"   height="50" /></td>
               <td height="20" class="rotate"  width="20"  ><img src="' . $mayo . '"   height="50" /></td>
               <td height="20" class="rotate"  width="20"  ><img src="' . $junio . '"   height="50" /></td>
               <td height="20" class="rotate"  width="20"  ><img src="' . $promedio . '"   height="50" /></td>
             </tr>';
+
+
             $primer_trimestre = $this->cicloescolar->showAllPrimerTrimestre();
             $total_primer_trimeste = count($primer_trimestre);
 
@@ -2551,131 +2623,369 @@ tblcalificacion  {border-collapse:collapse}
 
             $tercer_trimestre = $this->cicloescolar->showAllTercerTrimestre();
             $total_tercer_trimeste = count($tercer_trimestre);
-
+            $suma_materias = 0;
             $suma_promedio = 0;
+            $promedio_globa = 0;
             foreach ($materias as $materia) {
-                $suma_promedio = 0;
-                $idprofesormateria = $materia->idprofesormateri;
-                $tabla .= '<tr>
-                        <td class="nombreclase"  height="2">' . $materia->nombreclase . '</td>';
+                if ($materia->sepromedia == 1) {
+                    $suma_promedio = 0;
+                    $suma_materias++;
+                    $idprofesormateria = $materia->idprofesormateri;
+                    $tabla .= '<tr>';
+                    if ($pasoprimero == 0 && $ya_paso_area_academica == false) {
+                        // if ($suma_materias <= $total_area_academica) {
+                        $tabla .= '<td rowspan="' . $row_area_academica . '" align="center"   > 
+                                <br> 
+                                <img src="' . $formacionacademica . '" height="60" />
+                                </td>';
+                        $pasoprimero = 1;
+                        $ya_paso_area_academica = true;
+                        // }
+                    }
+                    if ($pasoprimero == 1 && $ya_paso_para_escolares == false &&  $suma_materias == ($total_area_academica)) {
+                        // if ($suma_materias <= $total_para_escolares) {
+                        $tabla .= '<td rowspan="' . $row_para_escolares . '"><img src="' . $desarrollopersonalysocial . '" height="60" /></td>';
+                        // $primero = 1;
+                        $ya_paso_para_escolares = true;
+                        // }
+                    }
+                    $tabla .= '<td class="nombreclase"  height="2">' . $materia->nombreclase . '</td>';
+                    $suma_primer_trimestre = 0;
+                    foreach ($primer_trimestre as $primero) {
+                        $idmes = $primero->idmes;
+                        $calificacion = $this->cicloescolar->calificacionXMes($idprofesormateria, $idalumno, $idmes, $idhorario);
+                        if ($calificacion) {
+                            $suma_primer_trimestre += $calificacion->calificacion;
+                            $tabla .= '<td class="calificacion" align="center"  height="2">' . eliminarDecimalCero($calificacion->calificacion) . '</td>';
+                        } else {
+                            $tabla .= '<td class="calificacion" align="center"  height="2"></td>';
+                        }
+                    }
+                    if ($total_primer_trimeste > 0 && $suma_primer_trimestre > 0) {
+                        $promedio = $suma_primer_trimestre / $total_primer_trimeste;
+                        $suma_promedio += $suma_primer_trimestre / $total_primer_trimeste;
+                        $tabla .= '<td class="calificacion" align="center"   height="2">' . eliminarDecimalCero(numberFormatPrecision($promedio, 1, '.')) . '</td>';
+                    } else {
+                        $tabla .= '<td class="calificacion" align="center"  height="2"></td>';
+                    }
+
+                    $suma_segundo_trimestre = 0;
+                    foreach ($segundo_trimestre as $segundo) {
+                        $idmes = $segundo->idmes;
+                        $calificacion = $this->cicloescolar->calificacionXMes($idprofesormateria, $idalumno, $idmes, $idhorario);
+                        if ($calificacion) {
+                            $suma_segundo_trimestre += $calificacion->calificacion;
+
+                            $tabla .= '<td class="calificacion" align="center"  height="2">' . eliminarDecimalCero($calificacion->calificacion) . '</td>';
+                        } else {
+                            $tabla .= '<td class="calificacion" align="center"  height="2"></td>';
+                        }
+                    }
+                    if ($total_segundo_trimeste > 0 && $suma_segundo_trimestre > 0) {
+                        $promedio = $suma_segundo_trimestre / $total_segundo_trimeste;
+                        $suma_promedio += $suma_segundo_trimestre / $total_segundo_trimeste;
+                        $tabla .= '<td class="calificacion" align="center"  height="2">' . eliminarDecimalCero(numberFormatPrecision($promedio, 1, '.')) . '</td>';
+                    } else {
+                        $tabla .= '<td class="calificacion" align="center"  height="2"></td>';
+                    }
+
+                    $suma_tercer_trimestre = 0;
+                    foreach ($tercer_trimestre as $tercer) {
+                        $idmes = $tercer->idmes;
+                        $calificacion = $this->cicloescolar->calificacionXMes($idprofesormateria, $idalumno, $idmes, $idhorario);
+                        if ($calificacion) {
+                            $suma_tercer_trimestre += $calificacion->calificacion;
+                            $tabla .= '<td class="calificacion" align="center"  height="2">' . eliminarDecimalCero($calificacion->calificacion) . '</td>';
+                        } else {
+                            $tabla .= '<td class="calificacion" align="center"  height="2"></td>';
+                        }
+                    }
+                    if ($total_tercer_trimeste > 0 && $suma_tercer_trimestre > 0) {
+                        $promedio = $suma_tercer_trimestre / $total_tercer_trimeste;
+                        $suma_promedio += $suma_tercer_trimestre / $total_tercer_trimeste;
+                        $tabla .= '<td class="calificacion" align="center"  height="2">' . eliminarDecimalCero(numberFormatPrecision($promedio, 1, '.')) . '</td>';
+                    } else {
+                        $tabla .= '<td class="calificacion" align="center"  height="2"></td>';
+                    }
+                    $promedio_final = $suma_promedio / 3;
+                    $promedio_globa += $promedio_final;
+                    if ($promedio_final > 0) {
+                        $tabla .= '<td class="calificacion" align="center"  width="20"   height="2">' . eliminarDecimalCero(numberFormatPrecision($promedio_final, 1, '.')) . '</td>';
+                    } else {
+                        $tabla .= '<td class="calificacion" align="center"  width="20"   height="2"></td>';
+                    }
+                    $tabla .= '</tr>';
+                    // $total_recorrido++;
+                }
+            }
+
+            $tabla .= '<tr>
+            <td  class="calificacion" align="center"  height="2"></td>
+            <td  class="calificacion bg-prom" align="center"  height="2"></td>
+            <td colspan="8" align="right" class="nombreclase bg-prom">PROMEDIO FINAL:</td>
+            <td  class="calificacion bg-prom" align="center"  height="2">' . eliminarDecimalCero(numberFormatPrecision(($promedio_globa / $suma_materias), 1, '.')) . '</td>
+            <td  class="calificacion" align="center"  height="2" colspan="5"></td>
+            </tr>';
+            $yapaso = false;
+            foreach ($materias as $materia) {
+                if ($materia->sepromedia == 0) {
+                    $suma_promedio = 0;
+                    $suma_materias++;
+                    $idprofesormateria = $materia->idprofesormateri;
+                    $tabla .= '<tr >';
+                    if (!$yapaso) {
+                        $tabla .= '<td rowspan="10">
+                        <br><br>
+                        <img src="' . $formacioninterna . '"   height="100"   />
+                        </td>';
+                    }
+                    $tabla .= '<td class="nombreclase" >' . $materia->nombreclase . '</td>';
+                    $suma_primer_trimestre = 0;
+                    foreach ($primer_trimestre as $primero) {
+                        $idmes = $primero->idmes;
+                        $calificacion = $this->cicloescolar->calificacionXMes($idprofesormateria, $idalumno, $idmes, $idhorario);
+                        if ($calificacion) {
+                            $suma_primer_trimestre += $calificacion->calificacion;
+                            $tabla .= '<td class="calificacion" align="center">' . eliminarDecimalCero($calificacion->calificacion) . '</td>';
+                        } else {
+                            $tabla .= '<td class="calificacion" align="center"></td>';
+                        }
+                    }
+                    if ($total_primer_trimeste > 0 && $suma_primer_trimestre > 0) {
+                        $promedio = $suma_primer_trimestre / $total_primer_trimeste;
+                        $suma_promedio += $suma_primer_trimestre / $total_primer_trimeste;
+                        $tabla .= '<td class="calificacion" align="center">' . eliminarDecimalCero(numberFormatPrecision($promedio, 1, '.')) . '</td>';
+                    } else {
+                        $tabla .= '<td class="calificacion" align="center"></td>';
+                    }
+
+                    $suma_segundo_trimestre = 0;
+                    foreach ($segundo_trimestre as $segundo) {
+                        $idmes = $segundo->idmes;
+                        $calificacion = $this->cicloescolar->calificacionXMes($idprofesormateria, $idalumno, $idmes, $idhorario);
+                        if ($calificacion) {
+                            $suma_segundo_trimestre += $calificacion->calificacion;
+
+                            $tabla .= '<td class="calificacion" align="center">' . eliminarDecimalCero($calificacion->calificacion) . '</td>';
+                        } else {
+                            $tabla .= '<td class="calificacion" align="center"></td>';
+                        }
+                    }
+                    if ($total_segundo_trimeste > 0 && $suma_segundo_trimestre > 0) {
+                        $promedio = $suma_segundo_trimestre / $total_segundo_trimeste;
+                        $suma_promedio += $suma_segundo_trimestre / $total_segundo_trimeste;
+                        $tabla .= '<td class="calificacion" align="center">' . eliminarDecimalCero(numberFormatPrecision($promedio, 1, '.')) . '</td>';
+                    } else {
+                        $tabla .= '<td class="calificacion" align="center"></td>';
+                    }
+
+                    $suma_tercer_trimestre = 0;
+                    foreach ($tercer_trimestre as $tercer) {
+                        $idmes = $tercer->idmes;
+                        $calificacion = $this->cicloescolar->calificacionXMes($idprofesormateria, $idalumno, $idmes, $idhorario);
+                        if ($calificacion) {
+                            $suma_tercer_trimestre += $calificacion->calificacion;
+                            $tabla .= '<td class="calificacion" align="center">' . eliminarDecimalCero($calificacion->calificacion) . '</td>';
+                        } else {
+                            $tabla .= '<td class="calificacion" align="center"></td>';
+                        }
+                    }
+                    if ($total_tercer_trimeste > 0 && $suma_tercer_trimestre > 0) {
+                        $promedio = $suma_tercer_trimestre / $total_tercer_trimeste;
+                        $suma_promedio += $suma_tercer_trimestre / $total_tercer_trimeste;
+                        $tabla .= '<td class="calificacion" align="center">' . eliminarDecimalCero(numberFormatPrecision($promedio, 1, '.')) . '</td>';
+                    } else {
+                        $tabla .= '<td class="calificacion" align="center"></td>';
+                    }
+                    $promedio_final = $suma_promedio / 3;
+                    if ($promedio_final > 0) {
+                        $tabla .= '<td class="calificacion" align="center"  width="20">' . eliminarDecimalCero(numberFormatPrecision($promedio_final, 1, '.')) . '</td>';
+                    } else {
+                        $tabla .= '<td class="calificacion" align="center"  width="20"></td>';
+                    }
+                    $tabla .= '</tr>';
+                    // $total_recorrido++;
+                    $yapaso = true;
+                }
+            }
+            $tabla .= '<tr> 
+            <td class="nombreclase"  height="2">ROBÓTICA</td>  
+            <td class="calificacion" align="center"  height="2"></td>
+            <td class="calificacion" align="center"  height="2"></td>
+            <td class="calificacion" align="center"  height="2"></td>
+            <td class="calificacion" align="center"  height="2"></td>
+            <td class="calificacion" align="center"  height="2"></td>
+            <td class="calificacion" align="center"  height="2"></td>
+            <td class="calificacion" align="center"  height="2"></td>
+            <td class="calificacion" align="center"  height="2"></td>
+            <td class="calificacion" align="center"  height="2"></td>  
+            <td class="calificacion" align="center"  height="2"></td>  
+            <td class="calificacion" align="center"  height="2"></td>  
+            <td class="calificacion" align="center"  height="2"></td>  
+            <td class="calificacion" align="center"  height="2"></td>  
+            <td class="calificacion" align="center"  height="2"></td> 
+            </tr>';
+
+            $suma_promedio_interno = 0;
+            foreach ($materiasinternas as $materia) {
+                $idtipoevaluacion = $materia->idtipoevaluacion;
+                $tabla .= '<tr >';
+                $tabla .= '<td   class="nombreclase"  height="1">' . $materia->nombre . '</td>';
                 $suma_primer_trimestre = 0;
                 foreach ($primer_trimestre as $primero) {
                     $idmes = $primero->idmes;
-                    $calificacion = $this->cicloescolar->calificacionXMes($idprofesormateria, $idalumno, $idmes, $idhorario);
-                    if ($calificacion) {
-                        $suma_primer_trimestre += $calificacion->calificacion;
-                        $tabla .= '<td class="calificacion" align="center"  height="2">' . eliminarDecimalCero($calificacion->calificacion) . '</td>';
+                    $calificacion = $this->cicloescolar->obtenerCalificacionInterna($idalumno, $idhorario, $idtipoevaluacion, $idmes);
+                    if ($calificacion && $calificacion[0]->calificacion > 0) {
+                        $suma_primer_trimestre += $calificacion[0]->calificacion;
+                        $tabla .= '<td class="calificacion" align="center"  height="2">' . eliminarDecimalCero(($calificacion[0]->calificacion / count($materias))) . '</td>';
                     } else {
-                        $tabla .= '<td class="calificacion" align="center"  height="2">0</td>';
+                        $tabla .= '<td class="calificacion" align="center"  height="2"></td>';
                     }
                 }
                 if ($total_primer_trimeste > 0 && $suma_primer_trimestre > 0) {
-                    $promedio = $suma_primer_trimestre / $total_primer_trimeste;
-                    $suma_promedio += $suma_primer_trimestre / $total_primer_trimeste;
+                    $promedio = ($suma_primer_trimestre / count($materias)) / $total_primer_trimeste;
+                    $suma_promedio_interno += ($suma_primer_trimestre / count($materias)) / $total_primer_trimeste;
                     $tabla .= '<td class="calificacion" align="center"   height="2">' . eliminarDecimalCero(numberFormatPrecision($promedio, 1, '.')) . '</td>';
                 } else {
-                    $tabla .= '<td class="calificacion" align="center"  height="2">0</td>';
+                    $tabla .= '<td class="calificacion" align="center"  height="2"></td>';
                 }
 
                 $suma_segundo_trimestre = 0;
                 foreach ($segundo_trimestre as $segundo) {
                     $idmes = $segundo->idmes;
-                    $calificacion = $this->cicloescolar->calificacionXMes($idprofesormateria, $idalumno, $idmes, $idhorario);
-                    if ($calificacion) {
-                        $suma_segundo_trimestre += $calificacion->calificacion;
+                    $calificacion = $this->cicloescolar->obtenerCalificacionInterna($idalumno, $idhorario, $idtipoevaluacion, $idmes);
+                    if ($calificacion  && $calificacion[0]->calificacion > 0) {
+                        $suma_segundo_trimestre += $calificacion[0]->calificacion;
 
-                        $tabla .= '<td class="calificacion" align="center"  height="2">' . eliminarDecimalCero($calificacion->calificacion) . '</td>';
+                        $tabla .= '<td class="calificacion" align="center"  height="2">' . eliminarDecimalCero($calificacion[0]->calificacion / count($materias)) . '</td>';
                     } else {
-                        $tabla .= '<td class="calificacion" align="center"  height="2">0</td>';
+                        $tabla .= '<td class="calificacion" align="center"  height="2"></td>';
                     }
                 }
                 if ($total_segundo_trimeste > 0 && $suma_segundo_trimestre > 0) {
-                    $promedio = $suma_segundo_trimestre / $total_segundo_trimeste;
-                    $suma_promedio += $suma_segundo_trimestre / $total_segundo_trimeste;
+                    $promedio = ($suma_segundo_trimestre / count($materias)) / $total_segundo_trimeste;
+                    $suma_promedio_interno +=  ($suma_segundo_trimestre / count($materias)) / $total_segundo_trimeste;
                     $tabla .= '<td class="calificacion" align="center"  height="2">' . eliminarDecimalCero(numberFormatPrecision($promedio, 1, '.')) . '</td>';
                 } else {
-                    $tabla .= '<td class="calificacion" align="center"  height="2">0</td>';
+                    $tabla .= '<td class="calificacion" align="center"  height="2"></td>';
                 }
 
                 $suma_tercer_trimestre = 0;
                 foreach ($tercer_trimestre as $tercer) {
                     $idmes = $tercer->idmes;
-                    $calificacion = $this->cicloescolar->calificacionXMes($idprofesormateria, $idalumno, $idmes, $idhorario);
-                    if ($calificacion) {
-                        $suma_tercer_trimestre += $calificacion->calificacion;
-                        $tabla .= '<td class="calificacion" align="center"  height="2">' . eliminarDecimalCero($calificacion->calificacion) . '</td>';
+                    $calificacion = $this->cicloescolar->obtenerCalificacionInterna($idalumno, $idhorario, $idtipoevaluacion, $idmes);
+                    if ($calificacion  && $calificacion[0]->calificacion > 0) {
+                        $suma_tercer_trimestre += $calificacion[0]->calificacion;
+                        $tabla .= '<td class="calificacion" align="center"  height="2">' . eliminarDecimalCero($calificacion[0]->calificacion / count($materias)) . '</td>';
                     } else {
-                        $tabla .= '<td class="calificacion" align="center"  height="2">0</td>';
+                        $tabla .= '<td class="calificacion" align="center"  height="2"></td>';
                     }
                 }
                 if ($total_tercer_trimeste > 0 && $suma_tercer_trimestre > 0) {
-                    $promedio = $suma_tercer_trimestre / $total_tercer_trimeste;
-                    $suma_promedio += $suma_tercer_trimestre / $total_tercer_trimeste;
+                    $promedio = ($suma_tercer_trimestre / count($materias)) / $total_tercer_trimeste;
+                    $suma_promedio_interno += ($suma_tercer_trimestre / count($materias)) / $total_tercer_trimeste;
                     $tabla .= '<td class="calificacion" align="center"  height="2">' . eliminarDecimalCero(numberFormatPrecision($promedio, 1, '.')) . '</td>';
                 } else {
-                    $tabla .= '<td class="calificacion" align="center"  height="2">0</td>';
+                    $tabla .= '<td class="calificacion" align="center"  height="2"></td>';
                 }
-                $promedio_final = $suma_promedio / 3;
-                $tabla .= '     
-                       
-                        <td class="calificacion" align="center"  width="20"   height="2">' . eliminarDecimalCero(numberFormatPrecision($promedio_final, 1, '.')) . '</td>
-                </tr>';
+                $promedio_final = $suma_promedio_interno / 3;
+                if ($promedio_final > 0) {
+                    $tabla .= '<td class="calificacion" align="center"  width="20"   height="2">' . eliminarDecimalCero(numberFormatPrecision($promedio_final, 1, '.')) . '</td>';
+                } else {
+                    $tabla .= '<td class="calificacion" align="center"  width="20"   height="2"></td>';
+                }
+                $tabla .= '</tr>';
+                // $total_recorrido++;
+
             }
+            $septiembref = $this->cicloescolar->obtenerTotalFaltas($idalumno, $idhorario, 1, 9);
+            $octubref = $this->cicloescolar->obtenerTotalFaltas($idalumno, $idhorario, 1, 10);
+            $noviembref = $this->cicloescolar->obtenerTotalFaltas($idalumno, $idhorario, 1, 11);
+            $diciembref = $this->cicloescolar->obtenerTotalFaltas($idalumno, $idhorario, 2, 12);
+            $enerof = $this->cicloescolar->obtenerTotalFaltas($idalumno, $idhorario, 2, 1);
+            $febrerof = $this->cicloescolar->obtenerTotalFaltas($idalumno, $idhorario, 2, 2);
+            $marzof = $this->cicloescolar->obtenerTotalFaltas($idalumno, $idhorario, 2, 3);
+            $abrilf = $this->cicloescolar->obtenerTotalFaltas($idalumno, $idhorario, 3, 4);
+            $mayof = $this->cicloescolar->obtenerTotalFaltas($idalumno, $idhorario, 3, 5);
+            $juniof = $this->cicloescolar->obtenerTotalFaltas($idalumno, $idhorario, 3, 6);
+            $tabla .= '<tr> 
+            <td  style="padding:0;" class="nombreclase"  height="2">INASISTENCIAS</td>  
+            <td class="calificacion"  align="center" height="2">' . $septiembref[0]->totalfaltas . '</td>
+            <td class="calificacion"  align="center" height="2">' . $octubref[0]->totalfaltas . '</td>
+            <td class="calificacion"  align="center" height="2">' . $noviembref[0]->totalfaltas . '</td>
+            <td class="calificacion"  align="center" height="2">' . ($septiembref[0]->totalfaltas + $octubref[0]->totalfaltas + $noviembref[0]->totalfaltas) . '</td>
+            <td class="calificacion"  align="center" height="2">' . $diciembref[0]->totalfaltas . '</td>
+            <td class="calificacion"  align="center" height="2">' . $enerof[0]->totalfaltas . '</td>
+            <td class="calificacion"  align="center" height="2">' . $febrerof[0]->totalfaltas . '</td>
+            <td class="calificacion"  align="center" height="2">' . $marzof[0]->totalfaltas . '</td>
+            <td class="calificacion"  align="center" height="2">' . ($diciembref[0]->totalfaltas + $enerof[0]->totalfaltas + $febrerof[0]->totalfaltas + $marzof[0]->totalfaltas) . '</td>
+            <td class="calificacion"  align="center" height="2" >' . $abrilf[0]->totalfaltas . '</td> 
+            <td class="calificacion"  align="center" height="2">' . $mayof[0]->totalfaltas . '</td> 
+            <td class="calificacion"  align="center" height="2" >' . $juniof[0]->totalfaltas . '</td> 
+            <td class="calificacion"  align="center" height="2" >' . ($abrilf[0]->totalfaltas + $mayof[0]->totalfaltas + $juniof[0]->totalfaltas) . '</td>
+            <td  class="calificacion"  align="center" height="2">' . ($septiembref[0]->totalfaltas + $octubref[0]->totalfaltas + $noviembref[0]->totalfaltas + $diciembref[0]->totalfaltas + $enerof[0]->totalfaltas + $febrerof[0]->totalfaltas + $marzof[0]->totalfaltas + $abrilf[0]->totalfaltas + $mayof[0]->totalfaltas + $juniof[0]->totalfaltas) . '</td> 
+            </tr>';
+
             $tabla .= '</table>';
-            $tabla .= ' <br/><br/><br/>
-                <table width="430"  border="0">
+            $tabla .= ' <br/><br>
+                <table width="520"  border="0"> 
+                <tr>  <td colspan="16"  class="director"  align="center">FIRMA DE PADRE, MADRE O TUTOR</td>   </tr> 
+                <tr>  <td colspan="16">&nbsp;</td>   </tr> 
                 <tr>
-                        <td colspan="5" align="center" class="director" width="200">PROFESORA DEL GRUPO</td>
+                <td>&nbsp;</td> 
+                <td colspan="5"  class="director" style="border-bottom:solid black 2px;">SEPTIEMBRE</td> 
+                <td ></td> 
+                <td colspan="4"  class="director" style="border-bottom:solid black 2px;">DICIEMBRE</td> 
+                <td >&nbsp;</td>
+                <td colspan="4"  class="director" style="border-bottom:solid black 2px;">ABRIL</td>  
+            </tr> 
+            <tr>  <td colspan="16">&nbsp;</td>   </tr> 
+            <tr>
+            <td>&nbsp;</td> 
+            <td colspan="5"  class="director" style="border-bottom:solid black 2px;">OCTUBRE</td> 
+            <td ></td> 
+            <td colspan="4"  class="director" style="border-bottom:solid black 2px;">ENERO</td> 
+            <td >&nbsp;</td>
+            <td colspan="4"  class="director" style="border-bottom:solid black 2px;">MAYO</td>  
+        </tr> 
+        <tr>  <td colspan="16">&nbsp;</td>   </tr> 
+        <tr>
+        <td>&nbsp;</td> 
+        <td colspan="5"  class="director" style="border-bottom:solid black 2px;">NOVIEMBRE</td> 
+        <td ></td> 
+        <td colspan="4"  class="director" style="border-bottom:solid black 2px;">FEBRERO</td> 
+        <td >&nbsp;</td>
+        <td colspan="4"  class="director" style="border-bottom:solid black 2px;">JUNIO</td>  
+    </tr> 
+    <tr>  <td colspan="16">&nbsp;</td>   </tr>  
+    <tr>
+    <td>&nbsp;</td> 
+    <td colspan="5"  ></td> 
+    <td ></td> 
+    <td colspan="4"  class="director" style="border-bottom:solid black 2px;">MARZO</td> 
+    <td >&nbsp;</td>
+    <td colspan="4" ></td>  
+</tr> 
+<tr>  <td colspan="16">&nbsp;</td>   </tr>   
+                <tr>
+                        <td colspan="5" align="center" class="director" width="172">DOCENTE DEL GRUPO</td>
                         <td>&nbsp;</td>
                         <td>&nbsp;</td>
                         <td>&nbsp;</td>
                         <td>&nbsp;</td>
                         <td>&nbsp;</td>
-                        <td colspan="5" align="center" class="director" width="200">DIRECTORA</td>
+                        <td colspan="5" align="center" class="director" width="172">DIRECTORA</td>
                     </tr>
                     <tr>
-                    <td colspan="5" align="center" style="border-bottom:solid black 1px;" width="200"></td>
+                    <td colspan="5" align="center" style="border-bottom:solid black 1px;" width="172"></td>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
-                    <td colspan="5" align="center" style="border-bottom:solid black 1px;" width="200"></td>
+                    <td colspan="5" align="center" style="border-bottom:solid black 1px;" width="172"></td>
                 </tr>
-                    <tr>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td >&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td >&nbsp;</td>
-                    </tr>
+                
                 </table>
             ';
             // echo $tabla;
@@ -2685,6 +2995,932 @@ tblcalificacion  {border-collapse:collapse}
 
             $pdf->Output('Kardex de Calificaciones', 'I');
             // echo $tabla;
+            /*
+             * $dompdf->loadHtml($tabla);
+             * $dompdf->setPaper('A4', 'portrait');
+             * $dompdf->render();
+             * $dompdf->stream('welcome.pdf', array("Attachment" => false));
+             */
+        }
+    }
+    public function imprimirBoletaSecundaria($idhorario, $idalumno)
+    {
+        $idhorario = $this->decode($idhorario);
+        $idalumno = $this->decode($idalumno);
+        if ((isset($idhorario) && !empty($idhorario)) && (isset($idalumno) && !empty($idalumno))) {
+            // $this->load->library('tcpdf');
+
+            $detalle_logo = $this->alumno->logo($this->session->idplantel);
+            $alumno = $this->alumno->detalleAlumno($idalumno);
+            $detalle_grupo = $this->cicloescolar->detalleGrupo($idhorario);
+            $grado_alumno = $this->calificacion->gradoAlumno($idalumno, $detalle_grupo->idperiodo, $detalle_grupo->idgrupo);
+            $idnivelestudio = $grado_alumno->idnivelestudio;
+            $idespecialidad = $grado_alumno->idespecialidad;
+            $ubicacion_imagen = '../../assets/images/escuelas/';
+            $encabezadosecundaria = base_url() . '/assets/images/escuelas/encabezadosecundaria.png';
+            $logo = base_url() . '/assets/images/escuelas/principal_licenciatura.png';
+            $logo2 = base_url() . '/assets/images/escuelas/secundario_licenciatura.png';
+            $dato = $_SERVER['DOCUMENT_ROOT'] . '/sice/assets/images/escuelas/' . 'secundario_licenciatura.png';
+            $septiembre = base_url() . '/assets/images/meses/septiembre.png';
+            $octubre = base_url() . '/assets/images/meses/octubre.png';
+            $noviembre = base_url() . '/assets/images/meses/noviembre.png';
+            $promedio = base_url() . '/assets/images/meses/promedio.png';
+            $promediofinal = base_url() . '/assets/images/meses/promediofinal.png';
+            $diciembre = base_url() . '/assets/images/meses/diciembre.png';
+            $diciembreenero = base_url() . '/assets/images/meses/dicenero.png';
+            $enero = base_url() . '/assets/images/meses/enero.png';
+            $febrero = base_url() . '/assets/images/meses/febrero.png';
+            $marzo = base_url() . '/assets/images/meses/marzo.png';
+            $abril = base_url() . '/assets/images/meses/abril.png';
+            $abrilmayo = base_url() . '/assets/images/meses/abrilmayo.png';
+            $mayo = base_url() . '/assets/images/meses/mayo.png';
+            $junio = base_url() . '/assets/images/meses/junio.png';
+            $julio = base_url() . '/assets/images/meses/julio.png';
+            $detalle_cicloescolar = $this->cicloescolar->detalleCicloEscolarHorario($idhorario);
+
+
+            $array_materias_reprobadas = array();
+            $materias_reprobadas = $this->alumno->obtenerTodasMateriaReprobadasActivas($idalumno);
+            if (isset($materias_reprobadas) && !empty($materias_reprobadas)) {
+                foreach ($materias_reprobadas as $row) {
+                    array_push($array_materias_reprobadas, $row->idmateriaprincipal);
+                }
+            }
+            $reprobadas = implode(",", $array_materias_reprobadas);
+
+            $materias = $this->alumno->showAllMateriasGrupo($idhorario, $reprobadas, $idalumno, $idespecialidad, $idnivelestudio);
+            $materiasinternas = $this->alumno->obtenerMateriasInternasSecu();
+            $total_recorrido = 0;
+            foreach ($materias as $materia) {
+                if ($materia->sepromedia == 1) {
+                    $total_recorrido++;
+                }
+            }
+            $data = array(
+                'detalle_logo' => $this->alumno->logo($this->session->idplantel),
+                'alumno' => $this->alumno->detalleAlumno($idalumno),
+                'detalle_cicloescolar' => $this->cicloescolar->detalleCicloEscolarHorario($idhorario),
+                'detalle_grupo' => $this->cicloescolar->detalleGrupo($idhorario),
+                'materias' => $materias,
+                'idalumno' => $idalumno,
+                'idhorario' => $idhorario
+            );
+
+
+            $row_area_academica = 0;
+            $row_para_escolares = 0;
+            $total_area_academica = 0;
+            //$total_para_escolares = 5;
+
+            switch ($idnivelestudio) {
+                case 1:
+                    //PRIMERO
+                    $row_area_academica = 10;
+                    $row_para_escolares = 3;
+                    $row_area_axiologica = 5;
+
+                    break;
+                case 2:
+                    //SEGUNDO 
+                    $row_area_academica = 9;
+                    $row_para_escolares = 3;
+                    $row_area_axiologica = 5;
+                    break;
+                case 3:
+                    //TERCERO
+                    $row_area_academica = 9;
+                    $row_para_escolares = 3;
+                    $row_area_axiologica = 5;
+                    // $total_area_academica = $row_area_academica  + 1;
+                    break;
+
+
+
+                default:
+                    # code...
+                    break;
+            }
+
+            $pasoprimero = 0;
+            $pasosegundo = 0;
+            $pasotercero = 0;
+            $ya_paso_area_academica = false;
+            $ya_paso_para_escolares = false;
+            $areaaxiologica = base_url() . '/assets/images/areaaxiologicasecu.png';
+            $desarrollopersonalysocial = base_url() . '/assets/images/desarrollopersonalysocial.png';
+            $areaparaescolares = base_url() . '/assets/images/areaparaescolaressecu.png';
+            $areaacademica = base_url() . '/assets/images/areaacademica.png';
+
+            $this->load->library('tcpdf');
+            $hora = date("h:i:s a");
+            $fechaactual = date('d/m/Y');
+            $pdf = new Pdf('P', 'mm', 'A4', true, 'UTF-8', false);
+            $pdf->SetTitle('Boleta de Evaluación.');
+            $pdf->SetHeaderMargin(20);
+            $pdf->SetTopMargin(10);
+            $pdf->setFooterMargin(20);
+            $pdf->SetAutoPageBreak(true);
+            $pdf->SetAuthor('Author');
+            $pdf->SetDisplayMode('real', 'default');
+            $pdf->setPrintHeader(false);
+            $pdf->setPrintFooter(false);
+
+            $pdf->SetMargins(10, 10, 10);
+            $pdf->SetHeaderMargin(15);
+            $pdf->SetFooterMargin(15);
+
+            // set auto page breaks
+            $pdf->SetAutoPageBreak(false, 15);
+            $pdf->AddPage();
+            $tabla = '
+             <style>
+             .txtn {
+                font-size: 12px;
+                color: #3dae57;
+                font-family: sans-serif;
+            }
+                      
+            .clave {
+                font-size: 9px;
+                color: #000;
+                font-family: sans-serif;
+            }
+            .cicloescolar {
+                font-size: 8px;
+                color: #000000;
+                font-weight:bold;
+                font-family: sans-serif;
+            }
+                      
+            .slogan {
+                font-size: 9px;
+                font-family: sans-serif;
+                font-weight:bold;
+            }
+                      
+            .nombreplantel {
+                font-size: 11px;
+                font-weight: bold;
+                color: #1f497d;
+                font-family: sans-serif;
+            }
+                      
+            .tipoplantel {
+                font-size: 10px;
+                padding: 0px;
+                margin: 0px;
+                color: #365f91;
+                font-family: sans-serif;
+            }
+                      
+            .titulo {
+                font-size: 7px;
+                text-align: center;
+                font-family: sans-serif;
+                font-weight:bold;
+            }
+            .cuerpo{
+              font-size: 7px;
+              text-align: left;
+              font-family: sans-serif;
+            }
+                      
+            .secondtxt {
+                font-size: 5px;
+                font-family: sans-serif;
+                vertical-align:middle;
+            }
+            .thirdtxt {
+                font-size: 6px;
+                font-family: sans-serif;
+            }
+                      
+            .bg-prom {
+                background-color: #ccc;
+            }
+          
+              .tituloalumno{
+               font-size: 7px;
+                font-family: sans-serif;
+                      
+          }
+         
+          .meses{
+            font-size: 10px;
+            font-family: sans-serif;
+          
+          }
+          .trimestre{
+            font-size: 9px;
+            font-family: sans-serif;
+            font-weight:bolder;
+            text-align:center;
+          }
+         .tblcalificacion td{
+              border-collapse:collapse;
+              border:solid black 1px;
+          }
+          tr:nth-of-type(5) td:nth-of-type(1){
+              visible:hidden;
+          }
+td{
+    padding:0;
+}
+          .rotate{
+        
+           white-space:nowrap;
+           width:2.0em;
+           font-size: 9px;
+           font-family: sans-serif;
+          }
+          .rotate div{
+            -moz-transform:rotate(-90.0deg);
+            -o-transform:rotate(-90.0deg);
+            -webkit-transform:rotate(-90.0deg);
+            filter:prodig:DXImageTransform.Microsoft.BasicImage(rotation=0.83);
+            transform:rotate(-90.0deg);
+            margin-left:-10em;
+            margin-right:-10em;
+            margin-top:-8em;
+          }
+          .rotatepromediofinal{
+            white-space:nowrap;
+            width:2.0em;
+            font-size: 9px;
+            font-weight:bolder;
+            font-family: sans-serif;
+          }
+          .rotatepromediofinal div{
+            -moz-transform:rotate(-90.0deg);
+            -o-transform:rotate(-90.0deg);
+            -webkit-transform:rotate(-90.0deg);
+            filter:prodig:DXImageTransform.Microsoft.BasicImage(rotation=0.83);
+            transform:rotate(-90.0deg);
+            margin-left:-10em;
+            margin-right:-10em;
+            margin-top:-7.5em;
+          }
+          .calificacion{
+            font-size: 8px;
+            font-weight:bolder;
+            font-family: sans-serif;
+          }
+          .nombreclase{
+            font-size: 8px;
+            font-weight:bolder;
+            font-family: sans-serif;
+          }
+          .asignatura{
+            font-size: 10px;
+            font-weight:bolder;
+            font-family: sans-serif;
+            text-align:center;
+          }
+          .boleta{
+            font-size: 11px;
+            font-weight:bolder;
+            font-family: sans-serif;
+            text-align:center;
+          }
+          .alumno{
+            font-size: 8px;
+            font-weight:bolder;
+            font-family: sans-serif; 
+          }.grado{
+            font-size: 9px;
+            font-weight:bolder;
+            font-family: sans-serif; 
+          }
+          .director{
+            font-size: 8px; 
+            font-family: sans-serif; 
+          }
+          .img{
+              width:30px;
+          }
+          .bg-prom {
+            background-color: #ccc;
+        }
+        .azulprimedio{
+            background-color: #8ea9db;
+        }
+             </style>
+          
+             <table  border="0" width="530" cellpadding="2"  cellspacing="0">
+             <tr>
+             <td align="center" colspan="4" class="boleta">  <img src="' . $encabezadosecundaria . '"  /></td>
+             </tr>
+             
+             <tr>
+             <td align="center" colspan="4" class="boleta">BOLETA DE CALIFICACIONES INTERNA</td>
+             </tr>
+             <tr>
+             <td align="center" colspan="4" ></td>
+             </tr> 
+             <tr>
+             <td  colspan="2" class="alumno">NOMBRE DEL ALUMNO: ' . $alumno->apellidop . ' ' . $alumno->apellidom . ' ' . $alumno->nombre . '</td>
+             <td  colspan="2" class="grado" align="right">' . $detalle_grupo->primaria . ' ' . $detalle_grupo->nombregrupo . '</td>
+             </tr>
+             <tr>
+             <td align="center" colspan="4" ></td>
+             </tr> 
+             </table>';
+            $tabla .= ' 
+            <table class="tblcalificacion"  style="margin-top:300px;" cellpadding="2" cellspacing="0">
+            <tr>
+              <td   width="40"  rowspan="2"   ></td>
+              <td width="230" rowspan="2" class="asignatura"><br><br><br>ASIGNATURA</td>
+              <td colspan="4"   width="80"    class="trimestre">1° TRIMESTRE</td>
+              <td colspan="4"   width="80"  class="trimestre">2° TRIMESTRE</td>
+              <td colspan="4"   width="80" class="trimestre">3° TRIMESTRE</td>
+              <td rowspan="2" width="20"  align="center"><img  src="' . $promediofinal . '"   height="70" /></td>
+            </tr>
+            <tr  > 
+              <td height="20" class="rotate" width="20" align="center"  > <img src="' . $septiembre . '"   height="50" /></td>
+              <td height="20" class="rotate" width="20" align="center"   ><img src="' . $octubre . '"   height="50" /></td>
+              <td height="20" class="rotate" width="20" align="center"   ><img src="' . $noviembre . '"   height="50" /></td>
+              <td height="20" class="rotate" width="20" align="center"   ><img src="' . $promedio . '"   height="50" /></td>
+              <td height="20" class="rotate" width="20" align="center"   ><img src="' . $diciembreenero . '"   height="50" /></td> 
+              <td height="20" class="rotate" width="20" align="center"   ><img src="' . $febrero . '"   height="50" /></td>
+              <td height="20" class="rotate" width="20" align="center"   ><img src="' . $marzo . '"   height="50" /></td>
+              <td height="20" class="rotate" width="20" align="center"   ><img src="' . $promedio . '"   height="50" /></td>
+              <td height="20" class="rotate"  width="20" align="center"  ><img src="' . $abrilmayo . '"   height="50" /></td> 
+              <td height="20" class="rotate"  width="20" align="center"  ><img src="' . $junio . '"   height="50" /></td>
+              <td height="20" class="rotate"  width="20" align="center"  ><img src="' . $julio . '"   height="50" /></td>
+              <td height="20" class="rotate"  width="20" align="center"  ><img src="' . $promedio . '"   height="50" /></td>
+            </tr>';
+
+
+            $primer_trimestre = $this->cicloescolar->showAllMesesDeTrimestre(4);
+            $total_primer_trimeste = count($primer_trimestre);
+
+            $segundo_trimestre = $this->cicloescolar->showAllMesesDeTrimestre(5);
+            $total_segundo_trimeste = count($segundo_trimestre);
+
+            $tercer_trimestre = $this->cicloescolar->showAllMesesDeTrimestre(6);
+            $total_tercer_trimeste = count($tercer_trimestre);
+            $suma_materias = 0;
+            $suma_promedio = 0;
+            $promedio_globa = 0;
+            $contar = 1;
+
+            $idspromedormaterias = '';
+            $idspromedormaterias2 = '';
+            $idspromedormaterias3 = '';
+            $promedio_final_primertrimestre = 0;
+            $promedio_final_segundotrimestre = 0;
+            $promedio_final_tercertrimestre = 0;
+            $promedio_final_primertrimestre2 = 0;
+            $promedio_final_segundotrimestre2 = 0;
+            $promedio_final_tercertrimestre2 = 0;
+            $promedio_final_primertrimestre3 = 0;
+            $promedio_final_segundotrimestre3 = 0;
+            $promedio_final_tercertrimestre3 = 0;
+            $promedio_final_todo1 = 0;
+            $promedio_final_todo2 = 0;
+            $promedio_final_todo3 = 0;
+            foreach ($materias as $materia) {
+                if ($materia->sepromedia == 1) {
+                    $suma_promedio = 0;
+                    $suma_primertrimestre = 0;
+                    $suma_segundotrimestre = 0;
+                    $suma_tercertrimestre = 0;
+                    $idprofesormateria = $materia->idprofesormateri;
+                    $tabla .= '<tr>';
+                    if ($pasoprimero == 0 && $ya_paso_area_academica == false) {
+                        $tabla .= '<td rowspan="' . ($row_area_academica + 1)  . '" align="center"   > 
+                                <br> <br><br>
+                                <img src="' . $areaacademica . '" height="80" />
+                                </td>';
+                        $pasoprimero = 1;
+                        $ya_paso_area_academica = true;
+                    }
+                    if ($pasoprimero == 1 && $ya_paso_para_escolares == false &&  $contar  == ($row_area_academica + 1)) {
+                        $tabla .= '<td rowspan="' . ($row_para_escolares + 1) . '"><img src="' . $areaparaescolares . '" height="60" /></td>';
+                        $pasosegundo = 1;
+                        $ya_paso_para_escolares = true;
+                    }
+                    if ($pasosegundo == 1 && $pasosegundo == true &&  $contar  == ($row_area_academica + $row_para_escolares + 1)) {
+                        $tabla .= '<td  align="center" rowspan="' . ($row_area_axiologica + 1) . '"  ><img src="' . $areaaxiologica . '" height="80" /></td>';
+                        $pasosegundo = 1;
+                        $ya_paso_para_escolares = true;
+                    }
+                    $tabla .= '<td class="nombreclase"  height="2">' . $materia->nombreclase . '</td>';
+                    $suma_primer_trimestre = 0;
+                    foreach ($primer_trimestre as $primero) {
+                        $idmes = $primero->idmes;
+                        $calificacion = $this->cicloescolar->calificacionXMes($idprofesormateria, $idalumno, $idmes, $idhorario);
+                        if ($calificacion) {
+
+                            $suma_primer_trimestre += $calificacion->calificacion;
+                            $tabla .= '<td class="calificacion" align="center"  height="2">' . eliminarDecimalCero($calificacion->calificacion) . '</td>';
+                        } else {
+                            $tabla .= '<td class="calificacion" align="center"  height="2"></td>';
+                        }
+                    }
+                    if ($total_primer_trimeste > 0 && $suma_primer_trimestre > 0) {
+                        $promedio = $suma_primer_trimestre / $total_primer_trimeste;
+                        $suma_primertrimestre = $promedio;
+                        $suma_promedio += $suma_primer_trimestre / $total_primer_trimeste;
+                        $tabla .= '<td class="calificacion" align="center"   height="2">' . eliminarDecimalCero(numberFormatPrecision($promedio, 1, '.')) . '</td>';
+                    } else {
+                        $tabla .= '<td class="calificacion" align="center"  height="2"></td>';
+                    }
+
+                    $suma_segundo_trimestre = 0;
+                    foreach ($segundo_trimestre as $segundo) {
+                        $idmes = $segundo->idmes;
+                        $calificacion = $this->cicloescolar->calificacionXMes($idprofesormateria, $idalumno, $idmes, $idhorario);
+                        if ($calificacion) {
+                            $suma_segundo_trimestre += $calificacion->calificacion;
+
+                            $tabla .= '<td class="calificacion" align="center"  height="2">' . eliminarDecimalCero($calificacion->calificacion) . '</td>';
+                        } else {
+                            $tabla .= '<td class="calificacion" align="center"  height="2"></td>';
+                        }
+                    }
+                    if ($total_segundo_trimeste > 0 && $suma_segundo_trimestre > 0) {
+                        $promedio = $suma_segundo_trimestre / $total_segundo_trimeste;
+                        $suma_segundotrimestre = $promedio;
+                        $suma_promedio += $suma_segundo_trimestre / $total_segundo_trimeste;
+                        $tabla .= '<td class="calificacion" align="center"  height="2">' . eliminarDecimalCero(numberFormatPrecision($promedio, 1, '.')) . '</td>';
+                    } else {
+                        $tabla .= '<td class="calificacion" align="center"  height="2"></td>';
+                    }
+
+                    $suma_tercer_trimestre = 0;
+                    foreach ($tercer_trimestre as $tercer) {
+                        $idmes = $tercer->idmes;
+                        $calificacion = $this->cicloescolar->calificacionXMes($idprofesormateria, $idalumno, $idmes, $idhorario);
+                        if ($calificacion) {
+                            $suma_tercer_trimestre += $calificacion->calificacion;
+                            $tabla .= '<td class="calificacion" align="center"  height="2">' . eliminarDecimalCero($calificacion->calificacion) . '</td>';
+                        } else {
+                            $tabla .= '<td class="calificacion" align="center"  height="2"></td>';
+                        }
+                    }
+                    if ($total_tercer_trimeste > 0 && $suma_tercer_trimestre > 0) {
+                        $promedio = $suma_tercer_trimestre / $total_tercer_trimeste;
+                        $suma_tercertrimestre = $promedio;
+                        $suma_promedio += $suma_tercer_trimestre / $total_tercer_trimeste;
+                        $tabla .= '<td class="calificacion" align="center"  height="2">' . eliminarDecimalCero(numberFormatPrecision($promedio, 1, '.')) . '</td>';
+                    } else {
+                        $tabla .= '<td class="calificacion" align="center"  height="2"></td>';
+                    }
+                    $promedio_final = $suma_promedio / 3;
+                    $promedio_globa += $promedio_final;
+                    if ($promedio_final > 0) {
+                        $tabla .= '<td class="calificacion" align="center"  width="20"   height="2">' . eliminarDecimalCero(numberFormatPrecision($promedio_final, 1, '.')) . '</td>';
+                    } else {
+                        $tabla .= '<td class="calificacion" align="center"  width="20"   height="2"></td>';
+                    }
+                    $tabla .= '</tr>';
+                    // $total_recorrido++;
+                    if ($contar <= ($row_area_academica)) {
+                        $idspromedormaterias .= $idprofesormateria . ',';
+                        $promedio_final_primertrimestre += $suma_primertrimestre;
+                        $promedio_final_segundotrimestre += $suma_segundotrimestre;
+                        $promedio_final_tercertrimestre += $suma_tercertrimestre;
+                        $promedio_final_todo1 += $promedio_final;
+                    }
+                    if (($contar > $row_area_academica) && $contar <= ($row_area_academica + $row_para_escolares)) {
+                        $idspromedormaterias2 .= $idprofesormateria . ',';
+                        $promedio_final_primertrimestre2 += $suma_primertrimestre;
+                        $promedio_final_segundotrimestre2 += $suma_segundotrimestre;
+                        $promedio_final_tercertrimestre2 += $suma_tercertrimestre;
+                        $promedio_final_todo2 += $promedio_final;
+                    }
+                    if ($contar > ($row_area_academica + $row_para_escolares) && $contar <= ($row_area_academica + $row_para_escolares + 1)) {
+                        $idspromedormaterias3 .= $idprofesormateria . ',';
+                        $promedio_final_primertrimestre3 += floor(($suma_primertrimestre * 100)) / 100;
+                        $promedio_final_segundotrimestre3 +=  floor(($suma_segundotrimestre * 100)) / 100;
+                        $promedio_final_tercertrimestre3 += floor(($suma_tercertrimestre * 100)) / 100;
+                        $promedio_final_todo3 += $promedio_final;
+                    }
+                    if ($contar == ($row_area_academica)) {
+                        //$ids = array(trim($idspromedormaterias, ','));
+                        $suma_calificacion_septiembre = $this->cicloescolar->calificacionXMesMaterias(trim($idspromedormaterias, ','), $idalumno, 9, $idhorario);
+                        $suma_calificacion_octubre = $this->cicloescolar->calificacionXMesMaterias(trim($idspromedormaterias, ','), $idalumno, 10, $idhorario);
+                        $suma_calificacion_noviembre = $this->cicloescolar->calificacionXMesMaterias(trim($idspromedormaterias, ','), $idalumno, 11, $idhorario);
+                        $suma_calificacion_diciembre = $this->cicloescolar->calificacionXMesMaterias(trim($idspromedormaterias, ','), $idalumno, 12, $idhorario);
+                        $suma_calificacion_enero = $this->cicloescolar->calificacionXMesMaterias(trim($idspromedormaterias, ','), $idalumno, 1, $idhorario);
+                        $suma_calificacion_febrero = $this->cicloescolar->calificacionXMesMaterias(trim($idspromedormaterias, ','), $idalumno, 2, $idhorario);
+                        $suma_calificacion_marzo = $this->cicloescolar->calificacionXMesMaterias(trim($idspromedormaterias, ','), $idalumno, 3, $idhorario);
+                        $suma_calificacion_abril = $this->cicloescolar->calificacionXMesMaterias(trim($idspromedormaterias, ','), $idalumno, 4, $idhorario);
+                        $suma_calificacion_mayo = $this->cicloescolar->calificacionXMesMaterias(trim($idspromedormaterias, ','), $idalumno, 5, $idhorario);
+                        $suma_calificacion_junio = $this->cicloescolar->calificacionXMesMaterias(trim($idspromedormaterias, ','), $idalumno, 7, $idhorario);
+                        $suma_calificacion_julio = $this->cicloescolar->calificacionXMesMaterias(trim($idspromedormaterias, ','), $idalumno, 7, $idhorario);
+                        $suma_diciembre_enero = $suma_calificacion_diciembre->sumacalificacion + $suma_calificacion_enero->sumacalificacion;
+                        $suma_abril_mayo = $suma_calificacion_abril->sumacalificacion + $suma_calificacion_mayo->sumacalificacion;
+                        //$promedio_primer_trimestre =  ($suma_calificacion_septiembre->sumacalificacion / $row_area_academica) + ($suma_calificacion_octubre->sumacalificacion / $row_area_academica) + ($suma_calificacion_noviembre->sumacalificacion / $row_area_academica);
+                        $tabla .= '<tr class="azulprimedio">
+
+                        <td  class="nombreclase">PROMEDIO</td>';
+                        if ($suma_calificacion_septiembre->sumacalificacion > 0) {
+                            $tabla .= '<td  class="calificacion" align="center">' .  eliminarDecimalCero(numberFormatPrecision(($suma_calificacion_septiembre->sumacalificacion / $row_area_academica), 1, '.')) . '</td>';
+                        } else {
+                            $tabla .= '<td  class="calificacion" align="center"></td>';
+                        }
+                        if ($suma_calificacion_octubre->sumacalificacion > 0) {
+                            $tabla .= '<td  class="calificacion" align="center">' .  eliminarDecimalCero(numberFormatPrecision(($suma_calificacion_octubre->sumacalificacion / $row_area_academica), 1, '.')) . '</td>';
+                        } else {
+                            $tabla .= '<td  class="calificacion" align="center"></td>';
+                        }
+                        if ($suma_calificacion_noviembre->sumacalificacion > 0) {
+                            $tabla .= '<td  class="calificacion" align="center">' .  eliminarDecimalCero(numberFormatPrecision(($suma_calificacion_noviembre->sumacalificacion / $row_area_academica), 1, '.')) . '</td>';
+                        } else {
+                            $tabla .= '<td  class="calificacion" align="center"></td>';
+                        }
+                        if ($promedio_final_primertrimestre > 0) {
+                            $tabla .= '<td  class="calificacion" align="center">' .  eliminarDecimalCero(numberFormatPrecision(($promedio_final_primertrimestre / $row_area_academica), 1, '.')) . '</td>';
+                        } else {
+                            $tabla .= '<td  class="calificacion" align="center"></td>';
+                        }
+
+                        if ($suma_diciembre_enero > 0) {
+                            $tabla .= '<td  class="calificacion" align="center">' . eliminarDecimalCero(numberFormatPrecision(($suma_diciembre_enero / $row_area_academica), 1, '.')) . '</td>';
+                        } else {
+                            $tabla .= '<td  class="calificacion" align="center"></td>';
+                        }
+                        if ($suma_calificacion_febrero->sumacalificacion > 0) {
+                            $tabla .= '<td  class="calificacion" align="center">' .  eliminarDecimalCero(numberFormatPrecision(($suma_calificacion_febrero->sumacalificacion / $row_area_academica), 1, '.')) . '</td>';
+                        } else {
+                            $tabla .= '<td  class="calificacion" align="center"></td>';
+                        }
+                        if ($suma_calificacion_marzo->sumacalificacion > 0) {
+                            $tabla .= '<td  class="calificacion" align="center">' .  eliminarDecimalCero(numberFormatPrecision(($suma_calificacion_marzo->sumacalificacion / $row_area_academica), 1, '.')) . '</td>';
+                        } else {
+                            $tabla .= '<td  class="calificacion" align="center"></td>';
+                        }
+                        if ($promedio_final_segundotrimestre > 0) {
+                            $tabla .= '<td  class="calificacion" align="center">' .  eliminarDecimalCero(numberFormatPrecision(($promedio_final_segundotrimestre / $row_area_academica), 1, '.')) . '</td>';
+                        } else {
+                            $tabla .= '<td  class="calificacion" align="center"></td>';
+                        }
+                        if ($suma_abril_mayo > 0) {
+                            $tabla .= '<td  class="calificacion" align="center">' . eliminarDecimalCero(numberFormatPrecision(($suma_abril_mayo / $row_area_academica), 1, '.')) . '</td>';
+                        } else {
+                            $tabla .= '<td  class="calificacion" align="center"></td>';
+                        }
+                        if ($suma_calificacion_junio->sumacalificacion > 0) {
+                            $tabla .= '<td  class="calificacion" align="center">' .  eliminarDecimalCero(numberFormatPrecision(($suma_calificacion_junio->sumacalificacion / $row_area_academica), 1, '.')) . '</td>';
+                        } else {
+                            $tabla .= '<td  class="calificacion" align="center"></td>';
+                        }
+                        if ($suma_calificacion_julio->sumacalificacion < 0) {
+                            $tabla .= '<td  class="calificacion" align="center">' .  eliminarDecimalCero(numberFormatPrecision(($suma_calificacion_julio->sumacalificacion / $row_area_academica), 1, '.')) . '</td>';
+                        } else {
+                            $tabla .= '<td  class="calificacion" align="center"></td>';
+                        }
+                        if ($promedio_final_tercertrimestre > 0) {
+                            $tabla .= '<td  class="calificacion" align="center">' .  eliminarDecimalCero(numberFormatPrecision(($promedio_final_tercertrimestre / $row_area_academica), 1, '.')) . '</td>';
+                        } else {
+                            $tabla .= '<td  class="calificacion" align="center"></td>';
+                        }
+                        if ($promedio_final_todo1 > 0) {
+
+                            $tabla .= ' <td  class="calificacion" align="center">' .  eliminarDecimalCero(numberFormatPrecision(($promedio_final_todo1 / $row_area_academica), 1, '.')) . '</td>';
+                        } else {
+                            $tabla .= '<td  class="calificacion" align="center"></td>';
+                        }
+                        $tabla .= '</tr>';
+                    }
+                    if ($contar == ($row_area_academica + $row_para_escolares)) {
+
+                        $suma_calificacion_septiembre = $this->cicloescolar->calificacionXMesMaterias(trim($idspromedormaterias2, ','), $idalumno, 9, $idhorario);
+                        $suma_calificacion_octubre = $this->cicloescolar->calificacionXMesMaterias(trim($idspromedormaterias2, ','), $idalumno, 10, $idhorario);
+                        $suma_calificacion_noviembre = $this->cicloescolar->calificacionXMesMaterias(trim($idspromedormaterias2, ','), $idalumno, 11, $idhorario);
+                        $suma_calificacion_diciembre = $this->cicloescolar->calificacionXMesMaterias(trim($idspromedormaterias2, ','), $idalumno, 12, $idhorario);
+                        $suma_calificacion_enero = $this->cicloescolar->calificacionXMesMaterias(trim($idspromedormaterias2, ','), $idalumno, 1, $idhorario);
+                        $suma_calificacion_febrero = $this->cicloescolar->calificacionXMesMaterias(trim($idspromedormaterias2, ','), $idalumno, 2, $idhorario);
+                        $suma_calificacion_marzo = $this->cicloescolar->calificacionXMesMaterias(trim($idspromedormaterias2, ','), $idalumno, 3, $idhorario);
+                        $suma_calificacion_abril = $this->cicloescolar->calificacionXMesMaterias(trim($idspromedormaterias2, ','), $idalumno, 4, $idhorario);
+                        $suma_calificacion_mayo = $this->cicloescolar->calificacionXMesMaterias(trim($idspromedormaterias2, ','), $idalumno, 5, $idhorario);
+                        $suma_calificacion_junio = $this->cicloescolar->calificacionXMesMaterias(trim($idspromedormaterias2, ','), $idalumno, 7, $idhorario);
+                        $suma_calificacion_julio = $this->cicloescolar->calificacionXMesMaterias(trim($idspromedormaterias2, ','), $idalumno, 7, $idhorario);
+                        $suma_diciembre_enero = $suma_calificacion_diciembre->sumacalificacion + $suma_calificacion_enero->sumacalificacion;
+                        $suma_abril_mayo = $suma_calificacion_abril->sumacalificacion + $suma_calificacion_mayo->sumacalificacion;
+                        //$promedio_primer_trimestre =  ($suma_calificacion_septiembre->sumacalificacion / $row_para_escolares) + ($suma_calificacion_octubre->sumacalificacion / $row_area_academica) + ($suma_calificacion_noviembre->sumacalificacion / $row_area_academica);
+                        $tabla .= '<tr class="azulprimedio">
+
+                        <td  class="nombreclase">PROMEDIO</td>';
+                        if ($suma_calificacion_septiembre->sumacalificacion > 0) {
+                            $tabla .= '<td  class="calificacion" align="center">' .   eliminarDecimalCero(numberFormatPrecision(($suma_calificacion_septiembre->sumacalificacion / $row_para_escolares), 1, '.'))  . '</td>';
+                        } else {
+                            $tabla .= '<td  class="calificacion" align="center"></td>';
+                        }
+                        if ($suma_calificacion_octubre->sumacalificacion > 0) {
+                            $tabla .= '<td  class="calificacion" align="center">' .  eliminarDecimalCero(numberFormatPrecision(($suma_calificacion_octubre->sumacalificacion / $row_para_escolares), 1, '.')) . '</td>';
+                        } else {
+                            $tabla .= '<td  class="calificacion" align="center"></td>';
+                        }
+                        if ($suma_calificacion_noviembre->sumacalificacion > 0) {
+                            $tabla .= ' <td  class="calificacion" align="center">' .  eliminarDecimalCero(numberFormatPrecision(($suma_calificacion_noviembre->sumacalificacion / $row_para_escolares), 1, '.')) . '</td>';
+                        } else {
+                            $tabla .= '<td  class="calificacion" align="center"></td>';
+                        }
+                        if ($promedio_final_primertrimestre2 > 0) {
+                            $tabla .= ' <td  class="calificacion" align="center">' .  eliminarDecimalCero(numberFormatPrecision(($promedio_final_primertrimestre2 / $row_para_escolares), 1, '.')) . '</td>';
+                        } else {
+                            $tabla .= '<td  class="calificacion" align="center"></td>';
+                        }
+                        if ($suma_diciembre_enero > 0) {
+                            $tabla .= ' <td  class="calificacion" align="center">' . eliminarDecimalCero(numberFormatPrecision(($suma_diciembre_enero / $row_para_escolares), 1, '.')) . '</td>';
+                        } else {
+                            $tabla .= '<td  class="calificacion" align="center"></td>';
+                        }
+                        if ($suma_calificacion_febrero->sumacalificacion > 0) {
+                            $tabla .= ' <td  class="calificacion" align="center">' .  eliminarDecimalCero(numberFormatPrecision(($suma_calificacion_febrero->sumacalificacion / $row_para_escolares), 1, '.')) . '</td>';
+                        } else {
+                            $tabla .= '<td  class="calificacion" align="center"></td>';
+                        }
+                        if ($suma_calificacion_marzo->sumacalificacion > 0) {
+                            $tabla .= ' <td  class="calificacion" align="center">' .  eliminarDecimalCero(numberFormatPrecision(($suma_calificacion_marzo->sumacalificacion / $row_para_escolares), 1, '.')) . '</td>';
+                        } else {
+                            $tabla .= '<td  class="calificacion" align="center"></td>';
+                        }
+                        if ($promedio_final_segundotrimestre2 > 0) {
+                            $tabla .= ' <td  class="calificacion" align="center">' .  eliminarDecimalCero(numberFormatPrecision(($promedio_final_segundotrimestre2 / $row_para_escolares), 1, '.')) . '</td>';
+                        } else {
+                            $tabla .= '<td  class="calificacion" align="center"></td>';
+                        }
+                        if ($suma_abril_mayo > 0) {
+                            $tabla .= ' <td  class="calificacion" align="center">' . eliminarDecimalCero(numberFormatPrecision(($suma_abril_mayo / $row_para_escolares), 1, '.')) . '</td>';
+                        } else {
+                            $tabla .= '<td  class="calificacion" align="center"></td>';
+                        }
+                        if ($suma_calificacion_junio->sumacalificacion > 0) {
+                            $tabla .= ' <td  class="calificacion" align="center">' .  eliminarDecimalCero(numberFormatPrecision(($suma_calificacion_junio->sumacalificacion / $row_para_escolares), 1, '.')) . '</td>';
+                        } else {
+                            $tabla .= '<td  class="calificacion" align="center"></td>';
+                        }
+                        if ($suma_calificacion_julio->sumacalificacion > 0) {
+                            $tabla .= ' <td  class="calificacion" align="center">' .  eliminarDecimalCero(numberFormatPrecision(($suma_calificacion_julio->sumacalificacion / $row_para_escolares), 1, '.')) . '</td>';
+                        } else {
+                            $tabla .= '<td  class="calificacion" align="center"></td>';
+                        }
+                        if ($promedio_final_tercertrimestre2 > 0) {
+                            $tabla .= ' <td  class="calificacion" align="center">' .  eliminarDecimalCero(numberFormatPrecision(($promedio_final_tercertrimestre2 / $row_para_escolares), 1, '.')) . '</td>';
+                        } else {
+                            $tabla .= '<td  class="calificacion" align="center"></td>';
+                        }
+                        if ($promedio_final_todo2 > 0) {
+
+                            $tabla .= ' <td  class="calificacion" align="center">' .  eliminarDecimalCero(numberFormatPrecision(($promedio_final_todo2 / $row_para_escolares), 1, '.')) . '</td>';
+                        } else {
+                            $tabla .= '<td  class="calificacion" align="center"></td>';
+                        }
+                        $tabla .= '</tr>';
+                    }
+                    $contar++;
+                    $suma_materias++;
+                }
+            }
+
+            $suma_primer_trimestre_internas = 0;
+            $suma_segundo_trimestre_internas = 0;
+            $suma_tercer_trimestre_internas = 0;
+            $suma_promedio_final = 0;
+            foreach ($materiasinternas as $materia) {
+                $suma_promedio_internoi = 0;
+                $idtipoevaluacion = $materia->idtipoevaluacion;
+                $tabla .= '<tr >';
+                $tabla .= '<td   class="nombreclase"  height="1">' . $materia->nombre . '</td>';
+                $suma_primer_trimestrei = 0;
+                foreach ($primer_trimestre as $primero) {
+                    $idmes = $primero->idmes;
+                    $calificacion = $this->cicloescolar->obtenerCalificacionInterna($idalumno, $idhorario, $idtipoevaluacion, $idmes);
+                    if ($calificacion && $calificacion[0]->calificacion > 0) {
+                        $suma_primer_trimestrei += $calificacion[0]->calificacion;
+                        $tabla .= '<td class="calificacion" align="center"  height="2">' . eliminarDecimalCero(($calificacion[0]->calificacion)) . '</td>';
+                    } else {
+                        $tabla .= '<td class="calificacion" align="center"  height="2"></td>';
+                    }
+                }
+                if ($total_primer_trimeste > 0 && $suma_primer_trimestrei > 0) {
+                    $promedio = ($suma_primer_trimestrei) / $total_primer_trimeste;
+                    $suma_primer_trimestre_internas += floor(($promedio * 100)) / 100;
+                    $suma_promedio_internoi += ($suma_primer_trimestrei) / $total_primer_trimeste;
+                    $tabla .= '<td class="calificacion" align="center"   height="2">' . eliminarDecimalCero(numberFormatPrecision($promedio, 1, '.')) . '</td>';
+                } else {
+                    $tabla .= '<td class="calificacion" align="center"  height="2"></td>';
+                }
+
+                $suma_segundo_trimestrei = 0;
+                foreach ($segundo_trimestre as $segundo) {
+                    $idmes = $segundo->idmes;
+                    $calificacion = $this->cicloescolar->obtenerCalificacionInterna($idalumno, $idhorario, $idtipoevaluacion, $idmes);
+                    if ($calificacion  && $calificacion[0]->calificacion > 0) {
+                        $suma_segundo_trimestrei += $calificacion[0]->calificacion;
+
+                        $tabla .= '<td class="calificacion" align="center"  height="2">' . eliminarDecimalCero($calificacion[0]->calificacion) . '</td>';
+                    } else {
+                        $tabla .= '<td class="calificacion" align="center"  height="2"></td>';
+                    }
+                }
+                if ($total_segundo_trimeste > 0 && $suma_segundo_trimestrei > 0) {
+                    $promedio = ($suma_segundo_trimestrei) / $total_segundo_trimeste;
+                    $suma_segundo_trimestre_internas += floor(($promedio * 100)) / 100;
+                    $suma_promedio_internoi +=  ($suma_segundo_trimestrei) / $total_segundo_trimeste;
+                    $tabla .= '<td class="calificacion" align="center"  height="2">' . eliminarDecimalCero(numberFormatPrecision($promedio, 1, '.')) . '</td>';
+                } else {
+                    $tabla .= '<td class="calificacion" align="center"  height="2"></td>';
+                }
+
+                $suma_tercer_trimestrei = 0;
+                foreach ($tercer_trimestre as $tercer) {
+                    $idmes = $tercer->idmes;
+                    $calificacion = $this->cicloescolar->obtenerCalificacionInterna($idalumno, $idhorario, $idtipoevaluacion, $idmes);
+                    if ($calificacion  && $calificacion[0]->calificacion > 0) {
+                        $suma_tercer_trimestrei += $calificacion[0]->calificacion;
+                        $tabla .= '<td class="calificacion" align="center"  height="2">' . eliminarDecimalCero($calificacion[0]->calificacion) . '</td>';
+                    } else {
+                        $tabla .= '<td class="calificacion" align="center"  height="2"></td>';
+                    }
+                }
+                if ($total_tercer_trimeste > 0 && $suma_tercer_trimestrei > 0) {
+                    $promedio = ($suma_tercer_trimestrei) / $total_tercer_trimeste;
+                    $suma_tercer_trimestre_internas +=  floor(($promedio * 100)) / 100;
+                    $suma_promedio_internoi += ($suma_tercer_trimestrei) / $total_tercer_trimeste;
+                    $tabla .= '<td class="calificacion" align="center"  height="2">' . eliminarDecimalCero(numberFormatPrecision($promedio, 1, '.')) . '</td>';
+                } else {
+                    $tabla .= '<td class="calificacion" align="center"  height="2"></td>';
+                }
+                $promedio_finali = $suma_promedio_internoi / 3;
+                $suma_promedio_final +=   floor(($promedio_finali * 100)) / 100;;
+                if ($promedio_finali > 0) {
+                    $tabla .= '<td class="calificacion" align="center"  width="20"   height="2">' . eliminarDecimalCero(numberFormatPrecision($promedio_finali, 1, '.')) . '</td>';
+                } else {
+                    $tabla .= '<td class="calificacion" align="center"  width="20"   height="2"></td>';
+                }
+                $tabla .= '</tr>';
+                // $total_recorrido++;
+
+            }
+            $suma_calificacion_septiembre1 = $this->cicloescolar->obtenerCalificacionInternaSecu($idalumno, 9, $idhorario);
+
+            $suma_calificacion_octubre1 = $this->cicloescolar->obtenerCalificacionInternaSecu($idalumno, 10, $idhorario);
+            $suma_calificacion_noviembre1 = $this->cicloescolar->obtenerCalificacionInternaSecu($idalumno, 11, $idhorario);
+            $suma_calificacion_diciembre1 = $this->cicloescolar->obtenerCalificacionInternaSecu($idalumno, 12, $idhorario);
+            $suma_calificacion_enero1 = $this->cicloescolar->obtenerCalificacionInternaSecu($idalumno, 1, $idhorario);
+            $suma_calificacion_febrero1 = $this->cicloescolar->obtenerCalificacionInternaSecu($idalumno, 2, $idhorario);
+            $suma_calificacion_marzo1 = $this->cicloescolar->obtenerCalificacionInternaSecu($idalumno, 3, $idhorario);
+            $suma_calificacion_abril1 = $this->cicloescolar->obtenerCalificacionInternaSecu($idalumno, 4, $idhorario);
+            $suma_calificacion_mayo1 = $this->cicloescolar->obtenerCalificacionInternaSecu($idalumno, 5, $idhorario);
+            $suma_calificacion_junio1 = $this->cicloescolar->obtenerCalificacionInternaSecu($idalumno, 7, $idhorario);
+            $suma_calificacion_julio1 = $this->cicloescolar->obtenerCalificacionInternaSecu($idalumno, 7, $idhorario);
+            $suma_diciembre_enero1 = $suma_calificacion_diciembre1->sumacalificacion + $suma_calificacion_enero1->sumacalificacion;
+            $suma_abril_mayo1 = $suma_calificacion_abril1->sumacalificacion + $suma_calificacion_mayo1->sumacalificacion;
+
+            $suma_calificacion_septiembre2 = $this->cicloescolar->calificacionXMesMaterias(trim($idspromedormaterias3, ','), $idalumno, 9, $idhorario);
+
+            $suma_calificacion_octubre2 = $this->cicloescolar->calificacionXMesMaterias(trim($idspromedormaterias3, ','), $idalumno, 10, $idhorario);
+            $suma_calificacion_noviembre2 = $this->cicloescolar->calificacionXMesMaterias(trim($idspromedormaterias3, ','), $idalumno, 11, $idhorario);
+            $suma_calificacion_diciembre2 = $this->cicloescolar->calificacionXMesMaterias(trim($idspromedormaterias3, ','), $idalumno, 12, $idhorario);
+            $suma_calificacion_enero2 = $this->cicloescolar->calificacionXMesMaterias(trim($idspromedormaterias3, ','), $idalumno, 1, $idhorario);
+            $suma_calificacion_febrero2 = $this->cicloescolar->calificacionXMesMaterias(trim($idspromedormaterias3, ','), $idalumno, 2, $idhorario);
+            $suma_calificacion_marzo2 = $this->cicloescolar->calificacionXMesMaterias(trim($idspromedormaterias3, ','), $idalumno, 3, $idhorario);
+            $suma_calificacion_abril2 = $this->cicloescolar->calificacionXMesMaterias(trim($idspromedormaterias3, ','), $idalumno, 4, $idhorario);
+            $suma_calificacion_mayo2 = $this->cicloescolar->calificacionXMesMaterias(trim($idspromedormaterias3, ','), $idalumno, 5, $idhorario);
+            $suma_calificacion_junio2 = $this->cicloescolar->calificacionXMesMaterias(trim($idspromedormaterias3, ','), $idalumno, 7, $idhorario);
+            $suma_calificacion_julio2 = $this->cicloescolar->calificacionXMesMaterias(trim($idspromedormaterias3, ','), $idalumno, 7, $idhorario);
+            $suma_diciembre_enero2 = $suma_calificacion_diciembre2->sumacalificacion + $suma_calificacion_enero2->sumacalificacion;
+            $suma_abril_mayo2 = $suma_calificacion_abril2->sumacalificacion + $suma_calificacion_mayo2->sumacalificacion;
+
+            $tabla .= '<tr class="azulprimedio">
+
+                <td  class="nombreclase">PROMEDIO</td>';
+            if (($suma_calificacion_septiembre1->sumacalificacion + $suma_calificacion_septiembre2->sumacalificacion) > 0) {
+                $tabla .= ' <td  class="calificacion" align="center">' .  eliminarDecimalCero(numberFormatPrecision((($suma_calificacion_septiembre1->sumacalificacion + $suma_calificacion_septiembre2->sumacalificacion) / $row_area_axiologica), 1, '.')) . '</td>';
+            } else {
+                $tabla .= ' <td  class="calificacion" align="center"></td>';
+            }
+            if (($suma_calificacion_octubre1->sumacalificacion + $suma_calificacion_octubre2->sumacalificacion) > 0) {
+                $tabla .= '<td  class="calificacion" align="center">' .  eliminarDecimalCero(numberFormatPrecision((($suma_calificacion_octubre1->sumacalificacion + $suma_calificacion_octubre2->sumacalificacion) / $row_area_axiologica), 1, '.')) . '</td>';
+            } else {
+                $tabla .= ' <td  class="calificacion" align="center"></td>';
+            }
+            if (($suma_calificacion_noviembre1->sumacalificacion + $suma_calificacion_noviembre2->sumacalificacion) > 0) {
+                $tabla .= ' <td  class="calificacion" align="center">' .  eliminarDecimalCero(numberFormatPrecision((($suma_calificacion_noviembre1->sumacalificacion + $suma_calificacion_noviembre2->sumacalificacion) / $row_area_axiologica), 1, '.')) . '</td>';
+            } else {
+                $tabla .= ' <td  class="calificacion" align="center"></td>';
+            }
+            if (($suma_primer_trimestre_internas + $promedio_final_primertrimestre3) > 0) {
+                $tabla .= '<td  class="calificacion" align="center">' . numberFormatPrecision((($suma_primer_trimestre_internas + $promedio_final_primertrimestre3) / $row_area_axiologica), 1, '.')  . '</td>';
+            } else {
+                $tabla .= ' <td  class="calificacion" align="center"></td>';
+            }
+            if (($suma_diciembre_enero1 + $suma_diciembre_enero2) > 0) {
+                $tabla .= '<td  class="calificacion" align="center">' . eliminarDecimalCero(numberFormatPrecision((($suma_diciembre_enero1 + $suma_diciembre_enero2) / $row_area_axiologica), 1, '.')) . '</td>';
+            } else {
+                $tabla .= ' <td  class="calificacion" align="center"></td>';
+            }
+            if (($suma_calificacion_febrero1->sumacalificacion + $suma_calificacion_febrero2->sumacalificacion) > 0) {
+                $tabla .= '<td  class="calificacion" align="center">' .  eliminarDecimalCero(numberFormatPrecision((($suma_calificacion_febrero1->sumacalificacion + $suma_calificacion_febrero2->sumacalificacion) / $row_area_axiologica), 1, '.')) . '</td>';
+            } else {
+                $tabla .= ' <td  class="calificacion" align="center"></td>';
+            }
+            if (($suma_calificacion_marzo1->sumacalificacion + $suma_calificacion_marzo2->sumacalificacion) > 0) {
+                $tabla .= ' <td  class="calificacion" align="center">' .  eliminarDecimalCero(numberFormatPrecision((($suma_calificacion_marzo1->sumacalificacion + $suma_calificacion_marzo2->sumacalificacion) / $row_area_axiologica), 1, '.')) . '</td>';
+            } else {
+                $tabla .= ' <td  class="calificacion" align="center"></td>';
+            }
+            if (($suma_segundo_trimestre_internas + $promedio_final_segundotrimestre3) > 0) {
+                $tabla .= ' <td  class="calificacion" align="center">' . numberFormatPrecision((($suma_segundo_trimestre_internas + $promedio_final_segundotrimestre3) / $row_area_axiologica), 1, '.')  . '</td>';
+            } else {
+                $tabla .= ' <td  class="calificacion" align="center"></td>';
+            }
+            if (($suma_abril_mayo1 + $suma_abril_mayo2) > 0) {
+                $tabla .= ' <td  class="calificacion" align="center">' . eliminarDecimalCero(numberFormatPrecision((($suma_abril_mayo1 + $suma_abril_mayo2) / $row_area_axiologica), 1, '.')) . '</td>';
+            } else {
+                $tabla .= ' <td  class="calificacion" align="center"></td>';
+            }
+            if (($suma_calificacion_junio1->sumacalificacion + $suma_calificacion_junio2->sumacalificacion) > 0) {
+                $tabla .= ' <td  class="calificacion" align="center">' .  eliminarDecimalCero(numberFormatPrecision((($suma_calificacion_junio1->sumacalificacion + $suma_calificacion_junio2->sumacalificacion) / $row_area_axiologica), 1, '.')) . '</td>';
+            } else {
+                $tabla .= ' <td  class="calificacion" align="center"></td>';
+            }
+            if (($suma_calificacion_julio1->sumacalificacion + $suma_calificacion_julio2->sumacalificacion) > 0) {
+                $tabla .= ' <td  class="calificacion" align="center">' .  eliminarDecimalCero(numberFormatPrecision((($suma_calificacion_julio1->sumacalificacion + $suma_calificacion_julio2->sumacalificacion) / $row_area_axiologica), 1, '.')) . '</td>';
+            } else {
+                $tabla .= ' <td  class="calificacion" align="center"></td>';
+            }
+            if (($suma_tercer_trimestre_internas + $promedio_final_tercertrimestre3) > 0) {
+                $tabla .= ' <td  class="calificacion" align="center">' . numberFormatPrecision((($suma_tercer_trimestre_internas + $promedio_final_tercertrimestre3) / $row_area_axiologica), 1, '.')  . '</td>';
+            } else {
+                $tabla .= ' <td  class="calificacion" align="center"></td>';
+            }
+            if (($suma_promedio_final + $promedio_final_todo3) > 0) {
+                $tabla .= ' <td  class="calificacion" align="center">' . numberFormatPrecision((($suma_promedio_final + $promedio_final_todo3) / $row_area_axiologica), 1, '.')  . '</td>';
+            } else {
+                $tabla .= ' <td  class="calificacion" align="center"></td>';
+            }
+            $tabla .= '</tr>';
+
+            $tabla .= '</table>';
+            $tabla .= ' <br/><br>
+                <table width="550"  border="0"> 
+                <tr>  <td colspan="15"  class="director"  align="center">FIRMA DEL PADRE O TUTOR</td>   </tr> 
+                <tr>  <td colspan="15">&nbsp;</td>   </tr> 
+                <tr>  
+                <td colspan="4"  class="director" style="border-bottom:solid black 2px;">SEPTIEMBRE</td> 
+                <td ></td> 
+                <td colspan="4"  class="director" style="border-bottom:solid black 2px;">DIC/ENERO</td> 
+                <td >&nbsp;</td>
+                <td colspan="4"  class="director" style="border-bottom:solid black 2px;">ABRIL/MAYO</td>  
+            </tr> 
+            <tr>  <td colspan="15">&nbsp;</td>   </tr> 
+            <tr>  
+            <td colspan="4"  class="director" style="border-bottom:solid black 2px;">OCTUBRE</td> 
+            <td ></td> 
+            <td colspan="4"  class="director" style="border-bottom:solid black 2px;">FEBRERO</td> 
+            <td >&nbsp;</td>
+            <td colspan="4"  class="director" style="border-bottom:solid black 2px;">JUNIO</td>  
+        </tr> 
+        <tr>  <td colspan="16">&nbsp;</td>   </tr> 
+        <tr> 
+        <td colspan="4"  class="director" style="border-bottom:solid black 2px;">NOVIEMBRE</td> 
+        <td ></td> 
+        <td colspan="4"  class="director" style="border-bottom:solid black 2px;">MARZO</td> 
+        <td >&nbsp;</td>
+        <td colspan="4"  class="director" style="border-bottom:solid black 2px;">JULIO</td>  
+    </tr> 
+    <tr>  <td colspan="15">&nbsp;</td>   </tr>  
+    <tr> 
+    <td colspan="4"  class="director" style="border-bottom:solid black 2px;">1° TRIMESTRE</td>
+    <td ></td> 
+    <td colspan="4"  class="director" style="border-bottom:solid black 2px;">2° TRIMESTRE</td> 
+    <td >&nbsp;</td>
+    <td colspan="4"  class="director" style="border-bottom:solid black 2px;">3° TRIMESTRE</td> 
+</tr> 
+<tr>  <td colspan="16">&nbsp;</td>   </tr>   
+                <tr>
+                        <td colspan="5" align="center" class="director" width="172">AUXILIAR DOCENTE</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td colspan="5" align="center" class="director" width="172">DIRECTORA DE NIVEL</td>
+                    </tr>
+                    <tr>
+                    <td colspan="5" align="center" style="border-bottom:solid black 1px;" width="172"></td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td colspan="5" align="center" style="border-bottom:solid black 1px;" width="172"></td>
+                </tr>';
+
+            $tabla .= ' </table>';
+            //echo $tabla;
+            $pdf->writeHTML($tabla, true, false, false, false, '');
+
+            ob_end_clean();
+
+            $pdf->Output('Kardex de Calificaciones.pdf', 'I');
+            //echo $tabla;
             /*
              * $dompdf->loadHtml($tabla);
              * $dompdf->setPaper('A4', 'portrait');
@@ -2864,6 +4100,7 @@ tblcalificacion  {border-collapse:collapse}
 
         $detalle_configuracion = $this->configuracion->showAllConfiguracion($this->session->idplantel, $idnivelestudio);
         $calificaciones = $this->alumno->obtenerCalificacionPorOportunidadAlumno($idalumno, $idhorario, $idoportunidad_acterior);
+        // var_dump($calificaciones);
         $tabla = "";
         $tabla .= '<table class="table  table-striped  table-hover">
         <thead class="bg-teal">

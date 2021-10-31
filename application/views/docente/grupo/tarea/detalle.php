@@ -141,4 +141,4 @@
 <script src="<?php echo base_url() . 'assets/vue/ckeditor/' ?>ckeditor.js"></script>
 <script src="<?php echo base_url() . 'assets/vue/ckeditor/' ?>vue-ckeditor2.umd.js"></script>
 
-<script data-my_var_1="<?php echo base_url() ?>" data-my_var_2="<?php echo $idtarea; ?>" data-my_var_3="<?php echo $idhorario; ?>" data-my_var_4="<?php echo $idmateria; ?>" data-my_var_5="<?php echo $idprofesormateria; ?>" src="<?php echo base_url(); ?>/assets/vue/appvue/docente/tarea/apptarea_detalle.js?1.0"></script>
+<script data-my_var_1="<?php echo base_url() ?>" data-my_var_2="<?php echo $idtarea; ?>" data-my_var_3="<?php echo $idhorario; ?>" data-my_var_4="<?php echo $idmateria; ?>" data-my_var_5="<?php echo $idprofesormateria; ?>" src="<?php echo base_url(); ?>/assets/vue/appvue/docente/tarea/apptarea_detalle.js?1.2"></script>

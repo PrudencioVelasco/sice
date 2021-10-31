@@ -10,7 +10,7 @@
                 <div class="x_panel">
                     <div class="x_title">
                         <div class="col-md-6 col-sm-12 col-xs-12 ">
-                            <h2><strong> <i class="fa fa-check-circle" style="color: #80e166;"></i> CALIFICACIONES</strong></h2>
+                            <h2><strong> <i class="fa fa-check-circle" style="color: #80e166;"></i> CALIFICACIONES Y ESTADISTICAS</strong></h2>
                         </div>
                         <div class="clearfix"></div>
                     </div>
@@ -51,11 +51,13 @@
                                                 <option v-for="option in oportunidades" v-bind:value="'o'+option.idoportunidadexamen">
                                                     {{ option.nombreoportunidad }}
                                                 </option>
-                                                <option v-for="option in meses" v-bind:value="'m'+option.idmes">
+
+                                                <option v-if="idniveleducativo == '1' || idniveleducativo == '2' " v-for="option in meses" v-bind:value="'m'+option.idmes">
                                                     {{ option.nombremes }}
                                                 </option>
                                             </select>
                                         </div>
+
                                     </div>
                                     <div class="col-md-2 col-sm-12 col-xs-12 ">
                                         <div class="form-group">
@@ -66,6 +68,7 @@
                                                 <button class="btn btn-default" type="button" disabled> <i class="fa fa-spin fa-spinner"></i> Buscando...</button>
                                             </div>
                                         </div>
+
                                     </div>
                                 </div>
 
@@ -97,46 +100,48 @@
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-md-12 col-sm-12 col-xs-12 ">
+                                    <div>
+                                        <div class="col-md-12 col-sm-12 col-xs-12 ">
 
 
-                                        <div class="responsive">
-                                            <table class="table table-hover">
-                                                <thead>
-                                                    <tr>
-                                                        <th>#</th>
-                                                        <th> NOMBRE</th>
-                                                        <th></th>
-                                                        <th> </th>
+                                            <div class="responsive">
+                                                <table class="table table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>#</th>
+                                                            <th> NOMBRE</th>
+                                                            <th></th>
+                                                            <th> </th>
 
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr v-for="alumno in alumnos" v-if="alumnos !=''">
-                                                        <th scope="row">{{alumno.enumeracion}}</th>
-                                                        <td>{{alumno.nombre}}</td>
-                                                        <td>
-                                                            <span class="col-red" v-if="(alumno.total_reprobadas) && (alumno.total_reprobadas > 0)">
-                                                                Reprobadas: {{alumno.total_reprobadas}}
-                                                            </span>
-                                                        </td>
-                                                        <td align="right">
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr v-for="alumno in alumnos" v-if="alumnos !=''">
+                                                            <th scope="row">{{alumno.enumeracion}}</th>
+                                                            <td>{{alumno.nombre}}</td>
+                                                            <td>
+                                                                <span class="col-red" v-if="(alumno.total_reprobadas) && (alumno.total_reprobadas > 0)">
+                                                                    Reprobadas: {{alumno.total_reprobadas}}
+                                                                </span>
+                                                            </td>
+                                                            <td align="right">
 
-                                                            <button v-if="alumno.agregar_diciplina == 'SI'" @click="selectAlumno(alumno);abrirAddModalDisciplina();" class="btn btn-success"><i class="fa fa-plus-circle"></i> Agregar</button>
-                                                            <button v-if="alumno.editar_diciplina == 'SI'" @click="selectAlumno(alumno);modalEditarDisciplina();" class="btn btn-primary"> <i class="fa fa-pencil-square"></i> Editar</button>
-                                                            <!-- <a href="#" v-if="alumno.editar_diciplina == 'SI'"  class="btn btn-default" v-bind:href="'descargarBoletaPDF/'+idperiodo+'/'+idgrupo+'/'+ alumno.idalumno">Boleta</a>-->
-                                                            <button @click="selectAlumno(alumno);showCalificacionesAlumno();abrirAddModal();" v-if="alumno.opcion_reporte  == 'UNIDAD'" class="btn btn-info"><i class="fa fa-file-text"></i> Boleta</button>
-                                                            <button @click="selectAlumno(alumno);showCalificacionesPSAlumno();abrirAModalCalificacionPS();" v-if="alumno.opcion_reporte  == 'MES'" class="btn btn-info"><i class="fa fa-file-text"></i> Boleta</button>
-                                                            <button @click="selectAlumno(alumno);showCalificacionesMateria();abrirAModalCalificacionMateria();" v-if="alumno.opcion_reporte  == 'CALIFICACION_MATERIA'" class="btn btn-info"><i class="fa fa-file-text"></i> Boleta</button>
-                                                            <button @click="selectAlumno(alumno);showCalificacionesOportunidad();abrirModalCalificacionesOportunidad();" v-if="alumno.opcion_reporte  == 'CALIFICACION_OPORTUNIDAD'" class="btn btn-info"><i class="fa fa-file-text"></i> Boleta</button>
-                                                        </td>
-                                                    </tr>
-                                                    <tr v-if="alumnos ==''">
-                                                        <td colspan="3" align="center"><strong>Sin registros</strong></td>
-                                                    </tr>
+                                                                <button v-if="alumno.agregar_diciplina == 'SI'" @click="selectAlumno(alumno);abrirAddModalDisciplina();" class="btn btn-success  waves-effect waves-black"><i class="fa fa-plus-circle"></i> Agregar</button>
+                                                                <button v-if="alumno.editar_diciplina == 'SI'" @click="selectAlumno(alumno);modalEditarDisciplina();" class="btn btn-primary  waves-effect waves-black"> <i class="fa fa-pencil-square"></i> Editar</button>
+                                                                <!-- <a href="#" v-if="alumno.editar_diciplina == 'SI'"  class="btn btn-default" v-bind:href="'descargarBoletaPDF/'+idperiodo+'/'+idgrupo+'/'+ alumno.idalumno">Boleta</a>-->
+                                                                <button @click="selectAlumno(alumno);showCalificacionesAlumno();abrirAddModal();" v-if="alumno.opcion_reporte  == 'UNIDAD'" class="btn btn-info  waves-effect waves-black"><i class="fa fa-file-text"></i> Boleta</button>
+                                                                <button @click="selectAlumno(alumno);showCalificacionesPSAlumno();abrirAModalCalificacionPS();" v-if="alumno.opcion_reporte  == 'MES'" class="btn btn-info  waves-effect waves-black"><i class="fa fa-file-text"></i> Boleta</button>
+                                                                <button @click="selectAlumno(alumno);showCalificacionesMateria();abrirAModalCalificacionMateria();" v-if="alumno.opcion_reporte  == 'CALIFICACION_MATERIA'" class="btn btn-info  waves-effect waves-black"><i class="fa fa-file-text"></i> Boleta</button>
+                                                                <button @click="selectAlumno(alumno);showCalificacionesOportunidad();abrirModalCalificacionesOportunidad();obtenerCalificacionMinima();" v-if="alumno.opcion_reporte  == 'CALIFICACION_OPORTUNIDAD'" class="btn btn-info  waves-effect waves-black"><i class="fa fa-file-text"></i> Boleta</button>
+                                                            </td>
+                                                        </tr>
+                                                        <tr v-if="alumnos ==''">
+                                                            <td colspan="3" align="center"><strong>Sin registros</strong></td>
+                                                        </tr>
 
-                                                </tbody>
-                                            </table>
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -173,5 +178,8 @@
     <div class="clearfix"></div>
     <div id="notif-group" class="tabbed_notifications"></div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+<script src="https://unpkg.com/vue-chartjs/dist/vue-chartjs.min.js"></script>
+
 <script src="<?php echo base_url(); ?>/assets/vue/vue2-filters.min.js"></script>
-<script data-my_var_1="<?php echo base_url() ?>" data-my_var_2="<?php echo $idplantel; ?>" src="<?php echo base_url(); ?>/assets/vue/appvue/administrador/calificaciones/appcalificacion.js"></script>
+<script data-my_var_1="<?php echo base_url() ?>" data-my_var_2="<?php echo $idplantel; ?>" data-my_var_3="<?php echo $this->session->idniveleducativo; ?>" src="<?php echo base_url(); ?>/assets/vue/appvue/administrador/calificaciones/appcalificacion.js"></script>

@@ -19,6 +19,7 @@
                                     <div class="col-md-6 col-sm-12 col-xs-12 ">
 
                                         <button class="btn  btn-primary waves-effect waves-black" @click="abrirAddModal()"><i class='fa fa-plus'></i> Agregar Alumno</button>
+                                        <button class="btn  btn-info waves-effect waves-black" @click="abrirSituacionAlumnos();showAllEstatusAlumnos();"><i class='fa fa-info-circle'></i> Situacion</button>
                                         <a class="btn btn-default waves-effect waves-black" href="<?php echo base_url() . 'Alumno/reprobadas'; ?>"> <i class="fa fa-share"></i> Asignación</a>
 
 
@@ -26,7 +27,10 @@
                                     <div class="col-md-6 col-sm-12 col-xs-12 "> </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6 col-sm-12 col-xs-12 ">
+                                    <div class="col-md-6 col-sm-12 col-xs-12 " align="right">
+                                        <div v-if="buscandoalumno">
+                                            <label><strong> Buscando...</strong> <i class="fa fa-spin fa-spinner fa-2x" style="color:royalblue"></i> </label>
+                                        </div>
                                     </div>
                                     <div class="col-md-6 col-sm-12 col-xs-12 ">
                                         <input placeholder="Buscar" :autofocus="'autofocus'" type="search" class="form-control btn-round" v-model="search.text" @keyup="searchAlumno" name="search">
@@ -51,7 +55,7 @@
                                                 <div class="media">
                                                     <div class="media-left">
                                                         <a href="#">
-                                                            <img v-if="alumno.foto" v-bind:src="url_image+alumno.foto" alt="Imagen del Alumno" />
+                                                            <img v-if="alumno.foto" style="width: 50px; height:50px; border:solid #ccc 1px;" v-bind:src="url_image+alumno.foto" alt="" />
                                                             <img v-else src="<?php echo base_url(); ?>/assets/images/user2.png" />
                                                         </a>
                                                     </div>
@@ -126,4 +130,4 @@
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vuejs-paginator/2.0.0/vuejs-paginator.js"></script>
 
-<script data-my_var_1="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/vue/appvue/appalumno.js"></script>
+<script data-my_var_1="<?php echo base_url() ?>" src="<?php echo base_url(); ?>/assets/vue/appvue/appalumno.js?v1.0"></script>

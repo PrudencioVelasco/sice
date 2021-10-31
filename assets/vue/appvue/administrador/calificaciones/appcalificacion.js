@@ -7,6 +7,10 @@ var my_var_2 = this_js_script.attr("data-my_var_2");
 if (typeof my_var_2 === "undefined") {
   var my_var_2 = "some_default_value";
 }
+var my_var_3 = this_js_script.attr("data-my_var_3");
+if (typeof my_var_3 === "undefined") {
+  var my_var_3 = "some_default_value";
+}
 
 Vue.config.devtools = true;
 var v = new Vue({
@@ -16,6 +20,7 @@ var v = new Vue({
   },
   data: {
     url: my_var_1,
+    idniveleducativo: my_var_3,
     cargando: false,
     btnbuscar2: true,
     btncargandobuscar2: false,
@@ -23,13 +28,14 @@ var v = new Vue({
     cargando_calificacion_tabla: false,
     error: false,
     actadeevaluacion: false,
-    //deleteModal:false,
+    //deleteModal:false, 
     periodos: [],
     idplantel: my_var_2,
     idperiodo: "",
     idgrupo: "",
     idtiporeporte: "",
     idalumno: "",
+    calificacionminima: "",
     grupos: [],
     alumnos: [],
     materias: [],
@@ -59,6 +65,9 @@ var v = new Vue({
     newCalificacionPrepa: {
       calificacion: ""
     },
+    newCalificacionOportunidadPrepa: {
+      calificacion: ""
+    },
     newCalificacionPrimaria: {
       calificacion: ""
     },
@@ -68,6 +77,7 @@ var v = new Vue({
     chooseAlumno: {},
     chooseAsistencia: {},
     chooseCalificacionPrepa: {},
+    chooseCalificacionOportunidadPrepa: {},
     chooseCalificacionPrimaria: {},
     chooseCalificacionQuita: {},
     formValidate: [],
@@ -88,7 +98,7 @@ var v = new Vue({
     this.showAllMeses();
   },
   methods: {
-    onSelect(option, id) {},
+    onSelect(option, id) { },
     orderBy(sortFn) {
       this.alumnos.sort(sortFn);
     },
@@ -115,6 +125,12 @@ var v = new Vue({
     abrirModalAddCalificacionPrepa() {
       $("#modalAddCalificacionPrepa").modal("show");
     },
+    abrirModalAddCalificacionOportunidadPrepa() {
+      $("#modalAddCalificacionOportunidadPrepa2").modal("show");
+    },
+    abrirModalEditCalificacionOportunidadPrepa() {
+      $("#modalEditCalificacionOportunidadPrepa2").modal("show");
+    },
     abrirModalAddCalificacionPrimaria() {
       $("#modalAddCalificacionPrimaria").modal("show");
     },
@@ -137,7 +153,7 @@ var v = new Vue({
           idhorario: v.chooseAlumno.idhorario,
           idunidad: v.chooseAlumno.idunidad
         }
-      }).then(response => (this.calificaciones = response.data.calificaciones)). finally(() => {
+      }).then(response => (this.calificaciones = response.data.calificaciones)).finally(() => {
         v.mostrar_calificacion_tabla = true;
         v.cargando_calificacion_tabla = false;
       });
@@ -151,7 +167,7 @@ var v = new Vue({
           idhorario: v.chooseAlumno.idhorario,
           idmes: v.chooseAlumno.idmes
         }
-      }).then(response => (this.calificaciones = response.data.calificaciones)). finally(() => {
+      }).then(response => (this.calificaciones = response.data.calificaciones)).finally(() => {
         v.mostrar_calificacion_tabla = true;
         v.cargando_calificacion_tabla = false;
       });
@@ -165,7 +181,7 @@ var v = new Vue({
           idhorario: v.chooseAlumno.idhorario,
           idperiodo: v.chooseAlumno.idperiodo
         }
-      }).then(response => (this.calificaciones = response.data.calificaciones)). finally(() => {
+      }).then(response => (this.calificaciones = response.data.calificaciones)).finally(() => {
         v.mostrar_calificacion_tabla = true;
         v.cargando_calificacion_tabla = false;
       });
@@ -180,9 +196,18 @@ var v = new Vue({
           idperiodo: v.chooseAlumno.idperiodo,
           idoportunidad: v.chooseAlumno.idoportunidad
         }
-      }).then(response => (this.calificaciones = response.data.calificaciones)). finally(() => {
+      }).then(response => (this.calificaciones = response.data.calificaciones)).finally(() => {
         v.mostrar_calificacion_tabla = true;
         v.cargando_calificacion_tabla = false;
+      });
+    },
+    obtenerCalificacionMinima() {
+      axios.get(this.url + "Calificacion/obtenerCalificacionMinima/", {
+        params: {
+          idhorario: v.chooseAlumno.idhorario
+        }
+      }).then(response => (this.calificacionminima = response.data.calificacionminima)).finally(() => {
+
       });
     },
     showAllTiposCalificacion() {
@@ -238,7 +263,7 @@ var v = new Vue({
             idperiodo: idperiodo,
             idgrupo: idgrupo
           }
-        }).then(response => (this.alumnos = response.data)). finally(() => {
+        }).then(response => (this.alumnos = response.data)).finally(() => {
           v.btnbuscar2 = true;
           v.btncargandobuscar2 = false;
         });
@@ -256,7 +281,7 @@ var v = new Vue({
           idperiodo: idperiodo,
           idgrupo: idgrupo
         }
-      }).then(response => (this.materias = response.data.materias)). finally(() => {
+      }).then(response => (this.materias = response.data.materias)).finally(() => {
         //v.btnbuscar2 = true;
         //v.btncargandobuscar2 = false;
       });
@@ -272,7 +297,7 @@ var v = new Vue({
           //v.successMSG = response.data.success;
           v.clearAll();
           v.clearMSG();
-          swal({position: "center", type: "success", title: "Modificado!", showConfirmButton: false, timer: 1500});
+          swal({ position: "center", type: "success", title: "Modificado!", showConfirmButton: false, timer: 1500 });
         }
       });
     },
@@ -288,7 +313,7 @@ var v = new Vue({
           v.cerrarVentaEditPrepa();
           v.clearMSG();
           v.showCalificacionesAlumno();
-          swal({position: "center", type: "success", title: "Modificado!", showConfirmButton: false, timer: 1500});
+          swal({ position: "center", type: "success", title: "Modificado!", showConfirmButton: false, timer: 1500 });
         }
       });
     },
@@ -304,7 +329,7 @@ var v = new Vue({
           v.showCalificacionesPSAlumno();
           v.cerrarVentanaEditPrimaria();
           v.clearMSG();
-          swal({position: "center", type: "success", title: "Modificado!", showConfirmButton: false, timer: 1500});
+          swal({ position: "center", type: "success", title: "Modificado!", showConfirmButton: false, timer: 1500 });
         }
       });
     },
@@ -327,7 +352,7 @@ var v = new Vue({
             }
           }).then(function (response) {
             if (response.data.error == false) {
-              swal({position: "center", type: "success", title: "Eliminado!", showConfirmButton: false, timer: 1500});
+              swal({ position: "center", type: "success", title: "Eliminado!", showConfirmButton: false, timer: 1500 });
               v.showCalificacionesAlumno();
             } else {
               swal("Información", response.data.mensaje, "info");
@@ -360,7 +385,7 @@ var v = new Vue({
             }
           }).then(function (response) {
             if (response.data.error == false) {
-              swal({position: "center", type: "success", title: response.data.msg.mensaje, showConfirmButton: false, timer: 1500});
+              swal({ position: "center", type: "success", title: response.data.msg.mensaje, showConfirmButton: false, timer: 1500 });
               v.showCalificacionesPSAlumno();
             } else {
               swal("Información", response.data.mensaje, "info");
@@ -396,7 +421,7 @@ var v = new Vue({
             }
           }).then(function (response) {
             if (response.data.error == false) {
-              swal({position: "center", type: "success", title: "Quitado!", showConfirmButton: false, timer: 1500});
+              swal({ position: "center", type: "success", title: "Quitado!", showConfirmButton: false, timer: 1500 });
               v.showCalificacionesMateria();
             } else {
               swal("Información", response.data.msg.mensaje, "info");
@@ -428,7 +453,7 @@ var v = new Vue({
             }
           }).then(function (response) {
             if (response.data.error == false) {
-              swal({position: "center", type: "success", title: "Agregado!", showConfirmButton: false, timer: 1500});
+              swal({ position: "center", type: "success", title: "Agregado!", showConfirmButton: false, timer: 1500 });
               v.showCalificacionesMateria();
             } else {
               swal("Información", response.data.msg.mensaje, "info");
@@ -436,6 +461,39 @@ var v = new Vue({
             }
           }).catch(error => {
             swal("Información", "No se puedo quitar el curso.", "info");
+            v.cargando = false;
+          });
+        }
+      });
+    },
+    eliminarCalificacionOportunidadPrepa() {
+      // console.log(v.chooseCalificacionPrepa.idcalificacion);
+      Swal.fire({
+        title: "Eliminar calificación?",
+        text: "Realmente desea eliminar la calificación.",
+        type: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Eliminar",
+        cancelButtonText: "Cancelar"
+      }).then(result => {
+        if (result.value) {
+          axios.get(this.url + "Calificacion/eliminarCalificacionOportunidad", {
+            params: {
+              idcalificacion: v.chooseCalificacionOportunidadPrepa.idcalificacionoportunidad
+            }
+          }).then(function (response) {
+            if (response.data.error == false) {
+              swal({ position: "center", type: "success", title: "Eliminado!", showConfirmButton: false, timer: 1500 });
+              //v.showCalificacionesMateria();
+              v.showCalificacionesOportunidad();
+            } else {
+              swal("Información", response.data.msg.mensaje, "info");
+              //v.showCalificacionesAlumno();
+            }
+          }).catch(error => {
+            swal("Información", "No se puedo modificar la calificación.", "info");
             v.cargando = false;
           });
         }
@@ -454,7 +512,7 @@ var v = new Vue({
           v.error = true;
           v.cargando = false;
         } else {
-          swal({position: "center", type: "success", title: "Agregado!", showConfirmButton: false, timer: 1500});
+          swal({ position: "center", type: "success", title: "Agregado!", showConfirmButton: false, timer: 1500 });
           v.searchAlumnos();
           v.clearAll();
           v.clearMSG();
@@ -478,7 +536,68 @@ var v = new Vue({
           v.showCalificacionesAlumno();
           v.cerrarVentanaAddPrepa();
           v.clearMSG();
-          swal({position: "center", type: "success", title: "Agregado!", showConfirmButton: false, timer: 1500});
+          swal({ position: "center", type: "success", title: "Agregado!", showConfirmButton: false, timer: 1500 });
+        }
+      });
+    },
+    addCalificacionOportunidadPrepa() {
+      v.error = false;
+      // var formData = v.formData();
+      var formData = v.formData(v.newCalificacionOportunidadPrepa);
+      formData.append("idhorario", v.chooseCalificacionOportunidadPrepa.idhorario);
+      formData.append("idhorariodetalle", v.chooseCalificacionOportunidadPrepa.idhorariodetalle);
+      formData.append("idoportunidadexamen", v.chooseAlumno.idoportunidad);
+      formData.append("idalumno", v.chooseCalificacionOportunidadPrepa.idalumno);
+      formData.append("idprofesormateria", v.chooseCalificacionOportunidadPrepa.idprofesormateria);
+      axios.post(this.url + "Calificacion/addCalificacionAdminOportunidadPrepa", formData).then(function (response) {
+        if (response.data.error) {
+          v.formValidate = response.data.msg;
+          v.error = true;
+          v.cargando = false;
+        } else {
+          v.showCalificacionesOportunidad();
+          v.cerrarVentanaAddOportunidadPrepa();
+          v.clearMSG();
+          swal({ position: "center", type: "success", title: "Agregado!", showConfirmButton: false, timer: 1500 });
+        }
+      });
+    },
+    addCalificacionOportunidadPrepa() {
+      v.error = false;
+      // var formData = v.formData();
+      var formData = v.formData(v.newCalificacionOportunidadPrepa);
+      formData.append("idhorario", v.chooseCalificacionOportunidadPrepa.idhorario);
+      formData.append("idhorariodetalle", v.chooseCalificacionOportunidadPrepa.idhorariodetalle);
+      formData.append("idoportunidadexamen", v.chooseAlumno.idoportunidad);
+      formData.append("idalumno", v.chooseCalificacionOportunidadPrepa.idalumno);
+      formData.append("idprofesormateria", v.chooseCalificacionOportunidadPrepa.idprofesormateria);
+      axios.post(this.url + "Calificacion/addCalificacionAdminOportunidadPrepa", formData).then(function (response) {
+        if (response.data.error) {
+          v.formValidate = response.data.msg;
+          v.error = true;
+          v.cargando = false;
+        } else {
+          v.showCalificacionesOportunidad();
+          v.cerrarVentanaAddOportunidadPrepa();
+          v.clearMSG();
+          swal({ position: "center", type: "success", title: "Agregado!", showConfirmButton: false, timer: 1500 });
+        }
+      });
+    },
+    editCalificacionOportunidadPrepa() {
+      v.error = false;
+      // var formData = v.formData();
+      var formData = v.formData(v.chooseCalificacionOportunidadPrepa);
+      axios.post(this.url + "Calificacion/editCalificacionAdminOportunidadPrepa", formData).then(function (response) {
+        if (response.data.error) {
+          v.formValidate = response.data.msg;
+          v.error = true;
+          v.cargando = false;
+        } else {
+          v.showCalificacionesOportunidad();
+          v.cerrarVentanaEditOportunidadPrepa();
+          v.clearMSG();
+          swal({ position: "center", type: "success", title: "Modificado!", showConfirmButton: false, timer: 1500 });
         }
       });
     },
@@ -499,7 +618,7 @@ var v = new Vue({
           v.showCalificacionesPSAlumno();
           v.cerrarVentanaAddPrimaria();
           v.clearMSG();
-          swal({position: "center", type: "success", title: "Agregado!", showConfirmButton: false, timer: 1500});
+          swal({ position: "center", type: "success", title: "Agregado!", showConfirmButton: false, timer: 1500 });
         }
       });
     },
@@ -517,6 +636,9 @@ var v = new Vue({
     },
     selectCalificacionPrepa(calificacion) {
       v.chooseCalificacionPrepa = calificacion;
+    },
+    selectCalificacionOportunidadPrepa(calificacion) {
+      v.chooseCalificacionOportunidadPrepa = calificacion;
     },
     selectCalificacionPrimaria(calificacion) {
       v.chooseCalificacionPrimaria = calificacion;
@@ -547,6 +669,26 @@ var v = new Vue({
         calificacion: ""
       };
     },
+    cerrarVentanaAddOportunidadPrepa() {
+      $("#modalAddCalificacionOportunidadPrepa2").modal("hide");
+      v.formValidate = false;
+      //v.searchAlumnos();
+      v.cargando = false;
+      v.error = false;
+      v.newCalificacionOportunidadPrepa = {
+        calificacion: ""
+      };
+    },
+    cerrarVentanaEditOportunidadPrepa() {
+      $("#modalEditCalificacionOportunidadPrepa2").modal("hide");
+      v.formValidate = false;
+      //v.searchAlumnos();
+      v.cargando = false;
+      v.error = false;
+      v.newCalificacionOportunidadPrepa = {
+        calificacion: ""
+      };
+    },
     cerrarVentanaAddPrimaria() {
       $("#modalAddCalificacionPrimaria").modal("hide");
       v.formValidate = false;
@@ -564,6 +706,7 @@ var v = new Vue({
       v.cargando = false;
       v.error = false;
     },
+
     clearAll() {
       // v.mostrar_calificacion_tabla = false;
       // v.cargando_calificacion_tabla = false;

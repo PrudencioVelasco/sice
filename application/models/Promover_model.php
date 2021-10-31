@@ -156,4 +156,47 @@ class Promover_model extends CI_Model
             return false;
         }
     }
+    public function obtenerDetalleGrupo($idgrupo = '')
+    {
+        $this->db->select('ne.idnivelestudio');
+        $this->db->from('tblgrupo g');
+        $this->db->join('tblnivelestudio ne', 'g.idnivelestudio = ne.idnivelestudio');
+        $this->db->where('g.idgrupo', $idgrupo);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
+    public function obtenerAlumnoGrupo($idalumno = '', $idperiodo = '')
+    {
+        $this->db->select('ag.idalumnogrupo');
+        $this->db->from('tblalumno_grupo ag');
+        $this->db->where('ag.idalumno', $idalumno);
+        $this->db->where('ag.idperiodo', $idperiodo);
+        $this->db->where('ag.activo', 1);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
+    public function updateAlumnoGrupo($id, $field)
+    {
+        $this->db->where('idalumnogrupo', $id);
+        $this->db->update('tblalumno_grupo', $field);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public function addAlumnoGrupo($data)
+    {
+        $this->db->insert('tblalumno_grupo', $data);
+        $insert_id = $this->db->insert_id();
+        return  $insert_id;
+    }
 }

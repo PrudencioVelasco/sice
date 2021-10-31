@@ -21,6 +21,7 @@ var vede = new Vue({
         url_image: my_var_1 + '/assets/alumnos/',
         file: '',
         alumno: [],
+        estatusoperaciones:[],
         search: { text: '' },
         emptyResult: false,
         grupos:[],
@@ -69,6 +70,7 @@ var vede = new Vue({
         this.showAllEstatus();
         this.calificacionAlumno();
         this.especialidadAlumno();
+        this.operacionesAlumno();
     },
     methods: {
         abrirAddModalAsignarGrupo() {
@@ -105,6 +107,14 @@ var vede = new Vue({
                     idalumno: this.idalumno
                 }
             }).then(response => (this.alumno = response.data.alumno));
+
+        },
+        operacionesAlumno() {
+            axios.get(this.url + "Alumno/validarMostrar/", {
+                params: {
+                    idalumno: this.idalumno
+                }
+            }).then(response => (this.estatusoperaciones = response.data.dato));
 
         },
          calificacionAlumno() {

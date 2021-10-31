@@ -7,15 +7,17 @@ if (typeof my_var_1 === "undefined") {
 Vue.config.devtools = true;
 var v = new Vue({
   el: "#app",
-  data: { 
+  data: {
     url: my_var_1,
     addModal: false,
     editModal: false,
     editPasswordModal: false,
     cargando: false,
+    buscandoalumno: false,
     error: false,
     //deleteModal:false,
     alumnos: [],
+    estatusalumnos: [],
     especialidades: [],
     tipossanguineos: [],
     estatusalumno: [],
@@ -72,6 +74,9 @@ var v = new Vue({
     abrirAddModal() {
       $("#addRegister").modal("show");
     },
+    abrirSituacionAlumnos() {
+      $("#situacionAlumnos").modal("show");
+    },
     abrirEditModal() {
       $("#editRegister").modal("show");
     },
@@ -83,14 +88,28 @@ var v = new Vue({
       this.alumnos.sort(sortFn);
     },
     showAll() {
-        axios.get(this.url + "Alumno/showAll").then(function (response) {
-                if (response.data.alumnos == null) {
-                    v.noResult()
-                } else {
-                    v.getData(response.data.alumnos);
-                }
-            })
-        }, 
+      axios.get(this.url + "Alumno/showAll").then(function (response) {
+        if (response.data.alumnos == null) {
+          v.noResult()
+        } else {
+          v.getData(response.data.alumnos);
+        }
+      })
+    },
+    showAllEstatusAlumnos() {
+      axios
+        .get(this.url + "Alumno/showAllEstatusAlumnos/")
+        .then(
+          (response) => (this.estatusalumnos = response.data.alumnos)
+        );
+    },
+    exportExcel: function () {
+      let data = XLSX.utils.json_to_sheet(this.estatusalumnos);
+      const workbook = XLSX.utils.book_new();
+      const filename = "Reporte de Estatus Alumnos";
+      XLSX.utils.book_append_sheet(workbook, data, filename);
+      XLSX.writeFile(workbook, `${filename}.xlsx`);
+    },
     showAllEspecialidades() {
       axios
         .get(this.url + "Alumno/showAllEspecialidades/")
@@ -111,16 +130,17 @@ var v = new Vue({
         );
     },
     searchAlumno() {
-      var formData = v.formData(v.search); 
-        
-        axios.post(this.url + "Alumno/searchAlumno", formData).then(function (response) {
-                if (response.data.alumnos == null) {
-                    v.noResult()
-                } else {
-                    v.getData(response.data.alumnos);
-
-                }
-            })
+      var formData = v.formData(v.search);
+      v.buscandoalumno = true;
+      axios.post(this.url + "Alumno/searchAlumno", formData).then(function (response) {
+        if (response.data.alumnos == null) {
+          v.noResult()
+          v.buscandoalumno = false;
+        } else {
+          v.getData(response.data.alumnos);
+          v.buscandoalumno = false;
+        }
+      })
     },
     addAlumno() {
       v.error = false;
@@ -247,21 +267,21 @@ var v = new Vue({
       }
       return formData;
     },
-     getData(alumnos) {
-            v.emptyResult = false; // become false if has a record
-            v.totalAlumnos = alumnos.length //get total of user
-            v.alumnos = alumnos.slice(v.currentPage * v.rowCountPage, (v.currentPage * v.rowCountPage) + v.rowCountPage); //slice the result for pagination
+    getData(alumnos) {
+      v.emptyResult = false; // become false if has a record
+      v.totalAlumnos = alumnos.length //get total of user
+      v.alumnos = alumnos.slice(v.currentPage * v.rowCountPage, (v.currentPage * v.rowCountPage) + v.rowCountPage); //slice the result for pagination
 
-            // if the record is empty, go back a page
-            if (v.alumnos.length == 0 && v.currentPage > 0) {
-                v.pageUpdate(v.currentPage - 1)
-                v.clearAll();
-            }
-        },
+      // if the record is empty, go back a page
+      if (v.alumnos.length == 0 && v.currentPage > 0) {
+        v.pageUpdate(v.currentPage - 1)
+        v.clearAll();
+      }
+    },
 
     selectAlumno(alumno) {
       v.chooseAlumno = alumno;
-      
+
     },
     clearMSG() {
       setTimeout(function () {
@@ -272,6 +292,7 @@ var v = new Vue({
       $("#editRegister").modal("hide");
       $("#addRegister").modal("hide");
       $("#changePassword").modal("hide");
+      $("#situacionAlumnos").modal("hide");
       v.newAlumno = {
         matricula: "",
         curp: "",

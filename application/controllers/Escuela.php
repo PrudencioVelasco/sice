@@ -1,8 +1,10 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 date_default_timezone_set("America/Mexico_City");
-class Escuela extends CI_Controller {
- function __construct() {
+class Escuela extends CI_Controller
+{
+    function __construct()
+    {
         parent::__construct();
 
         if (!isset($_SESSION['user_id'])) {
@@ -10,44 +12,45 @@ class Escuela extends CI_Controller {
             return redirect('welcome');
         }
         $this->load->helper('url');
-        $this->load->model('data_model'); 
+        $this->load->model('data_model');
         $this->load->library('permission');
         $this->load->library('session');
-        $this->load->model('escuela_model','escuela'); 
-	}
- 
-	public function index()
-	{  
-        Permission::grant(uri_string());
-	      $this->load->view('admin/header');
+        $this->load->model('escuela_model', 'escuela');
+    }
+
+    public function index()
+    {
+        // Permission::grant(uri_string());
+        $this->load->view('admin/header');
         $this->load->view('admin/escuela/index');
         $this->load->view('admin/footer');
-
-	} 
-   public function showAll() { 
-         $query = $this->escuela->showAll();
-         //var_dump($query);
-         if ($query) {
-             $result['escuelas'] = $this->escuela->showAll();
-         }
-         if(isset($result) && !empty($result)){
-         echo json_encode($result);
+    }
+    public function showAll()
+    {
+        $query = $this->escuela->showAll();
+        //var_dump($query);
+        if ($query) {
+            $result['escuelas'] = $this->escuela->showAll();
         }
-     }
-  public function searchEscuela() {
+        if (isset($result) && !empty($result)) {
+            echo json_encode($result);
+        }
+    }
+    public function searchEscuela()
+    {
         //Permission::grant(uri_string());
         $value = $this->input->post('text');
         $query = $this->escuela->searchEscuela($value);
         if ($query) {
             $result['escuelas'] = $query;
         }
-        if(isset($result) && !empty($result)){
-         echo json_encode($result);
+        if (isset($result) && !empty($result)) {
+            echo json_encode($result);
         }
     }
     public function addEscuela()
     {
-         $config = array(
+        $config = array(
             array(
                 'field' => 'clave',
                 'label' => 'Clave',
@@ -56,7 +59,7 @@ class Escuela extends CI_Controller {
                     'required' => 'Campo obligatorio.'
                 )
             ),
-             array(
+            array(
                 'field' => 'nombreplantel',
                 'label' => 'Nombre del plantel',
                 'rules' => 'trim|required',
@@ -71,7 +74,7 @@ class Escuela extends CI_Controller {
                 'errors' => array(
                     'required' => 'Campo obligatorio.'
                 )
-            ),array(
+            ), array(
                 'field' => 'director',
                 'label' => 'director',
                 'rules' => 'trim|required',
@@ -85,8 +88,8 @@ class Escuela extends CI_Controller {
                 'rules' => 'trim|required|integer|exact_length[10]',
                 'errors' => array(
                     'required' => 'Campo obligatorio.',
-                    'integer'=>'Debe de ser solo número.',
-                    'exact_length'=>'Debe de ser 10 digitos.'
+                    'integer' => 'Debe de ser solo número.',
+                    'exact_length' => 'Debe de ser 10 digitos.'
                 )
             )
         );
@@ -104,35 +107,33 @@ class Escuela extends CI_Controller {
         } else {
             $clave = strtoupper($this->input->post('clave'));
             $validar = $this->escuela->validarAddEscuela($clave);
-            if($validar == FALSE){
-            $data = array(
+            if ($validar == FALSE) {
+                $data = array(
                     'clave' => strtoupper($this->input->post('clave')),
                     'nombreplantel' => strtoupper($this->input->post('nombreplantel')),
                     'direccion' => strtoupper($this->input->post('direccion')),
                     'telefono' => $this->input->post('telefono'),
-                    'director' =>  strtoupper($this->input->post('director')), 
+                    'director' =>  strtoupper($this->input->post('director')),
                     'idusuario' => $this->session->user_id,
                     'fecharegistro' => date('Y-m-d H:i:s')
-                     
-                );
-            $this->escuela->addEscuela($data); 
-        }
-            else{
-                    $result['error'] = true;
-                    $result['msg'] = array(
-                        'msgerror' => "La clave de la Escuela ya esta registrado."
-                    );
 
+                );
+                $this->escuela->addEscuela($data);
+            } else {
+                $result['error'] = true;
+                $result['msg'] = array(
+                    'msgerror' => "La clave de la Escuela ya esta registrado."
+                );
             }
         }
-         
-       if(isset($result) && !empty($result)){
-         echo json_encode($result);
+
+        if (isset($result) && !empty($result)) {
+            echo json_encode($result);
         }
     }
-       public function updateEscuela()
+    public function updateEscuela()
     {
-         $config = array(
+        $config = array(
             array(
                 'field' => 'clave',
                 'label' => 'Clave',
@@ -141,7 +142,7 @@ class Escuela extends CI_Controller {
                     'required' => 'Campo obligatorio.'
                 )
             ),
-             array(
+            array(
                 'field' => 'nombreplantel',
                 'label' => 'Nombre del plantel',
                 'rules' => 'trim|required',
@@ -156,7 +157,7 @@ class Escuela extends CI_Controller {
                 'errors' => array(
                     'required' => 'Campo obligatorio.'
                 )
-            ),array(
+            ), array(
                 'field' => 'director',
                 'label' => 'director',
                 'rules' => 'trim|required',
@@ -170,8 +171,8 @@ class Escuela extends CI_Controller {
                 'rules' => 'trim|required|integer|exact_length[10]',
                 'errors' => array(
                     'required' => 'Campo obligatorio.',
-                    'integer'=>'Debe de ser solo número.',
-                    'exact_length'=>'Debe de ser 10 digitos.'
+                    'integer' => 'Debe de ser solo número.',
+                    'exact_length' => 'Debe de ser 10 digitos.'
                 )
             )
         );
@@ -189,47 +190,42 @@ class Escuela extends CI_Controller {
         } else {
             $clave = strtoupper($this->input->post('clave'));
             $idplantel = strtoupper($this->input->post('idplantel'));
-            $validar = $this->escuela->validarUpdateEscuela($clave,$idplantel);
-            if($validar == FALSE){
-            $data = array(
+            $validar = $this->escuela->validarUpdateEscuela($clave, $idplantel);
+            if ($validar == FALSE) {
+                $data = array(
                     'clave' => strtoupper($this->input->post('clave')),
                     'nombreplantel' => strtoupper($this->input->post('nombreplantel')),
                     'direccion' => strtoupper($this->input->post('direccion')),
                     'telefono' => $this->input->post('telefono'),
-                    'director' =>  strtoupper($this->input->post('director')), 
+                    'director' =>  strtoupper($this->input->post('director')),
                     'idusuario' => $this->session->user_id,
                     'fecharegistro' => date('Y-m-d H:i:s')
-                     
-                );
-            $this->escuela->updateEscuela($idplantel,$data); 
-        }
-            else{
-                    $result['error'] = true;
-                    $result['msg'] = array(
-                        'msgerror' => "La clave de la Escuela ya esta registrado."
-                    );
 
+                );
+                $this->escuela->updateEscuela($idplantel, $data);
+            } else {
+                $result['error'] = true;
+                $result['msg'] = array(
+                    'msgerror' => "La clave de la Escuela ya esta registrado."
+                );
             }
         }
-         
-       if(isset($result) && !empty($result)){
-         echo json_encode($result);
+
+        if (isset($result) && !empty($result)) {
+            echo json_encode($result);
         }
     }
 
-       public function deleteEscuela()
+    public function deleteEscuela()
     {
         # code...
         $idplantel = $this->input->get('idplantel');
         $query = $this->escuela->deleteEscuela($idplantel);
         if ($query) {
             $result['escuela'] = true;
-        } 
-       if(isset($result) && !empty($result)){
-         echo json_encode($result);
+        }
+        if (isset($result) && !empty($result)) {
+            echo json_encode($result);
         }
     }
-
-
-
 }

@@ -666,7 +666,7 @@
                 <h4 class="modal-title" id="defaultModalLabel">CAMBIAR CONTRASEÑA </h4>
             </div>
             <div class="modal-body">
-                <div style=" height: 100px; padding-top:13px; padding-right:15px; overflow-x: hidden; overflow-y: scroll;">
+                <div style="">
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12 ">
                             <div class="col-red" v-html="formValidate.msgerror"></div>
@@ -711,6 +711,58 @@
                     <div class="col-md-6 col-sm-12 col-xs-12 ">
                         <button class="btn btn-danger waves-effect waves-black" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
                         <button class="btn btn-primary waves-effect waves-black" @click="updatePasswordAlumno"><i class='fa fa-edit'></i> Modificar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--AGREGAR ALUMNO-->
+<div class="modal fade" id="situacionAlumnos" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="defaultModalLabel">ESTATUS ALUMNOS</h4>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12 ">
+                            <div class="col-red" v-html="formValidate.msgerror"></div>
+
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12 ">
+                            <button type="button" @click="exportExcel()" class="btn btn-default"><i class="fa fa-file-excel-o"></i> Exportar</button>
+                            <table class="table table-hover table-striped">
+                                <thead class="bg-teal">
+                                    <th>#</th>
+                                    <th>NOMBRE</th>
+                                    <th>ESTATUS</th>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(row,index) in estatusalumnos">
+                                        <td>{{index + 1}}</td>
+                                        <td style="color:#000;">{{row.apellidop}} {{row.apellidom}} {{row.nombre}}</td>
+                                        <td>
+                                            <span v-if="row.idestatusalumno == 3" class="label label-danger">{{row.nombreestatus}}</span>
+                                            <span v-if="row.idestatusalumno == 2" class="label label-warning">{{row.nombreestatus}}</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12 " align="right">
+                        <button class="btn btn-danger waves-effect waves-black" @click="clearAll"><i class='fa fa-ban'></i> Cancelar</button>
                     </div>
                 </div>
             </div>

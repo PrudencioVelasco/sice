@@ -78,6 +78,20 @@ class Alumno extends CI_Controller
         }
     }
 
+    public function showAllEstatusAlumnos()
+    {
+        //Permission::grant(uri_string()); 
+        $idplantel = $this->session->idplantel;
+        $query = $this->alumno->showAllEstatusAlumnos($idplantel);
+
+        if ($query) {
+            $result['alumnos'] = $this->alumno->showAllEstatusAlumnos($idplantel);
+        }
+        if (isset($result) && !empty($result)) {
+            echo json_encode($result);
+        }
+    }
+
     public function showAllMateriasAsignadas()
     {
         $idplantel = $this->session->idplantel;
@@ -546,7 +560,7 @@ class Alumno extends CI_Controller
             } else {
 
                 $matricula = trim($this->input->post('matricula'));
-                $validar = $this->alumno->validarMatricula($matricula, $this->session->idplantel);
+                $validar = $this->alumno->validarMatricula($matricula, '', $this->session->idplantel);
                 $fechanacimiento = $this->input->post('fechanacimiento');
                 $password = trim($this->input->post('password'));
                 $date = str_replace('/', '-', $fechanacimiento);
@@ -962,7 +976,9 @@ class Alumno extends CI_Controller
         $valida_grupo = $this->alumno->validadAlumnoGrupo($id);
         if ($valida_grupo) {
             $datag = $this->alumno->detalleGrupoActual($id);
-            $grupo_actual = $datag->nombrenivel . " " . $datag->nombregrupo . " - " . $datag->nombreturno;
+            if ($datag) {
+                $grupo_actual = $datag->nombrenivel . " " . $datag->nombregrupo . " - " . $datag->nombreturno;
+            }
         }
         $becas = $this->alumno->showAllBecas();
 
@@ -2553,6 +2569,7 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
     public function subirFoto()
     {
         if (isset($_FILES['file']['name']) && !empty($_FILES['file']['name'])) {
+            $id = $this->input->post('idalumno');
             $mi_archivo = 'file';
             $config['upload_path'] = "assets/alumnos/";
             //$config['file_name'] = 'Avatar' . date("Y-m-d his");
@@ -2564,7 +2581,7 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
             $file_name = $_FILES['file']['name'];
             $tmp = explode('.', $file_name);
             $extension_img = end($tmp);
-            $user_img_profile = date("Y-m-dhis") . '.' . $extension_img;
+            $user_img_profile = $id . "-" . date("Y-m-dhis") . '.' . $extension_img;
             $config['file_name'] = $user_img_profile;
 
             $this->load->library('upload', $config);
@@ -2582,9 +2599,9 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
                 );
                 //return;
             } else {
-                $id = $this->input->post('idalumno');
+
                 $data = array(
-                    'foto' => $user_img_profile,
+                    'foto' =>  $user_img_profile,
                     'idusuario' => $this->session->user_id,
                     'fecharegistro' => date('Y-m-d H:i:s')
                 );
@@ -3226,5 +3243,53 @@ document.getElementById("btnimprimir2").onclick = imprimirDiv;
 
 
         $pdf->Output('Boleta de Calificación.pdf', 'I');
+    }
+    public function validarMostrar()
+    {
+        $idalumno = $this->input->get('idalumno');
+        $alumnogrupo = $this->alumno->existenciaAlumnoGrupo($idalumno);
+        if ($alumnogrupo) {
+            $inactivoalumnogrupo = $this->alumno->inactivoAlumnoGrupo($idalumno);
+            if ($inactivoalumnogrupo) {
+                $datogrupo = $this->alumno->detalleGrupoFinalizado($idalumno);
+                $grupo = $datogrupo->nivelgrupo . " " . $datogrupo->nombregrupo . " - " . $datogrupo->nombreturno;
+                $result['dato'] = array(
+                    'agregaralumnogrupo' => false,
+                    'editaralumnogrupo' => false,
+                    'subirfoto' => true,
+                    'editarfoto' => false,
+                    'cambiarespecialidad' => false,
+                    'agregarespecialidad' => false,
+                    'editarestatus' => false,
+                    'activo' => false,
+                    'grupo' => $grupo
+                );
+            } else {
+                $result['dato'] = array(
+                    'agregaralumnogrupo' => false,
+                    'editaralumnogrupo' => true,
+                    'subirfoto' => false,
+                    'editarfoto' => true,
+                    'cambiarespecialidad' => true,
+                    'agregarespecialidad' => false,
+                    'editarestatus' => true,
+                    'activo' => true
+                );
+            }
+        } else {
+            $result['dato'] = array(
+                'agregaralumnogrupo' => true,
+                'editaralumnogrupo' => false,
+                'subirfoto' => true,
+                'editarfoto' => false,
+                'cambiarespecialidad' => true,
+                'agregarespecialidad' => true,
+                'editarestatus' => true,
+                'activo' => true
+            );
+        }
+        if (isset($result) && !empty($result)) {
+            echo json_encode($result);
+        }
     }
 }

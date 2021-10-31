@@ -46,6 +46,7 @@ class Calificacion_model extends CI_Model
             return false;
         }
     }
+
     public function detalleOportunidad($idoportunidad, $idplantel = '')
     {
         $this->db->select('o.idoportunidadexamen,o.numero, o.nombreoportunidad');
@@ -54,6 +55,34 @@ class Calificacion_model extends CI_Model
             $this->db->where('o.idplantel', $idplantel);
         }
         $this->db->where('o.idoportunidadexamen', $idoportunidad);
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
+    public function detalleOportunidadSiguiente($numero, $idplantel = '')
+    {
+        $this->db->select('o.idoportunidadexamen,o.numero, o.nombreoportunidad');
+        $this->db->from('tbloportunidad_examen o');
+        if (isset($idplantel) && !empty($idplantel)) {
+            $this->db->where('o.idplantel', $idplantel);
+        }
+        $this->db->where('o.numero >', $numero);
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+    public function primeraUnidad($idplantel = '')
+    {
+        $this->db->select('u.idunidad');
+        $this->db->from('tblunidad u');
+        $this->db->where('u.idplantel', $idplantel);
+        $this->db->where('u.numero', 1);
         $query = $this->db->get();
         if ($this->db->affected_rows() > 0) {
             return $query->first_row();
@@ -317,7 +346,7 @@ class Calificacion_model extends CI_Model
             return false;
         }
     }
-    public function obtenerCalificacionXUnidadMateria($idalumno = '', $idunidad = '', $idprofesormateria = '')
+    public function obtenerCalificacionXUnidadMateria($idalumno = '', $idunidad = '', $idprofesormateria = '', $idhorario = '')
     {
         $this->db->select('c.idcalificacion, c.calificacion');
         $this->db->from('tblcalificacion c');
@@ -326,6 +355,7 @@ class Calificacion_model extends CI_Model
         $this->db->where('c.idalumno', $idalumno);
         $this->db->where('hd.idmateria', $idprofesormateria);
         $this->db->where('c.idunidad', $idunidad);
+        $this->db->where('hd.idhorario', $idhorario);
         $query = $this->db->get();
         if ($this->db->affected_rows() > 0) {
             return $query->first_row();
@@ -435,6 +465,7 @@ class Calificacion_model extends CI_Model
         $this->db->where('u.idtipousuario', 2);
         $this->db->where('p.idplantel', $idplantel);
         $this->db->where('ur.id_rol', 13);
+        $this->db->where('p.activo', 1);
         $query = $this->db->get();
         if ($this->db->affected_rows() > 0) {
             return $query->first_row();
@@ -899,7 +930,7 @@ class Calificacion_model extends CI_Model
         $this->db->join('tbloportunidad_examen oe', 'oe.idoportunidadexamen = c.idoportunidadexamen');
         $this->db->where('hd.idmateria', $idmateria);
         $this->db->where('c.idalumno', $idalumno);
-        //$this->db->where('h.idperiodo', $idperiodo);
+        $this->db->where('h.idperiodo', $idperiodo);
         $this->db->where('hd.idhorario', $idhorario);
         $this->db->order_by('oe.numero DESC');
         $this->db->group_by('c.idoportunidadexamen, c.idalumno,c.idhorario, pm.idmateria');
@@ -1262,6 +1293,16 @@ ORDER BY    oe.numero DESC");
             return false;
         }
     }
+    public function updateCalificacion($id, $field)
+    {
+        $this->db->where('idcalificacion', $id);
+        $this->db->update('tblcalificacion', $field);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     public function updateFaltas($id, $field)
     {
@@ -1358,7 +1399,7 @@ FROM
         }
     }
 
-    public function validarCalificacionRegistrada($idalumno, $idhorario, $idprofesormateria, $idunidad)
+    public function validarCalificacionRegistrada($idalumno, $idhorario, $idprofesormateria, $idunidad, $idoportunidad = '')
     {
         $this->db->select('c.calificacion');
         $this->db->from('tblcalificacion  c');
@@ -1368,6 +1409,9 @@ FROM
         $this->db->where('hd.idmateria', $idprofesormateria);
         $this->db->where('c.idalumno', $idalumno);
         $this->db->where('c.idunidad', $idunidad);
+        if (isset($idoportunidad) && !empty($idoportunidad)) {
+            $this->db->where('c.idoportunidadexamen', $idoportunidad);
+        }
         $query = $this->db->get();
         if ($this->db->affected_rows() > 0) {
             return $query->result();
@@ -1404,6 +1448,17 @@ FROM
         # code...
         $this->db->where('idquitarmateria', $idquitarmateria);
         $this->db->delete('tblquitar_materia');
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public function eliminarCalificacionOportunidad($idcalificacion = '')
+    {
+        # code...
+        $this->db->where('idcalificacion', $idcalificacion);
+        $this->db->delete('tblcalificacion');
         if ($this->db->affected_rows() > 0) {
             return true;
         } else {

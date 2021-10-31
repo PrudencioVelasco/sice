@@ -73,7 +73,13 @@
                     <!-- menu prile quick info -->
                     <div class="profile">
                         <div class="profile_pic">
-                            <img src="<?php echo base_url(); ?>/assets/images/user2.png" alt="..." class="img-circle profile_img">
+                            <?php
+                            if (!empty($this->session->foto) && isset($this->session->foto)) { ?>
+                                <img style="width: 50px; height:50px;" src="<?php echo base_url(); ?>/assets/alumnos/<?php echo $this->session->foto; ?>" alt="..." class="img-circle profile_img">
+                            <?php  } else { ?>
+                                <img src="<?php echo base_url(); ?>/assets/images/user2.png" alt="..." class="img-circle profile_img">
+                            <?php }
+                            ?>
                         </div>
                         <div class="profile_info">
                             <span>Bienvenido,</span>
@@ -119,7 +125,14 @@
                         <ul class="nav navbar-nav navbar-right">
                             <li class="">
                                 <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                    <img src="<?php echo base_url(); ?>/assets/images/user2.png" alt=""><?php echo $this->session->nombre ?>
+                                    <?php
+                                    if (!empty($this->session->foto) && isset($this->session->foto)) { ?>
+                                        <img style="width: 35px; height:35px;" src="<?php echo base_url(); ?>/assets/alumnos/<?php echo $this->session->foto; ?>" alt="...">
+                                    <?php  } else { ?>
+                                        <img src="<?php echo base_url(); ?>/assets/images/user2.png" alt="...">
+                                    <?php }
+                                    ?>
+                                    <?php echo $this->session->nombre ?>
                                     <span class=" fa fa-angle-down"></span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-usermenu animated fadeInDown pull-right">

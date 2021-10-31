@@ -36,6 +36,29 @@ class Alumno_model extends CI_Model
             return false;
         }
     }
+    public function showAllEstatusAlumnos($idplantel = '')
+    {
+        //QUITAR A LUIS Y BIBIANA
+        $idalumno = array(1374, 1375, 1376);
+        $idestatus = array(2, 3);
+        $this->db->select(" t.nombre, t.apellidop, t.apellidom, ae.idestatusalumno, ae.nombreestatus");
+        $this->db->from('tblalumno t');
+        $this->db->join('tblplantel p', 't.idplantel = p.idplantel');
+        $this->db->join('tblniveleducativo n', 'n.idniveleducativo = p.idniveleducativo');
+        $this->db->join('tblalumno_estatus ae', 'ae.idestatusalumno = t.idalumnoestatus');
+        if (isset($idplantel) && !empty($idplantel)) {
+            $this->db->where('t.idplantel', $idplantel);
+        }
+        $this->db->where_in('ae.idestatusalumno', $idestatus);
+        $this->db->where_not_in('t.idalumno', $idalumno);
+        $this->db->order_by('t.apellidop, t.apellidom DESC');
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
 
     public function showAllEstatusAlumno()
     {
@@ -398,11 +421,22 @@ FROM
 
     public function showAllGrupos($idplantel = '')
     {
-        $this->db->select('g.idgrupo,n.nombrenivel,g.nombregrupo,t.nombreturno, e.nombreespecialidad');
+        $this->db->select("g.idgrupo,n.nombrenivel,g.nombregrupo,t.nombreturno, e.nombreespecialidad,
+         CASE niv.idniveleducativo 
+        WHEN 3 THEN n2.numeroromano
+        WHEN 5 THEN n2.numeroromano
+        WHEN 1 THEN n2.numeroordinaria
+        WHEN 2 THEN n2.numeroordinaria
+        WHEN 4 THEN n2.numeroordinaria
+        ELSE ''
+    END AS nivelgrupo");
         $this->db->from('tblgrupo g');
         $this->db->join('tblnivelestudio n', 'n.idnivelestudio = g.idnivelestudio');
         $this->db->join('tblespecialidad e', 'e.idespecialidad = g.idespecialidad');
         $this->db->join('tblturno t', 'g.idturno = t.idturno');
+        $this->db->join('tblnivelestudio n2', 'n2.idnivelestudio = g.idnivelestudio');
+        $this->db->join('tblplantel pla', 'pla.idplantel = g.idplantel');
+        $this->db->join('tblniveleducativo niv', 'pla.idniveleducativo = niv.idniveleducativo');
         if (isset($idplantel) && !empty($idplantel)) {
             $this->db->where('g.idplantel', $idplantel);
         }
@@ -719,7 +753,7 @@ GROUP BY idmateria ORDER BY nombreclase ASC';
     nombre,
     apellidop,
     apellidom,
-    idmateria,
+    idmateria, 
     unidades,
     opcion
 FROM
@@ -794,6 +828,156 @@ FROM
     JOIN tblprofesor p ON p.idprofesor = pm.idprofesor
     WHERE (pe.activo = 1 OR h.activo =1) AND mr.estatus = 1) materias
 GROUP BY idmateria order by nombreclase ASC';
+
+        $query = $this->db->query($sql);
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+    public function obtenerMateriasInternas()
+    {
+        $sql = "
+            select
+            te.idtipoevaluacion,
+            te.nombre,
+            te.abreviatura
+        from
+            tbltipo_evaluacion te
+        where
+            te.idniveleducativo = 1
+            and te.idtipoevaluacion in (15, 16, 17, 18, 19)
+            ORDER BY  FIELD(te.idtipoevaluacion , 15, 16, 17, 18, 19)";
+        $query = $this->db->query($sql);
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+    public function obtenerMateriasInternasSecu()
+    {
+        $sql = "
+            select
+            te.idtipoevaluacion,
+            te.nombre,
+            te.abreviatura
+        from
+            tbltipo_evaluacion te
+        where
+            te.idniveleducativo = 2
+            and te.idtipoevaluacion in (21, 22, 23, 24)
+            ORDER BY  FIELD(te.idtipoevaluacion , 21, 22, 23, 24)";
+        $query = $this->db->query($sql);
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+    public function showAllMateriasGrupo($idhorario, $reprobadas = '', $idalumno = '', $idespecialidad = '', $idnivelestudio = '')
+    {
+        $sql = 'select
+    idprofesormateri,
+    idhorariodetalle,
+    idhorario,
+    horainicial,
+    horafinal,
+    nombreclase,
+    nombre,
+    apellidop,
+    apellidom,
+    idmateria,
+    IFNULL(
+        (
+        SELECT
+            om.numero
+        FROM
+            tblorden_materia om
+        WHERE
+            om.idespecialidad = ' . $idespecialidad . ' AND om.idmateria = materias.idmateria AND om.idnivelestudio =  ' . $idnivelestudio . '
+    ),
+    0
+    ) AS numero,
+    unidades,
+    sepromedia,
+    opcion
+FROM
+    (select
+        hd.idmateria AS idprofesormateri,
+            hd.idhorariodetalle,
+            hd.idhorario,
+            hd.horainicial,
+            hd.horafinal,
+            m.nombreclase,
+            p.nombre,
+            p.apellidop,
+            p.apellidom,
+            m.idmateria,
+            m.unidades,
+            m.sepromedia,
+            1 as opcion
+    FROM
+        tblhorario_detalle hd
+    JOIN tblprofesor_materia pm ON hd.idmateria = pm.idprofesormateria
+    JOIN tblmateria m ON m.idmateria = pm.idmateria
+    JOIN tblprofesor p ON p.idprofesor = pm.idprofesor
+    WHERE hd.idhorario = ' . $idhorario . ' ';
+        if (isset($reprobadas) && !empty($reprobadas)) {
+            $sql .= " and m.idmateria NOT IN ($reprobadas)";
+        }
+        $sql .= " AND m.idclasificacionmateria NOT IN (3) AND m.secalifica = 1 ";
+        if (isset($idalumno) && !empty($idalumno)) {
+            $sql .= ' UNION ALL SELECT
+        hd.idmateria AS idprofesormateri,
+            hd.idhorariodetalle,
+            hd.idhorario,
+            hd.horainicial,
+            hd.horafinal,
+            m.nombreclase,
+            p.nombre,
+            p.apellidop,
+            p.apellidom,
+            m.idmateria,
+            m.unidades,
+            m.sepromedia,
+            1 as opcion
+    FROM
+        tblhorario_detalle hd
+    JOIN tblprofesor_materia pm ON hd.idmateria = pm.idprofesormateria
+    JOIN tblmateria m ON m.idmateria = pm.idmateria
+    JOIN tblprofesor p ON p.idprofesor = pm.idprofesor
+    JOIN tblhorario_detalle_cursos hdc ON hdc.idhorario = hd.idhorario
+    WHERE hd.idhorario = ' . $idhorario . ' ';
+            $sql .= " AND hdc.idalumno = $idalumno AND hdc.idprofesormateria = hd.idmateria AND m.secalifica = 1";
+        }
+        $sql .= ' UNION ALL
+        SELECT
+        hd.idmateria AS idprofesormateri,
+            hd.idhorariodetalle,
+            hd.idhorario,
+            hd.horainicial,
+            hd.horafinal,
+            m.nombreclase,
+            p.nombre,
+            p.apellidop,
+            p.apellidom,
+            m.idmateria,
+            m.unidades,
+            m.sepromedia,
+            0 as opcion
+    FROM
+        tblmateria_reprobada mr
+    INNER JOIN tbldetalle_reprobada dr ON mr.idreprobada = dr.idreprobada
+    INNER JOIN tblhorario_detalle hd ON dr.idprofesormateria = hd.idmateria
+    INNER JOIN tblhorario h ON h.idhorario = hd.idhorario
+    INNER JOIN tblperiodo pe ON h.idperiodo = pe.idperiodo
+    JOIN tblprofesor_materia pm ON hd.idmateria = pm.idprofesormateria
+    JOIN tblmateria m ON m.idmateria = pm.idmateria
+    JOIN tblprofesor p ON p.idprofesor = pm.idprofesor
+    WHERE (pe.activo = 1 OR h.activo =1) AND mr.estatus = 1) materias
+GROUP BY idmateria order by numero ASC';
 
         $query = $this->db->query($sql);
         if ($query->num_rows() > 0) {
@@ -1671,7 +1855,7 @@ END AS nivelgrupo");
         WHEN 2 THEN n.numeroordinaria
         WHEN 4 THEN n.numeroordinaria
         ELSE ''
-    END AS nivelgrupo");
+    END AS nivelgrupo,ag.activo");
         $this->db->from('tblalumno_grupo ag');
         $this->db->join('tblgrupo g', 'ag.idgrupo = g.idgrupo');
         $this->db->join('tblnivelestudio n', 'g.idnivelestudio = n.idnivelestudio');
@@ -1679,8 +1863,8 @@ END AS nivelgrupo");
         $this->db->join('tblplantel pla', 'pla.idplantel = g.idplantel');
         $this->db->join('tblniveleducativo niv', 'pla.idniveleducativo = niv.idniveleducativo');
         $this->db->where('ag.idalumno', $idalumno);
-        $this->db->where('ag.activo', 1);
-        $this->db->order_by("n.nombrenivel", "asc");
+        //$this->db->where('ag.activo', 1);
+        $this->db->order_by("n.nombrenivel", "desc");
         $query = $this->db->get();
         if ($this->db->affected_rows() > 0) {
             return $query->first_row();
@@ -2265,6 +2449,7 @@ END AS nivelgrupo");
             WHEN numero > 1 THEN 'SI'
             ELSE 'NO'
         END AS mostrar,
+        idmateria,
         numero ,
         idalumno,
         apellidop,
@@ -2278,7 +2463,7 @@ END AS nivelgrupo");
     FROM
         (
         SELECT
-            oe.numero , a2.idalumno , a2.apellidop, a2.apellidom , a2.nombre , m2.nombreclase,   concat(p.nombre,' ',p.apellidop,' ',p.apellidom) as profesor,
+            hd.idmateria,oe.numero , a2.idalumno , a2.apellidop, a2.apellidom , a2.nombre , m2.nombreclase,   concat(p.nombre,' ',p.apellidop,' ',p.apellidom) as profesor,
             CASE
                 /* PRIMARIA */
                 WHEN p1.idniveleducativo = 1 THEN
@@ -2674,4 +2859,70 @@ END AS nivelgrupo");
         return $res;
     }
     //Fin de codig
+    public function existenciaAlumnoGrupo($idalumno = '')
+    {
+        $this->db->select('ag.*');
+        $this->db->from('tblalumno_grupo ag');
+        $this->db->where('ag.idalumno', $idalumno);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+    public function activoAlumnoGrupo($idalumno = '')
+    {
+        $noincluir = array(5);
+        $this->db->select('ag.*');
+        $this->db->from('tblalumno_grupo ag');
+        $this->db->where('ag.idalumno', $idalumno);
+        $this->db->where_not_in('ag.idestatusnivel', $noincluir);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+    public function inactivoAlumnoGrupo($idalumno = '')
+    {
+        $noincluir = array(5);
+        $this->db->select('ag.*');
+        $this->db->from('tblalumno_grupo ag');
+        $this->db->where('ag.idalumno', $idalumno);
+        $this->db->where_in('ag.idestatusnivel', $noincluir);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+    public function detalleGrupoFinalizado($idalumno)
+    {
+        $this->db->select(" g.nombregrupo, n.nombrenivel, t.nombreturno, CASE niv.idniveleducativo 
+        WHEN 3 THEN n.numeroromano
+        WHEN 5 THEN n.numeroromano
+        WHEN 1 THEN n.numeroordinaria
+        WHEN 2 THEN n.numeroordinaria
+        WHEN 4 THEN n.numeroordinaria
+        ELSE ''
+    END AS nivelgrupo");
+        $this->db->from('tblalumno_grupo ag');
+        $this->db->join('tblgrupo g', 'ag.idgrupo = g.idgrupo');
+        $this->db->join('tblnivelestudio n', 'g.idnivelestudio = n.idnivelestudio');
+        $this->db->join('tblturno t', 't.idturno = g.idturno');
+        $this->db->join('tblplantel pla', 'pla.idplantel = g.idplantel');
+        $this->db->join('tblniveleducativo niv', 'pla.idniveleducativo = niv.idniveleducativo');
+        $this->db->where('ag.idalumno', $idalumno);
+        $this->db->where('ag.idestatusnivel', 5);
+        $this->db->where('ag.activo', 0);
+        $query = $this->db->get();
+        if ($this->db->affected_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
 }

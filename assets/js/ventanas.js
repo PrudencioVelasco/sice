@@ -30,6 +30,8 @@ $(document).ready(function () {
 
         $("#modalRegistrarCalificacionRecuperacionPrepa").modal("hide");
         $("#modalEliminarCalificacionRecuperacionPrepa").modal("hide");
+
+        $("#myModalEliminarCalificacion").modal("hide");
       }
     });
   });

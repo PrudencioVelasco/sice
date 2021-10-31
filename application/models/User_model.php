@@ -203,14 +203,19 @@ class User_model extends CI_Model
 
     public function loginAlumno($matricula)
     {
-        $this->db->select('u.id,a.password,u.idtipousuario, a.nombre, a.apellidop, a.apellidom, a.idalumno, a.matricula, a.idalumnoestatus,pla.idplantel, ne.idniveleducativo, ne.nombreniveleducativo');
+        $notincluir = array(5);
+        $this->db->select('u.id,a.password,u.idtipousuario, a.nombre, a.apellidop, a.apellidom, a.idalumno, a.matricula, a.idalumnoestatus,pla.idplantel, ne.idniveleducativo, ne.nombreniveleducativo,a.foto');
         $this->db->from('tblalumno a');
         $this->db->join('users u', 'u.idusuario = a.idalumno');
         $this->db->join('tblplantel pla', 'a.idplantel = pla.idplantel');
         $this->db->join('tblniveleducativo ne', 'ne.idniveleducativo = pla.idniveleducativo');
+        $this->db->join('tblalumno_grupo ag', 'ag.idalumno = a.idalumno');
         $this->db->where('a.matricula', $matricula);
         $this->db->where('a.idalumnoestatus', 1);
         $this->db->where('u.idtipousuario', 3);
+        $this->db->where('ag.activo', 1);
+        $this->db->where_not_in('ag.idestatusnivel', $notincluir);
+
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->first_row();
@@ -219,6 +224,21 @@ class User_model extends CI_Model
         }
     }
 
+    public function detalleProfesor($idprofesor)
+    {
+        $this->db->select('ne.nombreniveleducativo, u.idtipousuario, ne.idniveleducativo, u.id, p.nombre, p.apellidop, p.apellidom, p.idprofesor,p.correo, pla.idplantel, p.password,p.estatus,p.foto');
+        $this->db->from('tblprofesor p');
+        $this->db->join('users u', 'u.idusuario = p.idprofesor');
+        $this->db->join('tblplantel pla', 'p.idplantel = pla.idplantel');
+        $this->db->join('tblniveleducativo ne', 'ne.idniveleducativo = pla.idniveleducativo');
+        $this->db->where('p.idprofesor', $idprofesor);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->first_row();
+        } else {
+            return false;
+        }
+    }
     public function detallePlantel($idplantel)
     {
         $this->db->select('ne.nombreniveleducativo, ne.idniveleducativo, pla.nombreplantel, pla.clave');
@@ -235,7 +255,7 @@ class User_model extends CI_Model
 
     public function loginDocente($correo)
     {
-        $this->db->select('ne.nombreniveleducativo, u.idtipousuario, ne.idniveleducativo, u.id, p.nombre, p.apellidop, p.apellidom, p.idprofesor,p.correo, pla.idplantel, p.password,p.estatus');
+        $this->db->select('ne.nombreniveleducativo, u.idtipousuario, ne.idniveleducativo, u.id, p.nombre, p.apellidop, p.apellidom, p.idprofesor,p.correo, pla.idplantel, p.password,p.estatus,p.foto');
         $this->db->from('tblprofesor p');
         $this->db->join('users u', 'u.idusuario = p.idprofesor');
         $this->db->join('tblplantel pla', 'p.idplantel = pla.idplantel');

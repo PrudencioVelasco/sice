@@ -315,7 +315,7 @@ class Grupo extends CI_Controller
             $idplantel = $this->session->idplantel;
             if ($opcion == 28) {
                 //LISTA DE ALUMNOS
-                $alumnos = $this->grupo->listaAlumnosGrupo($idperiodo, $idgrupo, $idplantel);
+                $alumnos = $this->alumno->spObtenerAlumnosGrupo($idperiodo, $idgrupo);
                 $alumnos_reprobados = $this->grupo->listaAlumnosGrupoReprobados($idperiodo, $idgrupo, $idplantel);
             } else if ($opcion == 29) {
                 $calificaion_final = $this->tablaCalificacionesFinales($idgrupo, $idperiodo);
